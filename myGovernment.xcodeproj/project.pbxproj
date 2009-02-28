@@ -1,0 +1,314 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0102D2D10F58D7C7005AE0EA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D2CC0F58D7C7005AE0EA /* main.m */; };
+		0102D2D20F58D7C7005AE0EA /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2CD0F58D7C7005AE0EA /* MainWindow.xib */; };
+		0102D2D30F58D7C7005AE0EA /* myGovAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D2D00F58D7C7005AE0EA /* myGovAppDelegate.m */; };
+		0102D2EE0F58DECD005AE0EA /* eagleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2ED0F58DECD005AE0EA /* eagleIcon.png */; };
+		0102D2F20F58E007005AE0EA /* RecoveryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2F10F58E007005AE0EA /* RecoveryView.xib */; };
+		0102D2F50F58E028005AE0EA /* RecoveryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D2F40F58E028005AE0EA /* RecoveryViewController.m */; };
+		0102D2F90F58E253005AE0EA /* VoteSmartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D2F80F58E253005AE0EA /* VoteSmartViewController.m */; };
+		0102D2FB0F58E268005AE0EA /* VoteSmartView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2FA0F58E268005AE0EA /* VoteSmartView.xib */; };
+		0102D3020F58E31C005AE0EA /* SpendingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D3010F58E31C005AE0EA /* SpendingViewController.m */; };
+		0102D30D0F58E46A005AE0EA /* CommunityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D30C0F58E46A005AE0EA /* CommunityViewController.m */; };
+		0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D40A0F58F2D2005AE0EA /* CongressViewController.m */; };
+		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0102D2CC0F58D7C7005AE0EA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = src/main.m; sourceTree = "<group>"; };
+		0102D2CD0F58D7C7005AE0EA /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainWindow.xib; path = src/MainWindow.xib; sourceTree = "<group>"; };
+		0102D2CE0F58D7C7005AE0EA /* myGov_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = myGov_Prefix.pch; path = src/myGov_Prefix.pch; sourceTree = "<group>"; };
+		0102D2CF0F58D7C7005AE0EA /* myGovAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = myGovAppDelegate.h; path = src/myGovAppDelegate.h; sourceTree = "<group>"; };
+		0102D2D00F58D7C7005AE0EA /* myGovAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = myGovAppDelegate.m; path = src/myGovAppDelegate.m; sourceTree = "<group>"; };
+		0102D2ED0F58DECD005AE0EA /* eagleIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = eagleIcon.png; path = res/eagleIcon.png; sourceTree = "<group>"; };
+		0102D2F10F58E007005AE0EA /* RecoveryView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = RecoveryView.xib; path = src/recovery/RecoveryView.xib; sourceTree = "<group>"; };
+		0102D2F30F58E028005AE0EA /* RecoveryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecoveryViewController.h; path = src/recovery/RecoveryViewController.h; sourceTree = "<group>"; };
+		0102D2F40F58E028005AE0EA /* RecoveryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecoveryViewController.m; path = src/recovery/RecoveryViewController.m; sourceTree = "<group>"; };
+		0102D2F70F58E253005AE0EA /* VoteSmartViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoteSmartViewController.h; path = src/votesmart/VoteSmartViewController.h; sourceTree = "<group>"; };
+		0102D2F80F58E253005AE0EA /* VoteSmartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VoteSmartViewController.m; path = src/votesmart/VoteSmartViewController.m; sourceTree = "<group>"; };
+		0102D2FA0F58E268005AE0EA /* VoteSmartView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = VoteSmartView.xib; path = src/votesmart/VoteSmartView.xib; sourceTree = "<group>"; };
+		0102D3000F58E31C005AE0EA /* SpendingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingViewController.h; path = src/spending/SpendingViewController.h; sourceTree = "<group>"; };
+		0102D3010F58E31C005AE0EA /* SpendingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpendingViewController.m; path = src/spending/SpendingViewController.m; sourceTree = "<group>"; };
+		0102D30B0F58E46A005AE0EA /* CommunityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommunityViewController.h; path = src/community/CommunityViewController.h; sourceTree = "<group>"; };
+		0102D30C0F58E46A005AE0EA /* CommunityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CommunityViewController.m; path = src/community/CommunityViewController.m; sourceTree = "<group>"; };
+		0102D4090F58F2D2005AE0EA /* CongressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressViewController.h; path = src/congress/CongressViewController.h; sourceTree = "<group>"; };
+		0102D40A0F58F2D2005AE0EA /* CongressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressViewController.m; path = src/congress/CongressViewController.m; sourceTree = "<group>"; };
+		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		1D6058910D05DD3D006BFB54 /* myGovernment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myGovernment.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		288765070DF74369002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1D60588F0D05DD3D006BFB54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
+				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
+				288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0102D2D90F58DB5D005AE0EA /* src */ = {
+			isa = PBXGroup;
+			children = (
+				0102D2DE0F58DB87005AE0EA /* votesmart */,
+				0102D2DD0F58DB80005AE0EA /* recovery */,
+				0102D2DC0F58DB79005AE0EA /* spending */,
+				0102D2DB0F58DB72005AE0EA /* community */,
+				0102D2DA0F58DB6B005AE0EA /* congress */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		0102D2DA0F58DB6B005AE0EA /* congress */ = {
+			isa = PBXGroup;
+			children = (
+				0102D4090F58F2D2005AE0EA /* CongressViewController.h */,
+				0102D40A0F58F2D2005AE0EA /* CongressViewController.m */,
+			);
+			name = congress;
+			sourceTree = "<group>";
+		};
+		0102D2DB0F58DB72005AE0EA /* community */ = {
+			isa = PBXGroup;
+			children = (
+				0102D30B0F58E46A005AE0EA /* CommunityViewController.h */,
+				0102D30C0F58E46A005AE0EA /* CommunityViewController.m */,
+			);
+			name = community;
+			sourceTree = "<group>";
+		};
+		0102D2DC0F58DB79005AE0EA /* spending */ = {
+			isa = PBXGroup;
+			children = (
+				0102D3000F58E31C005AE0EA /* SpendingViewController.h */,
+				0102D3010F58E31C005AE0EA /* SpendingViewController.m */,
+			);
+			name = spending;
+			sourceTree = "<group>";
+		};
+		0102D2DD0F58DB80005AE0EA /* recovery */ = {
+			isa = PBXGroup;
+			children = (
+				0102D2F10F58E007005AE0EA /* RecoveryView.xib */,
+				0102D2F30F58E028005AE0EA /* RecoveryViewController.h */,
+				0102D2F40F58E028005AE0EA /* RecoveryViewController.m */,
+			);
+			name = recovery;
+			sourceTree = "<group>";
+		};
+		0102D2DE0F58DB87005AE0EA /* votesmart */ = {
+			isa = PBXGroup;
+			children = (
+				0102D2F70F58E253005AE0EA /* VoteSmartViewController.h */,
+				0102D2F80F58E253005AE0EA /* VoteSmartViewController.m */,
+				0102D2FA0F58E268005AE0EA /* VoteSmartView.xib */,
+			);
+			name = votesmart;
+			sourceTree = "<group>";
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1D6058910D05DD3D006BFB54 /* myGovernment.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* myGov */ = {
+			isa = PBXGroup;
+			children = (
+				0102D2D90F58DB5D005AE0EA /* src */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = myGov;
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0102D2ED0F58DECD005AE0EA /* eagleIcon.png */,
+				0102D2CC0F58D7C7005AE0EA /* main.m */,
+				0102D2CD0F58D7C7005AE0EA /* MainWindow.xib */,
+				0102D2CE0F58D7C7005AE0EA /* myGov_Prefix.pch */,
+				0102D2CF0F58D7C7005AE0EA /* myGovAppDelegate.h */,
+				0102D2D00F58D7C7005AE0EA /* myGovAppDelegate.m */,
+				8D1107310486CEB800E47090 /* Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
+				1D30AB110D05D00D00671497 /* Foundation.framework */,
+				288765070DF74369002DB57D /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1D6058900D05DD3D006BFB54 /* myGovernment */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "myGovernment" */;
+			buildPhases = (
+				1D60588D0D05DD3D006BFB54 /* Resources */,
+				1D60588E0D05DD3D006BFB54 /* Sources */,
+				1D60588F0D05DD3D006BFB54 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = myGovernment;
+			productName = myGov;
+			productReference = 1D6058910D05DD3D006BFB54 /* myGovernment.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "myGovernment" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* myGov */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1D6058900D05DD3D006BFB54 /* myGovernment */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1D60588D0D05DD3D006BFB54 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0102D2D20F58D7C7005AE0EA /* MainWindow.xib in Resources */,
+				0102D2EE0F58DECD005AE0EA /* eagleIcon.png in Resources */,
+				0102D2F20F58E007005AE0EA /* RecoveryView.xib in Resources */,
+				0102D2FB0F58E268005AE0EA /* VoteSmartView.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1D60588E0D05DD3D006BFB54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0102D2D10F58D7C7005AE0EA /* main.m in Sources */,
+				0102D2D30F58D7C7005AE0EA /* myGovAppDelegate.m in Sources */,
+				0102D2F50F58E028005AE0EA /* RecoveryViewController.m in Sources */,
+				0102D2F90F58E253005AE0EA /* VoteSmartViewController.m in Sources */,
+				0102D3020F58E31C005AE0EA /* SpendingViewController.m in Sources */,
+				0102D30D0F58E46A005AE0EA /* CommunityViewController.m in Sources */,
+				0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1D6058940D05DD3E006BFB54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = src/myGov_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = myGovernment;
+			};
+			name = Debug;
+		};
+		1D6058950D05DD3E006BFB54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = src/myGov_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = myGovernment;
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = iphoneos2.2.1;
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = iphoneos2.2.1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "myGovernment" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D6058940D05DD3E006BFB54 /* Debug */,
+				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "myGovernment" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}
