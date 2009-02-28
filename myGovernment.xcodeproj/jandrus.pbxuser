@@ -33,6 +33,7 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryName = TimeTravelToaster;
 		};
 	};
 	0102D2A60F58D61A005AE0EA /* Code sense */ = {
@@ -104,9 +105,9 @@
 	};
 	0102D3010F58E31C005AE0EA /* SpendingViewController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {857, 1350}}";
-			sepNavSelRange = "{1380, 0}";
-			sepNavVisRange = "{821, 1035}";
+			sepNavIntBoundsRect = "{{0, 0}, {857, 1335}}";
+			sepNavSelRange = "{859, 0}";
+			sepNavVisRange = "{794, 1060}";
 		};
 	};
 	0102D30B0F58E46A005AE0EA /* CommunityViewController.h */ = {
@@ -282,7 +283,7 @@
 		fRef = 0102D3010F58E31C005AE0EA /* SpendingViewController.m */;
 		name = "SpendingViewController.m: 40";
 		rLen = 0;
-		rLoc = 1857;
+		rLoc = 1842;
 		rType = 0;
 		vrLen = 482;
 		vrLoc = 825;
@@ -415,25 +416,25 @@
 		isa = PBXBookmark;
 		fRef = 0102D2ED0F58DECD005AE0EA /* eagleIcon.png */;
 	};
-	0102D5170F590699005AE0EA /* PBXTextBookmark */ = {
+	01D613C80F59081800623C40 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 0102D3010F58E31C005AE0EA /* SpendingViewController.m */;
-		name = "SpendingViewController.m: 64";
+		name = "SpendingViewController.m: 54";
 		rLen = 0;
-		rLoc = 1380;
+		rLoc = 859;
 		rType = 0;
-		vrLen = 1020;
-		vrLoc = 836;
+		vrLen = 1060;
+		vrLoc = 794;
 	};
-	0102D5180F59069C005AE0EA /* PBXTextBookmark */ = {
+	01D613C90F59081C00623C40 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 0102D3010F58E31C005AE0EA /* SpendingViewController.m */;
-		name = "SpendingViewController.m: 64";
+		name = "SpendingViewController.m: 54";
 		rLen = 0;
-		rLoc = 1380;
+		rLoc = 859;
 		rType = 0;
-		vrLen = 1035;
-		vrLoc = 821;
+		vrLen = 1060;
+		vrLoc = 794;
 	};
 	1D6058900D05DD3D006BFB54 /* myGovernment */ = {
 		activeExec = 0;
@@ -474,7 +475,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					76,
+					679,
 					20,
 					48,
 					43,
@@ -482,6 +483,30 @@
 					20,
 				);
 				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.XCSCMDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					20,
+					655,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_SCM_ColumnID,
 					PBXFileDataSource_FiletypeID,
 					PBXFileDataSource_Filename_ColumnID,
 					PBXFileDataSource_Built_ColumnID,
@@ -513,8 +538,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 257492608;
-			PBXWorkspaceStateSaveDate = 257492608;
+			PBXPerProjectTemplateStateSaveDate = 257492973;
+			PBXWorkspaceStateSaveDate = 257492973;
 			com.apple.ide.smrt.PBXUserSmartGroupsKey.Rev10 = <040b73747265616d747970656481e8038401408484840e4e534d757461626c654172726179008484074e534172726179008484084e534f626a65637400858401690192848484134e534d757461626c6544696374696f6e6172790084840c4e5344696374696f6e6172790095960792848484084e53537472696e67019584012b046e616d658692849a9a08436f6e67726573738692849a9a146162736f6c75746550617468546f42756e646c658692849a9a008692849a9a195042585472616e7369656e744c6f636174696f6e4174546f708692849a9a06626f74746f6d8692849a9a03636c7a8692849a9a1550425846696c656e616d65536d61727447726f75708692849a9a0b6465736372697074696f6e8692849a9a103c6e6f206465736372697074696f6e3e8692849a9a0b707265666572656e63657386928497960892849a9a07666e6d617463688692849a9a0e7372632f636f6e67726573732f2a8692849a9a05696d6167658692849a9a0b536d617274466f6c6465728692849a9a04726f6f748692849a9a093c50524f4a4543543e8692849a9a05726567657886929d92849a9a097265637572736976658692848484084e534e756d626572008484074e5356616c7565009584012a848401639e018692849a9a0669734c656166869284af9db19e008692849a9a0763616e536176658692ae92849a9a1250425850726f6a65637453636f70654b65798692849a9a03594553868692849a9a08676c6f62616c49448692849a9a18303130324432443630463538443746453030354145304541868686>;
 		};
 		perUserProjectItems = {
@@ -547,8 +572,8 @@
 			0102D4AF0F59016E005AE0EA /* PBXTextBookmark */ = 0102D4AF0F59016E005AE0EA /* PBXTextBookmark */;
 			0102D4B00F59016E005AE0EA /* PBXTextBookmark */ = 0102D4B00F59016E005AE0EA /* PBXTextBookmark */;
 			0102D4C60F590418005AE0EA /* PBXBookmark */ = 0102D4C60F590418005AE0EA /* PBXBookmark */;
-			0102D5170F590699005AE0EA /* PBXTextBookmark */ = 0102D5170F590699005AE0EA /* PBXTextBookmark */;
-			0102D5180F59069C005AE0EA /* PBXTextBookmark */ = 0102D5180F59069C005AE0EA /* PBXTextBookmark */;
+			01D613C80F59081800623C40 /* PBXTextBookmark */ = 01D613C80F59081800623C40 /* PBXTextBookmark */;
+			01D613C90F59081C00623C40 /* PBXTextBookmark */ = 01D613C90F59081C00623C40 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 0102D2A50F58D61A005AE0EA /* Source Control */;
 		userBuildSettings = {
