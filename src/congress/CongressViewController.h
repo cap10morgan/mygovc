@@ -8,10 +8,22 @@
 
 #import <UIKit/UIKit.h>
 
+@class CongressDataManager;
+
+typedef enum
+{
+	eCongressChamberHouse,
+	eCongressChamberSenate,
+} CongressChamber;
 
 @interface CongressViewController : UITableViewController 
 {
-
+	
+@private
+	CongressDataManager *m_data;
+	CongressChamber m_selectedChamber;
 }
+
+- (void)dataManagerCallback:(id)dataManager;
 
 @end

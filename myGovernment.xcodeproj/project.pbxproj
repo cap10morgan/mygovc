@@ -18,6 +18,9 @@
 		0102D3020F58E31C005AE0EA /* SpendingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D3010F58E31C005AE0EA /* SpendingViewController.m */; };
 		0102D30D0F58E46A005AE0EA /* CommunityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D30C0F58E46A005AE0EA /* CommunityViewController.m */; };
 		0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D40A0F58F2D2005AE0EA /* CongressViewController.m */; };
+		01BC2FAA0F5B84AD00E7ABD0 /* XMLParserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */; };
+		01BC2FE10F5B973B00E7ABD0 /* CongressDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */; };
+		01BC2FEC0F5BA34000E7ABD0 /* LegislatorContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
@@ -42,6 +45,12 @@
 		0102D30C0F58E46A005AE0EA /* CommunityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CommunityViewController.m; path = src/community/CommunityViewController.m; sourceTree = "<group>"; };
 		0102D4090F58F2D2005AE0EA /* CongressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressViewController.h; path = src/congress/CongressViewController.h; sourceTree = "<group>"; };
 		0102D40A0F58F2D2005AE0EA /* CongressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressViewController.m; path = src/congress/CongressViewController.m; sourceTree = "<group>"; };
+		01BC2FA80F5B84AD00E7ABD0 /* XMLParserOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLParserOperation.h; path = src/common/XMLParserOperation.h; sourceTree = "<group>"; };
+		01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XMLParserOperation.m; path = src/common/XMLParserOperation.m; sourceTree = "<group>"; };
+		01BC2FDF0F5B973B00E7ABD0 /* CongressDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressDataManager.h; path = src/congress/CongressDataManager.h; sourceTree = "<group>"; };
+		01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressDataManager.m; path = src/congress/CongressDataManager.m; sourceTree = "<group>"; };
+		01BC2FEA0F5BA34000E7ABD0 /* LegislatorContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorContainer.h; path = src/congress/LegislatorContainer.h; sourceTree = "<group>"; };
+		01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorContainer.m; path = src/congress/LegislatorContainer.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* myGovernment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myGovernment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -66,6 +75,7 @@
 		0102D2D90F58DB5D005AE0EA /* src */ = {
 			isa = PBXGroup;
 			children = (
+				01BC2FA00F5B840F00E7ABD0 /* common */,
 				0102D2DE0F58DB87005AE0EA /* votesmart */,
 				0102D2DD0F58DB80005AE0EA /* recovery */,
 				0102D2DC0F58DB79005AE0EA /* spending */,
@@ -80,6 +90,10 @@
 			children = (
 				0102D4090F58F2D2005AE0EA /* CongressViewController.h */,
 				0102D40A0F58F2D2005AE0EA /* CongressViewController.m */,
+				01BC2FDF0F5B973B00E7ABD0 /* CongressDataManager.h */,
+				01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */,
+				01BC2FEA0F5BA34000E7ABD0 /* LegislatorContainer.h */,
+				01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */,
 			);
 			name = congress;
 			sourceTree = "<group>";
@@ -120,6 +134,15 @@
 				0102D2FA0F58E268005AE0EA /* VoteSmartView.xib */,
 			);
 			name = votesmart;
+			sourceTree = "<group>";
+		};
+		01BC2FA00F5B840F00E7ABD0 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				01BC2FA80F5B84AD00E7ABD0 /* XMLParserOperation.h */,
+				01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */,
+			);
+			name = common;
 			sourceTree = "<group>";
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
@@ -228,6 +251,9 @@
 				0102D3020F58E31C005AE0EA /* SpendingViewController.m in Sources */,
 				0102D30D0F58E46A005AE0EA /* CommunityViewController.m in Sources */,
 				0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */,
+				01BC2FAA0F5B84AD00E7ABD0 /* XMLParserOperation.m in Sources */,
+				01BC2FE10F5B973B00E7ABD0 /* CongressDataManager.m in Sources */,
+				01BC2FEC0F5BA34000E7ABD0 /* LegislatorContainer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

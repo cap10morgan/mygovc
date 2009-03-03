@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="164"/>
+			<integer value="125"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -53,14 +53,14 @@
 				<object class="IBUISimulatedStatusBarMetrics" key="IBUISimulatedStatusBarMetrics">
 					<int key="IBUIStatusBarStyle">2</int>
 				</object>
-				<object class="IBUINavigationController" key="IBUISelectedViewController" id="382814786">
-					<object class="IBUITabBarItem" key="IBUITabBarItem" id="738529085">
-						<string key="IBUITitle">Community</string>
+				<object class="IBUINavigationController" key="IBUISelectedViewController" id="578262494">
+					<object class="IBUITabBarItem" key="IBUITabBarItem" id="14008661">
+						<string key="IBUITitle">Congress</string>
 						<reference key="IBUITabBar"/>
 					</object>
 					<reference key="IBUIParentViewController" ref="1034742383"/>
 					<object class="IBUISimulatedStatusBarMetrics" key="IBUISimulatedStatusBarMetrics"/>
-					<object class="IBUINavigationBar" key="IBUINavigationBar" id="322532705">
+					<object class="IBUINavigationBar" key="IBUINavigationBar" id="462289532">
 						<nil key="NSNextResponder"/>
 						<int key="NSvFlags">256</int>
 						<string key="NSFrameSize">{0, 0}</string>
@@ -71,70 +71,48 @@
 					</object>
 					<object class="NSMutableArray" key="IBUIViewControllers">
 						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="IBUIViewController" id="493945103">
-							<object class="IBUIView" key="IBUIView" id="497726065">
+						<object class="IBUIViewController" id="543985680">
+							<object class="IBUITableView" key="IBUIView" id="206566122">
 								<reference key="NSNextResponder"/>
 								<int key="NSvFlags">274</int>
-								<object class="NSMutableArray" key="NSSubviews">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<object class="IBUILabel" id="650455681">
-										<reference key="NSNextResponder" ref="497726065"/>
-										<int key="NSvFlags">292</int>
-										<string key="NSFrame">{{20, 148}, {280, 72}}</string>
-										<reference key="NSSuperview" ref="497726065"/>
-										<bool key="IBUIOpaque">NO</bool>
-										<bool key="IBUIClipsSubviews">YES</bool>
-										<bool key="IBUIUserInteractionEnabled">NO</bool>
-										<string key="IBUIText">Wes - feel free to modify this area as you see fit</string>
-										<object class="NSColor" key="IBUITextColor">
-											<int key="NSColorSpace">1</int>
-											<bytes key="NSRGB">MSAxIDEAA</bytes>
-											<object class="NSColorSpace" key="NSCustomColorSpace" id="812609600">
-												<int key="NSID">1</int>
-											</object>
-										</object>
-										<nil key="IBUIHighlightedColor"/>
-										<int key="IBUIBaselineAdjustment">1</int>
-										<float key="IBUIMinimumFontSize">1.000000e+01</float>
-										<int key="IBUINumberOfLines">3</int>
-										<int key="IBUITextAlignment">1</int>
-									</object>
-								</object>
 								<string key="NSFrameSize">{320, 367}</string>
 								<reference key="NSSuperview"/>
 								<object class="NSColor" key="IBUIBackgroundColor">
 									<int key="NSColorSpace">3</int>
-									<bytes key="NSWhite">MC4xNgA</bytes>
+									<bytes key="NSWhite">MQA</bytes>
 								</object>
+								<bool key="IBUIOpaque">NO</bool>
+								<bool key="IBUIClipsSubviews">YES</bool>
 								<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
+								<bool key="IBUIPagingEnabled">YES</bool>
+								<bool key="IBUIShowsHorizontalScrollIndicator">NO</bool>
+								<int key="IBUIIndicatorStyle">1</int>
+								<bool key="IBUIBouncesZoom">NO</bool>
+								<int key="IBUISeparatorStyle">1</int>
+								<int key="IBUISectionIndexMinimumDisplayRowCount">0</int>
+								<bool key="IBUIAllowsSelectionDuringEditing">YES</bool>
+								<bool key="IBUIShowsSelectionImmediatelyOnTouchBegin">YES</bool>
+								<float key="IBUIRowHeight">4.400000e+01</float>
+								<float key="IBUISectionHeaderHeight">2.200000e+01</float>
+								<float key="IBUISectionFooterHeight">2.200000e+01</float>
 							</object>
-							<object class="IBUINavigationItem" key="IBUINavigationItem" id="629678632">
+							<object class="IBUINavigationItem" key="IBUINavigationItem" id="330680780">
 								<reference key="IBUINavigationBar"/>
-								<string key="IBUITitle">Community</string>
-								<object class="IBUIBarButtonItem" key="IBUILeftBarButtonItem" id="660193334">
-									<string key="IBUITitle">Chatter</string>
-									<int key="IBUIStyle">1</int>
-								</object>
-								<object class="IBUIBarButtonItem" key="IBUIRightBarButtonItem" id="905679680">
-									<string key="IBUITitle">Events</string>
-									<int key="IBUIStyle">1</int>
-								</object>
 							</object>
-							<reference key="IBUIParentViewController" ref="382814786"/>
+							<reference key="IBUIParentViewController" ref="578262494"/>
 						</object>
 					</object>
 				</object>
 				<object class="NSMutableArray" key="IBUIViewControllers">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<reference ref="382814786"/>
-					<object class="IBUINavigationController" id="578262494">
-						<object class="IBUITabBarItem" key="IBUITabBarItem" id="14008661">
-							<string key="IBUITitle">Congress</string>
+					<object class="IBUINavigationController" id="382814786">
+						<object class="IBUITabBarItem" key="IBUITabBarItem" id="738529085">
+							<string key="IBUITitle">Community</string>
 							<reference key="IBUITabBar"/>
 						</object>
 						<reference key="IBUIParentViewController" ref="1034742383"/>
 						<object class="IBUISimulatedStatusBarMetrics" key="IBUISimulatedStatusBarMetrics"/>
-						<object class="IBUINavigationBar" key="IBUINavigationBar" id="462289532">
+						<object class="IBUINavigationBar" key="IBUINavigationBar" id="322532705">
 							<nil key="NSNextResponder"/>
 							<int key="NSvFlags">256</int>
 							<string key="NSFrameSize">{0, 0}</string>
@@ -145,34 +123,58 @@
 						</object>
 						<object class="NSMutableArray" key="IBUIViewControllers">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBUIViewController" id="543985680">
-								<object class="IBUITableView" key="IBUIView" id="206566122">
+							<object class="IBUIViewController" id="493945103">
+								<object class="IBUIView" key="IBUIView" id="497726065">
 									<nil key="NSNextResponder"/>
 									<int key="NSvFlags">274</int>
+									<object class="NSMutableArray" key="NSSubviews">
+										<bool key="EncodedWithXMLCoder">YES</bool>
+										<object class="IBUILabel" id="650455681">
+											<reference key="NSNextResponder" ref="497726065"/>
+											<int key="NSvFlags">292</int>
+											<string key="NSFrame">{{20, 148}, {280, 72}}</string>
+											<reference key="NSSuperview" ref="497726065"/>
+											<bool key="IBUIOpaque">NO</bool>
+											<bool key="IBUIClipsSubviews">YES</bool>
+											<bool key="IBUIUserInteractionEnabled">NO</bool>
+											<string key="IBUIText">Wes - feel free to modify this area as you see fit</string>
+											<object class="NSColor" key="IBUITextColor">
+												<int key="NSColorSpace">1</int>
+												<bytes key="NSRGB">MSAxIDEAA</bytes>
+												<object class="NSColorSpace" key="NSCustomColorSpace" id="812609600">
+													<int key="NSID">1</int>
+												</object>
+											</object>
+											<nil key="IBUIHighlightedColor"/>
+											<int key="IBUIBaselineAdjustment">1</int>
+											<float key="IBUIMinimumFontSize">1.000000e+01</float>
+											<int key="IBUINumberOfLines">3</int>
+											<int key="IBUITextAlignment">1</int>
+										</object>
+									</object>
 									<string key="NSFrameSize">{320, 367}</string>
 									<object class="NSColor" key="IBUIBackgroundColor">
 										<int key="NSColorSpace">3</int>
-										<bytes key="NSWhite">MQA</bytes>
+										<bytes key="NSWhite">MC4xNgA</bytes>
 									</object>
-									<bool key="IBUIOpaque">NO</bool>
-									<bool key="IBUIClipsSubviews">YES</bool>
 									<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
-									<bool key="IBUIPagingEnabled">YES</bool>
-									<bool key="IBUIShowsHorizontalScrollIndicator">NO</bool>
-									<bool key="IBUIBouncesZoom">NO</bool>
-									<int key="IBUISeparatorStyle">1</int>
-									<int key="IBUISectionIndexMinimumDisplayRowCount">0</int>
-									<bool key="IBUIAllowsSelectionDuringEditing">YES</bool>
-									<bool key="IBUIShowsSelectionImmediatelyOnTouchBegin">YES</bool>
-									<float key="IBUIRowHeight">4.400000e+01</float>
-									<float key="IBUISectionHeaderHeight">2.200000e+01</float>
-									<float key="IBUISectionFooterHeight">2.200000e+01</float>
 								</object>
-								<object class="IBUINavigationItem" key="IBUINavigationItem" id="330680780"/>
-								<reference key="IBUIParentViewController" ref="578262494"/>
+								<object class="IBUINavigationItem" key="IBUINavigationItem" id="629678632">
+									<string key="IBUITitle">Community</string>
+									<object class="IBUIBarButtonItem" key="IBUILeftBarButtonItem" id="660193334">
+										<string key="IBUITitle">Chatter</string>
+										<int key="IBUIStyle">1</int>
+									</object>
+									<object class="IBUIBarButtonItem" key="IBUIRightBarButtonItem" id="905679680">
+										<string key="IBUITitle">Events</string>
+										<int key="IBUIStyle">1</int>
+									</object>
+								</object>
+								<reference key="IBUIParentViewController" ref="382814786"/>
 							</object>
 						</object>
 					</object>
+					<reference ref="578262494"/>
 					<object class="IBUINavigationController" id="521573019">
 						<object class="IBUITabBarItem" key="IBUITabBarItem" id="806111871">
 							<string key="IBUITitle">Spending</string>
@@ -752,7 +754,7 @@
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
-		<string key="IBDocument.LastKnownRelativeProjectPath">../myGov.xcodeproj</string>
+		<string key="IBDocument.LastKnownRelativeProjectPath">../myGovernment.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 	</data>
 </archive>

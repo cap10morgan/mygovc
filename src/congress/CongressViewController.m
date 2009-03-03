@@ -7,6 +7,8 @@
 //
 
 #import "CongressViewController.h"
+#import "CongressDataManager.h"
+#import "LegislatorContainer.h"
 
 @interface CongressViewController (private)
 	- (void) congressSwitch: (id)sender;
@@ -41,34 +43,29 @@ UISegmentedControl *m_segmentCtrl;
 		default:
 		case 0:
 			// This is the House!
+			m_selectedChamber = eCongressChamberHouse;
 			break;
 			
 		case 1:
 			// This is the Senate!
+			m_selectedChamber = eCongressChamberSenate;
 			break;
 	}
+	if ( [m_data isDataAvailable] ) [self.tableView reloadData];
 }
 
-/*
-- (CongressViewController *)init
+
+- (void)dataManagerCallback:(id)dataManager
 {
-	if ( self = [super initWithStyle:UITableViewStylePlain] )
+	if ( dataManager == m_data )
 	{
+		if ( [m_data isDataAvailable] )
+		{
+			[self.tableView reloadData];
+		}
 	}
-	
-	return self;
 }
-*/
 
-/*
-- (id)initWithStyle:(UITableViewStyle)style 
-{
-    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-    if (self = [super initWithStyle:style]) {
-    }
-    return self;
-}
-*/
 
 - (void)viewDidLoad
 {
@@ -81,6 +78,7 @@ UISegmentedControl *m_segmentCtrl;
 	m_segmentCtrl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	m_segmentCtrl.segmentedControlStyle = UISegmentedControlStyleBar;
 	m_segmentCtrl.selectedSegmentIndex = 0; // Default to the "House"
+	m_selectedChamber = eCongressChamberHouse;
 	m_segmentCtrl.frame = CGRectMake(0,0,200,30);
 	// saturation of 0.0 means black/white
 	m_segmentCtrl.tintColor = [[UIColor alloc] initWithHue:0.0 saturation:0.0 brightness:0.45 alpha:1.0];
@@ -97,12 +95,24 @@ UISegmentedControl *m_segmentCtrl;
 	[super viewDidLoad];
 }
 
-/*
+
 - (void)viewWillAppear:(BOOL)animated 
 {
+	if ( nil == m_data )
+	{
+		m_data = [[CongressDataManager alloc] init];
+		[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	}
+	
+	if ( !m_data.isDataAvailable )
+	{
+		// XXX = put up some sort of notification that 
+		// data is being downloaded/retrieved...
+	}
+	
     [super viewWillAppear:animated];
 }
-*/
+
 
 /*
 - (void)viewDidAppear:(BOOL)animated 
@@ -137,34 +147,84 @@ UISegmentedControl *m_segmentCtrl;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
-	return 5;
+	if ( [m_data isDataAvailable] )
+	{
+		return [[m_data states] count];
+	}
+	else
+	{
+		return 1;
+	}
 }
 
 
-#define TMP_STATE_ARRAY [NSArray arrayWithObjects: @"AL", @"AK", @"AZ", @"AR", @"CA", nil]
-
 - (NSArray *)sectionIndexTitlesForTableView: (UITableView *)tableView
 {
-	return TMP_STATE_ARRAY;
+	if ( [m_data isDataAvailable] )
+	{
+		// 50 index points is too many - cut it in half by simple
+		// NULL-ing out every odd entry title
+		NSMutableArray * tmpArray = [[[NSMutableArray alloc] initWithArray:[m_data states]] autorelease];
+		NSUInteger numStates = [tmpArray count];
+		
+		for ( NSUInteger st = 0; st < numStates; ++st )
+		{
+			if ( st % 2 )
+			{
+				[tmpArray replaceObjectAtIndex:st withObject:[[[NSString alloc] initWithString:@""] autorelease] ];
+			}
+		}
+		
+		return tmpArray; //[m_data states];
+	}
+	else
+	{
+		return nil;
+	}
 }
 
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	return [TMP_STATE_ARRAY objectAtIndex:section];
+	if ( [m_data isDataAvailable] )
+	{
+		// XXX - get full state name?
+		return [[m_data states] objectAtIndex:section];
+	}
+	else
+	{
+		return nil;
+	}
 }
 
 
 // Customize the number of rows in the table view.
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 5;
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
+{
+	if ( [m_data isDataAvailable] )
+	{
+		NSString *state = [[m_data states] objectAtIndex:section];
+		switch (m_selectedChamber) 
+		{
+			default:
+			case eCongressChamberHouse:
+				return [[m_data houseMembersInState:state] count];
+			case eCongressChamberSenate:
+				return [[m_data senateMembersInState:state] count];
+		}
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 
 // Customize the appearance of table view cells.
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
+{
     
-	static NSString *CellIdentifier = @"Cell";
+	static NSString *CellIdentifier = @"CongressCell";
 
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if ( cell == nil ) 
@@ -172,12 +232,35 @@ UISegmentedControl *m_segmentCtrl;
 		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
 	}
 	
+	NSString *state = [[m_data states] objectAtIndex:indexPath.section];
+	LegislatorContainer *legislator;
+	if ( eCongressChamberHouse == m_selectedChamber ) 
+	{
+		legislator = [[m_data houseMembersInState:state] objectAtIndex:indexPath.row];
+	}
+	else
+	{
+		legislator = [[m_data senateMembersInState:state] objectAtIndex:indexPath.row];
+	}
+	
+	if ( nil == legislator ) 
+	{
+		cell.text = [[[NSString alloc] initWithString:@"??"] autorelease];
+		return cell;
+	}
+	
 	// Set up the cell...
-	NSString *lbl = [[NSString alloc] initWithFormat:@"Rep. %d (%d)", indexPath.row, indexPath.section ];
+	NSString *lbl = [[NSString alloc] initWithFormat:@"%@. %@ %@ %@ (%@)",
+											[legislator title],
+											[legislator firstname],
+											([legislator middlename] ? [legislator middlename] : @""),
+											[legislator lastname],
+											[legislator party]
+					 ];
 	cell.text = lbl;
 	[lbl release];
 	
-	//cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+	//cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	
     return cell;
 }
