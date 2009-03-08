@@ -26,7 +26,7 @@
 @synthesize isDataAvailable;
 
 static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
-static NSString *kPVS_APIKey = @"e9c18da5999464958518614cfa7c6e1c";
+//static NSString *kPVS_APIKey = @"e9c18da5999464958518614cfa7c6e1c";
 static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/legislators.getList.xml";
 
 
@@ -403,18 +403,6 @@ static NSString *kTitleValue_Senator = @"Sen";
 			if ( ![m_states containsObject:m_currentString] )
 			{
 				[m_states addObject:m_currentString];
-				
-				/*
-				// Add this state to our house/senate state dictionaries
-				if ( nil == [m_house objectForKey:m_currentString] )
-				{
-					[m_house setValue:[[NSMutableArray alloc] initWithCapacity:8] forKey:m_currentString];
-				}
-				if ( nil == [m_senate objectForKey:m_currentString] )
-				{
-					[m_senate setValue:[[NSMutableArray alloc] initWithCapacity:2] forKey:m_currentString];
-				}
-				*/
 			}
 			[m_states sortUsingSelector:@selector(caseInsensitiveCompare:)];
 		}

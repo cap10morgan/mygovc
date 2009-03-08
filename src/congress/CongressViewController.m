@@ -9,7 +9,7 @@
 #import "CongressViewController.h"
 #import "CongressDataManager.h"
 #import "LegislatorContainer.h"
-
+#import "LegislatorViewController.h"
 
 // "hidden" API feature to show a progress indicator
 @interface UIProgressHUD : NSObject
@@ -22,6 +22,7 @@
 @interface CongressViewController (private)
 	- (void) congressSwitch: (id)sender;
 	- (void) reloadCongressData;
+	- (void) deselectRow:(id)sender;
 	- (void) updateHUDText;
 	- (void) killHUD;
 @end
@@ -43,6 +44,8 @@
 
 - (void)viewDidLoad
 {
+	self.title = @"Congress";
+	
 	m_HUD = [[UIProgressHUD alloc] initWithWindow:self.tableView];
 	m_HUDTxt = [[NSString alloc] initWithString:@"Loading..."];
 	m_shouldKillHUD = NO;
@@ -120,6 +123,10 @@
 		[self performSelector:@selector(updateHUDText) withObject:nil];
 	}
 	
+	// de-select the currently selected row
+	// (so the user can go back to the same legislator)
+	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+	
 	[super viewDidAppear:animated];
 }
 
@@ -195,6 +202,14 @@
 		m_HUDTxt = [msg retain];
 		[self performSelector:@selector(updateHUDText) withObject:nil];
 	}
+}
+
+
+- (void) deselectRow:(id)sender
+{
+	// de-select the currently selected row
+	// (so the user can go back to the same legislator)
+	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
 
 
@@ -391,12 +406,23 @@
 }
 
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-	// AnotherViewController *anotherViewController = [[AnotherViewController alloc] initWithNibName:@"AnotherView" bundle:nil];
-	// [self.navigationController pushViewController:anotherViewController];
-	// [anotherViewController release];
+	NSString *state = [[m_data states] objectAtIndex:indexPath.section];
+	LegislatorContainer *legislator;
+	if ( eCongressChamberHouse == m_selectedChamber ) 
+	{
+		legislator = [[m_data houseMembersInState:state] objectAtIndex:indexPath.row];
+	}
+	else
+	{
+		legislator = [[m_data senateMembersInState:state] objectAtIndex:indexPath.row];
+	}
+	
+	LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+	[legViewCtrl setLegislator:legislator];
+	[self.navigationController pushViewController:legViewCtrl animated:YES];
+	[legViewCtrl release];
 }
 
 

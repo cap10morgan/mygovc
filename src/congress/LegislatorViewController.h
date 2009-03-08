@@ -12,7 +12,10 @@
 
 @interface LegislatorViewController : UITableViewController 
 {
+	UITableView *m_tableView;
 	LegislatorContainer *m_legislator;
+	NSMutableDictionary *m_infoSelector;
+	NSArray *m_keyNames;
 }
 
 @property (nonatomic, retain, setter=setLegislator:) LegislatorContainer *m_legislator;
