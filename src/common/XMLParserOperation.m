@@ -116,6 +116,7 @@
 	[m_opDelegate xmlParseOpStarted:self];
 	
 	m_xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:m_xmlURL];
+	
 	if ( nil == m_xmlParser ) 
 	{
 		m_finished = YES;

@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @class CongressDataManager;
+@class UIProgressHUD;
+
 
 typedef enum
 {
@@ -16,14 +18,20 @@ typedef enum
 	eCongressChamberSenate,
 } CongressChamber;
 
-@interface CongressViewController : UITableViewController 
-{
-	
+
+@interface CongressViewController : UITableViewController <UIActionSheetDelegate>
+{	
 @private
 	CongressDataManager *m_data;
 	CongressChamber m_selectedChamber;
+	UISegmentedControl *m_segmentCtrl;
+	
+	UIProgressHUD *m_HUD;
+	NSString *m_HUDTxt;
+	BOOL m_shouldKillHUD;
 }
 
-- (void)dataManagerCallback:(id)dataManager;
+- (void)dataManagerCallback:(id)message;
 
 @end
+

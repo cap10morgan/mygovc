@@ -21,6 +21,8 @@
 		01BC2FAA0F5B84AD00E7ABD0 /* XMLParserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */; };
 		01BC2FE10F5B973B00E7ABD0 /* CongressDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */; };
 		01BC2FEC0F5BA34000E7ABD0 /* LegislatorContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */; };
+		01EDDF9B0F6363980098A7B6 /* LegislatorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01EDDF9A0F6363980098A7B6 /* LegislatorView.xib */; };
+		01EDDF9F0F6363D00098A7B6 /* LegislatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
@@ -51,6 +53,9 @@
 		01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressDataManager.m; path = src/congress/CongressDataManager.m; sourceTree = "<group>"; };
 		01BC2FEA0F5BA34000E7ABD0 /* LegislatorContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorContainer.h; path = src/congress/LegislatorContainer.h; sourceTree = "<group>"; };
 		01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorContainer.m; path = src/congress/LegislatorContainer.m; sourceTree = "<group>"; };
+		01EDDF9A0F6363980098A7B6 /* LegislatorView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LegislatorView.xib; path = src/congress/LegislatorView.xib; sourceTree = "<group>"; };
+		01EDDF9D0F6363D00098A7B6 /* LegislatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorViewController.h; path = src/congress/LegislatorViewController.h; sourceTree = "<group>"; };
+		01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorViewController.m; path = src/congress/LegislatorViewController.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* myGovernment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myGovernment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -94,6 +99,9 @@
 				01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */,
 				01BC2FEA0F5BA34000E7ABD0 /* LegislatorContainer.h */,
 				01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */,
+				01EDDF9A0F6363980098A7B6 /* LegislatorView.xib */,
+				01EDDF9D0F6363D00098A7B6 /* LegislatorViewController.h */,
+				01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */,
 			);
 			name = congress;
 			sourceTree = "<group>";
@@ -234,6 +242,7 @@
 				0102D2EE0F58DECD005AE0EA /* eagleIcon.png in Resources */,
 				0102D2F20F58E007005AE0EA /* RecoveryView.xib in Resources */,
 				0102D2FB0F58E268005AE0EA /* VoteSmartView.xib in Resources */,
+				01EDDF9B0F6363980098A7B6 /* LegislatorView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,6 +263,7 @@
 				01BC2FAA0F5B84AD00E7ABD0 /* XMLParserOperation.m in Sources */,
 				01BC2FE10F5B973B00E7ABD0 /* CongressDataManager.m in Sources */,
 				01BC2FEC0F5BA34000E7ABD0 /* LegislatorContainer.m in Sources */,
+				01EDDF9F0F6363D00098A7B6 /* LegislatorViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

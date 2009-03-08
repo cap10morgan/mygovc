@@ -25,6 +25,8 @@
 	NSMutableDictionary *m_house;
 	NSMutableDictionary *m_senate;
 	
+	XMLParserOperation *m_xmlParser;
+	
 	id m_notifyTarget;
 	SEL m_notifySelector;
 }
@@ -36,5 +38,8 @@
 - (NSArray *)states;
 - (NSArray *)houseMembersInState:(NSString *)state;
 - (NSArray *)senateMembersInState:(NSString *)state;
+
+- (void)writeLegislatorDataToCache:(id)sender;
+- (void)updateCongressData;
 
 @end

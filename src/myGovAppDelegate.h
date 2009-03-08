@@ -22,5 +22,6 @@
 @property (nonatomic, retain) NSOperationQueue *m_operationQueue;
 
 + (myGovAppDelegate *)sharedAppDelegate;
++ (NSString *)sharedAppCacheDir;
 
 @end

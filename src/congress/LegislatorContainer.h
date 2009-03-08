@@ -16,7 +16,8 @@
 	NSString *m_filePath;
 }
 
-- (void)initFromFile:(NSString *)path;
+- (id)initFromFile:(NSString *)path;
+- (void)writeRecordToFile:(NSString *)path;
 
 - (NSComparisonResult)stateCompare:(LegislatorContainer *)aLegislator;
 - (NSComparisonResult)partyCompare:(LegislatorContainer *)aLegislator;
@@ -47,5 +48,7 @@
 - (NSString *)congresspedia_url;	// URL of Legislator's entry on Congresspedia
 - (NSString *)twitter_id;	// Congressperson's official Twitter account
 - (NSString *)youtube_url;	// Congressperson's official Youtube account
+
+-(void)addKey:(NSString *)field withValue:(NSString *)value;
 
 @end

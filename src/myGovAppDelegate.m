@@ -27,6 +27,19 @@ static myGovAppDelegate *s_myGovApp = NULL;
 	return s_myGovApp;
 }
 
++ (NSString *)sharedAppCacheDir
+{
+	NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+	NSString *path = [cachePaths objectAtIndex:0];
+	if ( path )
+	{
+		return [path stringByAppendingPathComponent:@"myGovernment"];
+	}
+	else
+	{
+		return path;
+	}
+}
 
 - (id)init 
 {

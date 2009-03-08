@@ -10,15 +10,24 @@
 #import "CongressDataManager.h"
 #import "LegislatorContainer.h"
 
+
+// "hidden" API feature to show a progress indicator
+@interface UIProgressHUD : NSObject
+	- (void) show:(BOOL)yesOrNo;
+	- (UIProgressHUD *) initWithWindow:(UIView *)window;
+	- (void) setText:(NSString *)theText;
+@end
+
+
 @interface CongressViewController (private)
 	- (void) congressSwitch: (id)sender;
+	- (void) reloadCongressData;
+	- (void) updateHUDText;
+	- (void) killHUD;
 @end
 
 
 @implementation CongressViewController
-
-UISegmentedControl *m_segmentCtrl;
-
 
 - (void)didReceiveMemoryWarning 
 {
@@ -32,43 +41,12 @@ UISegmentedControl *m_segmentCtrl;
     [super dealloc];
 }
 
-
-/**
-	Switch the table data source between House and Senate
- */
-- (void)congressSwitch: (id)sender
-{
-	switch ( [sender selectedSegmentIndex] )
-	{
-		default:
-		case 0:
-			// This is the House!
-			m_selectedChamber = eCongressChamberHouse;
-			break;
-			
-		case 1:
-			// This is the Senate!
-			m_selectedChamber = eCongressChamberSenate;
-			break;
-	}
-	if ( [m_data isDataAvailable] ) [self.tableView reloadData];
-}
-
-
-- (void)dataManagerCallback:(id)dataManager
-{
-	if ( dataManager == m_data )
-	{
-		if ( [m_data isDataAvailable] )
-		{
-			[self.tableView reloadData];
-		}
-	}
-}
-
-
 - (void)viewDidLoad
 {
+	m_HUD = [[UIProgressHUD alloc] initWithWindow:self.tableView];
+	m_HUDTxt = [[NSString alloc] initWithString:@"Loading..."];
+	m_shouldKillHUD = NO;
+	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
 	NSArray *buttonNames = [NSArray arrayWithObjects:@"House", @"Senate", nil];
@@ -90,7 +68,25 @@ UISegmentedControl *m_segmentCtrl;
 	self.navigationItem.titleView = m_segmentCtrl;
 	[m_segmentCtrl release];
 	
+	// 
+	// Add a "refresh" button which will wipe out the on-device cache and 
+	// re-download congress data
+	// 
+	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] 
+											   initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
+											   target:self 
+											   action:@selector(reloadCongressData)] autorelease];
+	
+	// 
 	// XXX - Add a "location" button
+	// 
+	/*
+	 UIButton* modalViewButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+	 [modalViewButton addTarget:self action:@selector(modalViewAction:) forControlEvents:UIControlEventTouchUpInside];
+	 UIBarButtonItem *modalButton = [[UIBarButtonItem alloc] initWithCustomView:modalViewButton];
+	 self.navigationItem.leftBarButtonItem = modalButton;
+	 [modalViewButton release];
+	 */
 	
 	[super viewDidLoad];
 }
@@ -104,35 +100,41 @@ UISegmentedControl *m_segmentCtrl;
 		[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	}
 	
-	if ( !m_data.isDataAvailable )
+	if ( ![m_data isDataAvailable] )
 	{
-		// XXX = put up some sort of notification that 
-		// data is being downloaded/retrieved...
+		self.tableView.userInteractionEnabled = NO;
 	}
-	
+		
     [super viewWillAppear:animated];
 }
 
 
-/*
 - (void)viewDidAppear:(BOOL)animated 
 {
-    [super viewDidAppear:animated];
+	if ( [m_data isDataAvailable] )
+	{
+		self.tableView.userInteractionEnabled = YES;
+	}
+	else
+	{
+		[self performSelector:@selector(updateHUDText) withObject:nil];
+	}
+	
+	[super viewDidAppear:animated];
 }
-*/
 
 /*
-- (void)viewWillDisappear:(BOOL)animated 
-{
-	[super viewWillDisappear:animated];
-}
-*/
+ - (void)viewWillDisappear:(BOOL)animated 
+ {
+ [super viewWillDisappear:animated];
+ }
+ */
 /*
-- (void)viewDidDisappear:(BOOL)animated 
-{
-	[super viewDidDisappear:animated];
-}
-*/
+ - (void)viewDidDisappear:(BOOL)animated 
+ {
+ [super viewDidDisappear:animated];
+ }
+ */
 
 
 // Override to allow orientations other than the default portrait orientation.
@@ -140,6 +142,129 @@ UISegmentedControl *m_segmentCtrl;
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+
+// Switch the table data source between House and Senate
+- (void)congressSwitch: (id)sender
+{
+	switch ( [sender selectedSegmentIndex] )
+	{
+		default:
+		case 0:
+			// This is the House!
+			m_selectedChamber = eCongressChamberHouse;
+			break;
+			
+		case 1:
+			// This is the Senate!
+			m_selectedChamber = eCongressChamberSenate;
+			break;
+	}
+	if ( [m_data isDataAvailable] ) 
+	{
+		[self.tableView reloadData];
+		NSUInteger idx[2] = {0,0};
+		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		self.tableView.userInteractionEnabled = YES;
+	}
+}
+
+
+// method called by our data manager when something interesting happens
+- (void)dataManagerCallback:(id)message
+{
+	NSString *msg = message;
+	if ( [m_data isDataAvailable] )
+	{
+		[self.tableView reloadData];
+		NSUInteger idx[2] = {0,0};
+		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+	
+		self.tableView.userInteractionEnabled = YES;
+		
+		m_shouldKillHUD = YES;
+		[self performSelector:@selector(killHUD) withObject:nil];
+	}
+	else
+	{
+		// something interesting must have happened,
+		// update the user with some progress
+		self.tableView.userInteractionEnabled = NO;
+		[m_HUDTxt release];
+		m_HUDTxt = [msg retain];
+		[self performSelector:@selector(updateHUDText) withObject:nil];
+	}
+}
+
+
+- (void)updateHUDText
+{
+	NSLog( @"updateHUDText: %@",m_HUDTxt );
+	
+	if ( nil != m_HUD ) [m_HUD show:NO];
+	if ( m_shouldKillHUD ) 
+	{
+		NSLog( @"updateHUDText quitting early - shouldKillHUD!" );
+		return;
+	}
+	
+	[m_HUD release];
+	
+	m_HUD = [[UIProgressHUD alloc] initWithWindow:self.tableView];
+	[m_HUD setText:m_HUDTxt];
+	[m_HUD show:YES];
+	
+	[self.tableView setNeedsDisplay];
+}
+
+
+- (void)killHUD
+{
+	NSLog( @"killHUD" );
+	[m_HUD show:NO];
+	[m_HUD release];
+	m_HUD = nil;
+}
+
+
+// wipe our device cache and re-download all congress personnel data
+// (see UIActionSheetDelegate method for actual work)
+- (void) reloadCongressData
+{
+	// pop up an alert asking the user if this is what they really want
+	UIActionSheet *reloadAlert =
+	[[UIActionSheet alloc] initWithTitle:@"Re-Download congress data? This may take some time..."
+						   delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
+					       otherButtonTitles:@"Download",nil,nil,nil,nil];
+	
+	// use the same style as the nav bar
+	reloadAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
+	
+	[reloadAlert showInView:self.view];
+	[reloadAlert release];
+}
+
+
+#pragma mark UIActionSheetDelegate methods
+
+
+// action sheet callback: maybe start a re-download on congress data
+- (void)actionSheet:(UIActionSheet *)modalView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+	switch (buttonIndex)
+	{
+		case 0:
+		{
+			// start a download: first wipe out the local data store
+			m_shouldKillHUD = NO;
+			[m_data updateCongressData];
+			// XXX - put up a view of some sort showing progress...
+			break;
+		}
+		default:
+			break;
+	}
 }
 
 
@@ -169,9 +294,9 @@ UISegmentedControl *m_segmentCtrl;
 		
 		for ( NSUInteger st = 0; st < numStates; ++st )
 		{
-			if ( st % 2 )
+			if ( ((st+1) % 2) || !((st+1) % 3) )
 			{
-				[tmpArray replaceObjectAtIndex:st withObject:[[[NSString alloc] initWithString:@""] autorelease] ];
+				[tmpArray replaceObjectAtIndex:st withObject:[[[NSString alloc] initWithString:@"  "] autorelease] ];
 			}
 		}
 		
@@ -266,7 +391,8 @@ UISegmentedControl *m_segmentCtrl;
 }
 
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
+{
     // Navigation logic may go here. Create and push another view controller.
 	// AnotherViewController *anotherViewController = [[AnotherViewController alloc] initWithNibName:@"AnotherView" bundle:nil];
 	// [self.navigationController pushViewController:anotherViewController];
@@ -276,7 +402,8 @@ UISegmentedControl *m_segmentCtrl;
 
 /*
 // Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath 
+{
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
@@ -285,7 +412,8 @@ UISegmentedControl *m_segmentCtrl;
 
 /*
 // Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath 
+{
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
@@ -300,14 +428,16 @@ UISegmentedControl *m_segmentCtrl;
 
 /*
 // Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath 
+{
 }
 */
 
 
 /*
 // Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath 
+{
     // Return NO if you do not want the item to be re-orderable.
     return YES;
 }

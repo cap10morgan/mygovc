@@ -68,10 +68,23 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 }
 
 
-- (void)initFromFile:(NSString *)path
+- (id)initFromFile:(NSString *)path
 {
-	m_filePath = path;
-	m_info = [[NSMutableArray alloc] initWithContentsOfFile:path];
+	if ( self = [super init] )
+	{
+		m_filePath = [path retain];
+		m_info = [[NSMutableDictionary alloc] initWithContentsOfFile:m_filePath];
+	}
+	return self;
+}
+
+
+- (void)writeRecordToFile:(NSString *)path
+{
+	if ( m_info )
+	{
+		[m_info writeToFile:path atomically:YES];
+	}
 }
 
 
@@ -84,17 +97,6 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 - (NSComparisonResult)partyCompare:(LegislatorContainer *)aLegislator
 {
 	return [[self party] compare:[aLegislator party]];
-}
-
-
-- (void)writeToStore
-{
-	if ( nil == m_filePath )
-	{
-		// XXX - determine file path by key/value pairs in the 'm_info' object
-	}
-	
-	// XXX - write the file!
 }
 
 
