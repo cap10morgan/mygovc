@@ -10,21 +10,13 @@
 #import "CongressDataManager.h"
 #import "LegislatorContainer.h"
 #import "LegislatorViewController.h"
-
-// "hidden" API feature to show a progress indicator
-@interface UIProgressHUD : NSObject
-	- (void) show:(BOOL)yesOrNo;
-	- (UIProgressHUD *) initWithWindow:(UIView *)window;
-	- (void) setText:(NSString *)theText;
-@end
+#import "ProgressOverlayViewController.h"
 
 
 @interface CongressViewController (private)
 	- (void) congressSwitch: (id)sender;
 	- (void) reloadCongressData;
 	- (void) deselectRow:(id)sender;
-	- (void) updateHUDText;
-	- (void) killHUD;
 @end
 
 
@@ -42,13 +34,16 @@
     [super dealloc];
 }
 
+
 - (void)viewDidLoad
 {
 	self.title = @"Congress";
 	
-	m_HUD = [[UIProgressHUD alloc] initWithWindow:self.tableView];
-	m_HUDTxt = [[NSString alloc] initWithString:@"Loading..."];
-	m_shouldKillHUD = NO;
+	self.tableView.autoresizesSubviews = YES;
+	self.tableView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
+	
+	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
+	[m_HUD setText:@"Loading..." andIndicateProgress:YES];
 	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
@@ -99,8 +94,8 @@
 {
 	if ( nil == m_data )
 	{
-		m_data = [[CongressDataManager alloc] init];
-		[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+		m_data = [[CongressDataManager alloc] initWithNotifyTarget:self andSelector:@selector(dataManagerCallback:)];
+		//[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	}
 	
 	if ( ![m_data isDataAvailable] )
@@ -120,7 +115,7 @@
 	}
 	else
 	{
-		[self performSelector:@selector(updateHUDText) withObject:nil];
+		[m_HUD show:YES]; // with whatever text is there...
 	}
 	
 	// de-select the currently selected row
@@ -131,24 +126,25 @@
 }
 
 /*
- - (void)viewWillDisappear:(BOOL)animated 
- {
- [super viewWillDisappear:animated];
- }
- */
+- (void)viewWillDisappear:(BOOL)animated 
+{
+	[super viewWillDisappear:animated];
+}
+*/
+
 /*
- - (void)viewDidDisappear:(BOOL)animated 
- {
- [super viewDidDisappear:animated];
- }
- */
+- (void)viewDidDisappear:(BOOL)animated 
+{
+	[super viewDidDisappear:animated];
+}
+*/
 
 
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
     // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES; // (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 
@@ -182,25 +178,32 @@
 - (void)dataManagerCallback:(id)message
 {
 	NSString *msg = message;
-	if ( [m_data isDataAvailable] )
+	NSRange errRange = {0, 5};
+	if ( NSOrderedSame == [msg compare:@"ERROR" options:NSCaseInsensitiveSearch range:errRange] )
+	{
+		// crap! an error occurred in the parsing/downloading: give the user
+		// an error message and leave it there...
+		self.tableView.userInteractionEnabled = NO;
+		NSString *txt = [[NSString alloc] initWithFormat:@"Error loading data%@",([msg length] <= 6 ? @"!" : [[NSString alloc] initWithFormat:@": \n%@",[msg substringFromIndex:6]])];
+		[m_HUD setText:txt andIndicateProgress:NO];
+		[m_HUD show:YES];
+		[txt release];
+	}
+	else if ( [m_data isDataAvailable] )
 	{
 		[self.tableView reloadData];
 		NSUInteger idx[2] = {0,0};
 		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
-	
+		[m_HUD show:NO];
 		self.tableView.userInteractionEnabled = YES;
-		
-		m_shouldKillHUD = YES;
-		[self performSelector:@selector(killHUD) withObject:nil];
 	}
 	else
 	{
 		// something interesting must have happened,
 		// update the user with some progress
 		self.tableView.userInteractionEnabled = NO;
-		[m_HUDTxt release];
-		m_HUDTxt = [msg retain];
-		[self performSelector:@selector(updateHUDText) withObject:nil];
+		[m_HUD setText:msg andIndicateProgress:YES];
+		[m_HUD show:YES];
 	}
 }
 
@@ -213,43 +216,16 @@
 }
 
 
-- (void)updateHUDText
-{
-	NSLog( @"updateHUDText: %@",m_HUDTxt );
-	
-	if ( nil != m_HUD ) [m_HUD show:NO];
-	if ( m_shouldKillHUD ) 
-	{
-		NSLog( @"updateHUDText quitting early - shouldKillHUD!" );
-		return;
-	}
-	
-	[m_HUD release];
-	
-	m_HUD = [[UIProgressHUD alloc] initWithWindow:self.tableView];
-	[m_HUD setText:m_HUDTxt];
-	[m_HUD show:YES];
-	
-	[self.tableView setNeedsDisplay];
-}
-
-
-- (void)killHUD
-{
-	NSLog( @"killHUD" );
-	[m_HUD show:NO];
-	[m_HUD release];
-	m_HUD = nil;
-}
-
-
 // wipe our device cache and re-download all congress personnel data
 // (see UIActionSheetDelegate method for actual work)
 - (void) reloadCongressData
 {
+	// don't start another re-load while one is apparently already in progress!
+	if ( [m_data isBusy] ) return;
+	
 	// pop up an alert asking the user if this is what they really want
 	UIActionSheet *reloadAlert =
-	[[UIActionSheet alloc] initWithTitle:@"Re-Download congress data? This may take some time..."
+	[[UIActionSheet alloc] initWithTitle:@"Re-Download congress data?\nWARNING: This may take some time..."
 						   delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
 					       otherButtonTitles:@"Download",nil,nil,nil,nil];
 	
@@ -271,10 +247,17 @@
 	{
 		case 0:
 		{
-			// start a download: first wipe out the local data store
-			m_shouldKillHUD = NO;
-			[m_data updateCongressData];
-			// XXX - put up a view of some sort showing progress...
+			// don't start another download if the data store is busy!
+			if ( ![m_data isBusy] ) 
+			{
+				// scroll to the top of the table so that our progress HUD
+				// is displayed properly
+				NSUInteger idx[2] = {0,0};
+				[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+				
+				// start a data download/update: this destroys the current data cache
+				[m_data updateCongressData];
+			}
 			break;
 		}
 		default:

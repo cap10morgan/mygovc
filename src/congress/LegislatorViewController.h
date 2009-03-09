@@ -9,13 +9,20 @@
 #import <UIKit/UIKit.h>
 
 @class LegislatorContainer;
+@class LegislatorHeaderViewController;
 
 @interface LegislatorViewController : UITableViewController 
 {
 	UITableView *m_tableView;
 	LegislatorContainer *m_legislator;
-	NSMutableDictionary *m_infoSelector;
-	NSArray *m_keyNames;
+	LegislatorHeaderViewController *m_headerViewCtrl;
+	
+	NSMutableDictionary *m_contactRows;
+	NSMutableDictionary *m_streamRows;
+	NSMutableDictionary *m_activityRows;
+	NSArray *m_contactFields;
+	NSArray *m_streamFields;
+	NSArray *m_activityFields;
 }
 
 @property (nonatomic, retain, setter=setLegislator:) LegislatorContainer *m_legislator;

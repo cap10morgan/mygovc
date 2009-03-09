@@ -21,19 +21,26 @@
 {
 	if (self = [super initWithFrame:frame reuseIdentifier:reuseIdentifier]) 
 	{
-		CGRect fieldRect = CGRectMake(0.0, 0.0, self.contentView.bounds.size.width/3, self.contentView.bounds.size.height);
+		CGFloat frameX = 15.0f;
+		CGFloat frameY = 0.0f;
+		CGFloat frameW = self.contentView.bounds.size.width - (frameX * 2.0f);
+		CGFloat frameH = self.contentView.bounds.size.height - (frameY * 2.0f);
+		CGRect fieldRect = CGRectMake(frameX, frameY, frameW/3.0f, frameH);
 		UILabel *fieldView = [[UILabel alloc] initWithFrame:fieldRect];
 		fieldView.backgroundColor = [UIColor clearColor];
-		fieldView.textColor = [UIColor whiteColor];
+		fieldView.textColor = [UIColor blackColor];
 		fieldView.font = [UIFont boldSystemFontOfSize:18.0f];
 		fieldView.textAlignment = UITextAlignmentLeft;
 		fieldView.adjustsFontSizeToFitWidth = YES;
 		[fieldView setTag:999];
 		
-		CGRect valRect = CGRectMake(CGRectGetWidth(fieldRect)+5, 0.0, self.contentView.bounds.size.width - CGRectGetWidth(fieldRect)-10, self.contentView.bounds.size.height);
+		CGRect valRect = CGRectMake(frameX + CGRectGetWidth(fieldRect)+5.0f, 
+									frameY, 
+									frameW - CGRectGetWidth(fieldRect) - 10.0f, 
+									frameH);
 		UILabel *valView = [[UILabel alloc] initWithFrame:valRect];
 		valView.backgroundColor = [UIColor clearColor];
-		valView.textColor = [UIColor whiteColor];
+		valView.textColor = [UIColor darkGrayColor];
 		valView.font = [UIFont systemFontOfSize:14.0f];
 		valView.textAlignment = UITextAlignmentLeft;
 		valView.lineBreakMode = UILineBreakModeMiddleTruncation;

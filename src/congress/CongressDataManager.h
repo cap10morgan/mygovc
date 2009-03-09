@@ -14,6 +14,7 @@
 @interface CongressDataManager : NSObject <XMLParserOperationDelegate>
 {
 	BOOL isDataAvailable;
+	BOOL isBusy;
 	
 @private
 	BOOL parsingLegislator;
@@ -32,6 +33,9 @@
 }
 
 @property (readonly) BOOL isDataAvailable;
+@property (readonly) BOOL isBusy;
+
+- (id)initWithNotifyTarget:(id)target andSelector:(SEL)sel;
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;
 

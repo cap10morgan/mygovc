@@ -24,20 +24,20 @@
 @implementation CongressDataManager
 
 @synthesize isDataAvailable;
+@synthesize isBusy;
 
 static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
 //static NSString *kPVS_APIKey = @"e9c18da5999464958518614cfa7c6e1c";
 static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/legislators.getList.xml";
 
 
-- (id)init
+- (id)initWithNotifyTarget:(id)target andSelector:(SEL)sel
 {
 	if ( self = [super init] )
 	{
 		isDataAvailable = NO;
 		
-		m_notifyTarget = nil;
-		m_xmlParser = nil;
+		[self setNotifyTarget:target withSelector:sel];
 		
 		// initialize states/house/senate arrays
 		m_states = [[NSMutableArray alloc] initWithCapacity:50];
@@ -71,17 +71,20 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 - (void)dealloc
 {
 	isDataAvailable = NO;
+	isBusy = YES;
+	[m_notifyTarget release];
 	[m_states release];
 	[m_house release];
 	[m_senate release];
 	[m_xmlParser release];
-	if ( nil != m_notifyTarget ) [m_notifyTarget release];
+	[m_currentString release];
 	[super dealloc];
 }
 
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel
 {
+	[m_notifyTarget release];
 	m_notifyTarget = [target retain];
 	m_notifySelector = sel;
 }
@@ -107,6 +110,8 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 
 - (void)writeLegislatorDataToCache:(id)sender
 {
+	isBusy = YES;
+	
 	NSString *congressDataPath = [[self dataCachePath] stringByAppendingPathComponent:@"data"];
 	
 	// make sure the directoy exists!
@@ -155,12 +160,15 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 	{
 		// XXX what to do?
 	}
+	
+	isBusy = NO;
 }
 
 
 - (void)updateCongressData
 {
 	isDataAvailable = NO;
+	isBusy = YES;
 	
 	if ( nil != m_notifyTarget )
 	{
@@ -192,6 +200,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 - (void)beginDataDownload
 {
 	isDataAvailable = NO;
+	isBusy = YES;
 	
 	if ( nil != m_notifyTarget )
 	{
@@ -203,6 +212,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 	
 	if ( nil != m_xmlParser )
 	{
+		// abort any previous attempt at parsing/downloading
 		[m_xmlParser abort];
 	}
 	else
@@ -285,7 +295,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 	isDataAvailable = success;
 	if ( nil != m_notifyTarget )
 	{
-		NSString *message = [[[NSString alloc] initWithString:@"Finished..."] autorelease];
+		NSString *message = [[[NSString alloc] initWithFormat:@"%@",(success ? @"Finished." : m_currentString)] autorelease];
 		[m_notifyTarget performSelector:m_notifySelector withObject:message];
 	}
 	else
@@ -304,6 +314,8 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 		
 		[theOp release];
 	}
+	
+	isBusy = NO;
 }
 
 
@@ -427,7 +439,11 @@ static NSString *kTitleValue_Senator = @"Sen";
 	parsingLegislator = NO;
 	storingCharacters = NO;
 	[m_currentLegislator release];
-	[m_currentString setString:@""];
+	[m_currentString release];
+	m_currentString = [[NSString alloc] initWithString:@"ERROR XML parsing error"];
+	[m_states release]; m_states = nil;
+	[m_house release]; m_house = nil;
+	[m_senate release]; m_senate = nil;
 }
 
 
@@ -436,7 +452,11 @@ static NSString *kTitleValue_Senator = @"Sen";
 	parsingLegislator = NO;
 	storingCharacters = NO;
 	[m_currentLegislator release];
-	[m_currentString setString:@""];
+	[m_currentString release];
+	m_currentString = [[NSString alloc] initWithString:@"ERROR XML validation error"];
+	[m_states release]; m_states = nil;
+	[m_house release]; m_house = nil;
+	[m_senate release]; m_senate = nil;
 }
 
 

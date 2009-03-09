@@ -9,8 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class CongressDataManager;
-@class UIProgressHUD;
-
+@class ProgressOverlayViewController;
 
 typedef enum
 {
@@ -26,9 +25,7 @@ typedef enum
 	CongressChamber m_selectedChamber;
 	UISegmentedControl *m_segmentCtrl;
 	
-	UIProgressHUD *m_HUD;
-	NSString *m_HUDTxt;
-	BOOL m_shouldKillHUD;
+	ProgressOverlayViewController *m_HUD;
 }
 
 - (void)dataManagerCallback:(id)message;
