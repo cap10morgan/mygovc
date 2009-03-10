@@ -13,8 +13,6 @@
 		0102D2EE0F58DECD005AE0EA /* eagleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2ED0F58DECD005AE0EA /* eagleIcon.png */; };
 		0102D2F20F58E007005AE0EA /* RecoveryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2F10F58E007005AE0EA /* RecoveryView.xib */; };
 		0102D2F50F58E028005AE0EA /* RecoveryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D2F40F58E028005AE0EA /* RecoveryViewController.m */; };
-		0102D2F90F58E253005AE0EA /* VoteSmartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D2F80F58E253005AE0EA /* VoteSmartViewController.m */; };
-		0102D2FB0F58E268005AE0EA /* VoteSmartView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2FA0F58E268005AE0EA /* VoteSmartView.xib */; };
 		0102D3020F58E31C005AE0EA /* SpendingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D3010F58E31C005AE0EA /* SpendingViewController.m */; };
 		0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D40A0F58F2D2005AE0EA /* CongressViewController.m */; };
 		01B4E05F0F6449BB00219672 /* ProgressOverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */; };
@@ -23,6 +21,8 @@
 		01BC2FAA0F5B84AD00E7ABD0 /* XMLParserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */; };
 		01BC2FE10F5B973B00E7ABD0 /* CongressDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */; };
 		01BC2FEC0F5BA34000E7ABD0 /* LegislatorContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */; };
+		01C43CE10F662D0B00F8A025 /* BillsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C43CE00F662D0B00F8A025 /* BillsViewController.m */; };
+		01C43D020F662E3300F8A025 /* LegislatorNameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C43D010F662E3300F8A025 /* LegislatorNameCell.m */; };
 		01EDDF9F0F6363D00098A7B6 /* LegislatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */; };
 		01EDDFC80F6380020098A7B6 /* LegislatorInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01EDDFC70F6380020098A7B6 /* LegislatorInfoCell.m */; };
 		0461A05A0F5A471400BE17FF /* CommunityItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 0461A0590F5A471400BE17FF /* CommunityItem.m */; };
@@ -44,9 +44,6 @@
 		0102D2F10F58E007005AE0EA /* RecoveryView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = RecoveryView.xib; path = src/recovery/RecoveryView.xib; sourceTree = "<group>"; };
 		0102D2F30F58E028005AE0EA /* RecoveryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecoveryViewController.h; path = src/recovery/RecoveryViewController.h; sourceTree = "<group>"; };
 		0102D2F40F58E028005AE0EA /* RecoveryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecoveryViewController.m; path = src/recovery/RecoveryViewController.m; sourceTree = "<group>"; };
-		0102D2F70F58E253005AE0EA /* VoteSmartViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoteSmartViewController.h; path = src/votesmart/VoteSmartViewController.h; sourceTree = "<group>"; };
-		0102D2F80F58E253005AE0EA /* VoteSmartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VoteSmartViewController.m; path = src/votesmart/VoteSmartViewController.m; sourceTree = "<group>"; };
-		0102D2FA0F58E268005AE0EA /* VoteSmartView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = VoteSmartView.xib; path = src/votesmart/VoteSmartView.xib; sourceTree = "<group>"; };
 		0102D3000F58E31C005AE0EA /* SpendingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingViewController.h; path = src/spending/SpendingViewController.h; sourceTree = "<group>"; };
 		0102D3010F58E31C005AE0EA /* SpendingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpendingViewController.m; path = src/spending/SpendingViewController.m; sourceTree = "<group>"; };
 		0102D4090F58F2D2005AE0EA /* CongressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressViewController.h; path = src/congress/CongressViewController.h; sourceTree = "<group>"; };
@@ -62,6 +59,10 @@
 		01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressDataManager.m; path = src/congress/CongressDataManager.m; sourceTree = "<group>"; };
 		01BC2FEA0F5BA34000E7ABD0 /* LegislatorContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorContainer.h; path = src/congress/LegislatorContainer.h; sourceTree = "<group>"; };
 		01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorContainer.m; path = src/congress/LegislatorContainer.m; sourceTree = "<group>"; };
+		01C43CDF0F662D0B00F8A025 /* BillsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillsViewController.h; path = src/bills/BillsViewController.h; sourceTree = "<group>"; };
+		01C43CE00F662D0B00F8A025 /* BillsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillsViewController.m; path = src/bills/BillsViewController.m; sourceTree = "<group>"; };
+		01C43D000F662E3300F8A025 /* LegislatorNameCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorNameCell.h; path = src/congress/LegislatorNameCell.h; sourceTree = "<group>"; };
+		01C43D010F662E3300F8A025 /* LegislatorNameCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorNameCell.m; path = src/congress/LegislatorNameCell.m; sourceTree = "<group>"; };
 		01EDDF9D0F6363D00098A7B6 /* LegislatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorViewController.h; path = src/congress/LegislatorViewController.h; sourceTree = "<group>"; };
 		01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorViewController.m; path = src/congress/LegislatorViewController.m; sourceTree = "<group>"; };
 		01EDDFC60F6380020098A7B6 /* LegislatorInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorInfoCell.h; path = src/congress/LegislatorInfoCell.h; sourceTree = "<group>"; };
@@ -99,9 +100,9 @@
 			isa = PBXGroup;
 			children = (
 				01BC2FA00F5B840F00E7ABD0 /* common */,
-				0102D2DE0F58DB87005AE0EA /* votesmart */,
-				0102D2DD0F58DB80005AE0EA /* mygovc */,
-				0102D2DC0F58DB79005AE0EA /* mygovc */,
+				0102D2DE0F58DB87005AE0EA /* bills */,
+				0102D2DD0F58DB80005AE0EA /* recovery */,
+				0102D2DC0F58DB79005AE0EA /* spending */,
 				0102D2DB0F58DB72005AE0EA /* community */,
 				0102D2DA0F58DB6B005AE0EA /* congress */,
 			);
@@ -124,6 +125,8 @@
 				01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */,
 				01B4E2210F64D88000219672 /* LegislatorHeaderViewController.h */,
 				01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */,
+				01C43D000F662E3300F8A025 /* LegislatorNameCell.h */,
+				01C43D010F662E3300F8A025 /* LegislatorNameCell.m */,
 			);
 			name = congress;
 			sourceTree = "<group>";
@@ -144,33 +147,32 @@
 			path = src/community;
 			sourceTree = "<group>";
 		};
-		0102D2DC0F58DB79005AE0EA /* mygovc */ = {
+		0102D2DC0F58DB79005AE0EA /* spending */ = {
 			isa = PBXGroup;
 			children = (
 				0102D3000F58E31C005AE0EA /* SpendingViewController.h */,
 				0102D3010F58E31C005AE0EA /* SpendingViewController.m */,
 			);
-			name = mygovc;
+			name = spending;
 			sourceTree = "<group>";
 		};
-		0102D2DD0F58DB80005AE0EA /* mygovc */ = {
+		0102D2DD0F58DB80005AE0EA /* recovery */ = {
 			isa = PBXGroup;
 			children = (
 				0102D2F10F58E007005AE0EA /* RecoveryView.xib */,
 				0102D2F30F58E028005AE0EA /* RecoveryViewController.h */,
 				0102D2F40F58E028005AE0EA /* RecoveryViewController.m */,
 			);
-			name = mygovc;
+			name = recovery;
 			sourceTree = "<group>";
 		};
-		0102D2DE0F58DB87005AE0EA /* votesmart */ = {
+		0102D2DE0F58DB87005AE0EA /* bills */ = {
 			isa = PBXGroup;
 			children = (
-				0102D2F70F58E253005AE0EA /* VoteSmartViewController.h */,
-				0102D2F80F58E253005AE0EA /* VoteSmartViewController.m */,
-				0102D2FA0F58E268005AE0EA /* VoteSmartView.xib */,
+				01C43CDF0F662D0B00F8A025 /* BillsViewController.h */,
+				01C43CE00F662D0B00F8A025 /* BillsViewController.m */,
 			);
-			name = votesmart;
+			name = bills;
 			sourceTree = "<group>";
 		};
 		01BC2FA00F5B840F00E7ABD0 /* common */ = {
@@ -272,7 +274,6 @@
 				0102D2D20F58D7C7005AE0EA /* MainWindow.xib in Resources */,
 				0102D2EE0F58DECD005AE0EA /* eagleIcon.png in Resources */,
 				0102D2F20F58E007005AE0EA /* RecoveryView.xib in Resources */,
-				0102D2FB0F58E268005AE0EA /* VoteSmartView.xib in Resources */,
 				01B4E2200F64D6EC00219672 /* LegislatorHeaderView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -287,7 +288,6 @@
 				0102D2D10F58D7C7005AE0EA /* main.m in Sources */,
 				0102D2D30F58D7C7005AE0EA /* myGovAppDelegate.m in Sources */,
 				0102D2F50F58E028005AE0EA /* RecoveryViewController.m in Sources */,
-				0102D2F90F58E253005AE0EA /* VoteSmartViewController.m in Sources */,
 				0102D3020F58E31C005AE0EA /* SpendingViewController.m in Sources */,
 				0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */,
 				04B603120F59BE3000815A86 /* CommunityViewController.m in Sources */,
@@ -301,6 +301,8 @@
 				01EDDFC80F6380020098A7B6 /* LegislatorInfoCell.m in Sources */,
 				01B4E05F0F6449BB00219672 /* ProgressOverlayViewController.m in Sources */,
 				01B4E2230F64D88000219672 /* LegislatorHeaderViewController.m in Sources */,
+				01C43CE10F662D0B00F8A025 /* BillsViewController.m in Sources */,
+				01C43D020F662E3300F8A025 /* LegislatorNameCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

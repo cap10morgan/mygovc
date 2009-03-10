@@ -10,6 +10,7 @@
 #import "CongressDataManager.h"
 #import "LegislatorContainer.h"
 #import "LegislatorViewController.h"
+#import "LegislatorNameCell.h"
 #import "ProgressOverlayViewController.h"
 
 
@@ -41,6 +42,7 @@
 	
 	self.tableView.autoresizesSubviews = YES;
 	self.tableView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
+	self.tableView.rowHeight = 50.0f;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD setText:@"Loading..." andIndicateProgress:YES];
@@ -292,9 +294,9 @@
 		
 		for ( NSUInteger st = 0; st < numStates; ++st )
 		{
-			if ( ((st+1) % 2) || !((st+1) % 3) )
+			if ( ((st+1) % 2) ) // || !((st+1) % 3) )
 			{
-				[tmpArray replaceObjectAtIndex:st withObject:[[[NSString alloc] initWithString:@"  "] autorelease] ];
+				[tmpArray replaceObjectAtIndex:st withObject:[[[NSString alloc] initWithString:@""] autorelease] ];
 			}
 		}
 		
@@ -349,10 +351,10 @@
     
 	static NSString *CellIdentifier = @"CongressCell";
 
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+	LegislatorNameCell *cell = (LegislatorNameCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if ( cell == nil ) 
 	{
-		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		cell = [[[LegislatorNameCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
 	}
 	
 	NSString *state = [[m_data states] objectAtIndex:indexPath.section];
@@ -368,22 +370,11 @@
 	
 	if ( nil == legislator ) 
 	{
-		cell.text = [[[NSString alloc] initWithString:@"??"] autorelease];
 		return cell;
 	}
 	
 	// Set up the cell...
-	NSString *lbl = [[NSString alloc] initWithFormat:@"%@. %@ %@ %@ (%@)",
-											[legislator title],
-											[legislator firstname],
-											([legislator middlename] ? [legislator middlename] : @""),
-											[legislator lastname],
-											[legislator party]
-					 ];
-	cell.text = lbl;
-	[lbl release];
-	
-	//cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	[cell setInfoFromLegislator:legislator];
 	
     return cell;
 }

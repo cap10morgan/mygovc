@@ -5,8 +5,13 @@
 //  Created by Jeremy C. Andrus on 3/2/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
-
+#import "myGovAppDelegate.h"
 #import "LegislatorContainer.h"
+#import "CongressDataManager.h"
+
+@interface LegislatorContainer (private)
+	- (void)downloadImage:(id)sender;
+@end
 
 
 @implementation LegislatorContainer
@@ -47,6 +52,7 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 		// (the max number of keys provided by sunlightlabs.com)
 		m_info = [[NSMutableDictionary alloc] initWithCapacity:27];
 		m_filePath = nil;
+		m_downloadInProgress = NO;
 	}
 	
 	return self;
@@ -72,6 +78,7 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 {
 	if ( self = [super init] )
 	{
+		m_downloadInProgress = NO;
 		m_filePath = [path retain];
 		m_info = [[NSMutableDictionary alloc] initWithContentsOfFile:m_filePath];
 	}
@@ -88,16 +95,15 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 }
 
 
-- (NSComparisonResult)stateCompare:(LegislatorContainer *)aLegislator
+- (NSComparisonResult)districtCompare:(LegislatorContainer *)aLegislator
 {
-	return [[self state] compare:[aLegislator state]];
+	NSInteger aDist  = [[aLegislator district] integerValue];
+	NSInteger myDist = [[self district] integerValue];
+	if ( myDist < aDist ) return NSOrderedAscending;
+	if ( myDist > aDist ) return NSOrderedDescending;
+	return NSOrderedSame;
 }
 
-
-- (NSComparisonResult)partyCompare:(LegislatorContainer *)aLegislator
-{
-	return [[self party] compare:[aLegislator party]];
-}
 
 
 - (NSString *)title
@@ -229,5 +235,89 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 {
 	return [m_info objectForKey:kField_YoutubeURL];
 }
+
+
+- (UIImage *)getImageAndBlock:(BOOL)blockUntilDownloaded
+{
+	// look for photo
+	NSString *cache = [[CongressDataManager dataCachePath] stringByAppendingPathComponent:@"photos"];
+	NSString *photoPath = [NSString stringWithFormat:@"%@/%@-100px.jpeg",cache,[self govtrack_id]];
+	
+	UIImage *img = nil;
+	
+	if ( [[NSFileManager defaultManager] fileExistsAtPath:photoPath] )
+	{
+		// return an image
+		img = [[UIImage alloc] initWithContentsOfFile:photoPath];
+		// a nil image will start a new download 
+		// (replacing the possibly corrupt one)
+	}
+	
+	if ( nil == img )
+	{
+		if ( !m_downloadInProgress )
+		{
+			m_downloadInProgress = YES;
+			
+			// start image download
+			// data is available - read disk data into memory (via a worker thread)
+			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+												selector:@selector(downloadImage:) object:self];
+		
+			// Add the operation to the internal operation queue managed by the application delegate.
+			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+			
+			[theOp release];
+		}
+		
+		if ( blockUntilDownloaded )
+		{
+			while ( m_downloadInProgress )
+			{
+				[NSThread sleepForTimeInterval:0.1f];
+			}
+			// recurse!
+			return [self getImageAndBlock:blockUntilDownloaded];
+		}
+	}
+	
+	return img;
+}
+
+
+- (void)setImageCallback:(SEL)sel onObject:(id)obj
+{
+	[m_imgObj release];
+	m_imgObj = [obj retain];
+	m_imgSel = sel;
+}
+
+
+- (void)downloadImage:(id)sender
+{
+	// download the data
+	NSString *photoName = [NSString stringWithFormat:@"%@-100px.jpeg",[self govtrack_id]];
+	NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://www.govtrack.us/data/photos/%@",photoName]];
+	NSData *imgData = [NSData dataWithContentsOfURL:url];
+	UIImage *img = [UIImage imageWithData:imgData];
+	
+	// save the data to disk
+	NSString *cache = [[CongressDataManager dataCachePath] stringByAppendingPathComponent:@"photos"];
+	NSString *photoPath = [cache stringByAppendingPathComponent:photoName];
+	
+	// don't check the return code - failure here should take care of itself...
+	if ( nil != imgData )
+	{
+		[[NSFileManager defaultManager] createFileAtPath:photoPath contents:imgData attributes:nil];
+	}
+	
+	if ( nil != m_imgObj )
+	{
+		[m_imgObj performSelector:m_imgSel withObject:(nil == imgData ? nil : img)];
+	}
+	
+	m_downloadInProgress = NO;
+}
+
 
 @end

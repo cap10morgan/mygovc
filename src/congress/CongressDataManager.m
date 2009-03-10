@@ -16,7 +16,6 @@
 	- (void)destroyDataCache;
 	- (void)beginDataDownload;
 	- (void)initFromDisk:(id)sender;
-	- (NSString *)dataCachePath;
 	- (void)addLegislatorToInMemoryCache:(id)legislator release:(BOOL)flag;
 @end
 
@@ -28,7 +27,15 @@
 
 static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
 //static NSString *kPVS_APIKey = @"e9c18da5999464958518614cfa7c6e1c";
+static NSString *kOpenCongress_APIKey = @"32aea132a66093e9bf9ebe9fc2e2a4c66b888777";
 static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/legislators.getList.xml";
+
+
++ (NSString *)dataCachePath
+{
+	NSString *congressDataPath = [[myGovAppDelegate sharedAppCacheDir] stringByAppendingPathComponent:@"congress"];
+	return congressDataPath;
+}
 
 
 - (id)initWithNotifyTarget:(id)target andSelector:(SEL)sel
@@ -46,7 +53,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 		
 		// check to see if we have congress data previously cached on this 
 		// device - if we don't then we'll have to go fetch it!
-		NSString *congressDataValidPath = [[self dataCachePath] stringByAppendingPathComponent:@"dataComplete"];
+		NSString *congressDataValidPath = [[CongressDataManager dataCachePath] stringByAppendingPathComponent:@"dataComplete"];
 		if ( ![[NSFileManager defaultManager] fileExistsAtPath:congressDataValidPath] )
 		{
 			// we need to start a data download!
@@ -112,7 +119,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 {
 	isBusy = YES;
 	
-	NSString *congressDataPath = [[self dataCachePath] stringByAppendingPathComponent:@"data"];
+	NSString *congressDataPath = [[CongressDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
 	
 	// make sure the directoy exists!
 	[[NSFileManager defaultManager] createDirectoryAtPath:congressDataPath withIntermediateDirectories:YES attributes:nil error:NULL];
@@ -192,7 +199,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 - (void)destroyDataCache
 {
 	NSFileManager *fileManager = [NSFileManager defaultManager];
-	[fileManager removeItemAtPath:[self dataCachePath] error:NULL];
+	[fileManager removeItemAtPath:[CongressDataManager dataCachePath] error:NULL];
 	// XXX - do something on failure ?!
 }
 
@@ -233,7 +240,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 		[m_notifyTarget performSelector:m_notifySelector withObject:message];
 	}
 	
-	NSString *congressDataPath = [[self dataCachePath] stringByAppendingPathComponent:@"data"];
+	NSString *congressDataPath = [[CongressDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
 	
 	// read data from /Library/Caches/congress/...
 	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -269,13 +276,6 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 	{
 		NSLog( @"CongressDataManager cached data parsing complete." );
 	}
-}
-
-
-- (NSString *)dataCachePath
-{
-	NSString *congressDataPath = [[myGovAppDelegate sharedAppCacheDir] stringByAppendingPathComponent:@"/congress"];
-	return congressDataPath;
 }
 
 
@@ -358,6 +358,8 @@ static NSString *kTitleValue_Senator = @"Sen";
 		}
 	}
 	[stateArray addObject:lc];
+	[stateArray sortUsingSelector:@selector(districtCompare:)];
+	
 	[stateArray release];
 	
 	if ( flag ) [lc release];

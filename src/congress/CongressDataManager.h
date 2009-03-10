@@ -35,6 +35,8 @@
 @property (readonly) BOOL isDataAvailable;
 @property (readonly) BOOL isBusy;
 
++ (NSString *)dataCachePath;
+
 - (id)initWithNotifyTarget:(id)target andSelector:(SEL)sel;
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;

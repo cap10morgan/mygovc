@@ -9,6 +9,10 @@
 #import "LegislatorHeaderViewController.h"
 #import "LegislatorContainer.h"
 
+@interface LegislatorHeaderViewController (private)
+	- (void)imageDownloadComplete:(UIImage *)img;
+@end
+
 @implementation LegislatorHeaderViewController
 
 @synthesize m_name;
@@ -91,6 +95,8 @@
 	[m_legislator release];
 	m_legislator = [legislator retain];
 	
+	[m_legislator setImageCallback:@selector(imageDownloadComplete:) onObject:self];
+	
 	// set legislator name 
 	NSString *fname = [m_legislator firstname];
 	NSString *mname = [m_legislator middlename];
@@ -120,7 +126,37 @@
 	[partyTxt release];
 	
 	// set legislator photo
-	// XXX - do this!
+	UIImage *img = [m_legislator getImageAndBlock:NO];
+	if ( nil == img )
+	{
+		// overlay a UIActivityIndicatorView on the image to
+		// tell the user we're working on it!
+		UIActivityIndicatorView *aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+		aiView.hidesWhenStopped = YES;
+		[aiView setFrame:CGRectMake(0.0f, 0.0f, 50.0f, 50.0f)];
+		[aiView setCenter:CGPointMake(50.0f, 60.0f)];
+		[aiView setTag:999];
+		[m_img addSubview:aiView];
+		[aiView startAnimating];
+		[aiView release];
+	}
+	else
+	{
+		[m_img setImage:img];
+	}
+}
+
+
+- (void)imageDownloadComplete:(UIImage *)img
+{
+	UIActivityIndicatorView *aiView = (UIActivityIndicatorView *)[m_img viewWithTag:999];
+	if ( nil != aiView )
+	{
+		[aiView stopAnimating];
+		[aiView removeFromSuperview];
+	}
+	
+	if ( nil != img ) [m_img setImage:img];
 }
 
 

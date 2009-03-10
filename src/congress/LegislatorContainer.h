@@ -14,13 +14,16 @@
 @private
 	NSMutableDictionary *m_info;
 	NSString *m_filePath;
+	
+	id   m_imgObj;
+	SEL  m_imgSel;
+	BOOL m_downloadInProgress;
 }
 
 - (id)initFromFile:(NSString *)path;
 - (void)writeRecordToFile:(NSString *)path;
 
-- (NSComparisonResult)stateCompare:(LegislatorContainer *)aLegislator;
-- (NSComparisonResult)partyCompare:(LegislatorContainer *)aLegislator;
+- (NSComparisonResult)districtCompare:(LegislatorContainer *)aLegislator;
 
 - (NSString *)title;		// Title held by this legislator, either Sen or Rep
 - (NSString *)firstname;	// Legislator's first name
@@ -49,6 +52,17 @@
 - (NSString *)twitter_id;	// Congressperson's official Twitter account
 - (NSString *)youtube_url;	// Congressperson's official Youtube account
 
+// return the image of a legislator, optionally blocking until
+// it has downloaded. If blockUntilDownloaded is false, and no image
+// is currently in the local cache - this function spawns a thread which
+// downloads the image for later
+- (UIImage *)getImageAndBlock:(BOOL)blockUntilDownloaded;
+
+// the provided selector is issued to 'obj' when the image has been downloaded
+// the selector must return void and accept 1 parameter, a UIImage *
+- (void)setImageCallback:(SEL)sel onObject:(id)obj;
+
+// add keys to the dictionary
 -(void)addKey:(NSString *)field withValue:(NSString *)value;
 
 @end

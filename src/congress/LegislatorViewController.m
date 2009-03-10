@@ -72,14 +72,7 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	
 	
 	m_legislator = [legislator retain];
-	if ( [[m_legislator title] isEqualToString:@"Sen"] )
-	{
-		self.title = [[[NSString alloc] initWithFormat:@"%@ Senator",[m_legislator state]] autorelease];
-	}
-	else 
-	{
-		self.title = [[[NSString alloc] initWithFormat:@"%@ District %@",[m_legislator state],[m_legislator district]] autorelease];
-	}
+	self.title = [[[NSString alloc] initWithFormat:@"%@ %@",[m_legislator firstname],[m_legislator lastname]] autorelease];
 	
 	// 
 	// setup the table data
@@ -118,28 +111,39 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	// Stream Section --------------
 	[m_streamRows removeAllObjects];
 	
+	/*
 	if ( [[m_legislator votesmart_id] length] > 0 )
 	{
 		[m_streamRows setObject:[m_legislator votesmart_id] forKey:@"01_votesmart"];
 	}
-	
-	if ( [[m_legislator congresspedia_url] length] > 0 )
-	{
-		[m_streamRows setObject:[m_legislator congresspedia_url] forKey:@"02_congresspedia"];
-	}
+	*/
 	
 	if ( [[m_legislator twitter_id] length] > 0 )
 	{
-		[m_streamRows setObject:[m_legislator twitter_id] forKey:@"03_twitter"];
+		[m_streamRows setObject:[m_legislator twitter_id] forKey:@"01_twitter"];
 	}
 	
 	if ( [[m_legislator youtube_url] length] > 0 )
 	{
-		[m_streamRows setObject:[m_legislator youtube_url] forKey:@"04_youtube"];
+		[m_streamRows setObject:[m_legislator youtube_url] forKey:@"02_youtube"];
+	}
+	
+	if ( [[m_legislator eventful_id] length] > 0 )
+	{
+		[m_streamRows setObject:[m_legislator eventful_id] forKey:@"03_eventful"];
+	}
+	
+	if ( [[m_legislator congresspedia_url] length] > 0 )
+	{
+		[m_streamRows setObject:[m_legislator congresspedia_url] forKey:@"04_open congress"];
 	}
 	
 	m_streamFields = [[NSArray alloc] initWithArray:[[m_streamRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
 	
+	// XXX - kick off a data download from OpenCongress.org
+	
+	[m_activityRows setObject:[NSString stringWithString:@"Download from OpenCongress.org..."] forKey:@"01_..."];
+	m_activityFields = [[NSArray alloc] initWithArray:[[m_activityRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
 	
 	[m_headerViewCtrl setLegislator:legislator];
 	[self.tableView reloadData];
@@ -295,6 +299,12 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 		NSString *val = [m_streamRows objectForKey:keyName];
 		[cell setField:keyName withValue:val];
 	}
+	else if ( kActivitySectionIdx == indexPath.section )
+	{
+		NSString *keyName = [m_activityFields objectAtIndex:indexPath.row];
+		NSString *val = [m_activityRows objectForKey:keyName];
+		[cell setField:keyName withValue:val];
+	}
 	
 	return cell;
 }
@@ -302,6 +312,9 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
 {
+	// XXX - perform a custom action based on the section/row
+	// XXX - i.e. make a phone call, send an email, view a map, etc.
+	
     // Navigation logic may go here. Create and push another view controller.
 	// AnotherViewController *anotherViewController = [[AnotherViewController alloc] initWithNibName:@"AnotherView" bundle:nil];
 	// [self.navigationController pushViewController:anotherViewController];
