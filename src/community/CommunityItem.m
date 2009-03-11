@@ -23,9 +23,10 @@ static UIImage *tmpImage2;
     }
 }
 
-- (id)initWithLabel:(NSString *)_label {
+- (id)initWithLabel:(NSString *)_label andType:(NSString *)_type {
     if (self = [super init]) {
         self.label = _label;
+        self.type = _type;
     }
     return self;
 }

@@ -3,7 +3,6 @@
 //  myGovernment
 //
 //  Created by Wesley Morgan on 2/28/09.
-//  Copyright 2009 U.S. PIRG. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -19,6 +18,6 @@
 @property (nonatomic, retain) NSString *type;
 @property (nonatomic, retain) NSString *label;
 
-- initWithLabel:(NSString *)_label;
+- initWithLabel:(NSString *)_label andType:(NSString *)_type;
 
 @end

@@ -149,8 +149,8 @@
 
 - (void)setupDisplayList {
 	NSMutableArray *communitySummary = [[NSMutableArray alloc] init];
-	[communitySummary addObject:[[CommunityItem alloc] initWithLabel:@"Event: Jeremy's Healthcare House Party"]];
-	[communitySummary addObject:[[CommunityItem alloc] initWithLabel:@"Wes says \"Hi everyone!\""]];
+	[communitySummary addObject:[[CommunityItem alloc] initWithLabel:@"Jeremy's Healthcare House Party"] andType:@"Event"];
+	[communitySummary addObject:[[CommunityItem alloc] initWithLabel:@"Wes says \"Hi everyone!\""] andType:@"Chatter"];
 	self.displayList = communitySummary;
 	[communitySummary release];
 }
