@@ -64,7 +64,7 @@
 					<object class="IBUIButton" id="1024331275">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{258, 103}, {29, 31}}</string>
+						<string key="NSFrame">{{258, 100}, {29, 31}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
@@ -101,13 +101,10 @@
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="IBUIText">Add To Contacts:</string>
-						<object class="NSColor" key="IBUITextColor">
-							<int key="NSColorSpace">2</int>
-							<bytes key="NSRGB">MC43OTIxNTY5MyAwLjQ3ODQzMTQgMC4xMTc2NDcwNwA</bytes>
-						</object>
-						<object class="NSColor" key="IBUIHighlightedColor" id="41496117">
-							<int key="NSColorSpace">2</int>
-							<bytes key="NSRGB">MC43OTIxNTY5MyAwLjQ3ODQzMTQgMC4xMTc2NDcwNwA</bytes>
+						<reference key="IBUITextColor" ref="284481973"/>
+						<object class="NSColor" key="IBUIHighlightedColor">
+							<int key="NSColorSpace">1</int>
+							<bytes key="NSRGB">MSAxIDEgMAA</bytes>
 						</object>
 						<int key="IBUIBaselineAdjustment">1</int>
 						<float key="IBUIMinimumFontSize">1.000000e+01</float>
@@ -116,14 +113,17 @@
 					<object class="IBUILabel" id="41780085">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{118, 107}, {132, 21}}</string>
+						<string key="NSFrame">{{118, 104}, {132, 21}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="IBUIText">Full Bio:</string>
-						<reference key="IBUITextColor" ref="41496117"/>
-						<reference key="IBUIHighlightedColor" ref="41496117"/>
+						<reference key="IBUITextColor" ref="284481973"/>
+						<object class="NSColor" key="IBUIHighlightedColor">
+							<int key="NSColorSpace">2</int>
+							<bytes key="NSRGB">MC43OTIxNTY5MyAwLjQ3ODQzMTQgMC4xMTc2NDcwNyAwAA</bytes>
+						</object>
 						<int key="IBUIBaselineAdjustment">1</int>
 						<float key="IBUIMinimumFontSize">1.000000e+01</float>
 						<int key="IBUITextAlignment">2</int>

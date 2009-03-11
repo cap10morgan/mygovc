@@ -98,10 +98,16 @@
 	[m_legislator setImageCallback:@selector(imageDownloadComplete:) onObject:self];
 	
 	// set legislator name 
+	NSString *nickname = [m_legislator nickname];
 	NSString *fname = [m_legislator firstname];
-	NSString *mname = [m_legislator middlename];
+	NSString *mname = ([nickname length] > 0 ? @"" : [m_legislator middlename]);
 	NSString *lname = [m_legislator lastname];
-	NSString *nm = [[NSString alloc] initWithFormat:@"%@. %@ %@%@%@",[m_legislator title],fname,(mname ? mname : @""),(mname ? @" " : @""),lname];
+	NSString *nm = [[NSString alloc] initWithFormat:@"%@. %@ %@%@%@",
+										[m_legislator title],
+										([nickname length] > 0 ? nickname : fname),
+										(mname ? mname : @""),
+										(mname ? @" " : @""),lname
+					];
 	m_name.text = nm;
 	[nm release];
 	

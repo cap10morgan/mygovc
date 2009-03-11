@@ -72,7 +72,7 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	
 	
 	m_legislator = [legislator retain];
-	self.title = [[[NSString alloc] initWithFormat:@"%@ %@",[m_legislator firstname],[m_legislator lastname]] autorelease];
+	//self.title = [[[NSString alloc] initWithFormat:@"%@ %@",[m_legislator firstname],[m_legislator lastname]] autorelease];
 	
 	// 
 	// setup the table data
@@ -96,14 +96,29 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 		[m_contactRows setObject:[m_legislator fax] forKey:@"03_fax"];
 	}
 	
+	if ( [[m_legislator webform] length] > 0 )
+	{
+		[m_contactRows setObject:[m_legislator webform] forKey:@"04_webform"];
+	}
+	
 	if ( [[m_legislator website] length] > 0 )
 	{
-		[m_contactRows setObject:[m_legislator website] forKey:@"04_website"];
+		[m_contactRows setObject:[m_legislator website] forKey:@"05_website"];
 	}
 	
 	if ( [[m_legislator congress_office] length] > 0 )
 	{
-		[m_contactRows setObject:[m_legislator congress_office] forKey:@"05_office"];
+		NSString *zip;
+		if ( [[m_legislator title] isEqualToString:@"Sen"] )
+		{
+			zip = @"Washington, DC 20510";
+		}
+		else
+		{
+			zip = @"Washington, DC 20515";
+		}
+		NSString * office = [NSString stringWithFormat:@"%@\n%@",[m_legislator congress_office],zip];
+		[m_contactRows setObject:office forKey:@"05_office"];
 	}
 	
 	m_contactFields = [[NSArray alloc] initWithArray:[[m_contactRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
@@ -166,7 +181,7 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	// XXX - set tableHeaderView to a custom UIView which has legislator
 	//       photo, name, major info (party, state, district), add to contacts link
 	// m_tableView.tableHeaderView = headerView;
-	CGRect hframe = CGRectMake(0,0,320,140);
+	CGRect hframe = CGRectMake(0,0,320,150);
 	m_headerViewCtrl = [[LegislatorHeaderViewController alloc] initWithNibName:@"LegislatorHeaderView" bundle:nil ];
 	[m_headerViewCtrl.view setFrame:hframe];
 	[m_headerViewCtrl setLegislator:m_legislator];
@@ -254,6 +269,7 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 }
 
 
+/*
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
 	if ( kContactSectionIdx == section )
@@ -272,6 +288,66 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	{
 		return 0;
 	}
+}
+*/
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+	return 40.0f;
+}
+
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+	CGRect lblFrame = CGRectMake(0.0f, 0.0f, 320.0f, 40.0f);
+	UILabel *sectionLabel = [[[UILabel alloc] initWithFrame:lblFrame] autorelease];
+	sectionLabel.backgroundColor = [UIColor clearColor];
+	sectionLabel.textColor = [UIColor whiteColor];
+	sectionLabel.font = [UIFont boldSystemFontOfSize:18.0f];
+	sectionLabel.textAlignment = UITextAlignmentLeft;
+	sectionLabel.adjustsFontSizeToFitWidth = YES;
+	
+	if ( kContactSectionIdx == section )
+	{
+		[sectionLabel setText:kContactHeaderTxt];
+	}
+	else if ( kStreamSectionIdx == section )
+	{
+		[sectionLabel setText:kStreamHeaderTxt];
+	}
+	else if ( kActivitySectionIdx == section )
+	{
+		[sectionLabel setText:kActivityHeaderTxt];
+	}
+	
+	return sectionLabel;
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	NSString *keyName;
+	NSString *val;
+	if ( kContactSectionIdx == indexPath.section )
+	{
+		keyName = [m_contactFields objectAtIndex:indexPath.row];
+		val = [m_contactRows objectForKey:keyName];
+	}
+	else if ( kStreamSectionIdx == indexPath.section )
+	{
+		keyName = [m_streamFields objectAtIndex:indexPath.row];
+		val = [m_streamRows objectForKey:keyName];
+	}
+	else if ( kActivitySectionIdx == indexPath.section )
+	{
+		keyName = [m_activityFields objectAtIndex:indexPath.row];
+		val = [m_activityRows objectForKey:keyName];
+	}
+	
+	CGFloat cellSz = [LegislatorInfoCell cellHeightForText:val];
+	
+	return cellSz;
 }
 
 

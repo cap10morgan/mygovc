@@ -20,8 +20,8 @@
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
 		
 		static const CGFloat S_TABLE_TITLE_WIDTH = 15.0f;
-		static const CGFloat S_INFO_OFFSET = 30.0f;
-		static const CGFloat S_PARTY_INDICATOR_WIDTH = 35.0f;
+		static const CGFloat S_INFO_OFFSET = 10.0f;
+		static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
 		
 		CGFloat frameX = 10.0f;
 		CGFloat frameY = 0.0f;
@@ -43,7 +43,7 @@
 		UILabel *nameView = [[UILabel alloc] initWithFrame:nameRect];
 		nameView.backgroundColor = [UIColor clearColor];
 		nameView.textColor = [UIColor blackColor];
-		nameView.font = [UIFont boldSystemFontOfSize:20.0f];
+		nameView.font = [UIFont boldSystemFontOfSize:18.0f];
 		nameView.textAlignment = UITextAlignmentLeft;
 		nameView.adjustsFontSizeToFitWidth = YES;
 		[nameView setTag:999];
@@ -55,7 +55,7 @@
 		UILabel *partyView = [[UILabel alloc] initWithFrame:partyRect];
 		partyView.backgroundColor = [UIColor clearColor];
 		partyView.textColor = [UIColor darkGrayColor];
-		partyView.font = [UIFont systemFontOfSize:16.0f];
+		partyView.font = [UIFont systemFontOfSize:18.0f];
 		partyView.textAlignment = UITextAlignmentCenter;
 		partyView.adjustsFontSizeToFitWidth = YES;
 		[partyView setTag:998];
@@ -67,7 +67,7 @@
 		UILabel *infoView = [[UILabel alloc] initWithFrame:infoRect];
 		infoView.backgroundColor = [UIColor clearColor];
 		infoView.textColor = [UIColor darkGrayColor];
-		infoView.font = [UIFont systemFontOfSize:12.0f];
+		infoView.font = [UIFont systemFontOfSize:14.0f];
 		infoView.textAlignment = UITextAlignmentLeft;
 		infoView.adjustsFontSizeToFitWidth = YES;
 		[infoView setTag:997];
@@ -120,7 +120,15 @@
 	NSString *info;
 	if ( [[legislator title] isEqualToString:@"Rep"] )
 	{
-		info = [[NSString alloc] initWithFormat:@"District %@",[legislator district]];
+		info = [[NSString alloc] initWithFormat:@"%@ District %@",[legislator state],[legislator district]];
+	}
+	else if ( [[legislator title] isEqualToString:@"Sen"] )
+	{
+		info = [[NSString alloc] initWithFormat:@"%@ Senator",[legislator state]];
+	}
+	else if ( [[legislator title] isEqualToString:@"Del"] )
+	{
+		info = [[NSString alloc] initWithFormat:@"%@ Delegate",[legislator state]];
 	}
 	else
 	{

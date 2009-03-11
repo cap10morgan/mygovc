@@ -180,6 +180,9 @@
 - (void)dataManagerCallback:(id)message
 {
 	NSString *msg = message;
+	
+	NSLog( @"dataManagerCallback: %@",msg );
+	
 	NSRange errRange = {0, 5};
 	if ( NSOrderedSame == [msg compare:@"ERROR" options:NSCaseInsensitiveSearch range:errRange] )
 	{
@@ -203,9 +206,11 @@
 	{
 		// something interesting must have happened,
 		// update the user with some progress
-		self.tableView.userInteractionEnabled = NO;
+		self.tableView.userInteractionEnabled = YES;
 		[m_HUD setText:msg andIndicateProgress:YES];
 		[m_HUD show:YES];
+		[self.tableView setNeedsDisplay];
+		self.tableView.userInteractionEnabled = NO;
 	}
 }
 
@@ -356,6 +361,8 @@
 	{
 		cell = [[[LegislatorNameCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
 	}
+	
+	if ( ![m_data isDataAvailable] ) return cell;
 	
 	NSString *state = [[m_data states] objectAtIndex:indexPath.section];
 	LegislatorContainer *legislator;
