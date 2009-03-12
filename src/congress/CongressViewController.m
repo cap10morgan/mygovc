@@ -189,7 +189,9 @@
 		// crap! an error occurred in the parsing/downloading: give the user
 		// an error message and leave it there...
 		self.tableView.userInteractionEnabled = NO;
-		NSString *txt = [[NSString alloc] initWithFormat:@"Error loading data%@",([msg length] <= 6 ? @"!" : [[NSString alloc] initWithFormat:@": \n%@",[msg substringFromIndex:6]])];
+		NSString *txt = [NSString stringWithFormat:@"Error loading data%@",
+							([msg length] <= 6 ? @"!" : 
+							 [NSString stringWithFormat:@": \n%@",[msg substringFromIndex:6]])];
 		[m_HUD setText:txt andIndicateProgress:NO];
 		[m_HUD show:YES];
 		[txt release];
@@ -301,7 +303,7 @@
 		{
 			if ( ((st+1) % 2) ) // || !((st+1) % 3) )
 			{
-				[tmpArray replaceObjectAtIndex:st withObject:[[[NSString alloc] initWithString:@""] autorelease] ];
+				[tmpArray replaceObjectAtIndex:st withObject:[NSString stringWithString:@""] ];
 			}
 		}
 		

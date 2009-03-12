@@ -10,6 +10,7 @@
 #import "XMLParserOperation.h"
 
 @class LegislatorContainer;
+@class CongressionalCommittees;
 
 @interface CongressDataManager : NSObject <XMLParserOperationDelegate>
 {
@@ -25,6 +26,8 @@
 	NSMutableArray *m_states;
 	NSMutableDictionary *m_house;
 	NSMutableDictionary *m_senate;
+	
+	CongressionalCommittees *m_committees;
 	
 	XMLParserOperation *m_xmlParser;
 	
@@ -44,6 +47,9 @@
 - (NSArray *)states;
 - (NSArray *)houseMembersInState:(NSString *)state;
 - (NSArray *)senateMembersInState:(NSString *)state;
+
+// array of LegislativeCommittee objects
+- (NSArray *)legislatorCommittees:(LegislatorContainer *)legislator;
 
 - (void)writeLegislatorDataToCache:(id)sender;
 - (void)updateCongressData;

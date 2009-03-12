@@ -15,16 +15,19 @@
 
 @synthesize m_legislator;
 
-static const int  kNumTableSections = 3;
+static const int  kNumTableSections = 4;
 
 static const int  kContactSectionIdx = 0;
-static NSString  *kContactHeaderTxt = @"Contact Information";
+static NSString  *kContactHeaderTxt = @" Contact Information";
 
-static const int  kStreamSectionIdx = 1;
-static NSString  *kStreamHeaderTxt = @"Legislator Info Stream";
+static const int  kCommitteeSectionIdx = 1;
+static NSString * kCommitteeSectionTxt = @" Committee Membership";
 
-static const int  kActivitySectionIdx = 2;
-static NSString  *kActivityHeaderTxt = @"Recent Activity";
+static const int  kStreamSectionIdx = 2;
+static NSString  *kStreamHeaderTxt = @" Legislator Info Stream";
+
+static const int  kActivitySectionIdx = 3;
+static NSString  *kActivityHeaderTxt = @" Recent Activity";
 
 
 - (void)didReceiveMemoryWarning 
@@ -40,10 +43,12 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	[m_headerViewCtrl release];
 	
 	[m_contactFields release];
+	[m_committeeFields release];
 	[m_streamFields release];
 	[m_activityFields release];
 	
 	[m_contactRows release];
+	[m_committeeFields release];
 	[m_streamRows release];
 	[m_activityRows release];
 	
@@ -56,6 +61,7 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	{
 		self.title = @"Legislator"; // this will be updated later...
 		m_contactRows = [[NSMutableDictionary alloc] initWithCapacity:10];
+		m_committeeRows = [[NSMutableDictionary alloc] initWithCapacity:10];
 		m_streamRows = [[NSMutableDictionary alloc] initWithCapacity:10];
 		m_activityRows = [[NSMutableDictionary alloc] initWithCapacity:10];
 	}
@@ -72,7 +78,6 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	
 	
 	m_legislator = [legislator retain];
-	//self.title = [[[NSString alloc] initWithFormat:@"%@ %@",[m_legislator firstname],[m_legislator lastname]] autorelease];
 	
 	// 
 	// setup the table data
@@ -123,15 +128,22 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	
 	m_contactFields = [[NSArray alloc] initWithArray:[[m_contactRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
 	
+	
+	// Committee Membership Section --------------
+	[m_committeeRows removeAllObjects];
+	
+	NSArray *comData = [m_legislator committee_data];
+	if ( nil != comData )
+	{
+		// XXX - fill this in!
+		[m_committeeRows setObject:[NSString stringWithString:@""] forKey:@"S111"];
+		
+		m_committeeFields = [[NSArray alloc] initWithArray:[[m_committeeRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
+	}
+	
+	
 	// Stream Section --------------
 	[m_streamRows removeAllObjects];
-	
-	/*
-	if ( [[m_legislator votesmart_id] length] > 0 )
-	{
-		[m_streamRows setObject:[m_legislator votesmart_id] forKey:@"01_votesmart"];
-	}
-	*/
 	
 	if ( [[m_legislator twitter_id] length] > 0 )
 	{
@@ -150,7 +162,7 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	
 	if ( [[m_legislator congresspedia_url] length] > 0 )
 	{
-		[m_streamRows setObject:[m_legislator congresspedia_url] forKey:@"04_open congress"];
+		[m_streamRows setObject:[m_legislator congresspedia_url] forKey:@"04_O.C."];
 	}
 	
 	m_streamFields = [[NSArray alloc] initWithArray:[[m_streamRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
@@ -254,6 +266,10 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	{
 		return [m_contactRows count];
 	}
+	else if ( kCommitteeSectionIdx == section )
+	{
+		return [m_committeeRows count];
+	}
 	else if ( kStreamSectionIdx == section )
 	{
 		return [m_streamRows count];
@@ -269,32 +285,10 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 }
 
 
-/*
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-	if ( kContactSectionIdx == section )
-	{
-		return kContactHeaderTxt;
-	}
-	else if ( kStreamSectionIdx == section )
-	{
-		return kStreamHeaderTxt;
-	}
-	else if ( kActivitySectionIdx == section )
-	{
-		return kActivityHeaderTxt;
-	}
-	else
-	{
-		return 0;
-	}
-}
-*/
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-	return 40.0f;
+	return 35.0f;
 }
 
 
@@ -312,6 +306,10 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	{
 		[sectionLabel setText:kContactHeaderTxt];
 	}
+	else if ( kCommitteeSectionIdx == section )
+	{
+		[sectionLabel setText:kCommitteeSectionTxt];
+	}
 	else if ( kStreamSectionIdx == section )
 	{
 		[sectionLabel setText:kStreamHeaderTxt];
@@ -327,12 +325,17 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSString *keyName;
-	NSString *val;
+	NSString *keyName = nil;
+	NSString *val = nil;
 	if ( kContactSectionIdx == indexPath.section )
 	{
 		keyName = [m_contactFields objectAtIndex:indexPath.row];
 		val = [m_contactRows objectForKey:keyName];
+	}
+	else if ( kCommitteeSectionIdx == indexPath.section )
+	{
+		keyName = [m_committeeFields objectAtIndex:indexPath.row];
+		val = [m_committeeRows objectForKey:keyName];
 	}
 	else if ( kStreamSectionIdx == indexPath.section )
 	{
@@ -363,22 +366,30 @@ static NSString  *kActivityHeaderTxt = @"Recent Activity";
 	}
 	
 	// Set up the cell...
+	NSString *keyName;
+	NSString *val;
 	if ( kContactSectionIdx == indexPath.section )
 	{
-		NSString *keyName = [m_contactFields objectAtIndex:indexPath.row];
-		NSString *val = [m_contactRows objectForKey:keyName];
+		keyName = [m_contactFields objectAtIndex:indexPath.row];
+		val = [m_contactRows objectForKey:keyName];
+		[cell setField:keyName withValue:val];
+	}
+	else if ( kCommitteeSectionIdx == indexPath.section )
+	{
+		keyName = [m_committeeFields objectAtIndex:indexPath.row];
+		val = [m_committeeRows objectForKey:keyName];
 		[cell setField:keyName withValue:val];
 	}
 	else if ( kStreamSectionIdx == indexPath.section )
 	{
-		NSString *keyName = [m_streamFields objectAtIndex:indexPath.row];
-		NSString *val = [m_streamRows objectForKey:keyName];
+		keyName = [m_streamFields objectAtIndex:indexPath.row];
+		val = [m_streamRows objectForKey:keyName];
 		[cell setField:keyName withValue:val];
 	}
 	else if ( kActivitySectionIdx == indexPath.section )
 	{
-		NSString *keyName = [m_activityFields objectAtIndex:indexPath.row];
-		NSString *val = [m_activityRows objectForKey:keyName];
+		keyName = [m_activityFields objectAtIndex:indexPath.row];
+		val = [m_activityRows objectForKey:keyName];
 		[cell setField:keyName withValue:val];
 	}
 	

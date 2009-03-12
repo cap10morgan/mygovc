@@ -8,6 +8,7 @@
 #import <Foundation/NSXMLParser.h>
 #import "CongressDataManager.h"
 #import "LegislatorContainer.h"
+#import "CongressionalCommittees.h"
 #import "XMLParserOperation.h"
 #import "myGovAppDelegate.h"
 
@@ -29,6 +30,7 @@ static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
 //static NSString *kPVS_APIKey = @"e9c18da5999464958518614cfa7c6e1c";
 static NSString *kOpenCongress_APIKey = @"32aea132a66093e9bf9ebe9fc2e2a4c66b888777";
 static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/legislators.getList.xml";
+static NSString *kGovtrack_committeeListXML = @"http://www.govtrack.us/data/us/111/committees.xml";
 
 
 + (NSString *)dataCachePath
@@ -50,6 +52,8 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 		m_states = [[NSMutableArray alloc] initWithCapacity:50];
 		m_house = [[NSMutableDictionary alloc] initWithCapacity:50];
 		m_senate = [[NSMutableDictionary alloc] initWithCapacity:50];
+		
+		m_committees = [[CongressionalCommittees alloc] init];
 		
 		// check to see if we have congress data previously cached on this 
 		// device - if we don't then we'll have to go fetch it!
@@ -83,6 +87,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 	[m_states release];
 	[m_house release];
 	[m_senate release];
+	[m_committees release];
 	[m_xmlParser release];
 	[m_currentString release];
 	[super dealloc];
@@ -115,6 +120,12 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 }
 
 
+- (NSArray *)legislatorCommittees:(LegislatorContainer *)legislator
+{
+	return [m_committees getCommitteeDataFor:legislator];
+}
+
+
 - (void)writeLegislatorDataToCache:(id)sender
 {
 	isBusy = YES;
@@ -137,8 +148,8 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 		NSArray *reps = [m_house objectForKey:state];
 		for ( id legislator in reps )
 		{
-			// congress/data/[STATE]/r_[ID].cache
-			path = [stateDir stringByAppendingPathComponent:[NSString stringWithFormat:@"r_%@.cache",[legislator votesmart_id]]];
+			// congress/data/[STATE]/[ID].cache
+			path = [stateDir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.cache",[legislator bioguide_id]]];
 			[legislator writeRecordToFile:path];
 		}
 	}
@@ -153,11 +164,15 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 		NSArray *senators = [m_senate objectForKey:state];
 		for ( id legislator in senators )
 		{
-			// congress/data/[STATE]/s_[ID].cache
-			path = [stateDir stringByAppendingPathComponent:[NSString stringWithFormat:@"s_%@.cache",[legislator votesmart_id]]];
+			// congress/data/[STATE]/[ID].cache
+			path = [stateDir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.cache",[legislator bioguide_id]]];
 			[legislator writeRecordToFile:path];
 		}
 	}
+	
+	// write out the committee data
+	path = [congressDataPath stringByAppendingPathComponent:@"committees.xml"];
+	[m_committees writeCommitteeDataToFile:path];
 	
 	// create a file named 'dataComplete' to indicate we've
 	// written out all of our congressional data
@@ -179,7 +194,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 	
 	if ( nil != m_notifyTarget )
 	{
-		NSString *message = [[[NSString alloc] initWithString:@"Removing Cached Congress Data..."] autorelease];
+		NSString *message = [NSString stringWithString:@"Removing Cached Congress Data..."];
 		[m_notifyTarget performSelector:m_notifySelector withObject:message];
 	}
 	
@@ -188,9 +203,13 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 	[m_states release];
 	[m_house release];
 	[m_senate release];
+	[m_committees release];
 	m_states = [[NSMutableArray alloc] initWithCapacity:50];
 	m_house = [[NSMutableDictionary alloc] initWithCapacity:50];
 	m_senate = [[NSMutableDictionary alloc] initWithCapacity:50];
+	
+	// includes sub-committees...
+	m_committees = [[CongressionalCommittees alloc] init];
 	
 	[self beginDataDownload];
 }
@@ -211,11 +230,11 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 	
 	if ( nil != m_notifyTarget )
 	{
-		NSString *message = [[[NSString alloc] initWithString:@"Downloading Congress Data..."] autorelease];
+		NSString *message = [NSString stringWithString:@"Downloading Congress Data..."];
 		[m_notifyTarget performSelector:m_notifySelector withObject:message];
 	}
 	
-	NSString *xmlURL = [[NSString alloc] initWithFormat:@"%@?apikey=%@",kSunlight_getListXML,kSunlight_APIKey];
+	NSString *xmlURL = [NSString stringWithFormat:@"%@?apikey=%@",kSunlight_getListXML,kSunlight_APIKey];
 	
 	if ( nil != m_xmlParser )
 	{
@@ -236,7 +255,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 	isDataAvailable = NO;
 	if ( nil != m_notifyTarget )
 	{
-		NSString *message = [[[NSString alloc] initWithString:@"Reading cached data..."] autorelease];
+		NSString *message = [NSString stringWithString:@"Reading cached data..."];
 		[m_notifyTarget performSelector:m_notifySelector withObject:message];
 	}
 	
@@ -266,16 +285,16 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 		}
 	}
 	
+	file = [congressDataPath stringByAppendingPathComponent:@"committees.xml"];
+	[m_committees initCommitteeDataFromFile:file];
+	
 	isDataAvailable = YES;
 	if ( nil != m_notifyTarget )
 	{
-		NSString *message = [[[NSString alloc] initWithString:@"Finished."] autorelease];
+		NSString *message = [NSString stringWithString:@"Finished."];
 		[m_notifyTarget performSelector:m_notifySelector withObject:message];
 	}
-	else
-	{
-		NSLog( @"CongressDataManager cached data parsing complete." );
-	}
+	NSLog( @"CongressDataManager cached data parsing complete." );
 }
 
 
@@ -283,7 +302,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 {
 	if ( nil != m_notifyTarget )
 	{
-		NSString *message = [[[NSString alloc] initWithString:@"Downloading Congress Data..."] autorelease];
+		NSString *message = [NSString stringWithString:@"Downloading Congress Data..."];
 		[m_notifyTarget performSelector:m_notifySelector withObject:message];
 	}
 	NSLog( @"CongessDataManager started XML parsing..." );
@@ -292,30 +311,45 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 
 - (void)xmlParseOp:(XMLParserOperation *)parseOp endedWith:(BOOL)success
 {
+	if ( success )
+	{
+		if ( nil != m_notifyTarget )
+		{
+			NSString *message = [NSString stringWithString:@"Downloading Committee Data..."];;
+			[m_notifyTarget performSelector:m_notifySelector withObject:message];
+		}
+		NSLog( @"CongressDataManager started committee data download from %@ ...",kGovtrack_committeeListXML );
+		// download the committee data (wait for this...)
+		[m_committees downloadDataFrom:[NSURL URLWithString:kGovtrack_committeeListXML]];
+	}
+	
 	isDataAvailable = success;
+	
 	if ( nil != m_notifyTarget )
 	{
-		NSString *message = [[[NSString alloc] initWithFormat:@"%@",(success ? @"Finished." : m_currentString)] autorelease];
+		NSString *message = [NSString stringWithFormat:@"%@",(success ? @"Finished." : m_currentString)];
 		[m_notifyTarget performSelector:m_notifySelector withObject:message];
 	}
-	else
-	{
-		NSLog( @"CongressDataManager XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
-	}
+	NSLog( @"CongressDataManager XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
 	
 	if ( isDataAvailable )
 	{
+		isBusy = YES; // we're writing the cache!
+		
 		// kick off the caching of this data
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																	  selector:@selector(writeLegislatorDataToCache:) object:self];
+																			selector:@selector(writeLegislatorDataToCache:) object:self];
 		
 		// Add the operation to the internal operation queue managed by the application delegate.
 		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
 		
 		[theOp release];
 	}
+	else
+	{
+		isBusy = NO;
+	}
 	
-	isBusy = NO;
 }
 
 
@@ -375,7 +409,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 	{
 		if ( nil != m_notifyTarget )
 		{
-			NSString *message = [[[NSString alloc] initWithString:@"Parsing data..."] autorelease];
+			NSString *message = [NSString stringWithString:@"Parsing data..."];
 			[m_notifyTarget performSelector:m_notifySelector withObject:message];
 		}
 	}

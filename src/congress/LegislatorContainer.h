@@ -8,15 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
-
 @interface LegislatorContainer : NSObject 
 {
 @private
 	NSMutableDictionary *m_info;
 	NSString *m_filePath;
 	
-	id   m_imgObj;
+	id   m_cbObj;
 	SEL  m_imgSel;
+	SEL  m_committeeSel;
 	BOOL m_downloadInProgress;
 }
 
@@ -52,15 +52,22 @@
 - (NSString *)twitter_id;	// Congressperson's official Twitter account
 - (NSString *)youtube_url;	// Congressperson's official Youtube account
 
+// congressional committee data:
+// returns an array of LegislativeCommittee objects, or nil of no data is present
+- (NSArray *)committee_data; 
+
+
+// The provided object is used to perform callbacks 
+- (void)setCallbackObject:(id)obj;
+
 // return the image of a legislator, optionally blocking until
 // it has downloaded. If blockUntilDownloaded is false, and no image
 // is currently in the local cache - this function spawns a thread which
-// downloads the image for later
-- (UIImage *)getImageAndBlock:(BOOL)blockUntilDownloaded;
+// downloads the image for later. If a callback selector is provided, the 
+// function will issue a message to the callback object (setCallbackObject)
+// with 1 parameter, a UIImage *
+- (UIImage *)getImageAndBlock:(BOOL)blockUntilDownloaded withCallbackOrNil:(SEL)sel;
 
-// the provided selector is issued to 'obj' when the image has been downloaded
-// the selector must return void and accept 1 parameter, a UIImage *
-- (void)setImageCallback:(SEL)sel onObject:(id)obj;
 
 // add keys to the dictionary
 -(void)addKey:(NSString *)field withValue:(NSString *)value;

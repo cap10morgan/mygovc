@@ -237,8 +237,17 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 }
 
 
-- (UIImage *)getImageAndBlock:(BOOL)blockUntilDownloaded
+- (NSArray *)committee_data
 {
+	// XXX - hook this up to CongressDataManager...
+	return nil;
+}
+
+
+- (UIImage *)getImageAndBlock:(BOOL)blockUntilDownloaded withCallbackOrNil:(SEL)sel;
+{
+	m_imgSel = sel;
+	
 	// look for photo
 	NSString *cache = [[CongressDataManager dataCachePath] stringByAppendingPathComponent:@"photos"];
 	NSString *photoPath = [NSString stringWithFormat:@"%@/%@-100px.jpeg",cache,[self govtrack_id]];
@@ -272,12 +281,12 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 		
 		if ( blockUntilDownloaded )
 		{
-			while ( m_downloadInProgress )
+			while ( m_downloadInProgress /* XXX - or timeout! */ )
 			{
 				[NSThread sleepForTimeInterval:0.1f];
 			}
 			// recurse!
-			return [self getImageAndBlock:blockUntilDownloaded];
+			return [self getImageAndBlock:blockUntilDownloaded withCallbackOrNil:sel];
 		}
 	}
 	
@@ -285,11 +294,10 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 }
 
 
-- (void)setImageCallback:(SEL)sel onObject:(id)obj
+- (void)setCallbackObject:(id)obj;
 {
-	[m_imgObj release];
-	m_imgObj = [obj retain];
-	m_imgSel = sel;
+	[m_cbObj release];
+	m_cbObj = [obj retain];
 }
 
 
@@ -311,9 +319,9 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 		[[NSFileManager defaultManager] createFileAtPath:photoPath contents:imgData attributes:nil];
 	}
 	
-	if ( nil != m_imgObj )
+	if ( (nil != m_cbObj) && (nil != m_imgSel) )
 	{
-		[m_imgObj performSelector:m_imgSel withObject:(nil == imgData ? nil : img)];
+		[m_cbObj performSelector:m_imgSel withObject:(nil == imgData ? nil : img)];
 	}
 	
 	m_downloadInProgress = NO;

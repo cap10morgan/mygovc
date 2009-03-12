@@ -95,7 +95,7 @@
 	[m_legislator release];
 	m_legislator = [legislator retain];
 	
-	[m_legislator setImageCallback:@selector(imageDownloadComplete:) onObject:self];
+	[m_legislator setCallbackObject:self];
 	
 	// set legislator name 
 	NSString *nickname = [m_legislator nickname];
@@ -103,10 +103,10 @@
 	NSString *mname = ([nickname length] > 0 ? @"" : [m_legislator middlename]);
 	NSString *lname = [m_legislator lastname];
 	NSString *nm = [[NSString alloc] initWithFormat:@"%@. %@ %@%@%@",
-										[m_legislator title],
-										([nickname length] > 0 ? nickname : fname),
-										(mname ? mname : @""),
-										(mname ? @" " : @""),lname
+									[m_legislator title],
+									([nickname length] > 0 ? nickname : fname),
+									(mname ? mname : @""),
+									(mname ? @" " : @""),lname
 					];
 	m_name.text = nm;
 	[nm release];
@@ -114,7 +114,7 @@
 	// set legislator party info
 	NSString *party = [m_legislator party];
 	NSString *state = [m_legislator state];
-	NSString *district = [[[NSString alloc] initWithFormat:@" District %@",[m_legislator district]] autorelease];
+	NSString *district = [[NSString alloc] initWithFormat:@" District %@",[m_legislator district]];
 	NSString *partyTxt = [[NSString alloc] initWithFormat:@"(%@) %@%@",party,state,([[m_legislator title] isEqualToString:@"Rep"] ? district : @"")];
 	m_partyInfo.text = partyTxt;
 	if ( [party isEqualToString:@"R"] )
@@ -129,10 +129,11 @@
 	{
 		m_partyInfo.textColor = [UIColor whiteColor];
 	}
+	[district release];
 	[partyTxt release];
 	
 	// set legislator photo
-	UIImage *img = [m_legislator getImageAndBlock:NO];
+	UIImage *img = [m_legislator getImageAndBlock:NO withCallbackOrNil:@selector(imageDownloadComplete:)];
 	if ( nil == img )
 	{
 		// overlay a UIActivityIndicatorView on the image to
