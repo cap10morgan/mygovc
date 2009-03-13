@@ -12,11 +12,14 @@
 
 @implementation LegislatorNameCell
 
+@synthesize m_legislator;
 
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier 
+
+- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier detailTarget:(id)tgt detailSelector:(SEL)sel
 {
 	if (self = [super initWithFrame:frame reuseIdentifier:reuseIdentifier]) 
 	{
+		m_legislator = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
 		
 		static const CGFloat S_TABLE_TITLE_WIDTH = 15.0f;
@@ -73,7 +76,8 @@
 		[infoView setTag:997];
 		
 		
-		// XXX - set delegate for detail button press!
+		// set delegate for detail button press!
+		[detail addTarget:tgt action:sel forControlEvents:UIControlEventTouchUpInside];
 		
 		// add views to cell view
 		[self addSubview:nameView];
@@ -86,6 +90,13 @@
 		[infoView release];
 	}
 	return self;
+}
+
+
+- (void)dealloc
+{
+	[m_legislator release];
+	[super dealloc];
 }
 
 
@@ -107,6 +118,9 @@
 
 - (void)setInfoFromLegislator:(LegislatorContainer *)legislator
 {
+	[m_legislator release];
+	m_legislator = [legislator retain];
+	
 	// Set up the cell...
 	NSString *name = [[NSString alloc] initWithFormat:@"%@%@ %@%@",
 										[legislator firstname],
@@ -163,6 +177,7 @@
 	[party release];
 	[info release];
 }
+
 
 
 @end

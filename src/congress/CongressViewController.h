@@ -18,17 +18,26 @@ typedef enum
 } CongressChamber;
 
 
+typedef enum
+{
+	eActionContact,
+	eActionReload,
+} CongressActionType;
+
+
 @interface CongressViewController : UITableViewController <UIActionSheetDelegate>
 {	
 @private
 	CongressDataManager *m_data;
 	CongressChamber m_selectedChamber;
+	CongressActionType m_actionType;
 	UISegmentedControl *m_segmentCtrl;
 	
 	ProgressOverlayViewController *m_HUD;
 }
 
 - (void)dataManagerCallback:(id)message;
+- (void)showLegislatorDetail:(id)sender;
 
 @end
 

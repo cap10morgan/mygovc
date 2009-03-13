@@ -7,11 +7,12 @@
 //
 
 #import "myGovAppDelegate.h"
-
+#import "CongressDataManager.h"
 
 @implementation myGovAppDelegate
 
 static myGovAppDelegate *s_myGovApp = NULL;
+static CongressDataManager *s_myCongressData = NULL;
 
 @synthesize m_window;
 @synthesize m_tabBarController;
@@ -21,9 +22,7 @@ static myGovAppDelegate *s_myGovApp = NULL;
 // Initialize the singleton instance if needed and return
 + (myGovAppDelegate *)sharedAppDelegate
 {
-	if ( !s_myGovApp )
-		s_myGovApp = [[myGovAppDelegate alloc] init];
-	
+	if ( !s_myGovApp ) s_myGovApp = [[myGovAppDelegate alloc] init];
 	return s_myGovApp;
 }
 
@@ -41,6 +40,15 @@ static myGovAppDelegate *s_myGovApp = NULL;
 	}
 }
 
+
++ (CongressDataManager *)sharedCongressData
+{
+	if ( !s_myCongressData ) [[CongressDataManager alloc] initWithNotifyTarget:nil andSelector:nil];
+	return s_myCongressData;
+}
+
+
+
 - (id)init 
 {
 	if ( !s_myGovApp )
@@ -48,7 +56,14 @@ static myGovAppDelegate *s_myGovApp = NULL;
 		s_myGovApp = [super init];
 	}
 	
+	// this needs to be initialized before the congress data!
 	m_operationQueue = [[NSOperationQueue alloc] init];
+	
+	if ( !s_myCongressData )
+	{
+		NSLog( @"Initializing Congress Data..." );
+		s_myCongressData = [[CongressDataManager alloc] initWithNotifyTarget:nil andSelector:nil];
+	}
 	
 	return s_myGovApp;
 }
@@ -64,6 +79,7 @@ static myGovAppDelegate *s_myGovApp = NULL;
     [m_window release];
 	
 	[m_operationQueue release];
+	[s_myCongressData release];
 	
     [super dealloc];
 }

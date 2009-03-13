@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class CongressDataManager;
+
 @interface myGovAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate> 
 {
     UIWindow *m_window;
@@ -23,5 +25,7 @@
 
 + (myGovAppDelegate *)sharedAppDelegate;
 + (NSString *)sharedAppCacheDir;
+
++ (CongressDataManager *)sharedCongressData;
 
 @end

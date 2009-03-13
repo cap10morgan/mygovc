@@ -237,6 +237,22 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 }
 
 
+- (NSString *)shortName
+{
+	NSString *nickname = [self nickname];
+	NSString *fname = [self firstname];
+	NSString *mname = ([nickname length] > 0 ? @"" : [self middlename]);
+	NSString *lname = [self lastname];
+	NSString *nm = [[[NSString alloc] initWithFormat:@"%@. %@ %@%@%@",
+										[self title],
+										([nickname length] > 0 ? nickname : fname),
+										(mname ? mname : @""),
+										(mname ? @" " : @""),lname
+					] autorelease];
+	return nm;
+}
+
+
 - (NSArray *)committee_data
 {
 	// XXX - hook this up to CongressDataManager...

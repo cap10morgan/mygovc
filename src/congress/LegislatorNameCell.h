@@ -12,8 +12,13 @@
 
 @interface LegislatorNameCell : UITableViewCell 
 {
+	LegislatorContainer *m_legislator;
 }
 
+@property (readonly) LegislatorContainer *m_legislator;
+
+- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier detailTarget:(id)tgt detailSelector:(SEL)sel;
 - (void)setInfoFromLegislator:(LegislatorContainer *)legislator;
+
 
 @end

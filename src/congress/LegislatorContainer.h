@@ -52,6 +52,8 @@
 - (NSString *)twitter_id;	// Congressperson's official Twitter account
 - (NSString *)youtube_url;	// Congressperson's official Youtube account
 
+- (NSString *)shortName;
+
 // congressional committee data:
 // returns an array of LegislativeCommittee objects, or nil of no data is present
 - (NSArray *)committee_data; 
