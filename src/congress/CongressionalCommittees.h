@@ -15,19 +15,29 @@
 {
 	NSString *m_id;
 	NSString *m_name;
-	NSString *m_role;
-	NSMutableArray *m_subCommittees; // array of LegislativeCommittee objects
+	NSURL *m_url; // website link for this committee
+	NSString *m_parentCommittee; // nil for main committees
+	NSMutableArray *m_members;
 }
-@end
+@property (nonatomic, retain) NSString *m_id;
+@property (nonatomic, retain) NSString *m_name;
+@property (nonatomic, retain) NSURL *m_url;
+@property (nonatomic, retain) NSString *m_parentCommittee;
+@property (readonly) NSMutableArray *m_members;
+
+@end // LegislativeCommittee
 
 
 @interface CongressionalCommittees : NSObject
 {
 @private
-	NSMutableDictionary *m_committees;    // committeeKey => NSArray: 0->NameString,1...n->Subcommittee keynames
-	NSMutableDictionary *m_subcommittees; // subCommitteeKey => NSString: subcommittee name
+	NSMutableDictionary *m_committees;    // committeeKey => LegislativeCommittee
+	NSMutableDictionary *m_legislativeConnection; // legislatorID => (sub)committeeKey (array)
 	
-	NSMutableDictionary *m_legislativeConnection; // legislatorID => (sub)committeeKey
+	// XML-parsing variables
+	BOOL m_parsingCommittees;
+	LegislativeCommittee *m_currentCommittee;
+	LegislativeCommittee *m_currentSubCommittee;
 }
 
 // initialize committee data from a file

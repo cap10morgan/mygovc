@@ -63,7 +63,7 @@
 	m_selectedChamber = eCongressChamberHouse;
 	m_segmentCtrl.frame = CGRectMake(0,0,200,30);
 	// saturation of 0.0 means black/white
-	m_segmentCtrl.tintColor = [[UIColor alloc] initWithHue:0.0 saturation:0.0 brightness:0.45 alpha:1.0];
+	m_segmentCtrl.tintColor = [[UIColor alloc] initWithHue:0.0 saturation:0.0 brightness:0.40 alpha:1.0];
 	
 	// add ourself as the target
 	[m_segmentCtrl addTarget:self action:@selector(congressSwitch:) forControlEvents:UIControlEventValueChanged];
@@ -155,32 +155,6 @@
 }
 
 
-// Switch the table data source between House and Senate
-- (void)congressSwitch: (id)sender
-{
-	switch ( [sender selectedSegmentIndex] )
-	{
-		default:
-		case 0:
-			// This is the House!
-			m_selectedChamber = eCongressChamberHouse;
-			break;
-			
-		case 1:
-			// This is the Senate!
-			m_selectedChamber = eCongressChamberSenate;
-			break;
-	}
-	if ( [m_data isDataAvailable] ) 
-	{
-		[self.tableView reloadData];
-		NSUInteger idx[2] = {0,0};
-		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
-		self.tableView.userInteractionEnabled = YES;
-	}
-}
-
-
 // method called by our data manager when something interesting happens
 - (void)dataManagerCallback:(id)message
 {
@@ -195,8 +169,8 @@
 		// an error message and leave it there...
 		self.tableView.userInteractionEnabled = NO;
 		NSString *txt = [NSString stringWithFormat:@"Error loading data%@",
-							([msg length] <= 6 ? @"!" : 
-							 [NSString stringWithFormat:@": \n%@",[msg substringFromIndex:6]])];
+						 ([msg length] <= 6 ? @"!" : 
+						  [NSString stringWithFormat:@": \n%@",[msg substringFromIndex:6]])];
 		[m_HUD show:NO];
 		[m_HUD.view setFrame:CGRectZero];
 		[m_HUD setText:txt andIndicateProgress:NO];
@@ -221,6 +195,50 @@
 		[m_HUD.view setFrame:CGRectZero];
 		[m_HUD setText:msg andIndicateProgress:YES];
 		[m_HUD show:YES];
+	}
+}
+
+
+- (void)showLegislatorDetail:(id)sender
+{
+	UIButton *button = (UIButton *)sender;
+	if ( nil == button ) return;
+	
+	LegislatorNameCell *sdr = (LegislatorNameCell *)[button superview];
+	if ( nil == sdr ) return;
+	
+	LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+	[legViewCtrl setLegislator:[sdr m_legislator]];
+	[self.navigationController pushViewController:legViewCtrl animated:YES];
+	[legViewCtrl release];
+}
+
+
+#pragma mark CongressViewController Private
+
+
+// Switch the table data source between House and Senate
+- (void)congressSwitch: (id)sender
+{
+	switch ( [sender selectedSegmentIndex] )
+	{
+		default:
+		case 0:
+			// This is the House!
+			m_selectedChamber = eCongressChamberHouse;
+			break;
+			
+		case 1:
+			// This is the Senate!
+			m_selectedChamber = eCongressChamberSenate;
+			break;
+	}
+	if ( [m_data isDataAvailable] ) 
+	{
+		[self.tableView reloadData];
+		NSUInteger idx[2] = {0,0};
+		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		self.tableView.userInteractionEnabled = YES;
 	}
 }
 
@@ -266,11 +284,16 @@
 		switch ( buttonIndex )
 		{
 			case 0:
+				// XXX - email!
 			case 1:
+				// XXX - Call
 			case 2:
+				// XXX - Tweet
 			default:
 				break;
 		}
+		// deselect the selected row (after we've used it to get phone/email/twitter)
+		[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 	}
 	else if ( eActionReload == m_actionType )
 	{
@@ -430,49 +453,13 @@
 	UIActionSheet *contactAlert =
 	[[UIActionSheet alloc] initWithTitle:[legislator shortName]
 							delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-							otherButtonTitles:@"Send Email",@"Call",@"Tweet",nil,nil];
+							otherButtonTitles:@"Email",@"Call",@"Tweet",nil,nil];
 	
 	// use the same style as the nav bar
 	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
 	
 	[contactAlert showInView:self.view];
 	[contactAlert release];
-	
-	// animate the row de-selection
-	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
-	
-	/*
-	NSString *state = [[m_data states] objectAtIndex:indexPath.section];
-	LegislatorContainer *legislator;
-	if ( eCongressChamberHouse == m_selectedChamber ) 
-	{
-		legislator = [[m_data houseMembersInState:state] objectAtIndex:indexPath.row];
-	}
-	else
-	{
-		legislator = [[m_data senateMembersInState:state] objectAtIndex:indexPath.row];
-	}
-	
-	LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
-	[legViewCtrl setLegislator:legislator];
-	[self.navigationController pushViewController:legViewCtrl animated:YES];
-	[legViewCtrl release];
-	*/
-}
-
-
-- (void)showLegislatorDetail:(id)sender
-{
-	UIButton *button = (UIButton *)sender;
-	if ( nil == button ) return;
-	
-	LegislatorNameCell *sdr = (LegislatorNameCell *)[button superview];
-	if ( nil == sdr ) return;
-	
-	LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
-	[legViewCtrl setLegislator:[sdr m_legislator]];
-	[self.navigationController pushViewController:legViewCtrl animated:YES];
-	[legViewCtrl release];
 }
 
 

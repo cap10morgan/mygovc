@@ -255,8 +255,7 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 
 - (NSArray *)committee_data
 {
-	// XXX - hook this up to CongressDataManager...
-	return nil;
+	return [[myGovAppDelegate sharedCongressData] legislatorCommittees:self];
 }
 
 

@@ -32,6 +32,12 @@ static NSString *kOpenCongress_APIKey = @"32aea132a66093e9bf9ebe9fc2e2a4c66b8887
 static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/legislators.getList.xml";
 static NSString *kGovtrack_committeeListXML = @"http://www.govtrack.us/data/us/111/committees.xml";
 
+// Legislator XML key names
+static NSString *kName_Response = @"response";
+static NSString *kName_Legislator = @"legislator";
+static NSString *kName_State = @"state";
+static NSString *kTitleValue_Senator = @"Sen";
+
 
 + (NSString *)dataCachePath
 {
@@ -172,15 +178,19 @@ static NSString *kGovtrack_committeeListXML = @"http://www.govtrack.us/data/us/1
 	
 	// write out the committee data
 	path = [congressDataPath stringByAppendingPathComponent:@"committees.xml"];
-	[m_committees writeCommitteeDataToFile:path];
+	BOOL success = [m_committees writeCommitteeDataToFile:path];
+	if ( !success )
+	{
+		// XXX - what to do?
+	}
 	
 	// create a file named 'dataComplete' to indicate we've
 	// written out all of our congressional data
 	path = [NSString stringWithFormat:@"%@Complete",congressDataPath];
-	BOOL success = [[NSFileManager defaultManager] createFileAtPath:path contents:[NSData dataWithBytes:"1" length:1] attributes:nil];
+	success = [[NSFileManager defaultManager] createFileAtPath:path contents:[NSData dataWithBytes:"1" length:1] attributes:nil];
 	if ( !success )
 	{
-		// XXX what to do?
+		// XXX - what to do?
 	}
 	
 	isBusy = NO;
@@ -318,7 +328,6 @@ static NSString *kGovtrack_committeeListXML = @"http://www.govtrack.us/data/us/1
 			NSString *message = [NSString stringWithString:@"Downloading Committee Data..."];;
 			[m_notifyTarget performSelector:m_notifySelector withObject:message];
 		}
-		NSLog( @"CongressDataManager started committee data download from %@ ...",kGovtrack_committeeListXML );
 		// download the committee data (wait for this...)
 		[m_committees downloadDataFrom:[NSURL URLWithString:kGovtrack_committeeListXML]];
 	}
@@ -351,12 +360,6 @@ static NSString *kGovtrack_committeeListXML = @"http://www.govtrack.us/data/us/1
 	}
 	
 }
-
-
-static NSString *kName_Response = @"response";
-static NSString *kName_Legislator = @"legislator";
-static NSString *kName_State = @"state";
-static NSString *kTitleValue_Senator = @"Sen";
 
 
 - (void)addLegislatorToInMemoryCache:(id)legislator release:(BOOL)flag

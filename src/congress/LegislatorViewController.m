@@ -10,6 +10,12 @@
 #import "LegislatorContainer.h"
 #import "LegislatorInfoCell.h"
 #import "LegislatorHeaderViewController.h"
+#import "CongressionalCommittees.h"
+
+@interface LegislatorViewController (private)
+	- (void) deselectRow:(id)sender;
+@end
+
 
 @implementation LegislatorViewController
 
@@ -48,7 +54,7 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 	[m_activityFields release];
 	
 	[m_contactRows release];
-	[m_committeeFields release];
+	[m_committeeRows release];
 	[m_streamRows release];
 	[m_activityRows release];
 	
@@ -136,7 +142,26 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 	if ( nil != comData )
 	{
 		// XXX - fill this in!
-		[m_committeeRows setObject:[NSString stringWithString:@""] forKey:@"S111"];
+		//[m_committeeRows setObject:[NSString stringWithString:@""] forKey:@"S111"];
+		NSEnumerator *comEnum = [comData objectEnumerator];
+		id obj;
+		while (obj = [comEnum nextObject]) 
+		{
+			LegislativeCommittee *committee = (LegislativeCommittee *)obj;
+			NSString *cID = [NSString stringWithFormat:@"%@_%@",
+										committee.m_id,
+										(nil == committee.m_parentCommittee ? 
+											@"" : 
+											[NSString stringWithFormat:@"[%@]",committee.m_parentCommittee]
+										)
+							];
+			NSString *cNM = [NSString stringWithFormat:@"%@\n%@",
+										(nil == committee.m_parentCommittee ? committee.m_id : @""),
+										committee.m_name
+							];
+			
+			[m_committeeRows setObject:cNM forKey:cID];
+		}
 		
 		m_committeeFields = [[NSArray alloc] initWithArray:[[m_committeeRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
 	}
@@ -247,6 +272,16 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 	return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+
+#pragma mark LegislatorViewController Private
+
+
+- (void) deselectRow:(id)sender
+{
+	// de-select the currently selected row
+	// (so the user can go back to the same legislator)
+	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+}
 
 
 #pragma mark Table view methods
@@ -401,6 +436,8 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 {
 	// XXX - perform a custom action based on the section/row
 	// XXX - i.e. make a phone call, send an email, view a map, etc.
+	
+	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 	
     // Navigation logic may go here. Create and push another view controller.
 	// AnotherViewController *anotherViewController = [[AnotherViewController alloc] initWithNibName:@"AnotherView" bundle:nil];

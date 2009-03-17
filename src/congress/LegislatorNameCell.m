@@ -14,6 +14,10 @@
 
 @synthesize m_legislator;
 
+static const CGFloat S_TABLE_TITLE_WIDTH = 15.0f;
+static const CGFloat S_INFO_OFFSET = 10.0f;
+static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
+
 
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier detailTarget:(id)tgt detailSelector:(SEL)sel
 {
@@ -21,10 +25,6 @@
 	{
 		m_legislator = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
-		
-		static const CGFloat S_TABLE_TITLE_WIDTH = 15.0f;
-		static const CGFloat S_INFO_OFFSET = 10.0f;
-		static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
 		
 		CGFloat frameX = 10.0f;
 		CGFloat frameY = 0.0f;

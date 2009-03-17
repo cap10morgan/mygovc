@@ -36,7 +36,7 @@ static const CGFloat CELL_PADDING = 5.0f;
 {
 	if (self = [super initWithFrame:frame reuseIdentifier:reuseIdentifier]) 
 	{
-		
+		self.selectionStyle = UITableViewCellSelectionStyleGray;
 		
 		CGFloat frameX = CELL_OFFSET;
 		CGFloat frameY = 0.0f;
@@ -49,8 +49,9 @@ static const CGFloat CELL_PADDING = 5.0f;
 		UILabel *fieldView = [[UILabel alloc] initWithFrame:fieldRect];
 		fieldView.backgroundColor = [UIColor clearColor];
 		fieldView.textColor = [UIColor blackColor];
-		fieldView.font = [UIFont boldSystemFontOfSize:16.0f];
+		fieldView.font = [UIFont boldSystemFontOfSize:15.0f];
 		fieldView.textAlignment = UITextAlignmentLeft;
+		//fieldView.numberOfLines = 2;
 		fieldView.adjustsFontSizeToFitWidth = YES;
 		[fieldView setTag:999];
 		
@@ -97,23 +98,55 @@ static const CGFloat CELL_PADDING = 5.0f;
 	CGFloat height = [LegislatorInfoCell cellHeightForText:value];
 	
 	UILabel *fieldView = (UILabel *)[self viewWithTag:999];
-	// strip out the leading "XX_"
-	[fieldView setText:[[field componentsSeparatedByString:@"_"] objectAtIndex:1]];
+	
+	NSString *fieldTxt = @"";
+	if ( nil != field )
+	{
+		// strip out the leading "XX_"
+		NSArray *fldArray = [field componentsSeparatedByString:@"_"];
+		if ( [fldArray count] > 1 )
+		{
+			fieldTxt = [[field componentsSeparatedByString:@"_"] objectAtIndex:([fldArray count]-1)];
+		}
+		else
+		{
+			fieldTxt = field;
+		}
+	}
+	[fieldView setText:fieldTxt];
+	
 	
 	UILabel *valView = (UILabel *)[self viewWithTag:998];
 	[valView setText:value];
 	
-	CGRect viewFrame = CGRectMake(CGRectGetMinX(fieldView.frame),
-								  CGRectGetMinY(fieldView.frame),
-								  KEYNAME_WIDTH,
-								  height );
-	[fieldView setFrame:viewFrame];
+	CGRect fieldFrame = CGRectMake(CGRectGetMinX(fieldView.frame),
+											 CGRectGetMinY(fieldView.frame),
+											 KEYNAME_WIDTH,
+											 height );
+	CGRect valFrame;
 	
-	viewFrame = CGRectMake(CGRectGetMinX(valView.frame),
-								  CGRectGetMinY(valView.frame),
-								  VALUE_WIDTH,
-								  height );
-	[valView setFrame:viewFrame];
+	// if we weren't passed a field name, extend the value rectangle to
+	// fill the entire cell
+	if ( [fieldTxt length] < 1 )
+	{
+		CGFloat minX = CGRectGetMinX(fieldView.frame);
+		CGFloat minY = CGRectGetMinY(fieldView.frame);
+		valFrame = CGRectMake(minX, minY, KEYNAME_WIDTH + CELL_PADDING + VALUE_WIDTH, height);
+		
+		valView.font = [UIFont boldSystemFontOfSize:15.0f];
+	}
+	else
+	{
+		// make sure the value rectangle is in its proper place
+		valFrame = CGRectMake(CGRectGetMaxX(fieldFrame) + CELL_PADDING,
+							   CGRectGetMinY(fieldFrame),
+							   VALUE_WIDTH,
+							   height);
+		valView.font = [UIFont systemFontOfSize:14.0f];
+	}
+	
+	[fieldView setFrame:fieldFrame];
+	[valView setFrame:valFrame];
 }
 
 
