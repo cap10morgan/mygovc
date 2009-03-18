@@ -8,6 +8,7 @@
 
 #import "LegislatorHeaderViewController.h"
 #import "LegislatorContainer.h"
+#import "StateAbbreviations.h"
 
 @interface LegislatorHeaderViewController (private)
 	- (void)imageDownloadComplete:(UIImage *)img;
@@ -113,8 +114,8 @@
 	
 	// set legislator party info
 	NSString *party = [m_legislator party];
-	NSString *state = [m_legislator state];
-	NSString *district = [[NSString alloc] initWithFormat:@" District %@",[m_legislator district]];
+	NSString *state = [StateAbbreviations nameFromAbbr:[m_legislator state]];
+	NSString *district = [[NSString alloc] initWithFormat:@" %@",([[m_legislator district] isEqualToString:@"0"] ? @"At-Large" : [m_legislator district])];
 	NSString *partyTxt = [[NSString alloc] initWithFormat:@"(%@) %@%@",party,state,([[m_legislator title] isEqualToString:@"Rep"] ? district : @"")];
 	m_partyInfo.text = partyTxt;
 	if ( [party isEqualToString:@"R"] )

@@ -17,6 +17,10 @@
 		0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D40A0F58F2D2005AE0EA /* CongressViewController.m */; };
 		011592C40F6A36D2008BECCD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 011592C30F6A36D2008BECCD /* Default.png */; };
 		0132E7500F68D22A00DF33DC /* CongressionalCommittees.m in Sources */ = {isa = PBXBuildFile; fileRef = 0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */; };
+		01B118360F709EC70076AFE0 /* StateAbbreviations.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B118350F709EC70076AFE0 /* StateAbbreviations.m */; };
+		01B119070F70B71E0076AFE0 /* SpendingDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B119060F70B71E0076AFE0 /* SpendingDataManager.m */; };
+		01B119440F70BD560076AFE0 /* location_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B119420F70BD560076AFE0 /* location_overlay.png */; };
+		01B119450F70BD560076AFE0 /* USStates.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01B119430F70BD560076AFE0 /* USStates.plist */; };
 		01B4E05F0F6449BB00219672 /* ProgressOverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */; };
 		01B4E2200F64D6EC00219672 /* LegislatorHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */; };
 		01B4E2230F64D88000219672 /* LegislatorHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */; };
@@ -53,6 +57,12 @@
 		011592C30F6A36D2008BECCD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		0132E74E0F68D22A00DF33DC /* CongressionalCommittees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressionalCommittees.h; path = src/congress/CongressionalCommittees.h; sourceTree = "<group>"; };
 		0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressionalCommittees.m; path = src/congress/CongressionalCommittees.m; sourceTree = "<group>"; };
+		01B118340F709EC70076AFE0 /* StateAbbreviations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StateAbbreviations.h; path = src/common/StateAbbreviations.h; sourceTree = "<group>"; };
+		01B118350F709EC70076AFE0 /* StateAbbreviations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StateAbbreviations.m; path = src/common/StateAbbreviations.m; sourceTree = "<group>"; };
+		01B119050F70B71E0076AFE0 /* SpendingDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingDataManager.h; path = src/spending/SpendingDataManager.h; sourceTree = "<group>"; };
+		01B119060F70B71E0076AFE0 /* SpendingDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpendingDataManager.m; path = src/spending/SpendingDataManager.m; sourceTree = "<group>"; };
+		01B119420F70BD560076AFE0 /* location_overlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = location_overlay.png; path = res/location_overlay.png; sourceTree = "<group>"; };
+		01B119430F70BD560076AFE0 /* USStates.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = USStates.plist; path = res/USStates.plist; sourceTree = "<group>"; };
 		01B4E05D0F6449BB00219672 /* ProgressOverlayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProgressOverlayViewController.h; path = src/common/ProgressOverlayViewController.h; sourceTree = "<group>"; };
 		01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProgressOverlayViewController.m; path = src/common/ProgressOverlayViewController.m; sourceTree = "<group>"; };
 		01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LegislatorHeaderView.xib; path = src/congress/LegislatorHeaderView.xib; sourceTree = "<group>"; };
@@ -159,6 +169,8 @@
 			children = (
 				0102D3000F58E31C005AE0EA /* SpendingViewController.h */,
 				0102D3010F58E31C005AE0EA /* SpendingViewController.m */,
+				01B119050F70B71E0076AFE0 /* SpendingDataManager.h */,
+				01B119060F70B71E0076AFE0 /* SpendingDataManager.m */,
 			);
 			name = spending;
 			sourceTree = "<group>";
@@ -189,6 +201,8 @@
 				01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */,
 				01B4E05D0F6449BB00219672 /* ProgressOverlayViewController.h */,
 				01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */,
+				01B118340F709EC70076AFE0 /* StateAbbreviations.h */,
+				01B118350F709EC70076AFE0 /* StateAbbreviations.m */,
 			);
 			name = common;
 			sourceTree = "<group>";
@@ -204,7 +218,6 @@
 		29B97314FDCFA39411CA2CEA /* myGov */ = {
 			isa = PBXGroup;
 			children = (
-				011592C30F6A36D2008BECCD /* Default.png */,
 				0102D2D90F58DB5D005AE0EA /* src */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -216,6 +229,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01B119420F70BD560076AFE0 /* location_overlay.png */,
+				01B119430F70BD560076AFE0 /* USStates.plist */,
+				011592C30F6A36D2008BECCD /* Default.png */,
 				0102D2ED0F58DECD005AE0EA /* eagleIcon.png */,
 				0102D2CC0F58D7C7005AE0EA /* main.m */,
 				0102D2CD0F58D7C7005AE0EA /* MainWindow.xib */,
@@ -284,6 +300,8 @@
 				0102D2F20F58E007005AE0EA /* RecoveryView.xib in Resources */,
 				01B4E2200F64D6EC00219672 /* LegislatorHeaderView.xib in Resources */,
 				011592C40F6A36D2008BECCD /* Default.png in Resources */,
+				01B119440F70BD560076AFE0 /* location_overlay.png in Resources */,
+				01B119450F70BD560076AFE0 /* USStates.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,6 +331,8 @@
 				01C43CE10F662D0B00F8A025 /* BillsViewController.m in Sources */,
 				01C43D020F662E3300F8A025 /* LegislatorNameCell.m in Sources */,
 				0132E7500F68D22A00DF33DC /* CongressionalCommittees.m in Sources */,
+				01B118360F709EC70076AFE0 /* StateAbbreviations.m in Sources */,
+				01B119070F70B71E0076AFE0 /* SpendingDataManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -134,7 +134,7 @@ static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
 	NSString *info;
 	if ( [[legislator title] isEqualToString:@"Rep"] )
 	{
-		info = [[NSString alloc] initWithFormat:@"%@ District %@",[legislator state],[legislator district]];
+		info = [[NSString alloc] initWithFormat:@"%@ District %@%@",[legislator state],[legislator district],([[legislator district] isEqualToString:@"0"] ? @" (At-Large)" : @"")];
 	}
 	else if ( [[legislator title] isEqualToString:@"Sen"] )
 	{

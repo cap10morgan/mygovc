@@ -7,18 +7,21 @@
 //
 
 #import "myGovAppDelegate.h"
-#import "CongressViewController.h"
+
 #import "CongressDataManager.h"
+#import "CongressViewController.h"
 #import "LegislatorContainer.h"
-#import "LegislatorViewController.h"
 #import "LegislatorNameCell.h"
+#import "LegislatorViewController.h"
 #import "ProgressOverlayViewController.h"
+#import "StateAbbreviations.h"
 
 
 @interface CongressViewController (private)
-	- (void) congressSwitch: (id)sender;
-	- (void) reloadCongressData;
-	- (void) deselectRow:(id)sender;
+	- (void)congressSwitch: (id)sender;
+	- (void)reloadCongressData;
+	- (void)deselectRow:(id)sender;
+	-(void)findLocalLegislators:(id)sender;
 @end
 
 
@@ -49,6 +52,7 @@
 	m_actionType = eActionReload;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
+	[m_HUD show:NO];
 	[m_HUD setText:@"Loading..." andIndicateProgress:YES];
 	
 	// Create a new segment control and place it in 
@@ -63,7 +67,7 @@
 	m_selectedChamber = eCongressChamberHouse;
 	m_segmentCtrl.frame = CGRectMake(0,0,200,30);
 	// saturation of 0.0 means black/white
-	m_segmentCtrl.tintColor = [[UIColor alloc] initWithHue:0.0 saturation:0.0 brightness:0.40 alpha:1.0];
+	m_segmentCtrl.tintColor = [[UIColor alloc] initWithHue:0.0 saturation:0.0 brightness:0.45 alpha:1.0];
 	
 	// add ourself as the target
 	[m_segmentCtrl addTarget:self action:@selector(congressSwitch:) forControlEvents:UIControlEventValueChanged];
@@ -82,15 +86,18 @@
 											   action:@selector(reloadCongressData)] autorelease];
 	
 	// 
-	// XXX - Add a "location" button
+	// Add a "location" button which will be used to find senators/representatives
+	// which represent a users current district
 	// 
-	/*
-	 UIButton* modalViewButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
-	 [modalViewButton addTarget:self action:@selector(modalViewAction:) forControlEvents:UIControlEventTouchUpInside];
-	 UIBarButtonItem *modalButton = [[UIBarButtonItem alloc] initWithCustomView:modalViewButton];
-	 self.navigationItem.leftBarButtonItem = modalButton;
-	 [modalViewButton release];
-	 */
+	UIImage *locImg = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"location_overlay.png"]];
+	UIBarButtonItem *locBarButton = [[[UIBarButtonItem alloc] 
+										initWithImage:locImg 
+										style:UIBarButtonItemStylePlain 
+										target:self 
+										action:@selector(findLocalLegislators:)] autorelease];
+	self.navigationItem.leftBarButtonItem = locBarButton;
+	self.navigationItem.leftBarButtonItem.width = self.navigationItem.rightBarButtonItem.width;
+	
 	
 	[super viewDidLoad];
 }
@@ -100,7 +107,6 @@
 {
 	if ( nil == m_data )
 	{
-		//m_data = [[CongressDataManager alloc] initWithNotifyTarget:self andSelector:@selector(dataManagerCallback:)];
 		m_data = [[myGovAppDelegate sharedCongressData] retain];
 		[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	}
@@ -123,6 +129,7 @@
 	else
 	{
 		[m_HUD show:YES]; // with whatever text is there...
+		[m_HUD setText:m_HUD.m_label.text andIndicateProgress:YES];
 	}
 	
 	// de-select the currently selected row
@@ -168,15 +175,13 @@
 		// crap! an error occurred in the parsing/downloading: give the user
 		// an error message and leave it there...
 		self.tableView.userInteractionEnabled = NO;
-		NSString *txt = [NSString stringWithFormat:@"Error loading data%@",
-						 ([msg length] <= 6 ? @"!" : 
-						  [NSString stringWithFormat:@": \n%@",[msg substringFromIndex:6]])];
-		[m_HUD show:NO];
-		[m_HUD.view setFrame:CGRectZero];
-		[m_HUD setText:txt andIndicateProgress:NO];
+		NSString *txt = [[[NSString alloc] initWithFormat:@"Error loading data%@",
+											([msg length] <= 6 ? @"!" : 
+											 [NSString stringWithFormat:@": \n%@",[msg substringFromIndex:6]])
+						] autorelease];
+		
 		[m_HUD show:YES];
-		//[m_HUD performSelector:@selector(show:) withObject:YES afterDelay:0.5];
-		[txt release];
+		[m_HUD setText:txt andIndicateProgress:NO];
 	}
 	else if ( [m_data isDataAvailable] )
 	{
@@ -191,10 +196,8 @@
 		// something interesting must have happened,
 		// update the user with some progress
 		self.tableView.userInteractionEnabled = NO;
-		[m_HUD show:NO];
-		[m_HUD.view setFrame:CGRectZero];
-		[m_HUD setText:msg andIndicateProgress:YES];
 		[m_HUD show:YES];
+		[m_HUD setText:msg andIndicateProgress:YES];
 	}
 }
 
@@ -243,14 +246,6 @@
 }
 
 
-- (void) deselectRow:(id)sender
-{
-	// de-select the currently selected row
-	// (so the user can go back to the same legislator)
-	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
-}
-
-
 // wipe our device cache and re-download all congress personnel data
 // (see UIActionSheetDelegate method for actual work)
 - (void) reloadCongressData
@@ -273,6 +268,22 @@
 }
 
 
+- (void) deselectRow:(id)sender
+{
+	// de-select the currently selected row
+	// (so the user can go back to the same legislator)
+	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+}
+
+
+-(void)findLocalLegislators:(id)sender
+{
+	// XXX - lookup legislators in current district using location services
+	// plus govtrack district data
+	NSLog( @"CongressViewController: find local legislators..." );
+}
+
+
 #pragma mark UIActionSheetDelegate methods
 
 
@@ -281,6 +292,7 @@
 {
 	if ( eActionContact == m_actionType )
 	{
+		// use currently selected legislator to perfom the following action:
 		switch ( buttonIndex )
 		{
 			case 0:
@@ -366,8 +378,8 @@
 {
 	if ( [m_data isDataAvailable] )
 	{
-		// XXX - get full state name?
-		return [[m_data states] objectAtIndex:section];
+		// get full state name
+		return [StateAbbreviations nameFromAbbr:[[m_data states] objectAtIndex:section]];
 	}
 	else
 	{

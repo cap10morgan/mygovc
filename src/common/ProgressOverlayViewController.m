@@ -10,8 +10,14 @@
 
 // UIView subclass to draw rounded corners :-)
 @interface ProgressOverlayView : UIView
-{}
+{
+	BOOL m_shouldAnimate;
+}
+	- (void)setShouldAnimate:(BOOL)yesOrNo;
+	- (void)setNewText:(id)txt;
+	- (void)hideView:(id)sender;
 @end
+
 
 
 @implementation ProgressOverlayViewController
@@ -52,11 +58,10 @@
 	{
 		m_window = [window retain];
 		
-		CGRect appFrame = [[UIScreen mainScreen] applicationFrame];
-		ProgressOverlayView *overlayView = [[ProgressOverlayView alloc] initWithFrame:appFrame];
-		//overlayView.backgroundColor = [UIColor colorWithRed:0.1f green:0.05f blue:0.1f alpha:0.90f];
+		//CGRect appFrame = [[UIScreen mainScreen] applicationFrame];
+		ProgressOverlayView *overlayView = [[ProgressOverlayView alloc] initWithFrame:m_window.frame];
 		overlayView.backgroundColor = [UIColor clearColor];
-		overlayView.frame = m_window.frame;
+		//[overlayView setFrame:m_window.frame];
 		self.view = overlayView;
 		[overlayView release];
 		
@@ -64,6 +69,7 @@
 		m_activityWheel.hidesWhenStopped = YES;
 		[m_activityWheel setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
 		[m_activityWheel setCenter:CGPointMake(100.0f, 20.0f)];
+		[m_activityWheel setTag:222];
 		[self.view addSubview:m_activityWheel];
 		[m_activityWheel release];
 		
@@ -77,6 +83,7 @@
 		m_label.textColor = [UIColor whiteColor];
 		m_label.shadowColor = [UIColor blackColor];
 		m_label.shadowOffset = CGSizeMake(0.0f, -1.0f);
+		[m_label setTag:111];
 		[self.view addSubview:m_label];
 		[m_label release];
 	}
@@ -94,12 +101,14 @@
 			{
 				[m_window addSubview:self.view];
 			}
-			self.view.hidden = NO;
+			self.view.hidden = NO;			
 			[self.view setNeedsDisplay];
 		}
 		else
 		{
-			self.view.hidden = YES;
+			[self.view setNeedsDisplay];
+			[self.view performSelector:@selector(hideView:) withObject:self];
+			//self.view.hidden = YES;
 		}
 	}
 }
@@ -107,45 +116,13 @@
 
 - (void)setText:(NSString *)text andIndicateProgress:(BOOL)shouldAnimate
 {
-	m_label.text = text;
+	self.view.hidden = NO;
+	ProgressOverlayView *pov = (ProgressOverlayView *)(self.view);
+	[pov setShouldAnimate:shouldAnimate];
+	
 	[self.view setNeedsDisplay];
-	
-	// get a rectangle which can minimally contain the text
-	CGSize fontSz = [text sizeWithFont:m_label.font constrainedToSize:CGSizeMake(200.0f,200.0f) lineBreakMode:UILineBreakModeWordWrap];
-	CGRect fontRect = CGRectMake(20.0f, 50.0f, fontSz.width, fontSz.height);
-	
-	// create a rectangle for the view which can minimally contain the whole text
-	// (with a 20 pixel margin on all sides)
-	static CGFloat S_MARGIN = 40.0f;
-	CGFloat dx = CGRectGetWidth(m_window.frame) - fontSz.width - S_MARGIN;
-	CGFloat dy = CGRectGetHeight(m_window.frame) - fontSz.height - 50.0f - S_MARGIN;
-	CGRect viewRect = CGRectInset(m_window.frame, dx/2.0f, dy/2.0f );
-	
-	// re-center the activity indicator
-	[m_activityWheel setCenter:CGPointMake(CGRectGetWidth(viewRect)/2.0f, 30.0f)];
-	
-	// animate the transition!
-	CGContextRef ctx = UIGraphicsGetCurrentContext();
-	[UIView beginAnimations:nil context:ctx];
-	[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
-	[UIView setAnimationDuration:0.25];
-	
-	// re-size the label and the view based on the input text
-	[m_label setFrame:fontRect];
-	[self.view setFrame:viewRect];
-	
-	[UIView commitAnimations];
-	
-	if ( shouldAnimate )
-	{
-		[m_activityWheel startAnimating];
-	}
-	else
-	{
-		[m_activityWheel stopAnimating];
-	}
+	[self.view performSelector:@selector(setNewText:) withObject:text];	
 }
-
 
 
 /*
@@ -174,12 +151,15 @@
 @end
 
 
+
 @implementation ProgressOverlayView
+
 
 - (void)dealloc
 {
     [super dealloc];
 }
+
 
 - (void)fillRoundedRect:(CGRect)rect inContext:(CGContextRef)context
 {
@@ -206,6 +186,98 @@
     boxRect = CGRectInset(boxRect, 1.0f, 1.0f);
     [self fillRoundedRect:boxRect inContext:ctxt];
 }
+
+
+- (void)setShouldAnimate:(BOOL)yesOrNo
+{
+	m_shouldAnimate = yesOrNo;
+}
+
+
+- (void)setNewText:(id)txt
+{
+	NSString *text = (NSString *)txt;
+	if ( nil == txt )
+	{
+		[self setNeedsDisplay];
+		return;
+	}
+	
+	UILabel *lbl = (UILabel *)[self viewWithTag:111];
+	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:222];
+	
+	// set the text
+	lbl.text = text;
+	
+	// get a rectangle which can minimally contain the text
+	CGSize fontSz = [text sizeWithFont:lbl.font constrainedToSize:CGSizeMake(200.0f,200.0f) lineBreakMode:UILineBreakModeWordWrap];
+	CGRect fontRect = CGRectMake(20.0f, 50.0f, fontSz.width, fontSz.height);
+	CGRect parentRect = ([self superview] ? [self superview].frame : CGRectZero);
+	
+	// create a rectangle for the view which can minimally contain the whole text
+	// (with a 20 pixel margin on all sides)
+	static CGFloat S_MARGIN = 40.0f;
+	CGFloat dx = CGRectGetWidth(parentRect) - fontSz.width - S_MARGIN;
+	CGFloat dy = CGRectGetHeight(parentRect) - fontSz.height - 50.0f - S_MARGIN;
+	CGRect viewRect = CGRectInset(parentRect, dx/2.0f, dy/2.0f );
+	
+	// animate the transition!
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView beginAnimations:nil context:UIGraphicsGetCurrentContext()];
+	[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
+	[UIView setAnimationDuration:0.25];
+	
+	// re-center the activity indicator
+	[activity setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
+	[activity setCenter:CGPointMake(CGRectGetWidth(viewRect)/2.0f, 30.0f)];
+	
+	// re-size the label and the view based on the input text
+	[lbl setFrame:fontRect];
+	[self setFrame:viewRect];
+	
+	[UIView commitAnimations];
+	
+	if ( m_shouldAnimate )
+	{
+		[activity startAnimating];
+	}
+	else
+	{
+		[activity stopAnimating];
+	}
+	
+	[self performSelector:@selector(setNewText:) withObject:nil afterDelay:0.10f];
+}
+
+
+- (void)hideView:(id)sender
+{
+	UILabel *lbl = (UILabel *)[self viewWithTag:111];
+	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:222];
+	
+	if ( self == sender )
+	{
+		[self setHidden:YES];
+	}
+	else
+	{
+		[UIView setAnimationBeginsFromCurrentState:YES];
+		[UIView beginAnimations:nil context:UIGraphicsGetCurrentContext()];
+		[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
+		[UIView setAnimationDuration:0.25];
+		
+		[lbl setFrame:CGRectZero];
+		[activity setFrame:CGRectZero];
+		[self setFrame:CGRectZero];
+		
+		[UIView commitAnimations];
+	
+		[self performSelector:@selector(hideView:) withObject:self afterDelay:0.30f];
+		[self setNeedsDisplay];
+	}
+}
+
+
 
 @end
 
