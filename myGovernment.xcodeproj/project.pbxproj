@@ -17,6 +17,10 @@
 		0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D40A0F58F2D2005AE0EA /* CongressViewController.m */; };
 		011592C40F6A36D2008BECCD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 011592C30F6A36D2008BECCD /* Default.png */; };
 		0132E7500F68D22A00DF33DC /* CongressionalCommittees.m in Sources */ = {isa = PBXBuildFile; fileRef = 0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */; };
+		017C22500F721824008CA4ED /* billsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224D0F721824008CA4ED /* billsIcon.png */; };
+		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
+		017C22520F721824008CA4ED /* spendingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224F0F721824008CA4ED /* spendingIcon.png */; };
+		017C22550F721E60008CA4ED /* communityIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C22540F721E60008CA4ED /* communityIcon.png */; };
 		01B118360F709EC70076AFE0 /* StateAbbreviations.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B118350F709EC70076AFE0 /* StateAbbreviations.m */; };
 		01B119070F70B71E0076AFE0 /* SpendingDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B119060F70B71E0076AFE0 /* SpendingDataManager.m */; };
 		01B119440F70BD560076AFE0 /* location_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B119420F70BD560076AFE0 /* location_overlay.png */; };
@@ -58,6 +62,10 @@
 		011592C30F6A36D2008BECCD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		0132E74E0F68D22A00DF33DC /* CongressionalCommittees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressionalCommittees.h; path = src/congress/CongressionalCommittees.h; sourceTree = "<group>"; };
 		0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressionalCommittees.m; path = src/congress/CongressionalCommittees.m; sourceTree = "<group>"; };
+		017C224D0F721824008CA4ED /* billsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = billsIcon.png; path = res/billsIcon.png; sourceTree = "<group>"; };
+		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
+		017C224F0F721824008CA4ED /* spendingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spendingIcon.png; path = res/spendingIcon.png; sourceTree = "<group>"; };
+		017C22540F721E60008CA4ED /* communityIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityIcon.png; path = res/communityIcon.png; sourceTree = "<group>"; };
 		01B118340F709EC70076AFE0 /* StateAbbreviations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StateAbbreviations.h; path = src/common/StateAbbreviations.h; sourceTree = "<group>"; };
 		01B118350F709EC70076AFE0 /* StateAbbreviations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StateAbbreviations.m; path = src/common/StateAbbreviations.m; sourceTree = "<group>"; };
 		01B119050F70B71E0076AFE0 /* SpendingDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingDataManager.h; path = src/spending/SpendingDataManager.h; sourceTree = "<group>"; };
@@ -234,6 +242,10 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				017C22540F721E60008CA4ED /* communityIcon.png */,
+				017C224D0F721824008CA4ED /* billsIcon.png */,
+				017C224E0F721824008CA4ED /* congressIcon.png */,
+				017C224F0F721824008CA4ED /* spendingIcon.png */,
 				01B119420F70BD560076AFE0 /* location_overlay.png */,
 				01B119430F70BD560076AFE0 /* USStates.plist */,
 				011592C30F6A36D2008BECCD /* Default.png */,
@@ -307,6 +319,10 @@
 				011592C40F6A36D2008BECCD /* Default.png in Resources */,
 				01B119440F70BD560076AFE0 /* location_overlay.png in Resources */,
 				01B119450F70BD560076AFE0 /* USStates.plist in Resources */,
+				017C22500F721824008CA4ED /* billsIcon.png in Resources */,
+				017C22510F721824008CA4ED /* congressIcon.png in Resources */,
+				017C22520F721824008CA4ED /* spendingIcon.png in Resources */,
+				017C22550F721E60008CA4ED /* communityIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

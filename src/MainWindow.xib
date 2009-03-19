@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="132"/>
+			<integer value="106"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -60,6 +60,10 @@
 				<object class="IBUINavigationController" key="IBUISelectedViewController" id="521573019">
 					<object class="IBUITabBarItem" key="IBUITabBarItem" id="806111871">
 						<string key="IBUITitle">Spending</string>
+						<object class="NSCustomResource" key="IBUIImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">spendingIcon.png</string>
+						</object>
 						<reference key="IBUITabBar"/>
 					</object>
 					<reference key="IBUIParentViewController" ref="1034742383"/>
@@ -109,6 +113,10 @@
 					<object class="IBUINavigationController" id="382814786">
 						<object class="IBUITabBarItem" key="IBUITabBarItem" id="738529085">
 							<string key="IBUITitle">Community</string>
+							<object class="NSCustomResource" key="IBUIImage">
+								<string key="NSClassName">NSImage</string>
+								<string key="NSResourceName">communityIcon.png</string>
+							</object>
 							<reference key="IBUITabBar"/>
 						</object>
 						<reference key="IBUIParentViewController" ref="1034742383"/>
@@ -151,6 +159,10 @@
 					<object class="IBUINavigationController" id="578262494">
 						<object class="IBUITabBarItem" key="IBUITabBarItem" id="14008661">
 							<string key="IBUITitle">Congress</string>
+							<object class="NSCustomResource" key="IBUIImage">
+								<string key="NSClassName">NSImage</string>
+								<string key="NSResourceName">congressIcon.png</string>
+							</object>
 							<reference key="IBUITabBar"/>
 						</object>
 						<reference key="IBUIParentViewController" ref="1034742383"/>
@@ -196,6 +208,10 @@
 					<object class="IBUINavigationController" id="960204606">
 						<object class="IBUITabBarItem" key="IBUITabBarItem" id="669690016">
 							<string key="IBUITitle">Bills</string>
+							<object class="NSCustomResource" key="IBUIImage">
+								<string key="NSClassName">NSImage</string>
+								<string key="NSResourceName">billsIcon.png</string>
+							</object>
 							<reference key="IBUITabBar"/>
 						</object>
 						<reference key="IBUIParentViewController" ref="1034742383"/>
@@ -634,7 +650,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>UIApplication</string>
 					<string>UIResponder</string>
-					<string>{{372, 299}, {320, 480}}</string>
+					<string>{{467, 330}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
