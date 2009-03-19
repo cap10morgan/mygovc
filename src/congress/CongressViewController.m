@@ -49,6 +49,9 @@
 	self.tableView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
 	self.tableView.rowHeight = 50.0f;
 	
+	m_data = [[myGovAppDelegate sharedCongressData] retain];
+	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	
 	m_actionType = eActionReload;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
@@ -105,11 +108,7 @@
 
 - (void)viewWillAppear:(BOOL)animated 
 {
-	if ( nil == m_data )
-	{
-		m_data = [[myGovAppDelegate sharedCongressData] retain];
-		[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
-	}
+	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	
 	if ( ![m_data isDataAvailable] )
 	{
@@ -339,7 +338,7 @@
 {
 	if ( [m_data isDataAvailable] )
 	{
-		return [[m_data states] count];
+		return [[StateAbbreviations abbrList] count]; // [[m_data states] count];
 	}
 	else
 	{
@@ -352,6 +351,8 @@
 {
 	if ( [m_data isDataAvailable] )
 	{
+		return [StateAbbreviations abbrTableIndexList];
+/*		
 		// 50 index points is too many - cut it in half by simple
 		// NULL-ing out every odd entry title
 		NSMutableArray * tmpArray = [[[NSMutableArray alloc] initWithArray:[m_data states]] autorelease];
@@ -366,6 +367,7 @@
 		}
 		
 		return tmpArray; //[m_data states];
+ */
 	}
 	else
 	{
@@ -379,7 +381,9 @@
 	if ( [m_data isDataAvailable] )
 	{
 		// get full state name
-		return [StateAbbreviations nameFromAbbr:[[m_data states] objectAtIndex:section]];
+		return [[StateAbbreviations nameList] objectAtIndex:section];
+		// get full state name
+		//return [StateAbbreviations nameFromAbbr:[[m_data states] objectAtIndex:section]];
 	}
 	else
 	{
@@ -393,7 +397,8 @@
 {
 	if ( [m_data isDataAvailable] )
 	{
-		NSString *state = [[m_data states] objectAtIndex:section];
+		//NSString *state = [[m_data states] objectAtIndex:section];
+		NSString *state = [[StateAbbreviations abbrList] objectAtIndex:section];
 		switch (m_selectedChamber) 
 		{
 			default:
@@ -424,7 +429,8 @@
 	
 	if ( ![m_data isDataAvailable] ) return cell;
 	
-	NSString *state = [[m_data states] objectAtIndex:indexPath.section];
+	//NSString *state = [[m_data states] objectAtIndex:indexPath.section];
+	NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.section];
 	LegislatorContainer *legislator;
 	if ( eCongressChamberHouse == m_selectedChamber ) 
 	{
@@ -449,7 +455,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSString *state = [[m_data states] objectAtIndex:indexPath.section];
+	//NSString *state = [[m_data states] objectAtIndex:indexPath.section];
+	NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.section];
 	LegislatorContainer *legislator;
 	if ( eCongressChamberHouse == m_selectedChamber ) 
 	{

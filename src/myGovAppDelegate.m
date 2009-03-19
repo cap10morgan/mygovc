@@ -8,11 +8,14 @@
 
 #import "myGovAppDelegate.h"
 #import "CongressDataManager.h"
+#import "SpendingDataManager.h"
 
 @implementation myGovAppDelegate
 
 static myGovAppDelegate *s_myGovApp = NULL;
 static CongressDataManager *s_myCongressData = NULL;
+static SpendingDataManager *s_mySpendingData = NULL;
+
 
 @synthesize m_window;
 @synthesize m_tabBarController;
@@ -43,10 +46,16 @@ static CongressDataManager *s_myCongressData = NULL;
 
 + (CongressDataManager *)sharedCongressData
 {
-	if ( !s_myCongressData ) [[CongressDataManager alloc] initWithNotifyTarget:nil andSelector:nil];
+	if ( !s_myCongressData ) s_myCongressData = [[CongressDataManager alloc] initWithNotifyTarget:nil andSelector:nil];
 	return s_myCongressData;
 }
 
+
++ (SpendingDataManager *)sharedSpendingData
+{
+	if ( !s_mySpendingData ) s_mySpendingData = [[SpendingDataManager alloc] init];
+	return s_mySpendingData;
+}
 
 
 - (id)init 

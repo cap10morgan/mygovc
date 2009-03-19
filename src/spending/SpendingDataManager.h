@@ -8,6 +8,26 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum
+{
+	eSpendingSortDate,
+	eSpendingSortAgency,
+	eSpendingSortContractor,
+	eSpendingSortCategory,
+	eSpendingSortDollars,
+} SpendingSortMethod;
+
+
+typedef enum
+{
+	eSpendingDetailSummary,
+	eSpendingDetailLow,
+	eSpendingDetailMed,
+	eSpendingDetailHigh,
+	eSpendingDetailComplete,
+} SpendingDetail;
+
+
 
 @interface SpendingDataManager : NSObject 
 {
@@ -17,5 +37,10 @@
 
 @property (readonly) BOOL isDataAvailable;
 @property (readonly) BOOL isBusy;
+
++ (NSString *)dataCachePath;
++ (NSURL *)getURLForDistrict:(NSString *)district forYear:(NSInteger)year withDetail:(SpendingDetail)detail sortedBy:(SpendingSortMethod)order;
++ (NSURL *)getURLForState:(NSString *)state forYear:(NSInteger)year withDetail:(SpendingDetail)detail sortedBy:(SpendingSortMethod)order;
+
 
 @end

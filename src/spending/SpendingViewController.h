@@ -8,10 +8,22 @@
 
 #import <UIKit/UIKit.h>
 
+@class SpendingDataManager;
 
-@interface SpendingViewController : UIViewController 
+typedef enum
 {
+	eSQMDistrict,
+	eSQMState,
+	eSQMContractor,
+} SpendingQueryMethod;
 
+
+@interface SpendingViewController : UITableViewController <UIActionSheetDelegate>
+{
+@private
+	SpendingDataManager *m_data;
+	SpendingQueryMethod m_selectedQueryMethod;
+	UISegmentedControl *m_segmentCtrl;
 }
 
 @end

@@ -16,6 +16,9 @@
 @implementation StateAbbreviations
 
 static NSDictionary *s_states = NULL;
+static NSArray *s_sortedStateAbbr = NULL;
+static NSArray *s_sortedStateNames = NULL;
+static NSArray *s_statesAbbrTableIndexList = NULL;
 
 
 + (NSString *)nameFromAbbr:(NSString *)abbr
@@ -41,13 +44,54 @@ static NSDictionary *s_states = NULL;
 
 + (NSArray *)abbrList
 {
-	return [[self stateDict] allKeys];
+	if ( NULL == s_sortedStateAbbr )
+	{
+		s_sortedStateAbbr = [[[[self stateDict] allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] retain];
+	}
+	return s_sortedStateAbbr;
+}
+
+
++ (NSArray *)abbrTableIndexList
+{
+	if ( NULL == s_statesAbbrTableIndexList )
+	{
+		// 50+ index points is too many - cut it in half by simple
+		// NULL-ing out every odd entry title
+		NSMutableArray * tmpArray = [[NSMutableArray alloc] initWithArray:[self abbrList]];
+		NSUInteger numStates = [tmpArray count];
+		
+		for ( NSUInteger st = 0; st < numStates; ++st )
+		{
+			if ( ((st+1) % 2) ) // || !((st+1) % 3) )
+			{
+				[tmpArray replaceObjectAtIndex:st withObject:[NSString stringWithString:@""] ];
+			}
+		}
+		
+		s_statesAbbrTableIndexList = (NSArray *)tmpArray;
+	}
+	
+	return s_statesAbbrTableIndexList;
 }
 
 
 + (NSArray *)nameList
 {
-	return [[self stateDict] allValues];
+	if ( NULL == s_sortedStateNames )
+	{
+		// sort the name array using the sorted abbreviation list
+		// (so indices will correspond!)
+		NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:58];
+		NSEnumerator *abbrEnum = [[self abbrList] objectEnumerator];
+		id abbr;
+		while ( (abbr = [abbrEnum nextObject]) )
+		{
+			[tmpArray addObject:[self nameFromAbbr:abbr]];
+		}
+		s_sortedStateNames = (NSArray *)tmpArray;
+	}
+	return s_sortedStateNames;
 }
 
 
