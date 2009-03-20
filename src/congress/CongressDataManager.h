@@ -44,14 +44,21 @@
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;
 
+// legislators by state
 - (NSArray *)states;
 - (NSArray *)houseMembersInState:(NSString *)state;
 - (NSArray *)senateMembersInState:(NSString *)state;
 
+// legislators by district
+- (NSArray *)congressionalDistricts;
+- (LegislatorContainer *)districtRepresentative:(NSString *)district;
+
 // array of LegislativeCommittee objects
 - (NSArray *)legislatorCommittees:(LegislatorContainer *)legislator;
 
+// data cache control
 - (void)writeLegislatorDataToCache:(id)sender;
 - (void)updateCongressData;
+
 
 @end

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class SpendingDataManager;
+@class ProgressOverlayViewController;
 
 typedef enum
 {
@@ -24,6 +25,9 @@ typedef enum
 	SpendingDataManager *m_data;
 	SpendingQueryMethod m_selectedQueryMethod;
 	UISegmentedControl *m_segmentCtrl;
+	
+	ProgressOverlayViewController *m_HUD;
 }
+
 
 @end

@@ -14,7 +14,8 @@
 
 @implementation DistrictSpendingData
 
-@synthesize m_dataAvailable;
+@synthesize isDataAvailable;
+@synthesize isBusy;
 @synthesize m_district;
 @synthesize m_year;
 @synthesize m_districtRank;
@@ -48,7 +49,9 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 {
 	if ( self = [super init] )
 	{
-		m_dataAvailable = NO;
+		isDataAvailable = NO;
+		isBusy = NO;
+		
 		m_district = [[NSString alloc] initWithString:district];
 		m_year = 0;
 		m_districtRank = 0.0;
@@ -104,8 +107,11 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 
 
 // Asynchronous download of 
-- (void)downloadDataWithCallback:(SEL)sel onObject:(id)obj
+- (void)downloadDataWithCallback:(SEL)sel onObject:(id)obj synchronously:(BOOL)waitForData
 {
+	isDataAvailable = NO;
+	isBusy = YES;
+	
 	m_notifyTarget = obj;
 	m_notifySelector = sel;
 	
@@ -131,7 +137,35 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 												   sortedBy:eSpendingSortDollars];
 	
 	// kick off the download/parsing of XML data 
-	[m_xmlParser parseXML:detailSummaryURL withParserDelegate:self];
+	if ( !waitForData )
+	{
+		[m_xmlParser parseXML:detailSummaryURL withParserDelegate:self];
+	}
+	else
+	{
+		// download synchronously :-)
+		NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:detailSummaryURL];
+		
+		if ( nil == xmlParser ) 
+		{
+			isDataAvailable = NO;
+			isBusy = NO;
+			if ( nil != m_notifyTarget )
+			{
+				[m_notifyTarget performSelector:m_notifySelector withObject:self];
+			}
+			return;
+		}
+		
+		[xmlParser setDelegate:self];
+		isDataAvailable = [xmlParser parse];
+		isBusy = NO;
+		
+		if ( nil != m_notifyTarget )
+		{
+			[m_notifyTarget performSelector:m_notifySelector withObject:self];
+		}
+	}
 }
 
 
@@ -146,7 +180,8 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 
 - (void)xmlParseOp:(XMLParserOperation *)parseOp endedWith:(BOOL)success
 {
-	m_dataAvailable = success;
+	isDataAvailable = success;
+	isBusy = NO;
 	
 	if ( nil != m_notifyTarget )
 	{
@@ -154,7 +189,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	}
 	NSLog( @"Distric %@ XML parsing ended %@", m_district, (success ? @"successfully." : @" in failure!") );
 	
-	if ( m_dataAvailable )
+	if ( isDataAvailable )
 	{
 		// XXX - cache this data somewhere?
 	}

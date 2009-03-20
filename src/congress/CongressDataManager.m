@@ -18,6 +18,7 @@
 	- (void)beginDataDownload;
 	- (void)initFromDisk:(id)sender;
 	- (void)addLegislatorToInMemoryCache:(id)legislator release:(BOOL)flag;
+	- (NSDictionary *)districtDictionary;
 @end
 
 
@@ -25,6 +26,10 @@
 
 @synthesize isDataAvailable;
 @synthesize isBusy;
+
+// [KEY:state_district] -> [VALUE:legislator_container]
+static NSMutableDictionary *s_districts = NULL;
+
 
 static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
 //static NSString *kPVS_APIKey = @"e9c18da5999464958518614cfa7c6e1c";
@@ -126,6 +131,25 @@ static NSString *kTitleValue_Senator = @"Sen";
 }
 
 
+- (NSArray *)congressionalDistricts
+{
+	NSDictionary *districtDict = [self districtDictionary];
+	if ( nil == districtDict ) return nil;
+	
+	NSArray * dists = [[districtDict allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+	return dists;
+}
+
+
+- (LegislatorContainer *)districtRepresentative:(NSString *)district
+{
+	NSDictionary *districtDict = [self districtDictionary];
+	if ( nil == districtDict ) return nil;
+	
+	return [districtDict objectForKey:district];
+}
+
+
 - (NSArray *)legislatorCommittees:(LegislatorContainer *)legislator
 {
 	return [m_committees getCommitteeDataFor:legislator];
@@ -210,6 +234,8 @@ static NSString *kTitleValue_Senator = @"Sen";
 	
 	[self destroyDataCache];
 	
+	[s_districts release]; s_districts = NULL;
+	
 	[m_states release];
 	[m_house release];
 	[m_senate release];
@@ -223,6 +249,9 @@ static NSString *kTitleValue_Senator = @"Sen";
 	
 	[self beginDataDownload];
 }
+
+
+#pragma mark CongressDataManager Private
 
 
 - (void)destroyDataCache
@@ -308,6 +337,77 @@ static NSString *kTitleValue_Senator = @"Sen";
 }
 
 
+- (void)addLegislatorToInMemoryCache:(id)legislator release:(BOOL)flag
+{
+	LegislatorContainer *lc = legislator;
+	
+	// add this legislator to an appropriate array
+	NSMutableArray *stateArray;
+	if ( [[lc title] isEqualToString:kTitleValue_Senator] )
+	{
+		stateArray = [m_senate objectForKey:[lc state]];
+		if ( nil == stateArray ) 
+		{
+			stateArray = [[NSMutableArray alloc] initWithCapacity:2];
+			[m_senate setValue:stateArray forKey:[lc state]];
+		}
+		else
+		{
+			[stateArray retain];
+		}
+	}
+	else
+	{
+		stateArray = [m_house objectForKey:[lc state]];
+		if ( nil == stateArray ) 
+		{
+			stateArray = [[NSMutableArray alloc] initWithCapacity:8];
+			[m_house setValue:stateArray forKey:[lc state]];
+		}
+		else
+		{
+			[stateArray retain];
+		}
+	}
+	[stateArray addObject:lc];
+	[stateArray sortUsingSelector:@selector(districtCompare:)];
+	
+	[stateArray release];
+	
+	if ( flag ) [lc release];
+}
+
+
+- (NSDictionary *)districtDictionary
+{
+	if ( (NULL == s_districts) && isDataAvailable )
+	{
+		// allocate a new dictionary of district->legislator pairs
+		// (cache this shit because a giant linear algorithm through all US district is NOOO GOOD!)
+		s_districts = [[NSMutableDictionary alloc] initWithCapacity:480];
+		
+		// Painfully iterate through
+		NSEnumerator *houseEnum = [m_house objectEnumerator];
+		id stateArray;
+		while ( (stateArray = [houseEnum nextObject]) )
+		{
+			NSEnumerator *districtEnum = [(NSArray *)stateArray objectEnumerator];
+			id legislator;
+			while ( (legislator = [districtEnum nextObject]) )
+			{
+				LegislatorContainer *lc = (LegislatorContainer *)legislator;
+				NSString *districtStr = [NSString stringWithFormat:@"%@%.2d",[lc state],[[lc district] integerValue]];
+				[s_districts setValue:lc forKey:districtStr];
+			} // while (districts)
+		} // while ( states )
+	}
+	return s_districts;
+}
+
+
+#pragma mark XMLParserOperationDelegate Methods
+
+
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
 	if ( nil != m_notifyTarget )
@@ -359,47 +459,6 @@ static NSString *kTitleValue_Senator = @"Sen";
 		isBusy = NO;
 	}
 	
-}
-
-
-- (void)addLegislatorToInMemoryCache:(id)legislator release:(BOOL)flag
-{
-	LegislatorContainer *lc = legislator;
-	
-	// add this legislator to an appropriate array
-	NSMutableArray *stateArray;
-	if ( [[lc title] isEqualToString:kTitleValue_Senator] )
-	{
-		stateArray = [m_senate objectForKey:[lc state]];
-		if ( nil == stateArray ) 
-		{
-			stateArray = [[NSMutableArray alloc] initWithCapacity:2];
-			[m_senate setValue:stateArray forKey:[lc state]];
-		}
-		else
-		{
-			[stateArray retain];
-		}
-	}
-	else
-	{
-		stateArray = [m_house objectForKey:[lc state]];
-		if ( nil == stateArray ) 
-		{
-			stateArray = [[NSMutableArray alloc] initWithCapacity:8];
-			[m_house setValue:stateArray forKey:[lc state]];
-		}
-		else
-		{
-			[stateArray retain];
-		}
-	}
-	[stateArray addObject:lc];
-	[stateArray sortUsingSelector:@selector(districtCompare:)];
-	
-	[stateArray release];
-	
-	if ( flag ) [lc release];
 }
 
 

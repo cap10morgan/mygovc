@@ -7,15 +7,21 @@
 //
 #import "myGovAppDelegate.h"
 
-#import "SpendingViewController.h"
+#import "CongressDataManager.h"
+#import "DistrictSpendingData.h"
+#import "LegislatorContainer.h"
+#import "ProgressOverlayViewController.h"
 #import "SpendingDataManager.h"
+#import "SpendingViewController.h"
 #import "StateAbbreviations.h"
 
 
 @interface SpendingViewController (private)
+	- (void)dataManagerCallback:(id)sender;
 	- (void)queryMethodSwitch:(id)sender;
 	- (void)sortSpendingData;
 	- (void)findLocalSpenders:(id)sender;
+	- (void) deselectRow:(id)sender;
 @end
 
 @implementation SpendingViewController
@@ -39,6 +45,7 @@ static id s_alphabet[26] =
 - (void)dealloc 
 {
 	[m_data release];
+	[m_HUD release];
     [super dealloc];
 }
 
@@ -50,6 +57,10 @@ static id s_alphabet[26] =
 	self.title = @"Spending";
 	
 	self.tableView.rowHeight = 50.0f;
+	
+	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
+	[m_HUD show:NO];
+	[m_HUD setText:@"Waiting for data..." andIndicateProgress:YES];
 	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
@@ -99,6 +110,54 @@ static id s_alphabet[26] =
 }
 
 
+- (void)viewWillAppear:(BOOL)animated 
+{
+	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	
+	if ( ![m_data isDataAvailable] )
+	{
+		self.tableView.userInteractionEnabled = NO;
+	}
+	
+    [super viewWillAppear:animated];
+}
+
+
+- (void)viewDidAppear:(BOOL)animated 
+{
+	if ( [m_data isDataAvailable] )
+	{
+		self.tableView.userInteractionEnabled = YES;
+	}
+	else
+	{
+		[m_HUD show:YES]; // with whatever text is there...
+		[m_HUD setText:m_HUD.m_label.text andIndicateProgress:YES];
+	}
+	
+	// de-select the currently selected row
+	// (so the user can go back to the same district/state/contractor)
+	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+	
+	[super viewDidAppear:animated];
+}
+
+
+/*
+- (void)viewWillDisappear:(BOOL)animated 
+{
+	[super viewWillDisappear:animated];
+}
+*/
+
+/*
+- (void)viewDidDisappear:(BOOL)animated 
+{
+	[super viewDidDisappear:animated];
+}
+*/
+
+
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
@@ -108,6 +167,26 @@ static id s_alphabet[26] =
 
 
 #pragma mark SpendingViewController Private 
+
+
+- (void)dataManagerCallback:(id)sender
+{
+	NSLog( @"SpendingViewController: dataManagerCallback!" );
+	if ( [m_data isDataAvailable] )
+	{
+		[self.tableView reloadData];
+		[m_HUD show:NO];
+		self.tableView.userInteractionEnabled = YES;
+	}
+	else
+	{
+		// something interesting must have happened,
+		// update the user with some progress
+		self.tableView.userInteractionEnabled = NO;
+		[m_HUD show:YES];
+		[m_HUD setText:[NSString stringWithString:@"Waiting for data..."] andIndicateProgress:YES];
+	}
+}
 
 
 - (void)queryMethodSwitch: (id)sender
@@ -146,6 +225,14 @@ static id s_alphabet[26] =
 
 - (void)findLocalSpenders:(id)sender
 {
+}
+
+
+- (void) deselectRow:(id)sender
+{
+	// de-select the currently selected row
+	// (so the user can go back to the same row)
+	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
 
 
@@ -246,14 +333,14 @@ static id s_alphabet[26] =
 {
 	if ( [m_data isDataAvailable] )
 	{
-		//NSString *state = [[StateAbbreviations abbrList] objectAtIndex:section];
+		NSString *state = [[StateAbbreviations abbrList] objectAtIndex:section];
 		switch (m_selectedQueryMethod) 
 		{
 			default:
 			case eSQMDistrict:
-				return 1; // get number from SpendingDataManager
+				return [m_data numDistrictsInState:state];
 			case eSQMState:
-				return [[StateAbbreviations abbrList] count];
+				return [[StateAbbreviations abbrList] count]; // one row per state
 			case eSQMContractor:
 				return 1; // get number from SpendingDataManager
 		}
@@ -268,14 +355,18 @@ static id s_alphabet[26] =
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-    
 	static NSString *CellIdentifier = @"SpendingCell";
 	
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if ( cell == nil ) 
 	{
-		cell = [[UITableViewCell alloc] initWithFrame:CGRectZero];
+		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		cell.selectionStyle = UITableViewCellSelectionStyleGray;
+		cell.font = [UIFont systemFontOfSize:12];
 	}
+	
+	// setup custom cell!
+	// XXX - do this :-)
 	
 	if ( ![m_data isDataAvailable] )
 	{
@@ -283,8 +374,27 @@ static id s_alphabet[26] =
 		return cell;
 	}
 	
-	// setup custom cell!
-	// XXX - do this :-)
+	NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.section];
+	NSString *districtStr = [NSString stringWithFormat:@"%@%.2d",state,([m_data numDistrictsInState:state] > 1 ? (indexPath.row + 1) : indexPath.row)];
+	
+	DistrictSpendingData *dsd = [m_data getDistrictData:districtStr andWaitForDownload:NO];
+	if ( nil == dsd || ![dsd isDataAvailable] )
+	{
+		cell.text = [[[NSString alloc] initWithFormat:@"%@ (downloading...)",districtStr] autorelease];
+	}
+	else
+	{
+		NSInteger numDistricts = [[m_data congressionalDistricts] count];
+		NSString *legislatorName = [[[myGovAppDelegate sharedCongressData] districtRepresentative:districtStr] shortName];
+		NSString *txt = [[[NSString alloc] initWithFormat:@"%@ (%@) [$%.3gM] %d/%d ",
+									districtStr,
+									legislatorName,
+									dsd.m_totalDollarsObligated/(1000000),
+									(NSInteger)(dsd.m_districtRank),
+									numDistricts
+					] autorelease];
+		cell.text = txt;
+	}
 	
     return cell;
 }
@@ -293,6 +403,7 @@ static id s_alphabet[26] =
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	// XXX - do something !
+	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 }
 
 

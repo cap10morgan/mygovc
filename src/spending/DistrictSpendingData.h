@@ -22,7 +22,8 @@ typedef enum
 
 @interface DistrictSpendingData : NSObject <XMLParserOperationDelegate>
 {
-	BOOL       m_dataAvailable;
+	BOOL       isDataAvailable;
+	BOOL       isBusy;
 	
 	NSString  *m_district;
 	NSUInteger m_year;
@@ -47,7 +48,8 @@ typedef enum
 	SEL m_notifySelector;
 }
 
-@property (readonly) BOOL m_dataAvailable;
+@property (readonly) BOOL isDataAvailable;
+@property (readonly) BOOL isBusy;
 @property (readonly) NSString *m_district;
 @property (readonly) NSUInteger m_year;
 @property (readonly) CGFloat m_districtRank;
@@ -61,7 +63,8 @@ typedef enum
 - (NSDictionary *)topAgencies;
 - (NSDictionary *)topCategories;
 
-- (void)downloadDataWithCallback:(SEL)sel onObject:(id)obj;
+- (void)downloadDataWithCallback:(SEL)sel onObject:(id)obj synchronously:(BOOL)waitForData;
+
 
 @end
 

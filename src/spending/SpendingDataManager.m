@@ -7,8 +7,19 @@
 //
 
 #import "myGovAppDelegate.h"
-#import "SpendingDataManager.h"
+
+#import "CongressDataManager.h"
 #import "DistrictSpendingData.h"
+#import "SpendingDataManager.h"
+
+
+@interface SpendingDataManager (private)
+	- (void)timerFireMethod:(NSTimer *)timer;
+	- (void)downloadDistrictData:(DistrictSpendingData *)dsd;
+	//- (void)downloadStateData:(NSString *)state;
+	//- (void)downloadContractorData:(NSString *)contractor;
+@end
+
 
 @implementation SpendingDataManager
 
@@ -155,13 +166,148 @@ static NSString *kContractorKey = @"&company_name";
 {
 	if ( self == [super init] )
 	{
-		isDataAvailable = YES;
+		isDataAvailable = NO;
+		isBusy = NO;
 		
-		DistrictSpendingData *dsd = [[DistrictSpendingData alloc] initWithDistrict:@"MI02"];
-		[dsd downloadDataWithCallback:nil onObject:nil];
+		m_notifyTarget = nil;
+		m_districtSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:480];
+		m_stateSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:50];
+		m_contractorSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:100];
+		
+		m_downloadOperations = [[NSOperationQueue alloc] init];
+		[m_downloadOperations setMaxConcurrentOperationCount:5]; // only 5 downloads at a time!
+		
+		m_timer = nil;
+		
+		CongressDataManager *cdm = [myGovAppDelegate sharedCongressData];
+		if ( (nil == cdm) || (![cdm isDataAvailable]) )
+		{
+			// start a timer that will periodically check to see if
+			// congressional data is ready... no this is not the most
+			// efficient way of doing this...
+			m_timer = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
+			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+		}
 	}
 	return self;
 }
+
+
+- (void)dealloc
+{
+	[m_notifyTarget release];
+	[m_districtSpendingSummary release];
+	[m_stateSpendingSummary release];
+	[m_contractorSpendingSummary release];
+	
+	[m_downloadOperations release]; // XXX - stop current operations gracefully? 
+	
+	if ( nil != m_timer ) [m_timer invalidate];
+	
+	[super dealloc];
+}
+
+
+- (void)setNotifyTarget:(id)target withSelector:(SEL)sel
+{
+	[m_notifyTarget release];
+	m_notifyTarget = [target retain];
+	m_notifySelector = sel;
+}
+
+
+- (void)cancelAllDownloads
+{
+	[m_downloadOperations cancelAllOperations];
+}
+
+
+- (NSArray *)congressionalDistricts
+{
+	if ( ![self isDataAvailable] ) return nil;
+	
+	CongressDataManager *cdm = [myGovAppDelegate sharedCongressData];
+	return [cdm congressionalDistricts];
+}
+
+
+- (NSInteger)numDistrictsInState:(NSString *)state
+{
+	if ( ![self isDataAvailable] ) return 0;
+	
+	CongressDataManager *cdm = [myGovAppDelegate sharedCongressData];
+	NSArray *representatives = [cdm houseMembersInState:state];
+	if ( nil == representatives ) return 0;
+	else return [representatives count];
+}
+
+
+- (DistrictSpendingData *)getDistrictData:(NSString *)district andWaitForDownload:(BOOL)yesOrNo
+{
+	DistrictSpendingData *dsd = [m_districtSpendingSummary objectForKey:district];
+	
+	if ( nil == dsd )
+	{
+		dsd = [[DistrictSpendingData alloc] initWithDistrict:district];
+		[m_districtSpendingSummary setValue:dsd forKey:district];
+	}
+	
+	if ( ![dsd isDataAvailable] && ![dsd isBusy] )
+	{
+		// kick off a download operation
+		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																	  selector:@selector(downloadDistrictData:) object:dsd];
+		// Add the operation to our download management queue
+		[m_downloadOperations addOperation:theOp];
+	}
+	
+	return dsd;
+}
+
+
+// -(StateSpendingData *)getStateData:(NSString *)state andWaitForDownload:(BOOL)yesOrNo;
+// -(ContractorSpendingData *)getContractorData:(NSString *)contractor andWaitForDownload:(BOOL)yesOrNo;
+
+
+#pragma mark SpendingDataManager Private 
+
+
+- (void)timerFireMethod:(NSTimer *)timer
+{
+	if ( timer != m_timer ) return;
+	
+	CongressDataManager *cdm = [myGovAppDelegate sharedCongressData];
+	if ( (nil != cdm) && ([cdm isDataAvailable]) )
+	{
+		// stop this timer, and start downloading some spending data!
+		[timer invalidate];
+		m_timer = nil;
+		
+		isDataAvailable = YES;
+		if ( nil != m_notifyTarget )
+		{
+			[m_notifyTarget performSelector:m_notifySelector withObject:self];
+		}
+	}
+}
+
+
+- (void)downloadDistrictData:(DistrictSpendingData *)dsd
+{
+	NSLog( @"SpendingDataManager: downloading data for %@ FY%.4d...",dsd.m_district,dsd.m_year );
+	
+	[dsd downloadDataWithCallback:nil onObject:nil synchronously:YES];
+	
+	if ( nil == m_timer )
+	{
+		m_timer = [NSTimer timerWithTimeInterval:1.1 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
+		[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+	}
+}
+
+
+//- (void)downloadStateData:(NSString *)state;
+//- (void)downloadContractorData:(NSString *)contractor;
 
 
 @end
