@@ -1,5 +1,5 @@
 //
-//  DistrictSpendingData.m
+//  PlaceSpendingData.m
 //  myGovernment
 //
 //  Created by Jeremy C. Andrus on 3/18/09.
@@ -7,31 +7,43 @@
 //
 #import <Foundation/NSCalendar.h>
 
-#import "DistrictSpendingData.h"
+#import "PlaceSpendingData.h"
 #import "SpendingDataManager.h"
+#import "StateAbbreviations.h"
 #import "XMLParserOperation.h"
 
 
-@implementation DistrictSpendingData
+@interface PlaceSpendingData (private)
+	- (void)genericInit;
+@end
+
+
+@implementation PlaceSpendingData
 
 @synthesize isDataAvailable;
 @synthesize isBusy;
-@synthesize m_district;
+@synthesize m_place;
 @synthesize m_year;
-@synthesize m_districtRank;
+@synthesize m_rank;
 @synthesize m_totalDollarsObligated;
 @synthesize m_totalContractors;
 @synthesize m_totalTransactions;
+@synthesize m_placeType;
 
 static NSString *kName_Data = @"data";
 static NSString *kName_Record = @"record";
 
 static NSString *kName_Totals = @"totals";
 static NSString *kName_SummaryYear = @"fiscal_year";
+static NSString *kName_SummaryPercentFY = @"percent_of_fiscal_year";
 static NSString *kName_SummaryTotalDollars = @"total_ObligatedAmount";
 static NSString *kName_SummaryDistrictRank = @"rank_among_congressional_districts";
+static NSString *kName_SummaryStateRank = @"rank_among_states";
 static NSString *kName_SummaryNumContactors = @"number_of_contractors";
 static NSString *kName_SummaryNumTransactions = @"number_of_transactions";
+
+static NSString *kName_TopCDistWhereWorkPerformed = @"top_known_congressional_districts";
+static NSString *kName_CongressionalDistrict = @"congressional_district";
 
 static NSString *kName_TopCategories = @"top_products_or_services_sold";
 static NSString *kName_ContractCategory = @"product_or_service_category";
@@ -44,32 +56,56 @@ static NSString *kName_ContractCompany = @"contractor_parent_company";
 static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 
 
+#pragma mark PlaceSpendingData Private 
+
+
+- (void)genericInit
+{
+	isDataAvailable = NO;
+	isBusy = NO;
+	
+	m_year = 0;
+	m_rank = 0;
+	m_totalDollarsObligated = 0.0;
+	m_totalContractors = 0;
+	m_totalTransactions = 0;
+	
+	m_topCDists = [[NSMutableDictionary alloc] initWithCapacity:10];
+	m_topContractors = [[NSMutableDictionary alloc] initWithCapacity:10];
+	m_topAgencies = [[NSMutableDictionary alloc] initWithCapacity:10];
+	m_topCategories = [[NSMutableDictionary alloc] initWithCapacity:10];
+	
+	m_xmlParser = nil;
+	m_parsingData = NO;
+	m_parsingRecord = NO;
+	m_currentXMLStr = nil;
+	m_currentParseElement = eDSE_None;
+	
+	m_notifyTarget = nil;
+}
+
+
+#pragma mark PlaceSpendingData Public
 
 - (id)initWithDistrict:(NSString *)district
 {
 	if ( self = [super init] )
 	{
-		isDataAvailable = NO;
-		isBusy = NO;
-		
-		m_district = [[NSString alloc] initWithString:district];
-		m_year = 0;
-		m_districtRank = 0.0;
-		m_totalDollarsObligated = 0.0;
-		m_totalContractors = 0;
-		m_totalTransactions = 0;
-		
-		m_topContractors = [[NSMutableDictionary alloc] initWithCapacity:10];
-		m_topAgencies = [[NSMutableDictionary alloc] initWithCapacity:10];
-		m_topCategories = [[NSMutableDictionary alloc] initWithCapacity:10];
-		
-		m_xmlParser = nil;
-		m_parsingData = NO;
-		m_parsingRecord = NO;
-		m_currentXMLStr = nil;
-		m_currentParseElement = eDSE_None;
-		
-		m_notifyTarget = nil;
+		[self genericInit];
+		m_placeType = eSPT_District;
+		m_place = [[NSString alloc] initWithString:district];
+	}
+	return self;
+}
+
+
+- (id)initWithState:(NSString *)state 
+{
+	if ( self = [super init] )
+	{
+		[self genericInit];
+		m_placeType = eSPT_State;
+		m_place = [[NSString alloc] initWithString:state];
 	}
 	return self;
 }
@@ -77,7 +113,8 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 
 - (void)dealloc
 {
-	[m_district release];
+	[m_place release];
+	[m_topCDists release];
 	[m_topContractors release];
 	[m_topAgencies release];
 	[m_topCategories release];
@@ -85,6 +122,12 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	[m_currentXMLStr release];
 	[m_notifyTarget release];
 	[super dealloc];
+}
+
+
+- (NSDictionary *)topCDistsWhereWorkPerformed
+{
+	return (NSDictionary *)m_topCDists;
 }
 
 
@@ -131,10 +174,21 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	[gregorian release];
 	m_year = year;
 	
-	NSURL *detailSummaryURL = [SpendingDataManager getURLForDistrict:m_district 
-												   forYear:year 
-												   withDetail:eSpendingDetailSummary 
-												   sortedBy:eSpendingSortDollars];
+	NSURL *detailSummaryURL;
+	if ( eSPT_District == m_placeType )
+	{
+		detailSummaryURL = [SpendingDataManager getURLForDistrict:m_place 
+												forYear:year 
+												withDetail:eSpendingDetailSummary 
+												sortedBy:eSpendingSortDollars];
+	}
+	else if ( eSPT_State == m_placeType )
+	{
+		detailSummaryURL = [SpendingDataManager getURLForState:m_place
+												forYear:year 
+												withDetail:eSpendingDetailSummary 
+												sortedBy:eSpendingSortDollars];
+	}
 	
 	// kick off the download/parsing of XML data 
 	if ( !waitForData )
@@ -174,7 +228,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
-	NSLog( @"District %@ started XML parsing...",m_district );
+	NSLog( @"[PlaceSpendingData:%@] started XML parsing...",m_place );
 }
 
 
@@ -187,7 +241,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	{
 		[m_notifyTarget performSelector:m_notifySelector withObject:self];
 	}
-	NSLog( @"Distric %@ XML parsing ended %@", m_district, (success ? @"successfully." : @" in failure!") );
+	NSLog( @"[PlaceSpendingData:%@] XML parsing ended %@", m_place, (success ? @"successfully." : @" in failure!") );
 	
 	if ( isDataAvailable )
 	{
@@ -213,6 +267,10 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	{
 		m_currentParseElement = eDSE_Totals;
     }
+	else if ( m_parsingRecord && [elementName isEqualToString:kName_TopCDistWhereWorkPerformed] )
+	{
+		m_currentParseElement = eDSE_TopCongDistricts;
+	}
 	else if ( m_parsingRecord && [elementName isEqualToString:kName_TopAgencies] )
 	{
 		m_currentParseElement = eDSE_TopAgencies;
@@ -255,6 +313,10 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	{
 		m_currentParseElement = eDSE_None;
     }
+	else if ( m_parsingRecord && [elementName isEqualToString:kName_TopCDistWhereWorkPerformed] )
+	{
+		m_currentParseElement = eDSE_None;
+	}
 	else if ( m_parsingRecord && [elementName isEqualToString:kName_TopAgencies] )
 	{
 		m_currentParseElement = eDSE_None;
@@ -276,7 +338,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 					if ( [elementName isEqualToString:kName_SummaryYear] )
 					{
 						NSUInteger year =  [m_currentXMLStr integerValue];
-						//if ( year != m_year ) NSLog( @"District %@: year in returned data (%d) doesn't match current year (%d)!", m_district, year, m_year );
+						//if ( year != m_year ) NSLog( @"District %@: year in returned data (%d) doesn't match current year (%d)!", m_place, year, m_year );
 						m_year = year;
 					}
 					else if ( [elementName isEqualToString:kName_SummaryTotalDollars] )
@@ -285,7 +347,11 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 					}
 					else if ( [elementName isEqualToString:kName_SummaryDistrictRank] )
 					{
-						m_districtRank = [m_currentXMLStr doubleValue];
+						m_rank = (NSUInteger)[m_currentXMLStr integerValue];
+					}
+					else if ( [elementName isEqualToString:kName_SummaryStateRank] )
+					{
+						m_rank = (NSUInteger)[m_currentXMLStr integerValue];
 					}
 					else if ( [elementName isEqualToString:kName_SummaryNumContactors] )
 					{
@@ -294,6 +360,23 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 					else if ( [elementName isEqualToString:kName_SummaryNumTransactions] )
 					{
 						m_totalTransactions = [m_currentXMLStr integerValue];
+					}
+				}
+				break;
+			case eDSE_TopCongDistricts:
+				{
+					if ( [elementName isEqualToString:kName_CongressionalDistrict] )
+					{
+						// district name format from XML: "{State} {Dist} ({Representative})"
+						NSArray *components = [m_currentXMLStr componentsSeparatedByString:@" "];
+						if ( [components count] > 1 )
+						{
+							NSString *state = [StateAbbreviations abbrFromName:[components objectAtIndex:0]];
+							NSString *distStr = [components objectAtIndex:1];
+							if ( [distStr isEqualToString:@"At"] ) { distStr = @"00"; } // At Large district...
+							NSString *dist = [NSString stringWithFormat:@"%@%.2d",state,[distStr integerValue]];
+							[m_topCDists setValue:[NSNumber numberWithFloat:m_currentFloatVal] forKey:dist];
+						}
 					}
 				}
 				break;
@@ -340,7 +423,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 // XXX - handle XML parse errors in some sort of graceful way...
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError 
 {
-	NSLog( @"District %@ XMLParser error: %@",m_district,[parseError localizedDescription] );
+	NSLog( @"[PlaceSpendingData:%@] XMLParser error: %@",m_place,[parseError localizedDescription] );
 	if ( nil != m_notifyTarget )
 	{
 		[m_notifyTarget performSelector:m_notifySelector withObject:self];
@@ -350,7 +433,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 
 - (void)parser:(NSXMLParser *)parser validationErrorOccurred:(NSError *)validError 
 {
-	NSLog( @"District %@ XMLParser validation error: %@",m_district,[validError localizedDescription] );
+	NSLog( @"[PlaceSpendingData:%@] XMLParser validation error: %@",m_place,[validError localizedDescription] );
 	if ( nil != m_notifyTarget )
 	{
 		[m_notifyTarget performSelector:m_notifySelector withObject:self];

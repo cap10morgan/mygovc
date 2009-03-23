@@ -9,14 +9,13 @@
 #import "myGovAppDelegate.h"
 
 #import "CongressDataManager.h"
-#import "DistrictSpendingData.h"
+#import "PlaceSpendingData.h"
 #import "SpendingDataManager.h"
 
 
 @interface SpendingDataManager (private)
 	- (void)timerFireMethod:(NSTimer *)timer;
-	- (void)downloadDistrictData:(DistrictSpendingData *)dsd;
-	//- (void)downloadStateData:(NSString *)state;
+	- (void)downloadPlaceData:(PlaceSpendingData *)psd;
 	//- (void)downloadContractorData:(NSString *)contractor;
 @end
 
@@ -175,7 +174,7 @@ static NSString *kContractorKey = @"&company_name";
 		m_contractorSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:100];
 		
 		m_downloadOperations = [[NSOperationQueue alloc] init];
-		[m_downloadOperations setMaxConcurrentOperationCount:5]; // only 5 downloads at a time!
+		[m_downloadOperations setMaxConcurrentOperationCount:2]; // only 2 downloads at a time (for now...)
 		
 		m_timer = nil;
 		
@@ -185,7 +184,7 @@ static NSString *kContractorKey = @"&company_name";
 			// start a timer that will periodically check to see if
 			// congressional data is ready... no this is not the most
 			// efficient way of doing this...
-			m_timer = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
+			m_timer = [NSTimer timerWithTimeInterval:0.75 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
 			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
 		}
 	}
@@ -242,30 +241,64 @@ static NSString *kContractorKey = @"&company_name";
 }
 
 
-- (DistrictSpendingData *)getDistrictData:(NSString *)district andWaitForDownload:(BOOL)yesOrNo
+- (PlaceSpendingData *)getDistrictData:(NSString *)district andWaitForDownload:(BOOL)yesOrNo
 {
-	DistrictSpendingData *dsd = [m_districtSpendingSummary objectForKey:district];
+	PlaceSpendingData *dsd = [m_districtSpendingSummary objectForKey:district];
 	
 	if ( nil == dsd )
 	{
-		dsd = [[DistrictSpendingData alloc] initWithDistrict:district];
+		dsd = [[PlaceSpendingData alloc] initWithDistrict:district];
 		[m_districtSpendingSummary setValue:dsd forKey:district];
+		[dsd release]; // the dictionary holds the last reference...
 	}
 	
 	if ( ![dsd isDataAvailable] && ![dsd isBusy] )
 	{
 		// kick off a download operation
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																	  selector:@selector(downloadDistrictData:) object:dsd];
+																	  selector:@selector(downloadPlaceData:) object:dsd];
 		// Add the operation to our download management queue
 		[m_downloadOperations addOperation:theOp];
+		
+		if ( YES == yesOrNo )
+		{
+			// XXX - somehow wait for data to be downloaded and parsed...
+		}
 	}
 	
 	return dsd;
 }
 
 
-// -(StateSpendingData *)getStateData:(NSString *)state andWaitForDownload:(BOOL)yesOrNo;
+- (PlaceSpendingData *)getStateData:(NSString *)state andWaitForDownload:(BOOL)yesOrNo
+{
+	PlaceSpendingData *psd = [m_stateSpendingSummary objectForKey:state];
+	
+	if ( nil == psd )
+	{
+		psd = [[PlaceSpendingData alloc] initWithState:state];
+		[m_stateSpendingSummary setValue:psd forKey:state];
+		[psd release]; // the dictionary holds the last reference...
+	}
+	
+	if ( ![psd isDataAvailable] && ![psd isBusy] )
+	{
+		// kick off a download operation
+		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																	  selector:@selector(downloadPlaceData:) object:psd];
+		// Add the operation to our download management queue
+		[m_downloadOperations addOperation:theOp];
+		
+		if ( YES == yesOrNo )
+		{
+			// XXX - somehow wait for data to be downloaded and parsed...
+		}
+	}
+	
+	return psd;
+}
+
+
 // -(ContractorSpendingData *)getContractorData:(NSString *)contractor andWaitForDownload:(BOOL)yesOrNo;
 
 
@@ -292,15 +325,15 @@ static NSString *kContractorKey = @"&company_name";
 }
 
 
-- (void)downloadDistrictData:(DistrictSpendingData *)dsd
+- (void)downloadPlaceData:(PlaceSpendingData *)psd
 {
-	NSLog( @"SpendingDataManager: downloading data for %@ FY%.4d...",dsd.m_district,dsd.m_year );
+	NSLog( @"SpendingDataManager: downloading data for %@...",psd.m_place );
 	
-	[dsd downloadDataWithCallback:nil onObject:nil synchronously:YES];
+	[psd downloadDataWithCallback:nil onObject:nil synchronously:YES];
 	
 	if ( nil == m_timer )
 	{
-		m_timer = [NSTimer timerWithTimeInterval:1.1 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
+		m_timer = [NSTimer timerWithTimeInterval:0.75 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
 		[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
 	}
 }

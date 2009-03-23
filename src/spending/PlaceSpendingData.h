@@ -1,5 +1,5 @@
 //
-//  DistrictSpendingData.h
+//  PlaceSpendingData.h
 //  myGovernment
 //
 //  Created by Jeremy C. Andrus on 3/18/09.
@@ -14,25 +14,37 @@ typedef enum
 {
 	eDSE_None,
 	eDSE_Totals,
+	eDSE_TopCongDistricts,
 	eDSE_TopContractors,
 	eDSE_TopAgencies,
 	eDSE_TopCategories,
 } DistrictSummaryElement;
 
 
-@interface DistrictSpendingData : NSObject <XMLParserOperationDelegate>
+typedef enum
+{
+	eSPT_District,
+	eSPT_State,
+} SpendingPlaceType;
+
+
+
+@interface PlaceSpendingData : NSObject <XMLParserOperationDelegate>
 {
 	BOOL       isDataAvailable;
 	BOOL       isBusy;
 	
-	NSString  *m_district;
+	NSString  *m_place;
 	NSUInteger m_year;
-	CGFloat    m_districtRank;
+	NSUInteger m_rank;
 	CGFloat    m_totalDollarsObligated;
 	NSUInteger m_totalContractors;
 	NSUInteger m_totalTransactions;
 	
+	SpendingPlaceType    m_placeType;
+	
 @private
+	NSMutableDictionary *m_topCDists;
 	NSMutableDictionary *m_topContractors;
 	NSMutableDictionary *m_topAgencies;
 	NSMutableDictionary *m_topCategories;
@@ -50,15 +62,18 @@ typedef enum
 
 @property (readonly) BOOL isDataAvailable;
 @property (readonly) BOOL isBusy;
-@property (readonly) NSString *m_district;
+@property (readonly) NSString *m_place;
 @property (readonly) NSUInteger m_year;
-@property (readonly) CGFloat m_districtRank;
+@property (readonly) NSUInteger m_rank;
 @property (readonly) CGFloat m_totalDollarsObligated;
 @property (readonly) NSUInteger m_totalContractors;
 @property (readonly) NSUInteger m_totalTransactions;
+@property (readonly) SpendingPlaceType m_placeType;
 
 - (id)initWithDistrict:(NSString *)district;
+- (id)initWithState:(NSString *)state;
 
+- (NSDictionary *)topCDistsWhereWorkPerformed;
 - (NSDictionary *)topContractors;
 - (NSDictionary *)topAgencies;
 - (NSDictionary *)topCategories;

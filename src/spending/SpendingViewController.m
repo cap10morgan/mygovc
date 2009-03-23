@@ -8,8 +8,9 @@
 #import "myGovAppDelegate.h"
 
 #import "CongressDataManager.h"
-#import "DistrictSpendingData.h"
 #import "LegislatorContainer.h"
+#import "PlaceSpendingData.h"
+#import "PlaceSpendingTableCell.h"
 #import "ProgressOverlayViewController.h"
 #import "SpendingDataManager.h"
 #import "SpendingViewController.h"
@@ -357,46 +358,42 @@ static id s_alphabet[26] =
 {
 	static NSString *CellIdentifier = @"SpendingCell";
 	
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-	if ( cell == nil ) 
+	UITableViewCell *tcell;
+	if ( eSQMContractor == m_selectedQueryMethod )
 	{
-		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
-		cell.selectionStyle = UITableViewCellSelectionStyleGray;
-		cell.font = [UIFont systemFontOfSize:12];
-	}
-	
-	// setup custom cell!
-	// XXX - do this :-)
-	
-	if ( ![m_data isDataAvailable] )
-	{
-		cell.text = @"waiting...";
-		return cell;
-	}
-	
-	NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.section];
-	NSString *districtStr = [NSString stringWithFormat:@"%@%.2d",state,([m_data numDistrictsInState:state] > 1 ? (indexPath.row + 1) : indexPath.row)];
-	
-	DistrictSpendingData *dsd = [m_data getDistrictData:districtStr andWaitForDownload:NO];
-	if ( nil == dsd || ![dsd isDataAvailable] )
-	{
-		cell.text = [[[NSString alloc] initWithFormat:@"%@ (downloading...)",districtStr] autorelease];
+		tcell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+		if ( tcell == nil )
+		{
+			tcell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		}
+		//tcell.text = @"?!?";
 	}
 	else
 	{
-		NSInteger numDistricts = [[m_data congressionalDistricts] count];
-		NSString *legislatorName = [[[myGovAppDelegate sharedCongressData] districtRepresentative:districtStr] shortName];
-		NSString *txt = [[[NSString alloc] initWithFormat:@"%@ (%@) [$%.3gM] %d/%d ",
-									districtStr,
-									legislatorName,
-									dsd.m_totalDollarsObligated/(1000000),
-									(NSInteger)(dsd.m_districtRank),
-									numDistricts
-					] autorelease];
-		cell.text = txt;
+		PlaceSpendingTableCell *cell = (PlaceSpendingTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+		if ( cell == nil ) 
+		{
+			cell = [[[PlaceSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier detailTarget:self detailSelector:nil] autorelease];
+		}
+	
+		PlaceSpendingData *psd;
+		if ( eSQMState == m_selectedQueryMethod )
+		{
+			NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.row];
+			psd = [m_data getStateData:state andWaitForDownload:NO];
+		}
+		else if ( eSQMDistrict == m_selectedQueryMethod )
+		{
+			NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.section];
+			NSString *districtStr = [NSString stringWithFormat:@"%@%.2d",state,([m_data numDistrictsInState:state] > 1 ? (indexPath.row + 1) : indexPath.row)];
+			psd = [m_data getDistrictData:districtStr andWaitForDownload:NO];
+		}
+		
+		[cell setPlaceData:psd];
+		tcell = (UITableViewCell *)cell;
 	}
 	
-    return cell;
+	return tcell;
 }
 
 

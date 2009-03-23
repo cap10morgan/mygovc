@@ -28,7 +28,8 @@
 		01B4E05F0F6449BB00219672 /* ProgressOverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */; };
 		01B4E2200F64D6EC00219672 /* LegislatorHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */; };
 		01B4E2230F64D88000219672 /* LegislatorHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */; };
-		01B4F1760F71ED4B009742F8 /* DistrictSpendingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4F1750F71ED4B009742F8 /* DistrictSpendingData.m */; };
+		01BB71A10F7712C900E7065F /* PlaceSpendingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BB71A00F7712C900E7065F /* PlaceSpendingData.m */; };
+		01BB72460F773FD700E7065F /* PlaceSpendingTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BB72450F773FD700E7065F /* PlaceSpendingTableCell.m */; };
 		01BC2FAA0F5B84AD00E7ABD0 /* XMLParserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */; };
 		01BC2FE10F5B973B00E7ABD0 /* CongressDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */; };
 		01BC2FEC0F5BA34000E7ABD0 /* LegislatorContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */; };
@@ -77,8 +78,10 @@
 		01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LegislatorHeaderView.xib; path = src/congress/LegislatorHeaderView.xib; sourceTree = "<group>"; };
 		01B4E2210F64D88000219672 /* LegislatorHeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorHeaderViewController.h; path = src/congress/LegislatorHeaderViewController.h; sourceTree = "<group>"; };
 		01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorHeaderViewController.m; path = src/congress/LegislatorHeaderViewController.m; sourceTree = "<group>"; };
-		01B4F1740F71ED4B009742F8 /* DistrictSpendingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DistrictSpendingData.h; path = src/spending/DistrictSpendingData.h; sourceTree = "<group>"; };
-		01B4F1750F71ED4B009742F8 /* DistrictSpendingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DistrictSpendingData.m; path = src/spending/DistrictSpendingData.m; sourceTree = "<group>"; };
+		01BB719F0F7712C900E7065F /* PlaceSpendingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaceSpendingData.h; path = src/spending/PlaceSpendingData.h; sourceTree = "<group>"; };
+		01BB71A00F7712C900E7065F /* PlaceSpendingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlaceSpendingData.m; path = src/spending/PlaceSpendingData.m; sourceTree = "<group>"; };
+		01BB72440F773FD700E7065F /* PlaceSpendingTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaceSpendingTableCell.h; path = src/spending/PlaceSpendingTableCell.h; sourceTree = "<group>"; };
+		01BB72450F773FD700E7065F /* PlaceSpendingTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlaceSpendingTableCell.m; path = src/spending/PlaceSpendingTableCell.m; sourceTree = "<group>"; };
 		01BC2FA80F5B84AD00E7ABD0 /* XMLParserOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLParserOperation.h; path = src/common/XMLParserOperation.h; sourceTree = "<group>"; };
 		01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XMLParserOperation.m; path = src/common/XMLParserOperation.m; sourceTree = "<group>"; };
 		01BC2FDF0F5B973B00E7ABD0 /* CongressDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressDataManager.h; path = src/congress/CongressDataManager.h; sourceTree = "<group>"; };
@@ -178,12 +181,14 @@
 		0102D2DC0F58DB79005AE0EA /* spending */ = {
 			isa = PBXGroup;
 			children = (
+				01BB719F0F7712C900E7065F /* PlaceSpendingData.h */,
+				01BB71A00F7712C900E7065F /* PlaceSpendingData.m */,
 				0102D3000F58E31C005AE0EA /* SpendingViewController.h */,
 				0102D3010F58E31C005AE0EA /* SpendingViewController.m */,
 				01B119050F70B71E0076AFE0 /* SpendingDataManager.h */,
 				01B119060F70B71E0076AFE0 /* SpendingDataManager.m */,
-				01B4F1740F71ED4B009742F8 /* DistrictSpendingData.h */,
-				01B4F1750F71ED4B009742F8 /* DistrictSpendingData.m */,
+				01BB72440F773FD700E7065F /* PlaceSpendingTableCell.h */,
+				01BB72450F773FD700E7065F /* PlaceSpendingTableCell.m */,
 			);
 			name = spending;
 			sourceTree = "<group>";
@@ -354,7 +359,8 @@
 				0132E7500F68D22A00DF33DC /* CongressionalCommittees.m in Sources */,
 				01B118360F709EC70076AFE0 /* StateAbbreviations.m in Sources */,
 				01B119070F70B71E0076AFE0 /* SpendingDataManager.m in Sources */,
-				01B4F1760F71ED4B009742F8 /* DistrictSpendingData.m in Sources */,
+				01BB71A10F7712C900E7065F /* PlaceSpendingData.m in Sources */,
+				01BB72460F773FD700E7065F /* PlaceSpendingTableCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

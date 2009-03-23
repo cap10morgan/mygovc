@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class DistrictSpendingData;
+@class PlaceSpendingData;
 
 
 typedef enum
@@ -63,9 +63,10 @@ typedef enum
 
 - (NSArray *)congressionalDistricts;
 - (NSInteger)numDistrictsInState:(NSString *)state;
-- (DistrictSpendingData *)getDistrictData:(NSString *)district andWaitForDownload:(BOOL)yesOrNo;
 
-// -(StateSpendingData *)getStateData:(NSString *)state andWaitForDownload:(BOOL)yesOrNo;
+- (PlaceSpendingData *)getDistrictData:(NSString *)district andWaitForDownload:(BOOL)yesOrNo;
+- (PlaceSpendingData *)getStateData:(NSString *)state andWaitForDownload:(BOOL)yesOrNo;
+
 // -(ContractorSpendingData *)getContractorData:(NSString *)contractor andWaitForDownload:(BOOL)yesOrNo;
 
 @end
