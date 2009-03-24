@@ -193,12 +193,16 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	// kick off the download/parsing of XML data 
 	if ( !waitForData )
 	{
-		[m_xmlParser parseXML:detailSummaryURL withParserDelegate:self];
+		[m_xmlParser parseXML:detailSummaryURL withParserDelegate:self withStringEncoding:NSMacOSRomanStringEncoding];
 	}
 	else
 	{
 		// download synchronously :-)
-		NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:detailSummaryURL];
+		//NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:detailSummaryURL];
+		NSData *data = [NSData dataWithContentsOfURL:detailSummaryURL];
+		NSString *xmlStr = [[NSString alloc] initWithData:data encoding:NSMacOSRomanStringEncoding];
+		NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithData:[xmlStr dataUsingEncoding:NSUTF8StringEncoding]];
+		[xmlStr release];
 		
 		if ( nil == xmlParser ) 
 		{

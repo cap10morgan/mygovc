@@ -29,6 +29,7 @@
 	{
 		self.m_xmlDelegate = self;
 		self.m_opDelegate = self;
+		m_strEncoding = NSUTF8StringEncoding;
 	}
 	return self;
 }
@@ -43,6 +44,7 @@
 	}
 	self.m_opDelegate = [oDelegate retain];
 	self.m_xmlDelegate = self;
+	m_strEncoding = NSUTF8StringEncoding;
 	
 	return self;
 }
@@ -70,6 +72,7 @@
 	[self parseXML:m_xmlURL withParserDelegate:m_xmlDelegate];
 }
 
+
 - (void)parseXML: (NSURL *)url
 {
 	m_finished = NO;
@@ -83,11 +86,12 @@
 	[self parseXML:url withParserDelegate:m_xmlDelegate];
 }
 
+
 - (void)parseXML:(NSURL *)url withParserDelegate:(id)pDelegate
 {
 	m_finished = NO;
 	self.m_xmlURL = [url retain];
-	if ( (id)self != pDelegate )
+	if ( (id)self != pDelegate && nil != pDelegate )
 	{
 		self.m_xmlDelegate = [pDelegate retain];
 	}
@@ -100,12 +104,21 @@
 	// our 'downloadAndParse' method as a thread's "main" function
 	// somewhat auto-magically
 	NSInvocationOperation* xmlOp = [[NSInvocationOperation alloc] initWithTarget:self
-																		selector:@selector(downloadAndParse:) object:nil];
+																  selector:@selector(downloadAndParse:) 
+																  object:nil];
 	
     // Add the operation to the internal operation queue managed by the application delegate.
     [[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:xmlOp];
 	
 	[xmlOp release];
+}
+
+
+- (void)parseXML: (NSURL *)url withParserDelegate:(id)pDelegate withStringEncoding:(NSStringEncoding)encoding
+{
+	// custom string encoding request...
+	m_strEncoding = encoding;
+	[self parseXML:url withParserDelegate:pDelegate];
 }
 
 
@@ -115,7 +128,18 @@
 	
 	[m_opDelegate xmlParseOpStarted:self];
 	
-	m_xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:m_xmlURL];
+	if ( NSUTF8StringEncoding == m_strEncoding )
+	{
+		m_xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:m_xmlURL];
+	}
+	else
+	{
+		// custom string encoding... YUCK!
+		NSData *data = [NSData dataWithContentsOfURL:m_xmlURL];
+		NSString *xmlStr = [[NSString alloc] initWithData:data encoding:NSMacOSRomanStringEncoding];
+		m_xmlParser = [[NSXMLParser alloc] initWithData:[xmlStr dataUsingEncoding:NSUTF8StringEncoding]];
+		[xmlStr release];
+	}
 	
 	if ( nil == m_xmlParser ) 
 	{

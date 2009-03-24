@@ -57,7 +57,7 @@ static id s_alphabet[26] =
 	
 	self.title = @"Spending";
 	
-	self.tableView.rowHeight = 50.0f;
+	self.tableView.rowHeight = 40.0f;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
@@ -356,24 +356,25 @@ static id s_alphabet[26] =
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-	static NSString *CellIdentifier = @"SpendingCell";
+	static NSString *PlaceCellIdentifier = @"PlaceSpendingCell";
+	static NSString *CtorCellIdendifier = @"ContractorCell";
 	
 	UITableViewCell *tcell;
 	if ( eSQMContractor == m_selectedQueryMethod )
 	{
-		tcell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+		tcell = [tableView dequeueReusableCellWithIdentifier:CtorCellIdendifier];
 		if ( tcell == nil )
 		{
-			tcell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+			tcell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CtorCellIdendifier] autorelease];
 		}
 		//tcell.text = @"?!?";
 	}
 	else
 	{
-		PlaceSpendingTableCell *cell = (PlaceSpendingTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+		PlaceSpendingTableCell *cell = (PlaceSpendingTableCell *)[tableView dequeueReusableCellWithIdentifier:PlaceCellIdentifier];
 		if ( cell == nil ) 
 		{
-			cell = [[[PlaceSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier detailTarget:self detailSelector:nil] autorelease];
+			cell = [[[PlaceSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:PlaceCellIdentifier detailTarget:self detailSelector:nil] autorelease];
 		}
 	
 		PlaceSpendingData *psd;

@@ -30,6 +30,7 @@
 @private
 	// private XMLParser variable
 	NSXMLParser *m_xmlParser;
+	NSStringEncoding m_strEncoding;
 }
 
 @property (nonatomic, retain) id m_xmlDelegate;
@@ -43,6 +44,7 @@
 - (void)parseXML;
 - (void)parseXML: (NSURL *)url;
 - (void)parseXML: (NSURL *)url withParserDelegate: (id)pDelegate;
+- (void)parseXML: (NSURL *)url withParserDelegate: (id)pDelegate withStringEncoding:(NSStringEncoding)encoding;
 
 - (void)abort;
 
