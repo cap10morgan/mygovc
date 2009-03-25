@@ -47,6 +47,8 @@ typedef enum
 	
 	NSOperationQueue *m_downloadOperations;
 	NSTimer *m_timer;
+	BOOL m_shouldStopDownloads;
+	NSUInteger m_downloadsInFlight;
 	
 	id  m_notifyTarget;
 	SEL m_notifySelector;

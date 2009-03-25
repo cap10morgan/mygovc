@@ -171,6 +171,8 @@ static NSString *kContractorKey = @"&company_name";
 	{
 		isDataAvailable = NO;
 		isBusy = NO;
+		m_shouldStopDownloads = NO;
+		m_downloadsInFlight = 0;
 		
 		m_notifyTarget = nil;
 		m_districtSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:480];
@@ -221,7 +223,20 @@ static NSString *kContractorKey = @"&company_name";
 
 - (void)cancelAllDownloads
 {
+	NSLog( @"SpendingDataManager: Cancelling downloads..." );
 	[m_downloadOperations cancelAllOperations];
+	
+	if ( nil != m_timer ) 
+	{
+		[m_timer invalidate]; 
+		m_timer = nil;
+	}
+	
+	// completely kill this Queue, and re-create it...
+	[m_downloadOperations release];
+	
+	m_downloadOperations = [[NSOperationQueue alloc] init];
+	[m_downloadOperations setMaxConcurrentOperationCount:kMAX_CONCURRENT_DOWNLOADS];
 }
 
 
@@ -320,6 +335,9 @@ static NSString *kContractorKey = @"&company_name";
 		[timer invalidate];
 		m_timer = nil;
 		
+		if ( m_shouldStopDownloads ) m_downloadsInFlight = 0;
+		m_shouldStopDownloads = NO;
+		
 		isDataAvailable = YES;
 		if ( nil != m_notifyTarget )
 		{
@@ -331,6 +349,9 @@ static NSString *kContractorKey = @"&company_name";
 
 - (void)addOperationToQueue:(NSInvocationOperation *)op
 {
+	// short-circuit to wait for all downloads to be stopped!
+	if ( m_shouldStopDownloads ) return;
+	
 	// If there are too many of these operations in memory,
 	// let's stop everything and send up a notification that will
 	// hopefully re-start the really necessary ones.
@@ -340,16 +361,13 @@ static NSString *kContractorKey = @"&company_name";
 	// the perceived download time, we'll cheat and re-start the download
 	// of data that is currently waiting to be displayed.
 	// 
-	if ( [[m_downloadOperations operations] count] > kMAX_OPS_IN_QUEUE )
+	if ( ++m_downloadsInFlight > kMAX_OPS_IN_QUEUE )
 	{
-		[m_downloadOperations cancelAllOperations];
-		if ( nil != m_timer ) 
-		{
-			[m_timer invalidate]; 
-			m_timer = nil;
-		}
+		m_shouldStopDownloads = YES;
+		[self cancelAllDownloads];
 		m_timer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
 		[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+		return; // don't add it!! (let the caller re-add it later)
 	}
 	
 	// Add the operation to our download management queue
@@ -359,6 +377,7 @@ static NSString *kContractorKey = @"&company_name";
 
 - (void)downloadPlaceData:(PlaceSpendingData *)psd
 {
+	--m_downloadsInFlight;
 	NSLog( @"SpendingDataManager: downloading data for %@...",psd.m_place );
 	
 	[psd downloadDataWithCallback:nil onObject:nil synchronously:YES];

@@ -135,6 +135,9 @@ enum
 
 - (void)setupLabelAndActivityViews
 {
+	// 
+	// XXX - use a critical section here!
+	// 
 	[m_label removeFromSuperview];
 	[m_activityWheel removeFromSuperview];
 	
@@ -212,6 +215,10 @@ enum
 - (void)setNewText:(id)txt
 {
 	if ( nil == txt ) return;
+	
+	// 
+	// XXX - use a critical section!
+	// 
 	
 	NSString *text = [[NSString alloc] initWithString:(NSString *)txt];
 	
