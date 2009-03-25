@@ -30,7 +30,10 @@ typedef enum
 	eSpendingDetailComplete,
 } SpendingDetail;
 
-
+// 
+// Top 100 Contractors for 2009:
+// http://www.usaspending.gov/fpds/fpds.php?fiscal_year=2009&sortby=f&datype=T&reptype=r&database=fpds&detail=0&max_records=100
+// 
 
 @interface SpendingDataManager : NSObject 
 {

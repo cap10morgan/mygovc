@@ -136,7 +136,7 @@
 	{
 		// custom string encoding... YUCK!
 		NSData *data = [NSData dataWithContentsOfURL:m_xmlURL];
-		NSString *xmlStr = [[NSString alloc] initWithData:data encoding:NSMacOSRomanStringEncoding];
+		NSString *xmlStr = [[NSString alloc] initWithData:data encoding:m_strEncoding];
 		m_xmlParser = [[NSXMLParser alloc] initWithData:[xmlStr dataUsingEncoding:NSUTF8StringEncoding]];
 		[xmlStr release];
 	}

@@ -19,6 +19,17 @@
 @end
 
 
+enum
+{
+	eTAG_LABEL    = 111,
+	eTAG_ACTIVITY = 222,
+};
+
+
+@interface ProgressOverlayViewController (private)
+	- (void)setupLabelAndActivityViews;
+@end
+
 
 @implementation ProgressOverlayViewController
 
@@ -40,52 +51,21 @@
 }
 
 
-// The designated initializer. Override to perform setup that is required before the view is loaded.
-/*
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil 
-{
-	if ( self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil] ) 
-	{
-		// Custom initialization
-	}
-	return self;
-}
-*/
-
 - (id)initWithWindow:(UIView *)window
 {
 	if ( self = [super init] )
 	{
 		m_window = [window retain];
 		
-		//CGRect appFrame = [[UIScreen mainScreen] applicationFrame];
 		ProgressOverlayView *overlayView = [[ProgressOverlayView alloc] initWithFrame:m_window.frame];
 		overlayView.backgroundColor = [UIColor clearColor];
 		//[overlayView setFrame:m_window.frame];
 		self.view = overlayView;
 		[overlayView release];
 		
-		m_activityWheel = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-		m_activityWheel.hidesWhenStopped = YES;
-		[m_activityWheel setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
-		[m_activityWheel setCenter:CGPointMake(100.0f, 20.0f)];
-		[m_activityWheel setTag:222];
-		[self.view addSubview:m_activityWheel];
-		[m_activityWheel release];
-		
-		m_label = [[UILabel alloc] initWithFrame:CGRectMake(0.0f,40.0f,200.0f,160.0f)];
-		m_label.font = [UIFont boldSystemFontOfSize:26.0f];
-		m_label.adjustsFontSizeToFitWidth = YES;
-		m_label.numberOfLines = 3;
-		m_label.backgroundColor = [UIColor clearColor];
-		m_label.lineBreakMode = UILineBreakModeWordWrap;
-		m_label.textAlignment = UITextAlignmentCenter;
-		m_label.textColor = [UIColor whiteColor];
-		m_label.shadowColor = [UIColor blackColor];
-		m_label.shadowOffset = CGSizeMake(0.0f, -1.0f);
-		[m_label setTag:111];
-		[self.view addSubview:m_label];
-		[m_label release];
+		m_label = nil;
+		m_activityWheel = nil;
+		[self setupLabelAndActivityViews];
 	}
 	return self;
 }
@@ -120,8 +100,10 @@
 	ProgressOverlayView *pov = (ProgressOverlayView *)(self.view);
 	[pov setShouldAnimate:shouldAnimate];
 	
-	[self.view setNeedsDisplay];
-	[self.view performSelector:@selector(setNewText:) withObject:text];	
+	[self setupLabelAndActivityViews];
+	
+	[pov performSelector:@selector(setNewText:) withObject:text];
+	[pov setNeedsDisplay];
 }
 
 
@@ -148,8 +130,41 @@
 }
 
 
+#pragma mark ProgressOverlayViewController Private
+
+
+- (void)setupLabelAndActivityViews
+{
+	[m_label removeFromSuperview];
+	[m_activityWheel removeFromSuperview];
+	
+	m_activityWheel = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+	m_activityWheel.hidesWhenStopped = YES;
+	[m_activityWheel setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
+	[m_activityWheel setCenter:CGPointMake(100.0f, 20.0f)];
+	[m_activityWheel setTag:eTAG_ACTIVITY];
+	[self.view addSubview:m_activityWheel];
+	[m_activityWheel release];
+	
+	m_label = [[UILabel alloc] initWithFrame:CGRectMake(0.0f,40.0f,200.0f,160.0f)];
+	m_label.font = [UIFont boldSystemFontOfSize:26.0f];
+	m_label.adjustsFontSizeToFitWidth = YES;
+	m_label.numberOfLines = 3;
+	m_label.backgroundColor = [UIColor clearColor];
+	m_label.lineBreakMode = UILineBreakModeWordWrap;
+	m_label.textAlignment = UITextAlignmentCenter;
+	m_label.textColor = [UIColor whiteColor];
+	m_label.shadowColor = [UIColor blackColor];
+	m_label.shadowOffset = CGSizeMake(0.0f, -1.0f);
+	[m_label setTag:eTAG_LABEL];
+	[self.view addSubview:m_label];
+	[m_label release];
+}
+
 @end
 
+
+#pragma mark ProgressOverlayView
 
 
 @implementation ProgressOverlayView
@@ -166,7 +181,7 @@
     float radius = 7.0f;
     
     CGContextBeginPath(context);
-    CGContextSetGrayFillColor(context, 0.1, 0.9);
+    CGContextSetGrayFillColor(context, 0.1f, 0.9f);
     CGContextMoveToPoint(context, CGRectGetMinX(rect) + radius, CGRectGetMinY(rect));
     CGContextAddArc(context, CGRectGetMaxX(rect) - radius, CGRectGetMinY(rect) + radius, radius, 3 * M_PI / 2, 0, 0);
     CGContextAddArc(context, CGRectGetMaxX(rect) - radius, CGRectGetMaxY(rect) - radius, radius, 0, M_PI / 2, 0);
@@ -196,18 +211,16 @@
 
 - (void)setNewText:(id)txt
 {
-	NSString *text = (NSString *)txt;
-	if ( nil == txt )
-	{
-		[self setNeedsDisplay];
-		return;
-	}
+	if ( nil == txt ) return;
 	
-	UILabel *lbl = (UILabel *)[self viewWithTag:111];
-	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:222];
+	NSString *text = [[NSString alloc] initWithString:(NSString *)txt];
+	
+	UILabel *lbl = (UILabel *)[self viewWithTag:eTAG_LABEL];
+	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
 	
 	// set the text
-	lbl.text = text;
+	[lbl setText:text];
+	[lbl setNeedsDisplay];
 	
 	// get a rectangle which can minimally contain the text
 	CGSize fontSz = [text sizeWithFont:lbl.font constrainedToSize:CGSizeMake(200.0f,200.0f) lineBreakMode:UILineBreakModeWordWrap];
@@ -225,7 +238,7 @@
 	[UIView setAnimationBeginsFromCurrentState:YES];
 	[UIView beginAnimations:nil context:UIGraphicsGetCurrentContext()];
 	[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
-	[UIView setAnimationDuration:0.25];
+	[UIView setAnimationDuration:0.20f];
 	
 	// re-center the activity indicator
 	[activity setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
@@ -246,14 +259,14 @@
 		[activity stopAnimating];
 	}
 	
-	[self performSelector:@selector(setNewText:) withObject:nil afterDelay:0.10f];
+	[text release];
 }
 
 
 - (void)hideView:(id)sender
 {
-	UILabel *lbl = (UILabel *)[self viewWithTag:111];
-	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:222];
+	UILabel *lbl = (UILabel *)[self viewWithTag:eTAG_LABEL];
+	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
 	
 	if ( self == sender )
 	{
@@ -264,7 +277,7 @@
 		[UIView setAnimationBeginsFromCurrentState:YES];
 		[UIView beginAnimations:nil context:UIGraphicsGetCurrentContext()];
 		[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
-		[UIView setAnimationDuration:0.25];
+		[UIView setAnimationDuration:0.20f];
 		
 		[lbl setFrame:CGRectZero];
 		[activity setFrame:CGRectZero];
@@ -273,7 +286,7 @@
 		[UIView commitAnimations];
 	
 		[self performSelector:@selector(hideView:) withObject:self afterDelay:0.30f];
-		[self setNeedsDisplay];
+		//[self setNeedsDisplay];
 	}
 }
 

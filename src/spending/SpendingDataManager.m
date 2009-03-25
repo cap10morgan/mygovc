@@ -15,6 +15,7 @@
 
 @interface SpendingDataManager (private)
 	- (void)timerFireMethod:(NSTimer *)timer;
+	- (void)addOperationToQueue:(NSInvocationOperation *)op;
 	- (void)downloadPlaceData:(PlaceSpendingData *)psd;
 	//- (void)downloadContractorData:(NSString *)contractor;
 @end
@@ -24,6 +25,9 @@
 
 @synthesize isDataAvailable;
 @synthesize isBusy;
+
+static int kMAX_CONCURRENT_DOWNLOADS = 2;
+static int kMAX_OPS_IN_QUEUE = 10;
 
 static NSString *kUSASpending_fpdsXML = @"http://www.usaspending.gov/fpds/fpds.php?datype=X";
 
@@ -174,7 +178,7 @@ static NSString *kContractorKey = @"&company_name";
 		m_contractorSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:100];
 		
 		m_downloadOperations = [[NSOperationQueue alloc] init];
-		[m_downloadOperations setMaxConcurrentOperationCount:2]; // only 2 downloads at a time (for now...)
+		[m_downloadOperations setMaxConcurrentOperationCount:kMAX_CONCURRENT_DOWNLOADS];
 		
 		m_timer = nil;
 		
@@ -257,8 +261,8 @@ static NSString *kContractorKey = @"&company_name";
 		// kick off a download operation
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																	  selector:@selector(downloadPlaceData:) object:dsd];
-		// Add the operation to our download management queue
-		[m_downloadOperations addOperation:theOp];
+		
+		[self addOperationToQueue:theOp];
 		
 		if ( YES == yesOrNo )
 		{
@@ -286,8 +290,8 @@ static NSString *kContractorKey = @"&company_name";
 		// kick off a download operation
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																	  selector:@selector(downloadPlaceData:) object:psd];
-		// Add the operation to our download management queue
-		[m_downloadOperations addOperation:theOp];
+		
+		[self addOperationToQueue:theOp];
 		
 		if ( YES == yesOrNo )
 		{
@@ -325,12 +329,43 @@ static NSString *kContractorKey = @"&company_name";
 }
 
 
+- (void)addOperationToQueue:(NSInvocationOperation *)op
+{
+	// If there are too many of these operations in memory,
+	// let's stop everything and send up a notification that will
+	// hopefully re-start the really necessary ones.
+	// 
+	// This situation occurs when a user flicks through the spending
+	// area data table really fast. Instead of hogging RAM and slowing
+	// the perceived download time, we'll cheat and re-start the download
+	// of data that is currently waiting to be displayed.
+	// 
+	if ( [[m_downloadOperations operations] count] > kMAX_OPS_IN_QUEUE )
+	{
+		[m_downloadOperations cancelAllOperations];
+		if ( nil != m_timer ) 
+		{
+			[m_timer invalidate]; 
+			m_timer = nil;
+		}
+		m_timer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
+		[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+	}
+	
+	// Add the operation to our download management queue
+	[m_downloadOperations addOperation:op];
+}
+
+
 - (void)downloadPlaceData:(PlaceSpendingData *)psd
 {
 	NSLog( @"SpendingDataManager: downloading data for %@...",psd.m_place );
 	
 	[psd downloadDataWithCallback:nil onObject:nil synchronously:YES];
 	
+	// don't fire one of these every time, the timer essentially 
+	// aggregates the calls to the notify target to prevent thread
+	// synchronization and system instability issues 
 	if ( nil == m_timer )
 	{
 		m_timer = [NSTimer timerWithTimeInterval:0.75 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
@@ -339,7 +374,6 @@ static NSString *kContractorKey = @"&company_name";
 }
 
 
-//- (void)downloadStateData:(NSString *)state;
 //- (void)downloadContractorData:(NSString *)contractor;
 
 
