@@ -8,6 +8,8 @@
 #import "myGovAppDelegate.h"
 
 #import "CongressDataManager.h"
+#import "ContractorSpendingData.h"
+#import "ContractorSpendingTableCell.h"
 #import "LegislatorContainer.h"
 #import "PlaceSpendingData.h"
 #import "PlaceSpendingTableCell.h"
@@ -26,14 +28,6 @@
 @end
 
 @implementation SpendingViewController
-
-
-static id s_alphabet[26] = 
-{
-	@"A",@"B",@"C",@"D",@"E",@"F",@"G",@"H",@"I",
-	@"J",@"K",@"L",@"M",@"N",@"O",@"P",@"Q",@"R",
-	@"S",@"T",@"U",@"V",@"W",@"X",@"Y",@"Z"
-};
 
 
 - (void)didReceiveMemoryWarning 
@@ -58,6 +52,8 @@ static id s_alphabet[26] =
 	self.title = @"Spending";
 	
 	self.tableView.rowHeight = 40.0f;
+	
+	m_sortOrder = eSpendingSortDollars;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
@@ -221,6 +217,36 @@ static id s_alphabet[26] =
 
 - (void)sortSpendingData
 {
+	if ( m_selectedQueryMethod != eSQMContractor )
+	{
+		// XXX - sorting not supported on other query types
+		return;
+	}
+	
+	NSMutableString *sortByName = [[NSMutableString alloc] initWithString:@"Sort By Name"];
+	NSMutableString *sortByDollars = [[NSMutableString alloc] initWithString:@"Sort By Dollars"];
+	
+	switch ( m_sortOrder )
+	{
+		default:
+		case eSpendingSortDollars:
+			[sortByDollars appendString:@" (*)"];
+			break;
+		case eSpendingSortContractor:
+			[sortByName appendString:@" (*)"];
+			break;
+	}
+	
+	UIActionSheet *sortAlert =
+	[[UIActionSheet alloc] initWithTitle:@"Sort Spending Data"
+						   delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
+						   otherButtonTitles:sortByDollars,sortByName,nil,nil,nil];
+	
+	// use the same style as the nav bar
+	sortAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
+	
+	[sortAlert showInView:self.view];
+	[sortAlert release];
 }
 
 
@@ -240,19 +266,29 @@ static id s_alphabet[26] =
 #pragma mark UIActionSheetDelegate methods
 
 
-// action sheet callback: maybe start a re-download on congress data
+// action sheet callback: choose a sort method for spending data!
 - (void)actionSheet:(UIActionSheet *)modalView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
 	switch ( buttonIndex )
 	{
+		// sort by dollars
 		case 0:
-			// XXX 
+			m_sortOrder = eSpendingSortDollars;
+			break;
+		// sort by name
 		case 1:
-			// XXX 
+			m_sortOrder = eSpendingSortContractor;
+			break;
 		case 2:
 			// XXX
 		default:
 			break;
+	}
+	if ( [m_data isDataAvailable] )
+	{
+		[self.tableView reloadData];
+		NSUInteger idx[2] = {0,0};
+		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
 	}
 }
 
@@ -264,7 +300,7 @@ static id s_alphabet[26] =
 {
 	if ( m_selectedQueryMethod == eSQMContractor )
 	{
-		return 26; // XXX - get number of categories from SpendingDataManager...
+		return 1; // XXX - get number of categories from SpendingDataManager?
 	}
 	else if ( m_selectedQueryMethod == eSQMState )
 	{
@@ -285,7 +321,8 @@ static id s_alphabet[26] =
 		if ( m_selectedQueryMethod == eSQMContractor )
 		{
 			// XXX - get categories from SpendingDataManager...
-			return [NSArray arrayWithObjects:s_alphabet count:26];
+			//return [NSArray arrayWithObjects:s_alphabet count:26];
+			return nil; 
 		}
 		else if ( m_selectedQueryMethod == eSQMState )
 		{
@@ -309,7 +346,7 @@ static id s_alphabet[26] =
 	{
 		if ( m_selectedQueryMethod == eSQMContractor )
 		{
-			if ( section < 26 ) return s_alphabet[section];
+			//if ( section < 26 ) return s_alphabet[section];
 			return nil;
 		}
 		else if ( m_selectedQueryMethod == eSQMState )
@@ -343,7 +380,10 @@ static id s_alphabet[26] =
 			case eSQMState:
 				return [[StateAbbreviations abbrList] count]; // one row per state
 			case eSQMContractor:
-				return 1; // get number from SpendingDataManager
+			{
+				NSInteger cnt = [[m_data top100ContractorsSortedBy:m_sortOrder] count];
+				return (cnt > 0 ? cnt : 1); // get number from SpendingDataManager
+			}
 		}
 	}
 	else
@@ -362,12 +402,15 @@ static id s_alphabet[26] =
 	UITableViewCell *tcell;
 	if ( eSQMContractor == m_selectedQueryMethod )
 	{
-		tcell = [tableView dequeueReusableCellWithIdentifier:CtorCellIdendifier];
-		if ( tcell == nil )
+		ContractorSpendingTableCell *cell = (ContractorSpendingTableCell *)[tableView dequeueReusableCellWithIdentifier:CtorCellIdendifier];
+		if ( cell == nil )
 		{
-			tcell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CtorCellIdendifier] autorelease];
+			cell = [[[ContractorSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CtorCellIdendifier detailTarget:self detailSelector:nil] autorelease];
 		}
-		//tcell.text = @"?!?";
+		
+		ContractorInfo *ctrInfo = [m_data contractorData:indexPath.row whenSortedBy:m_sortOrder];
+		[cell setContractor:ctrInfo];
+		tcell = (UITableViewCell *)cell;
 	}
 	else
 	{

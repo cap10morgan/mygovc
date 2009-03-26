@@ -17,6 +17,8 @@
 		0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D40A0F58F2D2005AE0EA /* CongressViewController.m */; };
 		011592C40F6A36D2008BECCD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 011592C30F6A36D2008BECCD /* Default.png */; };
 		0132E7500F68D22A00DF33DC /* CongressionalCommittees.m in Sources */ = {isa = PBXBuildFile; fileRef = 0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */; };
+		0168727D0F7B15EE00D23E78 /* ContractorSpendingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */; };
+		0168730A0F7B34E100D23E78 /* ContractorSpendingTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 016873090F7B34E100D23E78 /* ContractorSpendingTableCell.m */; };
 		017C22500F721824008CA4ED /* billsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224D0F721824008CA4ED /* billsIcon.png */; };
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
 		017C22520F721824008CA4ED /* spendingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224F0F721824008CA4ED /* spendingIcon.png */; };
@@ -63,6 +65,10 @@
 		011592C30F6A36D2008BECCD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		0132E74E0F68D22A00DF33DC /* CongressionalCommittees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressionalCommittees.h; path = src/congress/CongressionalCommittees.h; sourceTree = "<group>"; };
 		0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressionalCommittees.m; path = src/congress/CongressionalCommittees.m; sourceTree = "<group>"; };
+		0168727B0F7B15EE00D23E78 /* ContractorSpendingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContractorSpendingData.h; path = src/spending/ContractorSpendingData.h; sourceTree = "<group>"; };
+		0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContractorSpendingData.m; path = src/spending/ContractorSpendingData.m; sourceTree = "<group>"; };
+		016873080F7B34E100D23E78 /* ContractorSpendingTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContractorSpendingTableCell.h; path = src/spending/ContractorSpendingTableCell.h; sourceTree = "<group>"; };
+		016873090F7B34E100D23E78 /* ContractorSpendingTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContractorSpendingTableCell.m; path = src/spending/ContractorSpendingTableCell.m; sourceTree = "<group>"; };
 		017C224D0F721824008CA4ED /* billsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = billsIcon.png; path = res/billsIcon.png; sourceTree = "<group>"; };
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
 		017C224F0F721824008CA4ED /* spendingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spendingIcon.png; path = res/spendingIcon.png; sourceTree = "<group>"; };
@@ -189,6 +195,10 @@
 				01B119060F70B71E0076AFE0 /* SpendingDataManager.m */,
 				01BB72440F773FD700E7065F /* PlaceSpendingTableCell.h */,
 				01BB72450F773FD700E7065F /* PlaceSpendingTableCell.m */,
+				0168727B0F7B15EE00D23E78 /* ContractorSpendingData.h */,
+				0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */,
+				016873080F7B34E100D23E78 /* ContractorSpendingTableCell.h */,
+				016873090F7B34E100D23E78 /* ContractorSpendingTableCell.m */,
 			);
 			name = spending;
 			sourceTree = "<group>";
@@ -361,6 +371,8 @@
 				01B119070F70B71E0076AFE0 /* SpendingDataManager.m in Sources */,
 				01BB71A10F7712C900E7065F /* PlaceSpendingData.m in Sources */,
 				01BB72460F773FD700E7065F /* PlaceSpendingTableCell.m in Sources */,
+				0168727D0F7B15EE00D23E78 /* ContractorSpendingData.m in Sources */,
+				0168730A0F7B34E100D23E78 /* ContractorSpendingTableCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

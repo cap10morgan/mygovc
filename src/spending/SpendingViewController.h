@@ -16,6 +16,8 @@ typedef enum
 	eSQMDistrict,
 	eSQMState,
 	eSQMContractor,
+	eSQMSearch,
+	eSQMLocal,
 } SpendingQueryMethod;
 
 
@@ -25,6 +27,8 @@ typedef enum
 	SpendingDataManager *m_data;
 	SpendingQueryMethod m_selectedQueryMethod;
 	UISegmentedControl *m_segmentCtrl;
+	
+	int m_sortOrder;
 	
 	ProgressOverlayViewController *m_HUD;
 }

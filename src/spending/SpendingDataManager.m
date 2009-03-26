@@ -9,6 +9,7 @@
 #import "myGovAppDelegate.h"
 
 #import "CongressDataManager.h"
+#import "ContractorSpendingData.h"
 #import "PlaceSpendingData.h"
 #import "SpendingDataManager.h"
 
@@ -29,7 +30,7 @@
 static int kMAX_CONCURRENT_DOWNLOADS = 2;
 static int kMAX_OPS_IN_QUEUE = 10;
 
-static NSString *kUSASpending_fpdsXML = @"http://www.usaspending.gov/fpds/fpds.php?datype=X";
+static NSString *kUSASpending_fpdsXML = @"http://www.usaspending.gov/fpds/fpds.php?database=fpds&reptype=r&datype=X";
 
 static NSString *kDetailLevel_Summary = @"&detail=-1";
 static NSString *kDetailLevel_Low = @"&detail=0";
@@ -46,6 +47,7 @@ static NSString *kSortByDate = @"&sortby=d";
 static NSString *kFiscalYearKey = @"&fiscal_year";
 static NSString *kDistrictKey = @"&pop_cd2";
 static NSString *kStateKey = @"&stateCode";
+static NSString *kMaxRecordsKey = @"&max_records";
 static NSString *kContractorKey = @"&company_name";
 
 
@@ -100,7 +102,7 @@ static NSString *kContractorKey = @"&company_name";
 			break;
 	}
 	
-	NSString *urlStr = [kUSASpending_fpdsXML stringByAppendingFormat:@"%@=%@%@=%d%@%@",
+	NSString *urlStr = [kUSASpending_fpdsXML stringByAppendingFormat:@"%@=%@%@=%0d%@%@",
 												kDistrictKey,district,
 												kFiscalYearKey,year,
 												sortStr,
@@ -154,11 +156,65 @@ static NSString *kContractorKey = @"&company_name";
 			break;
 	}
 	
-	NSString *urlStr = [kUSASpending_fpdsXML stringByAppendingFormat:@"%@=%@%@=%d%@%@",
+	NSString *urlStr = [kUSASpending_fpdsXML stringByAppendingFormat:@"%@=%@%@=%0d%@%@",
 												kStateKey,state,
 												kFiscalYearKey,year,
 												sortStr,
 												detailStr
+						];
+	return [NSURL URLWithString:urlStr];
+}
+
+
++ (NSURL *)getURLForTopContractors:(NSInteger)year maxNumContractors:(NSInteger)maxRecords withDetail:(SpendingDetail)detail sortedBy:(SpendingSortMethod)order;
+{
+	NSString *sortStr;
+	switch ( order )
+	{
+		case eSpendingSortDate:
+			sortStr = kSortByDate;
+			break;
+		case eSpendingSortAgency:
+			sortStr = kSortByContractingAgency;
+			break;
+		case eSpendingSortContractor:
+			sortStr = kSortByContractor;
+			break;
+		case eSpendingSortCategory:
+			sortStr = kSortByCategory;
+			break;
+		default:
+		case eSpendingSortDollars:
+			sortStr = kSortByDollars;
+			break;
+	}
+	
+	NSString *detailStr;
+	switch ( detail )
+	{
+		default:
+		case eSpendingDetailSummary:
+			detailStr = kDetailLevel_Summary;
+			break;
+		case eSpendingDetailLow:
+			detailStr = kDetailLevel_Low;
+			break;
+		case eSpendingDetailMed:
+			detailStr = kDetailLevel_Medium;
+			break;
+		case eSpendingDetailHigh:
+			detailStr = kDetailLevel_High;
+			break;
+		case eSpendingDetailComplete:
+			detailStr = kDetailLevel_Complete;
+			break;
+	}
+	
+	NSString *urlStr = [kUSASpending_fpdsXML stringByAppendingFormat:@"%@=%0d%@=%0d%@%@",
+												kMaxRecordsKey,maxRecords,
+												kFiscalYearKey,year,
+												detailStr,
+												sortStr
 						];
 	return [NSURL URLWithString:urlStr];
 }
@@ -177,7 +233,7 @@ static NSString *kContractorKey = @"&company_name";
 		m_notifyTarget = nil;
 		m_districtSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:480];
 		m_stateSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:50];
-		m_contractorSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:100];
+		m_contractorSpendingSummary = [[ContractorSpendingData alloc] init];
 		
 		m_downloadOperations = [[NSOperationQueue alloc] init];
 		[m_downloadOperations setMaxConcurrentOperationCount:kMAX_CONCURRENT_DOWNLOADS];
@@ -232,11 +288,13 @@ static NSString *kContractorKey = @"&company_name";
 		m_timer = nil;
 	}
 	
+	/*
 	// completely kill this Queue, and re-create it...
 	[m_downloadOperations release];
 	
 	m_downloadOperations = [[NSOperationQueue alloc] init];
 	[m_downloadOperations setMaxConcurrentOperationCount:kMAX_CONCURRENT_DOWNLOADS];
+	 */
 }
 
 
@@ -257,6 +315,18 @@ static NSString *kContractorKey = @"&company_name";
 	NSArray *representatives = [cdm houseMembersInState:state];
 	if ( nil == representatives ) return 0;
 	else return [representatives count];
+}
+
+
+- (NSArray *)top100ContractorsSortedBy:(SpendingSortMethod)order
+{
+	if ( ![self isDataAvailable] ) return nil;
+	if ( ![m_contractorSpendingSummary isDataAvailable] ) 
+	{
+		[m_contractorSpendingSummary downloadDataWithCallback:m_notifySelector onObject:m_notifyTarget synchronously:NO];
+		return nil;
+	}
+	return [m_contractorSpendingSummary contractorsSortedBy:eSpendingSortDollars];
 }
 
 
@@ -318,7 +388,15 @@ static NSString *kContractorKey = @"&company_name";
 }
 
 
-// -(ContractorSpendingData *)getContractorData:(NSString *)contractor andWaitForDownload:(BOOL)yesOrNo;
+- (ContractorInfo *)contractorData:(NSInteger)idx whenSortedBy:(SpendingSortMethod)order
+{
+	if ( ![m_contractorSpendingSummary isDataAvailable] ) 
+	{
+		[m_contractorSpendingSummary downloadDataWithCallback:m_notifySelector onObject:m_notifyTarget synchronously:NO];
+		return nil;
+	}
+	return [m_contractorSpendingSummary contractorAtIndex:idx whenSortedBy:order];
+}
 
 
 #pragma mark SpendingDataManager Private 
