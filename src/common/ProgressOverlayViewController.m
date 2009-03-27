@@ -66,6 +66,7 @@ enum
 		m_label = nil;
 		m_activityWheel = nil;
 		[self setupLabelAndActivityViews];
+		[self.view setNeedsDisplay];
 	}
 	return self;
 }
@@ -225,10 +226,6 @@ enum
 	UILabel *lbl = (UILabel *)[self viewWithTag:eTAG_LABEL];
 	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
 	
-	// set the text
-	[lbl setText:text];
-	[lbl setNeedsDisplay];
-	
 	// get a rectangle which can minimally contain the text
 	CGSize fontSz = [text sizeWithFont:lbl.font constrainedToSize:CGSizeMake(200.0f,200.0f) lineBreakMode:UILineBreakModeWordWrap];
 	CGRect fontRect = CGRectMake(20.0f, 50.0f, fontSz.width, fontSz.height);
@@ -250,6 +247,9 @@ enum
 	// re-center the activity indicator
 	[activity setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
 	[activity setCenter:CGPointMake(CGRectGetWidth(viewRect)/2.0f, 30.0f)];
+	
+	// set the text
+	[lbl setText:text];
 	
 	// re-size the label and the view based on the input text
 	[lbl setFrame:fontRect];

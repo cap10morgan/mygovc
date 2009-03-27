@@ -259,6 +259,30 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 }
 
 
+- (BOOL)isSimilarToo:(NSString *)searchPattern
+{
+	int txtLen = [searchPattern length];
+	NSRange searchRange;
+	searchRange.location = 0;
+	searchRange.length = txtLen;
+	
+	if ( NSOrderedSame == [[self firstname] compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
+	{
+		return TRUE;
+	}
+	if ( NSOrderedSame == [[self lastname] compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
+	{
+		return TRUE;
+	}
+	if ( NSOrderedSame == [[self middlename] compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
+	{
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
+
 - (UIImage *)getImageAndBlock:(BOOL)blockUntilDownloaded withCallbackOrNil:(SEL)sel;
 {
 	m_imgSel = sel;

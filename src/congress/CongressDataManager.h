@@ -27,6 +27,8 @@
 	NSMutableDictionary *m_house;
 	NSMutableDictionary *m_senate;
 	
+	NSMutableArray *m_searchArray;
+	
 	CongressionalCommittees *m_committees;
 	
 	XMLParserOperation *m_xmlParser;
@@ -48,6 +50,10 @@
 - (NSArray *)states;
 - (NSArray *)houseMembersInState:(NSString *)state;
 - (NSArray *)senateMembersInState:(NSString *)state;
+
+// legislator search!
+- (void)setSearchString:(NSString *)string;
+- (NSArray *)searchResultsArray;
 
 // legislators by district
 - (NSArray *)congressionalDistricts;

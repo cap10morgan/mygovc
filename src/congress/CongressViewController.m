@@ -101,6 +101,18 @@
 	self.navigationItem.leftBarButtonItem = locBarButton;
 	self.navigationItem.leftBarButtonItem.width = self.navigationItem.rightBarButtonItem.width;
 	
+	// create a search bar which will be used as our table's header view
+	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 50.0f)];
+	searchBar.delegate = self;
+	searchBar.prompt = @"";
+	searchBar.placeholder = @"Search for legislator...";
+	searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+	searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+	searchBar.barStyle = UIBarStyleBlackOpaque;
+	searchBar.showsCancelButton = YES;
+	
+	self.tableView.tableHeaderView = searchBar;
+	self.tableView.tableHeaderView.userInteractionEnabled = YES;
 	
 	[super viewDidLoad];
 }
@@ -279,7 +291,65 @@
 {
 	// XXX - lookup legislators in current district using location services
 	// plus govtrack district data
-	NSLog( @"CongressViewController: find local legislators..." );
+	NSLog( @"CongressViewController: XXX - find local legislators..." );
+}
+
+
+#pragma mark UISearchBarDelegate methods
+
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+	if ( [searchText length] == 0 )
+	{
+		[searchBar resignFirstResponder];
+		switch ( [m_segmentCtrl selectedSegmentIndex] )
+		{
+			default:
+			case 0:
+				m_selectedChamber = eCongressChamberHouse;
+				break;
+			case 1:
+				m_selectedChamber = eCongressChamberSenate;
+				break;
+		}
+		[self.tableView reloadData];
+	}
+	else
+	{
+		m_selectedChamber = eCongressSearchResults;
+		[m_data setSearchString:searchText];
+	}
+	
+	[self.tableView reloadData];
+}
+
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+	[searchBar resignFirstResponder];
+	m_selectedChamber = eCongressSearchResults;
+	[self.tableView reloadData];
+}
+
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
+{
+	searchBar.text = @"";
+	[searchBar resignFirstResponder];
+	
+	switch ( [m_segmentCtrl selectedSegmentIndex] )
+	{
+		default:
+		case 0:
+			m_selectedChamber = eCongressChamberHouse;
+			break;
+		case 1:
+			m_selectedChamber = eCongressChamberSenate;
+			break;
+	}
+	
+	[self.tableView reloadData];
 }
 
 
@@ -338,7 +408,14 @@
 {
 	if ( [m_data isDataAvailable] )
 	{
-		return [[StateAbbreviations abbrList] count]; // [[m_data states] count];
+		switch ( m_selectedChamber )
+		{
+			case eCongressSearchResults:
+				return 1;
+			
+			default:
+				return [[StateAbbreviations abbrList] count]; // [[m_data states] count];
+		}
 	}
 	else
 	{
@@ -351,23 +428,13 @@
 {
 	if ( [m_data isDataAvailable] )
 	{
-		return [StateAbbreviations abbrTableIndexList];
-/*		
-		// 50 index points is too many - cut it in half by simple
-		// NULL-ing out every odd entry title
-		NSMutableArray * tmpArray = [[[NSMutableArray alloc] initWithArray:[m_data states]] autorelease];
-		NSUInteger numStates = [tmpArray count];
-		
-		for ( NSUInteger st = 0; st < numStates; ++st )
+		switch ( m_selectedChamber )
 		{
-			if ( ((st+1) % 2) ) // || !((st+1) % 3) )
-			{
-				[tmpArray replaceObjectAtIndex:st withObject:[NSString stringWithString:@""] ];
-			}
+			case eCongressSearchResults:
+				return nil;
+			default:
+				return [StateAbbreviations abbrTableIndexList];
 		}
-		
-		return tmpArray; //[m_data states];
- */
 	}
 	else
 	{
@@ -380,10 +447,14 @@
 {
 	if ( [m_data isDataAvailable] )
 	{
-		// get full state name
-		return [[StateAbbreviations nameList] objectAtIndex:section];
-		// get full state name
-		//return [StateAbbreviations nameFromAbbr:[[m_data states] objectAtIndex:section]];
+		switch ( m_selectedChamber )
+		{
+			case eCongressSearchResults:
+				return @"Search Results";
+			default:
+				// get full state name
+				return [[StateAbbreviations nameList] objectAtIndex:section];
+		}
 	}
 	else
 	{
@@ -406,6 +477,8 @@
 				return [[m_data houseMembersInState:state] count];
 			case eCongressChamberSenate:
 				return [[m_data senateMembersInState:state] count];
+			case eCongressSearchResults:
+				return [[m_data searchResultsArray] count];
 		}
 	}
 	else
@@ -432,13 +505,20 @@
 	//NSString *state = [[m_data states] objectAtIndex:indexPath.section];
 	NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.section];
 	LegislatorContainer *legislator;
-	if ( eCongressChamberHouse == m_selectedChamber ) 
+	switch ( m_selectedChamber )
 	{
-		legislator = [[m_data houseMembersInState:state] objectAtIndex:indexPath.row];
-	}
-	else
-	{
-		legislator = [[m_data senateMembersInState:state] objectAtIndex:indexPath.row];
+		case eCongressChamberHouse:
+			legislator = [[m_data houseMembersInState:state] objectAtIndex:indexPath.row];
+			break;
+		case eCongressChamberSenate:
+			legislator = [[m_data senateMembersInState:state] objectAtIndex:indexPath.row];
+			break;
+		case eCongressSearchResults:
+			legislator = [[m_data searchResultsArray] objectAtIndex:indexPath.row];
+			break;
+		default:
+			legislator = nil;
+			break;
 	}
 	
 	if ( nil == legislator ) 
@@ -458,13 +538,27 @@
 	//NSString *state = [[m_data states] objectAtIndex:indexPath.section];
 	NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.section];
 	LegislatorContainer *legislator;
-	if ( eCongressChamberHouse == m_selectedChamber ) 
+	switch ( m_selectedChamber )
 	{
-		legislator = [[m_data houseMembersInState:state] objectAtIndex:indexPath.row];
+		case eCongressChamberHouse:
+			legislator = [[m_data houseMembersInState:state] objectAtIndex:indexPath.row];
+			break;
+		case eCongressChamberSenate:
+			legislator = [[m_data senateMembersInState:state] objectAtIndex:indexPath.row];
+			break;
+		case eCongressSearchResults:
+			legislator = [[m_data searchResultsArray] objectAtIndex:indexPath.row];
+			break;
+		default:
+			legislator = nil;
+			break;
 	}
-	else
+	
+	// no legislator here...
+	if ( nil == legislator )
 	{
-		legislator = [[m_data senateMembersInState:state] objectAtIndex:indexPath.row];
+		[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+		return;
 	}
 	
 	// pop up an alert asking the user if this is what they really want

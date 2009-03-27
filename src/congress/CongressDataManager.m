@@ -63,6 +63,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 		m_states = [[NSMutableArray alloc] initWithCapacity:50];
 		m_house = [[NSMutableDictionary alloc] initWithCapacity:50];
 		m_senate = [[NSMutableDictionary alloc] initWithCapacity:50];
+		m_searchArray = nil;
 		
 		m_committees = [[CongressionalCommittees alloc] init];
 		
@@ -98,6 +99,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 	[m_states release];
 	[m_house release];
 	[m_senate release];
+	[m_searchArray release];
 	[m_committees release];
 	[m_xmlParser release];
 	[m_currentString release];
@@ -128,6 +130,51 @@ static NSString *kTitleValue_Senator = @"Sen";
 - (NSArray *)senateMembersInState:(NSString *)state
 {
 	return (NSArray *)[m_senate objectForKey:state];
+}
+
+
+- (void)setSearchString:(NSString *)string
+{
+	[m_searchArray release]; m_searchArray = nil;
+	if ( 0 == [string length] ) return;
+	
+	// build a new search array
+	m_searchArray = [[NSMutableArray alloc] initWithCapacity:10];
+	
+	// linearly search the house data
+	NSEnumerator *houseEnum = [m_house objectEnumerator];
+	id state;
+	id legislator;
+	while ( state = [houseEnum nextObject] ) 
+	{
+		NSEnumerator *legEnum = [state objectEnumerator];
+		while ( legislator = [legEnum nextObject] )
+		{
+			if ( [legislator isSimilarToo:string] )
+			{
+				[m_searchArray addObject:legislator];
+			}
+		}
+	}
+	
+	NSEnumerator *senateEnum = [m_senate objectEnumerator];
+	while ( state = [senateEnum nextObject] ) 
+	{
+		NSEnumerator *legEnum = [state objectEnumerator];
+		while ( legislator = [legEnum nextObject] )
+		{
+			if ( [legislator isSimilarToo:string] )
+			{
+				[m_searchArray addObject:legislator];
+			}
+		}
+	}
+}
+
+
+- (NSArray *)searchResultsArray
+{
+	return (NSArray *)m_searchArray;
 }
 
 

@@ -9,6 +9,7 @@
 #import "ContractorSpendingData.h"
 #import "SpendingDataManager.h"
 
+static const int kNumContractorsToQuery = 100;
 
 
 @implementation ContractorInfo
@@ -97,8 +98,8 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 		isDataAvailable = NO;
 		isBusy = NO;
 		
-		m_infoSortedByName = [[NSMutableArray alloc] initWithCapacity:100];
-		m_infoSortedByDollars = [[NSMutableArray alloc] initWithCapacity:100];
+		m_infoSortedByName = [[NSMutableArray alloc] initWithCapacity:kNumContractorsToQuery];
+		m_infoSortedByDollars = [[NSMutableArray alloc] initWithCapacity:kNumContractorsToQuery];
 		
 		m_xmlParser = nil;
 		m_currentXMLStr = nil;
@@ -186,7 +187,7 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 	[gregorian release];
 	
 	NSURL *dataURL = [SpendingDataManager getURLForTopContractors:year 
-											maxNumContractors:100 
+											maxNumContractors:kNumContractorsToQuery 
 											withDetail:eSpendingDetailLow 
 											sortedBy:eSpendingSortDollars];
 	
@@ -232,7 +233,7 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
-	NSLog( @"[ContractorSpendingData] started XML parsing..." );
+	NSLog( @"[ContractorSpendingData] started XML Download..." );
 }
 
 
@@ -261,6 +262,7 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 {
 	if ( [elementName isEqualToString:kName_Data] )
 	{
+		NSLog( @"[ContractorSpendingData] XML Parsing started..." );
 		m_parsingData = YES;
 	}
     else if ( m_parsingData && [elementName isEqualToString:kName_Record] ) 

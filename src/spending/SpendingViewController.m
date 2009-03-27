@@ -81,16 +81,6 @@
 	[m_segmentCtrl release];
 	
 	// 
-	// Add an "organize button which will present the user with a method of
-	// sorting the displayed data
-	// 
-	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] 
-											   initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize 
-											   target:self 
-											   action:@selector(sortSpendingData)] autorelease];
-	
-	
-	// 
 	// Add a "location" button which will be used to find senators/representatives
 	// which represent a users current district
 	// 
@@ -188,6 +178,7 @@
 
 - (void)queryMethodSwitch: (id)sender
 {
+	BOOL showOrganizerButton = NO;
 	switch ( [sender selectedSegmentIndex] )
 	{
 		default:
@@ -204,8 +195,26 @@
 		case 2:
 			// This is "Contractor"
 			m_selectedQueryMethod = eSQMContractor;
+			showOrganizerButton = YES;
 			break;
 	}
+	
+	if ( showOrganizerButton )
+	{
+		// 
+		// Add an "organize button which will present the user with a method of
+		// sorting the displayed data
+		// 
+		self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] 
+												   initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize 
+												   target:self 
+												   action:@selector(sortSpendingData)] autorelease];
+	}
+	else
+	{
+		self.navigationItem.rightBarButtonItem = nil;
+	}
+	
 	if ( [m_data isDataAvailable] )
 	{
 		[self.tableView reloadData];
@@ -381,7 +390,7 @@
 				return [[StateAbbreviations abbrList] count]; // one row per state
 			case eSQMContractor:
 			{
-				NSInteger cnt = [[m_data top100ContractorsSortedBy:m_sortOrder] count];
+				NSInteger cnt = [[m_data topContractorsSortedBy:m_sortOrder] count];
 				return (cnt > 0 ? cnt : 1); // get number from SpendingDataManager
 			}
 		}

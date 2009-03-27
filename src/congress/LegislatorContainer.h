@@ -58,6 +58,11 @@
 // returns an array of LegislativeCommittee objects, or nil of no data is present
 - (NSArray *)committee_data; 
 
+// search criterion:
+// If the legislator's first name, last name or middle name starts with
+// the search string passed in, then return true
+- (BOOL)isSimilarToo:(NSString *)searchPattern;
+
 
 // The provided object is used to perform callbacks 
 - (void)setCallbackObject:(id)obj;

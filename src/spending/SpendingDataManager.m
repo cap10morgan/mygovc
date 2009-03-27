@@ -318,7 +318,7 @@ static NSString *kContractorKey = @"&company_name";
 }
 
 
-- (NSArray *)top100ContractorsSortedBy:(SpendingSortMethod)order
+- (NSArray *)topContractorsSortedBy:(SpendingSortMethod)order
 {
 	if ( ![self isDataAvailable] ) return nil;
 	if ( ![m_contractorSpendingSummary isDataAvailable] ) 

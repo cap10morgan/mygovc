@@ -15,6 +15,7 @@ typedef enum
 {
 	eCongressChamberHouse,
 	eCongressChamberSenate,
+	eCongressSearchResults,
 } CongressChamber;
 
 
@@ -25,7 +26,7 @@ typedef enum
 } CongressActionType;
 
 
-@interface CongressViewController : UITableViewController <UIActionSheetDelegate>
+@interface CongressViewController : UITableViewController <UIActionSheetDelegate, UISearchBarDelegate>
 {	
 @private
 	CongressDataManager *m_data;

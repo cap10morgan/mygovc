@@ -66,7 +66,7 @@ typedef enum
 
 - (NSArray *)congressionalDistricts; // sortedBy:(SpendingSortMethod)order;
 - (NSInteger)numDistrictsInState:(NSString *)state; // sortedBy:(SpendingSortMethod)order;
-- (NSArray *)top100ContractorsSortedBy:(SpendingSortMethod)order;
+- (NSArray *)topContractorsSortedBy:(SpendingSortMethod)order;
 
 
 - (PlaceSpendingData *)getDistrictData:(NSString *)district andWaitForDownload:(BOOL)yesOrNo;
