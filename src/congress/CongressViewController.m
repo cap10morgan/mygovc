@@ -18,12 +18,18 @@
 
 
 @interface CongressViewController (private)
+	- (void)setLocationButtonInNavBar;
+	- (void)setActivityViewInNavBar;
 	- (void)congressSwitch: (id)sender;
 	- (void)reloadCongressData;
 	- (void)deselectRow:(id)sender;
 	-(void)findLocalLegislators:(id)sender;
 @end
 
+enum
+{
+	eTAG_ACTIVITY = 999,
+};
 
 @implementation CongressViewController
 
@@ -37,6 +43,8 @@
 - (void)dealloc 
 {
 	[m_data release];
+	[m_locationManager release];
+	[m_currentLocation release];
     [super dealloc];
 }
 
@@ -51,6 +59,11 @@
 	
 	m_data = [[myGovAppDelegate sharedCongressData] retain];
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	
+	m_searchResultsTitle = @"Search Results";
+	
+	m_locationManager = nil;
+	m_currentLocation = nil;
 	
 	m_actionType = eActionReload;
 	
@@ -70,7 +83,7 @@
 	m_selectedChamber = eCongressChamberHouse;
 	m_segmentCtrl.frame = CGRectMake(0,0,200,30);
 	// saturation of 0.0 means black/white
-	m_segmentCtrl.tintColor = [[UIColor alloc] initWithHue:0.0 saturation:0.0 brightness:0.45 alpha:1.0];
+	m_segmentCtrl.tintColor = [UIColor darkGrayColor];
 	
 	// add ourself as the target
 	[m_segmentCtrl addTarget:self action:@selector(congressSwitch:) forControlEvents:UIControlEventValueChanged];
@@ -92,14 +105,7 @@
 	// Add a "location" button which will be used to find senators/representatives
 	// which represent a users current district
 	// 
-	UIImage *locImg = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"location_overlay.png"]];
-	UIBarButtonItem *locBarButton = [[[UIBarButtonItem alloc] 
-										initWithImage:locImg 
-										style:UIBarButtonItemStylePlain 
-										target:self 
-										action:@selector(findLocalLegislators:)] autorelease];
-	self.navigationItem.leftBarButtonItem = locBarButton;
-	self.navigationItem.leftBarButtonItem.width = self.navigationItem.rightBarButtonItem.width;
+	[self setLocationButtonInNavBar];
 	
 	// create a search bar which will be used as our table's header view
 	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 50.0f)];
@@ -180,11 +186,12 @@
 	
 	NSLog( @"dataManagerCallback: %@",msg );
 	
-	NSRange errRange = {0, 5};
-	if ( NSOrderedSame == [msg compare:@"ERROR" options:NSCaseInsensitiveSearch range:errRange] )
+	NSRange msgTypeRange = {0, 5};
+	if ( NSOrderedSame == [msg compare:@"ERROR" options:NSCaseInsensitiveSearch range:msgTypeRange] )
 	{
 		// crap! an error occurred in the parsing/downloading: give the user
 		// an error message and leave it there...
+		[self setLocationButtonInNavBar];
 		self.tableView.userInteractionEnabled = NO;
 		NSString *txt = [[[NSString alloc] initWithFormat:@"Error loading data%@",
 											([msg length] <= 6 ? @"!" : 
@@ -193,6 +200,16 @@
 		
 		[m_HUD show:YES];
 		[m_HUD setText:txt andIndicateProgress:NO];
+	}
+	else if ( NSOrderedSame == [msg compare:@"LOCTN" options:NSCaseInsensitiveSearch range:msgTypeRange] )
+	{
+		m_selectedChamber = eCongressSearchResults;
+		[self setLocationButtonInNavBar];
+		[self.tableView reloadData];
+		NSUInteger idx[2] = {0,0};
+		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		[m_HUD show:NO];
+		self.tableView.userInteractionEnabled = YES;
 	}
 	else if ( [m_data isDataAvailable] )
 	{
@@ -209,6 +226,7 @@
 		self.tableView.userInteractionEnabled = NO;
 		[m_HUD show:YES];
 		[m_HUD setText:msg andIndicateProgress:YES];
+		[self.tableView setNeedsDisplay];
 	}
 }
 
@@ -229,6 +247,45 @@
 
 
 #pragma mark CongressViewController Private
+
+
+- (void)setLocationButtonInNavBar
+{
+	UIImage *locImg = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"location_overlay.png"]];
+	UIBarButtonItem *locBarButton = [[UIBarButtonItem alloc] 
+									  initWithImage:locImg 
+									  style:UIBarButtonItemStylePlain 
+									  target:self 
+									  action:@selector(findLocalLegislators:)];
+	self.navigationItem.leftBarButtonItem = locBarButton;
+	[locBarButton release];
+}
+
+
+- (void)setActivityViewInNavBar
+{
+	UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 44.0f, 32.0f)];
+	UIActivityIndicatorView *aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+	//aiView.hidesWhenStopped = YES;
+	[aiView setFrame:CGRectMake(12.0f, 6.0f, 20.0f, 20.0f)];
+	[view addSubview:aiView];
+	[aiView startAnimating];
+	
+	//UIBarButtonItem *locBarButton = [[UIBarButtonItem alloc] initWithCustomView:aiView];
+	UIBarButtonItem *locBarButton = [[UIBarButtonItem alloc] 
+										initWithBarButtonSystemItem:UIBarButtonSystemItemStop
+										target:nil action:nil];
+	locBarButton.customView = view;
+	locBarButton.style = UIBarButtonItemStyleBordered;
+	locBarButton.target = nil;
+	self.navigationItem.leftBarButtonItem = locBarButton;
+	
+	[self.navigationController.navigationBar setNeedsDisplay];
+	
+	[view release];
+	[aiView release];
+	[locBarButton release];
+}
 
 
 // Switch the table data source between House and Senate
@@ -291,7 +348,52 @@
 {
 	// XXX - lookup legislators in current district using location services
 	// plus govtrack district data
-	NSLog( @"CongressViewController: XXX - find local legislators..." );
+	NSLog( @"CongressViewController: finding local legislators..." );
+	
+	if ( nil == m_locationManager )
+	{
+		m_locationManager = [[CLLocationManager alloc] init];
+		m_locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+		m_locationManager.distanceFilter = 100.0;
+		m_locationManager.delegate = self;
+	}
+	
+	if ( !m_locationManager.locationServicesEnabled )
+	{
+		// XXX - alert user of failure?!
+	}
+	else
+	{
+		[self setActivityViewInNavBar];
+		m_searchResultsTitle = @"Local Legislators";
+		
+		[m_locationManager startUpdatingLocation];
+	}
+}
+
+
+#pragma mark CLLocationManagerDelegate methods
+
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+	if ( signbit(newLocation.horizontalAccuracy) )
+	{
+		// Negative accuracy means an invalid or unavailable measurement
+		// XXX - stop activity wheel, and notify user of failure?
+	} 
+	else 
+	{
+		[m_data setSearchLocation:newLocation];
+    }
+}
+
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
+	[self setLocationButtonInNavBar];
+	
+	// XXX - notify user of error?
 }
 
 
@@ -300,6 +402,8 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
+	m_searchResultsTitle = @"Search Results";
+	
 	if ( [searchText length] == 0 )
 	{
 		[searchBar resignFirstResponder];
@@ -450,7 +554,7 @@
 		switch ( m_selectedChamber )
 		{
 			case eCongressSearchResults:
-				return @"Search Results";
+				return m_searchResultsTitle;
 			default:
 				// get full state name
 				return [[StateAbbreviations nameList] objectAtIndex:section];

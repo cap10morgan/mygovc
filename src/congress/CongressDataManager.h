@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 #import "XMLParserOperation.h"
 
 @class LegislatorContainer;
@@ -53,6 +54,7 @@
 
 // legislator search!
 - (void)setSearchString:(NSString *)string;
+- (void)setSearchLocation:(CLLocation *)loc;
 - (NSArray *)searchResultsArray;
 
 // legislators by district

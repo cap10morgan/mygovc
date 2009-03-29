@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 
 @class CongressDataManager;
 @class ProgressOverlayViewController;
@@ -26,13 +27,18 @@ typedef enum
 } CongressActionType;
 
 
-@interface CongressViewController : UITableViewController <UIActionSheetDelegate, UISearchBarDelegate>
+@interface CongressViewController : UITableViewController <UIActionSheetDelegate, UISearchBarDelegate, CLLocationManagerDelegate>
 {	
 @private
 	CongressDataManager *m_data;
 	CongressChamber m_selectedChamber;
 	CongressActionType m_actionType;
 	UISegmentedControl *m_segmentCtrl;
+	
+	NSString *m_searchResultsTitle;
+	
+	CLLocationManager *m_locationManager;
+	CLLocation *m_currentLocation;
 	
 	ProgressOverlayViewController *m_HUD;
 }

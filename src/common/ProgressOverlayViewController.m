@@ -12,6 +12,7 @@
 @interface ProgressOverlayView : UIView
 {
 	BOOL m_shouldAnimate;
+	NSInteger m_framePlacementHack;
 }
 	- (void)setShouldAnimate:(BOOL)yesOrNo;
 	- (void)setNewText:(id)txt;
@@ -101,7 +102,7 @@ enum
 	ProgressOverlayView *pov = (ProgressOverlayView *)(self.view);
 	[pov setShouldAnimate:shouldAnimate];
 	
-	[self setupLabelAndActivityViews];
+	//[self setupLabelAndActivityViews];
 	
 	[pov performSelector:@selector(setNewText:) withObject:text];
 	[pov setNeedsDisplay];
@@ -173,6 +174,15 @@ enum
 
 @implementation ProgressOverlayView
 
+- (id)initWithFrame:(CGRect)frame
+{
+	if ( self = [super initWithFrame:frame] )
+	{
+		m_framePlacementHack = 1;
+	}
+	return self;
+}
+
 
 - (void)dealloc
 {
@@ -234,9 +244,10 @@ enum
 	// create a rectangle for the view which can minimally contain the whole text
 	// (with a 20 pixel margin on all sides)
 	static CGFloat S_MARGIN = 40.0f;
-	CGFloat dx = CGRectGetWidth(parentRect) - fontSz.width - S_MARGIN;
-	CGFloat dy = CGRectGetHeight(parentRect) - fontSz.height - 50.0f - S_MARGIN;
+	CGFloat dx = CGRectGetWidth(parentRect) - fontSz.width - S_MARGIN + m_framePlacementHack;
+	CGFloat dy = CGRectGetHeight(parentRect) - fontSz.height - 50.0f - S_MARGIN + m_framePlacementHack;
 	CGRect viewRect = CGRectInset(parentRect, dx/2.0f, dy/2.0f );
+	m_framePlacementHack = (m_framePlacementHack == 1) ? -1 : 1;
 	
 	// animate the transition!
 	[UIView setAnimationBeginsFromCurrentState:YES];
@@ -293,7 +304,6 @@ enum
 		[UIView commitAnimations];
 	
 		[self performSelector:@selector(hideView:) withObject:self afterDelay:0.30f];
-		//[self setNeedsDisplay];
 	}
 }
 

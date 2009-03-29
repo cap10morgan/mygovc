@@ -279,6 +279,12 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 		return TRUE;
 	}
 	
+	NSString *shortName = [NSString stringWithFormat:@"%@ %@",([self nickname] ? [self nickname] : [self firstname]),[self lastname]];
+	if ( NSOrderedSame == [shortName compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
+	{
+		return TRUE;
+	}
+	
 	return FALSE;
 }
 

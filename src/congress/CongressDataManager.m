@@ -6,18 +6,24 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 #import <Foundation/NSXMLParser.h>
-#import "CongressDataManager.h"
-#import "LegislatorContainer.h"
-#import "CongressionalCommittees.h"
-#import "XMLParserOperation.h"
 #import "myGovAppDelegate.h"
+
+#import "CongressDatabaseParser.h"
+#import "CongressDataManager.h"
+#import "CongressionalCommittees.h"
+#import "CongressLocationParser.h"
+#import "LegislatorContainer.h"
+#import "XMLParserOperation.h"
 
 
 @interface CongressDataManager (private)
 	- (void)destroyDataCache;
+	- (void)beginLocationFetch;
 	- (void)beginDataDownload;
 	- (void)initFromDisk:(id)sender;
+	- (void)setCurrentState:(NSString *)stateAbbr andDistrict:(NSUInteger)district;
 	- (void)addLegislatorToInMemoryCache:(id)legislator release:(BOOL)flag;
+	- (NSMutableArray *)states_mut;
 	- (NSDictionary *)districtDictionary;
 @end
 
@@ -36,12 +42,11 @@ static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
 static NSString *kOpenCongress_APIKey = @"32aea132a66093e9bf9ebe9fc2e2a4c66b888777";
 static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/legislators.getList.xml";
 static NSString *kGovtrack_committeeListXML = @"http://www.govtrack.us/data/us/111/committees.xml";
+static NSString *kGovtrack_locLookupXML = @"http://www.govtrack.us/perl/district-lookup.cgi?";
+static NSString *kGovtrack_latLongFmt = @"lat=%f&long=%f";
 
-// Legislator XML key names
-static NSString *kName_Response = @"response";
-static NSString *kName_Legislator = @"legislator";
-static NSString *kName_State = @"state";
 static NSString *kTitleValue_Senator = @"Sen";
+
 
 
 + (NSString *)dataCachePath
@@ -65,6 +70,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 		m_senate = [[NSMutableDictionary alloc] initWithCapacity:50];
 		m_searchArray = nil;
 		
+		m_xmlParser = nil;
 		m_committees = [[CongressionalCommittees alloc] init];
 		
 		// check to see if we have congress data previously cached on this 
@@ -169,6 +175,30 @@ static NSString *kTitleValue_Senator = @"Sen";
 			}
 		}
 	}
+}
+
+
+- (void)setSearchLocation:(CLLocation *)loc
+{
+	[m_searchArray release]; m_searchArray = nil;
+	
+	NSString *searchStr = [kGovtrack_locLookupXML stringByAppendingFormat:kGovtrack_latLongFmt, loc.coordinate.latitude, loc.coordinate.longitude];
+	if ( nil != m_xmlParser )
+	{
+		// abort any previous attempt at parsing/downloading
+		[m_xmlParser abort];
+	}
+	else
+	{
+		m_xmlParser = [[XMLParserOperation alloc] initWithOpDelegate:self];
+	}
+	m_xmlParser.m_opDelegate = nil;
+	
+	CongressLocationParser *clxp = [[CongressLocationParser alloc] initWithCongressData:self];
+	[clxp setNotifyTarget:m_notifyTarget andSelector:m_notifySelector];
+	
+	[m_xmlParser parseXML:[NSURL URLWithString:searchStr] withParserDelegate:clxp];
+	[clxp release];
 }
 
 
@@ -309,6 +339,11 @@ static NSString *kTitleValue_Senator = @"Sen";
 }
 
 
+- (void)beginLocationFetch:(NSString *)url
+{
+}
+
+
 - (void)beginDataDownload
 {
 	isDataAvailable = NO;
@@ -331,8 +366,13 @@ static NSString *kTitleValue_Senator = @"Sen";
 	{
 		m_xmlParser = [[XMLParserOperation alloc] initWithOpDelegate:self];
 	}
+	m_xmlParser.m_opDelegate = self;
 	
-	[m_xmlParser parseXML:[NSURL URLWithString:xmlURL] withParserDelegate:self];
+	CongressDatabaseParser *cdxp = [[CongressDatabaseParser alloc] initWithCongressData:self];
+	[cdxp setNotifyTarget:m_notifyTarget andSelector:m_notifySelector];
+	
+	[m_xmlParser parseXML:[NSURL URLWithString:xmlURL] withParserDelegate:cdxp];
+	[cdxp release];
 }
 
 
@@ -384,6 +424,37 @@ static NSString *kTitleValue_Senator = @"Sen";
 }
 
 
+- (void)setCurrentState:(NSString *)stateAbbr andDistrict:(NSUInteger)district
+{
+	[m_searchArray release]; m_searchArray = nil;
+	m_searchArray = [[NSMutableArray alloc] initWithCapacity:3];
+	
+	// linearly search the house members in the current state
+	NSEnumerator *houseEnum = [[self houseMembersInState:stateAbbr] objectEnumerator];
+	id legislator;
+	while ( legislator = [houseEnum nextObject] ) 
+	{
+		if ( [[legislator district] integerValue] == district )
+		{
+			[m_searchArray addObject:legislator];
+		}
+	}
+	
+	// add _all_ the senate members for the current state
+	NSEnumerator *senateEnum = [[self senateMembersInState:stateAbbr] objectEnumerator];
+	while ( legislator = [senateEnum nextObject] ) 
+	{
+		[m_searchArray addObject:legislator];
+	}
+	
+	if ( nil != m_notifyTarget )
+	{
+		NSString *msg = @"LOCTN Search Complete";
+		[m_notifyTarget performSelector:m_notifySelector withObject:msg];
+	}
+}
+
+
 - (void)addLegislatorToInMemoryCache:(id)legislator release:(BOOL)flag
 {
 	LegislatorContainer *lc = legislator;
@@ -422,6 +493,12 @@ static NSString *kTitleValue_Senator = @"Sen";
 	[stateArray release];
 	
 	if ( flag ) [lc release];
+}
+
+
+- (NSMutableArray *)states_mut
+{
+	return m_states;
 }
 
 
@@ -508,149 +585,5 @@ static NSString *kTitleValue_Senator = @"Sen";
 	
 }
 
-
-#pragma mark XMLParser Delegate Methods
-
-
-- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *) qualifiedName attributes:(NSDictionary *)attributeDict 
-{
-	if ( [elementName isEqualToString:kName_Response] )
-	{
-		if ( nil != m_notifyTarget )
-		{
-			NSString *message = [NSString stringWithString:@"Parsing data..."];
-			[m_notifyTarget performSelector:m_notifySelector withObject:message];
-		}
-	}
-    else if ( [elementName isEqualToString:kName_Legislator] ) 
-	{
-		parsingLegislator = YES;
-		
-		// alloc a new Legislator 
-		m_currentLegislator = [[LegislatorContainer alloc] init];
-    } 
-	else if ( parsingLegislator ) 
-	{
-		m_currentString = [[NSMutableString alloc] initWithString:@""];
-        storingCharacters = YES;
-    }
-	else
-	{
-		storingCharacters = NO;
-		parsingLegislator = NO;
-	}
-}
-
-
-- (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName 
-{
-	storingCharacters = NO;
-	if ( [elementName isEqualToString:kName_Legislator] ) 
-	{
-		parsingLegislator = NO;
-		[self addLegislatorToInMemoryCache:m_currentLegislator release:YES];
-	}
-	else if ( parsingLegislator )
-	{
-		[m_currentLegislator addKey:elementName withValue:m_currentString];
-		
-		// Build a dynamic list of states :-)
-		if ( [elementName isEqualToString:kName_State] )
-		{
-			if ( ![m_states containsObject:m_currentString] )
-			{
-				[m_states addObject:m_currentString];
-			}
-			[m_states sortUsingSelector:@selector(caseInsensitiveCompare:)];
-		}
-		
-		[m_currentString release];
-	}
-	else
-	{
-	}
-}
-
-
-- (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string 
-{
-    if ( storingCharacters ) [m_currentString appendString:string];
-}
-
-
-// XXX - handle XML parse errors in some sort of graceful way...
-- (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError 
-{
-	parsingLegislator = NO;
-	storingCharacters = NO;
-	[m_currentLegislator release];
-	[m_currentString release];
-	m_currentString = [[NSString alloc] initWithString:@"ERROR XML parsing error"];
-	[m_states release]; m_states = nil;
-	[m_house release]; m_house = nil;
-	[m_senate release]; m_senate = nil;
-}
-
-
-- (void)parser:(NSXMLParser *)parser validationErrorOccurred:(NSError *)validError 
-{
-	parsingLegislator = NO;
-	storingCharacters = NO;
-	[m_currentLegislator release];
-	[m_currentString release];
-	m_currentString = [[NSString alloc] initWithString:@"ERROR XML validation error"];
-	[m_states release]; m_states = nil;
-	[m_house release]; m_house = nil;
-	[m_senate release]; m_senate = nil;
-}
-
-
-/*
-– (void)parserDidStartDocument:(NSXMLParser *)parser
-{
-}
-
-– (void)parserDidEndDocument:(NSXMLParser *)parser
-{
-}
-
-
-– (void)parser:(NSXMLParser *)parser didStartMappingPrefix:(NSString *)prefix toURI:(NSString *)namespaceURI
-{
-}
-
-– (void)parser:(NSXMLParser *)parser didEndMappingPrefix:(NSString *)prefix
-{
-}
-
-– (void)parser:(NSXMLParser *)parser resolveExternalEntityName:(NSString *)entityName systemID:(NSString *)systemID
-{
-}
-
-– (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError
-{
-}
-
-
-– (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string
-{
-}
-
-– (void)parser:(NSXMLParser *)parser foundIgnorableWhitespace:(NSString *)whitespaceString
-{
-}
-
-– (void)parser:(NSXMLParser *)parser foundProcessingInstructionWithTarget:(NSString *)target data:(NSString *)data
-{
-}
-
-– (void)parser:(NSXMLParser *)parser foundComment:(NSString *)comment
-{
-}
-
-– (void)parser:(NSXMLParser *)parser foundCDATA:(NSData *)CDATABlock
-{
-}
-*/
 
 @end
