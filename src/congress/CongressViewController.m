@@ -146,7 +146,7 @@ enum
 	else
 	{
 		[m_HUD show:YES]; // with whatever text is there...
-		[m_HUD setText:m_HUD.m_label.text andIndicateProgress:YES];
+		//[m_HUD setText:m_HUD.m_label.text andIndicateProgress:YES];
 	}
 	
 	// de-select the currently selected row
@@ -489,11 +489,13 @@ enum
 				// don't start another download if the data store is busy!
 				if ( ![m_data isBusy] ) 
 				{
-					// scroll to the top of the table so that our progress HUD
-					// is displayed properly
-					NSUInteger idx[2] = {0,0};
-					[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
-					
+					if ( [self.tableView numberOfSections] > 0 && [self.tableView numberOfRowsInSection:0] > 0 )
+					{
+						// scroll to the top of the table so that our progress HUD
+						// is displayed properly
+						NSUInteger idx[2] = {0,0};
+						[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+					}
 					// start a data download/update: this destroys the current data cache
 					[m_data updateCongressData];
 				}

@@ -7,16 +7,22 @@
 //
 
 #import "ProgressOverlayViewController.h"
+#import <QuartzCore/CAAnimation.h>
 
 // UIView subclass to draw rounded corners :-)
 @interface ProgressOverlayView : UIView
 {
+@private
 	BOOL m_shouldAnimate;
+	BOOL m_animating;
+	BOOL m_needsToHide;
 	NSInteger m_framePlacementHack;
+	NSMutableArray *m_txtArray;
 }
 	- (void)setShouldAnimate:(BOOL)yesOrNo;
+	- (void)setupLabelAndActivityViews;
 	- (void)setNewText:(id)txt;
-	- (void)hideView:(id)sender;
+	- (void)hideView;
 @end
 
 
@@ -26,16 +32,14 @@ enum
 	eTAG_ACTIVITY = 222,
 };
 
-
+/*
 @interface ProgressOverlayViewController (private)
 	- (void)setupLabelAndActivityViews;
 @end
-
+*/
 
 @implementation ProgressOverlayViewController
 
-@synthesize m_activityWheel;
-@synthesize m_label;
 @synthesize m_window;
 
 
@@ -60,13 +64,9 @@ enum
 		
 		ProgressOverlayView *overlayView = [[ProgressOverlayView alloc] initWithFrame:m_window.frame];
 		overlayView.backgroundColor = [UIColor clearColor];
-		//[overlayView setFrame:m_window.frame];
 		self.view = overlayView;
 		[overlayView release];
 		
-		m_label = nil;
-		m_activityWheel = nil;
-		[self setupLabelAndActivityViews];
 		[self.view setNeedsDisplay];
 	}
 	return self;
@@ -89,8 +89,7 @@ enum
 		else
 		{
 			[self.view setNeedsDisplay];
-			[self.view performSelector:@selector(hideView:) withObject:self];
-			//self.view.hidden = YES;
+			[self.view performSelector:@selector(hideView)];
 		}
 	}
 }
@@ -98,73 +97,18 @@ enum
 
 - (void)setText:(NSString *)text andIndicateProgress:(BOOL)shouldAnimate
 {
-	self.view.hidden = NO;
 	ProgressOverlayView *pov = (ProgressOverlayView *)(self.view);
 	[pov setShouldAnimate:shouldAnimate];
-	
-	//[self setupLabelAndActivityViews];
-	
-	[pov performSelector:@selector(setNewText:) withObject:text];
+	[pov setNewText:text];
 	[pov setNeedsDisplay];
 }
 
-
-/*
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView {
-}
-*/
-
-
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-/*
-- (void)viewDidLoad 
-{
-	[super viewDidLoad];
-}
-*/
-
 // Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations
-    //return (interfaceOrientation == UIInterfaceOrientationPortrait);
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+{
 	return YES;
 }
 
-
-#pragma mark ProgressOverlayViewController Private
-
-
-- (void)setupLabelAndActivityViews
-{
-	// 
-	// XXX - use a critical section here!
-	// 
-	[m_label removeFromSuperview];
-	[m_activityWheel removeFromSuperview];
-	
-	m_activityWheel = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-	m_activityWheel.hidesWhenStopped = YES;
-	[m_activityWheel setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
-	[m_activityWheel setCenter:CGPointMake(100.0f, 20.0f)];
-	[m_activityWheel setTag:eTAG_ACTIVITY];
-	[self.view addSubview:m_activityWheel];
-	[m_activityWheel release];
-	
-	m_label = [[UILabel alloc] initWithFrame:CGRectMake(0.0f,40.0f,200.0f,160.0f)];
-	m_label.font = [UIFont boldSystemFontOfSize:26.0f];
-	m_label.adjustsFontSizeToFitWidth = YES;
-	m_label.numberOfLines = 3;
-	m_label.backgroundColor = [UIColor clearColor];
-	m_label.lineBreakMode = UILineBreakModeWordWrap;
-	m_label.textAlignment = UITextAlignmentCenter;
-	m_label.textColor = [UIColor whiteColor];
-	m_label.shadowColor = [UIColor blackColor];
-	m_label.shadowOffset = CGSizeMake(0.0f, -1.0f);
-	[m_label setTag:eTAG_LABEL];
-	[self.view addSubview:m_label];
-	[m_label release];
-}
 
 @end
 
@@ -174,11 +118,15 @@ enum
 
 @implementation ProgressOverlayView
 
+
 - (id)initWithFrame:(CGRect)frame
 {
 	if ( self = [super initWithFrame:frame] )
 	{
+		m_animating = NO;
+		m_txtArray = [[NSMutableArray alloc] initWithCapacity:4];
 		m_framePlacementHack = 1;
+		[self setupLabelAndActivityViews];
 	}
 	return self;
 }
@@ -186,6 +134,7 @@ enum
 
 - (void)dealloc
 {
+	[m_txtArray release];
     [super dealloc];
 }
 
@@ -223,15 +172,50 @@ enum
 }
 
 
-- (void)setNewText:(id)txt
+- (void)setupLabelAndActivityViews
 {
-	if ( nil == txt ) return;
+	UILabel *lbl = (UILabel *)[self viewWithTag:eTAG_LABEL];
+	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
 	
-	// 
-	// XXX - use a critical section!
-	// 
+	[lbl removeFromSuperview];
+	[activity removeFromSuperview];
 	
-	NSString *text = [[NSString alloc] initWithString:(NSString *)txt];
+	activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+	activity.hidesWhenStopped = YES;
+	[activity setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
+	[activity setCenter:CGPointMake(100.0f, 20.0f)];
+	[activity setTag:eTAG_ACTIVITY];
+	[self addSubview:activity];
+	[activity release];
+	
+	lbl = [[UILabel alloc] initWithFrame:CGRectMake(0.0f,40.0f,200.0f,160.0f)];
+	lbl.font = [UIFont boldSystemFontOfSize:26.0f];
+	lbl.adjustsFontSizeToFitWidth = YES;
+	lbl.numberOfLines = 3;
+	lbl.backgroundColor = [UIColor clearColor];
+	lbl.lineBreakMode = UILineBreakModeWordWrap;
+	lbl.textAlignment = UITextAlignmentCenter;
+	lbl.textColor = [UIColor whiteColor];
+	lbl.shadowColor = [UIColor blackColor];
+	lbl.shadowOffset = CGSizeMake(0.0f, -1.0f);
+	[lbl setTag:eTAG_LABEL];
+	[self addSubview:lbl];
+	[lbl release];
+}
+
+
+- (void)animateNextMessage
+{
+	if ( [m_txtArray count] < 1 )
+	{
+		m_animating = NO;
+		return;
+	}
+	
+	m_animating = YES;
+	
+	NSString *text = [[m_txtArray objectAtIndex:0] retain];
+	[m_txtArray removeObjectAtIndex:0];
 	
 	UILabel *lbl = (UILabel *)[self viewWithTag:eTAG_LABEL];
 	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
@@ -249,15 +233,18 @@ enum
 	CGRect viewRect = CGRectInset(parentRect, dx/2.0f, dy/2.0f );
 	m_framePlacementHack = (m_framePlacementHack == 1) ? -1 : 1;
 	
-	// animate the transition!
-	[UIView setAnimationBeginsFromCurrentState:YES];
-	[UIView beginAnimations:nil context:UIGraphicsGetCurrentContext()];
-	[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
-	[UIView setAnimationDuration:0.20f];
-	
 	// re-center the activity indicator
 	[activity setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
 	[activity setCenter:CGPointMake(CGRectGetWidth(viewRect)/2.0f, 30.0f)];
+	
+	
+	// animate the transition!
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
+	[UIView setAnimationDuration:0.25f];
+	[UIView setAnimationDelegate:self];
+	[UIView setAnimationDidStopSelector:@selector(textAnimationFinished:finished:context:)];
 	
 	// set the text
 	[lbl setText:text];
@@ -278,33 +265,69 @@ enum
 	}
 	
 	[text release];
+	[self setNeedsDisplay];
 }
 
-
-- (void)hideView:(id)sender
+- (void)textAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context
 {
-	UILabel *lbl = (UILabel *)[self viewWithTag:eTAG_LABEL];
-	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
-	
-	if ( self == sender )
+	if ( [m_txtArray count] > 0 )
 	{
-		[self setHidden:YES];
+		// start the next animation!
+		[self animateNextMessage];
 	}
 	else
 	{
-		[UIView setAnimationBeginsFromCurrentState:YES];
-		[UIView beginAnimations:nil context:UIGraphicsGetCurrentContext()];
-		[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
-		[UIView setAnimationDuration:0.20f];
-		
-		[lbl setFrame:CGRectZero];
-		[activity setFrame:CGRectZero];
-		[self setFrame:CGRectZero];
-		
-		[UIView commitAnimations];
-	
-		[self performSelector:@selector(hideView:) withObject:self afterDelay:0.30f];
+		m_animating = NO;
+		if ( m_needsToHide )
+		{
+			m_needsToHide = NO;
+			[self hideView];
+		}
 	}
+}
+
+
+- (void)hideAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context
+{
+	self.hidden = YES;
+}
+
+
+- (void)setNewText:(id)txt
+{
+	[m_txtArray addObject:txt];
+	if ( !m_animating )
+	{
+		[self animateNextMessage];
+	}
+	[self setNeedsDisplay];
+}
+
+- (void)hideView
+{
+	if ( m_animating )
+	{
+		m_needsToHide = YES;
+		return;
+	}
+	
+	UILabel *lbl = (UILabel *)[self viewWithTag:eTAG_LABEL];
+	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
+	
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
+	[UIView setAnimationDuration:0.15f];
+	[UIView setAnimationDelegate:self];
+	[UIView setAnimationDidStopSelector:@selector(hideAnimationFinished:finished:context:)];
+	
+	[lbl setFrame:CGRectZero];
+	[activity setFrame:CGRectZero];
+	[self setFrame:CGRectZero];
+	
+	[UIView commitAnimations];
+	
+	[self setNeedsDisplay];
 }
 
 

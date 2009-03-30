@@ -7,12 +7,14 @@
 //
 
 #import "myGovAppDelegate.h"
+#import "BillsDataManager.h"
 #import "CongressDataManager.h"
 #import "SpendingDataManager.h"
 
 @implementation myGovAppDelegate
 
 static myGovAppDelegate *s_myGovApp = NULL;
+static BillsDataManager *s_myBillsData = NULL;
 static CongressDataManager *s_myCongressData = NULL;
 static SpendingDataManager *s_mySpendingData = NULL;
 
@@ -41,6 +43,13 @@ static SpendingDataManager *s_mySpendingData = NULL;
 	{
 		return path;
 	}
+}
+
+
++ (BillsDataManager *)sharedBillsData
+{
+	if ( !s_myBillsData ) s_myBillsData = [[BillsDataManager alloc] init];
+	return s_myBillsData;
 }
 
 

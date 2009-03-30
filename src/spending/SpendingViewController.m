@@ -119,7 +119,7 @@
 	else
 	{
 		[m_HUD show:YES]; // with whatever text is there...
-		[m_HUD setText:m_HUD.m_label.text andIndicateProgress:YES];
+		//[m_HUD setText:m_HUD.m_label.text andIndicateProgress:YES];
 	}
 	
 	// de-select the currently selected row

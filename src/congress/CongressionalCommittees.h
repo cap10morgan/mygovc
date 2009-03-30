@@ -33,6 +33,7 @@
 @private
 	NSMutableDictionary *m_committees;    // committeeKey => LegislativeCommittee
 	NSMutableDictionary *m_legislativeConnection; // legislatorID => (sub)committeeKey (array)
+	NSInteger m_congressSession;
 	
 	// XML-parsing variables
 	BOOL m_parsingCommittees;
@@ -48,7 +49,10 @@
 
 // downloads congressional XML data from specified source
 // and updates internal state
-- (void)downloadDataFrom:(NSURL *)url;
+- (void)downloadDataFrom:(NSURL *)url forCongressSession:(NSInteger)session;
+
+// retrieve the congress session associated with this committee data
+- (NSInteger)congressSession;
 
 // Return an array of LegislativeCommittee objects
 - (NSArray *)getCommitteeDataFor:(LegislatorContainer *)legislator;

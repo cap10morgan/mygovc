@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+@class BillsDataManager;
 @class CongressDataManager;
 @class SpendingDataManager;
 
@@ -27,6 +28,7 @@
 + (myGovAppDelegate *)sharedAppDelegate;
 + (NSString *)sharedAppCacheDir;
 
++ (BillsDataManager *)sharedBillsData;
 + (CongressDataManager *)sharedCongressData;
 + (SpendingDataManager *)sharedSpendingData;
 

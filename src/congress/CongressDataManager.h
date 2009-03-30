@@ -15,10 +15,10 @@
 
 @interface CongressDataManager : NSObject <XMLParserOperationDelegate>
 {
+@private
 	BOOL isDataAvailable;
 	BOOL isBusy;
 	
-@private
 	BOOL parsingLegislator;
 	BOOL storingCharacters;
 	NSMutableString *m_currentString;
@@ -30,6 +30,7 @@
 	
 	NSMutableArray *m_searchArray;
 	
+	NSInteger m_currentCongressSession;
 	CongressionalCommittees *m_committees;
 	
 	XMLParserOperation *m_xmlParser;
@@ -46,6 +47,8 @@
 - (id)initWithNotifyTarget:(id)target andSelector:(SEL)sel;
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;
+
+- (NSInteger)currentCongressSession;
 
 // legislators by state
 - (NSArray *)states;

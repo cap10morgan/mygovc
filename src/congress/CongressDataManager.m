@@ -18,7 +18,7 @@
 
 @interface CongressDataManager (private)
 	- (void)destroyDataCache;
-	- (void)beginLocationFetch;
+	- (void)discoverCurrentCongressSession;
 	- (void)beginDataDownload;
 	- (void)initFromDisk:(id)sender;
 	- (void)setCurrentState:(NSString *)stateAbbr andDistrict:(NSUInteger)district;
@@ -39,9 +39,9 @@ static NSMutableDictionary *s_districts = NULL;
 
 static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
 //static NSString *kPVS_APIKey = @"e9c18da5999464958518614cfa7c6e1c";
-static NSString *kOpenCongress_APIKey = @"32aea132a66093e9bf9ebe9fc2e2a4c66b888777";
 static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/legislators.getList.xml";
-static NSString *kGovtrack_committeeListXML = @"http://www.govtrack.us/data/us/111/committees.xml";
+static NSString *kGovtrack_dataDir = @"http://www.govtrack.us/data/us/";
+static NSString *kGovtrack_committeeListXMLFmt = @"http://www.govtrack.us/data/us/%d/committees.xml";
 static NSString *kGovtrack_locLookupXML = @"http://www.govtrack.us/perl/district-lookup.cgi?";
 static NSString *kGovtrack_latLongFmt = @"lat=%f&long=%f";
 
@@ -71,6 +71,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 		m_searchArray = nil;
 		
 		m_xmlParser = nil;
+		m_currentCongressSession = 0;
 		m_committees = [[CongressionalCommittees alloc] init];
 		
 		// check to see if we have congress data previously cached on this 
@@ -121,6 +122,12 @@ static NSString *kTitleValue_Senator = @"Sen";
 }
 
 
+- (NSInteger)currentCongressSession
+{
+	return m_currentCongressSession;
+}
+
+
 - (NSArray *)states
 {
 	return (NSArray *)m_states;
@@ -146,6 +153,29 @@ static NSString *kTitleValue_Senator = @"Sen";
 	
 	// build a new search array
 	m_searchArray = [[NSMutableArray alloc] initWithCapacity:10];
+	
+	// this is a district specification - build the search list quick and easy :-)
+	if ( [string length] == 4 && [[string substringFromIndex:2] integerValue] > 0 )
+	{
+		// XXX - fix for At-Large districts...
+		
+		NSString *state = [string substringToIndex:2];
+		
+		// representative
+		LegislatorContainer *lc = [self districtRepresentative:string]; 
+		if ( nil != lc ) [m_searchArray addObject:lc];
+		
+		// senators
+		NSArray *senators = [m_senate objectForKey:state];
+		NSEnumerator *senum = [senators objectEnumerator];
+		id legislator;
+		while ( legislator = [senum nextObject] )
+		{
+			[m_searchArray addObject:legislator];
+		}
+		
+		return;
+	}
 	
 	// linearly search the house data
 	NSEnumerator *houseEnum = [m_house objectEnumerator];
@@ -339,8 +369,36 @@ static NSString *kTitleValue_Senator = @"Sen";
 }
 
 
-- (void)beginLocationFetch:(NSString *)url
+- (void)discoverCurrentCongressSession
 {
+	// get current congress session!
+	NSData *govTrackDirData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:kGovtrack_dataDir]];
+	NSString *dirListHtmlStr = [[NSString alloc] initWithData:govTrackDirData encoding:NSUTF8StringEncoding];
+	
+	// we have to stat somewhere :-)
+	m_currentCongressSession = 110;
+	
+	// hacker-parse the HTML string to find the highest number directory
+	// link which should correspond to the current session of congress!
+	NSRange pos = {0,[dirListHtmlStr length]};
+	NSRange anchorPos = [dirListHtmlStr rangeOfString:@"a href=\"" options:NSCaseInsensitiveSearch range:pos];
+	while ( anchorPos.length > 0 )
+	{
+		pos.location = (anchorPos.location + anchorPos.length);
+		pos.length = [dirListHtmlStr length] - pos.location;
+		// pos is not pointing to the larget of the anchor, 
+		// look for the closing quote and chop off the directory slash
+		NSRange tgtRange = {pos.location, 5}; // 110/" 
+		NSString *targetStr = [dirListHtmlStr substringWithRange:tgtRange];
+		if ( [targetStr characterAtIndex:3] == '/' && [targetStr characterAtIndex:4] == '"' )
+		{
+			// get a number from this - it's a congress session link!
+			NSInteger session = [[targetStr substringToIndex:3] integerValue];
+			if ( session > m_currentCongressSession ) m_currentCongressSession = session;
+		}
+		
+		anchorPos = [dirListHtmlStr rangeOfString:@"a href=\"" options:NSCaseInsensitiveSearch range:pos];
+	}
 }
 
 
@@ -411,8 +469,11 @@ static NSString *kTitleValue_Senator = @"Sen";
 		}
 	}
 	
+	// read committee data (and current congress session) from disk
 	file = [congressDataPath stringByAppendingPathComponent:@"committees.xml"];
 	[m_committees initCommitteeDataFromFile:file];
+	
+	m_currentCongressSession = [m_committees congressSession];
 	
 	isDataAvailable = YES;
 	if ( nil != m_notifyTarget )
@@ -552,8 +613,12 @@ static NSString *kTitleValue_Senator = @"Sen";
 			NSString *message = [NSString stringWithString:@"Downloading Committee Data..."];;
 			[m_notifyTarget performSelector:m_notifySelector withObject:message];
 		}
+		
+		[self discoverCurrentCongressSession];
+		
 		// download the committee data (wait for this...)
-		[m_committees downloadDataFrom:[NSURL URLWithString:kGovtrack_committeeListXML]];
+		NSURL *committeeURL = [NSURL URLWithString:[NSString stringWithFormat:kGovtrack_committeeListXMLFmt,m_currentCongressSession]];
+		[m_committees downloadDataFrom:committeeURL forCongressSession:m_currentCongressSession];
 	}
 	
 	isDataAvailable = success;

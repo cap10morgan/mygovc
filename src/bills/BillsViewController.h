@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 
 
-@interface BillsViewController : UITableViewController {
+@interface BillsViewController : UITableViewController 
+{
 
 }
 

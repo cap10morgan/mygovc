@@ -14,6 +14,7 @@
 	- (void)newState;
 @end
 
+static NSString *kCongressSessionKey = @"CongressSession";
 
 static NSString *kName_CommitteesGroup = @"committees";
 static NSString *kName_Committee = @"committee";
@@ -89,13 +90,18 @@ static NSString *kPropTitle_Parent = @"parent";
 	
 	NSDictionary *committeeStore = [[NSDictionary alloc] initWithContentsOfFile:path];
 	
+	NSString *cSession = [committeeStore objectForKey:kCongressSessionKey];
+	m_congressSession = [cSession integerValue];
+	
 	// run through all the committees and build our in-memory data objects
 	NSEnumerator *comEnum = [committeeStore keyEnumerator];
 	id comKey;
 	while ( (comKey = [comEnum nextObject]) ) 
 	{
+		if ( [comKey isEqualToString:kCongressSessionKey] ) continue;
+		
 		// create LegislativeCommittee object
-		NSDictionary *committeeData = [committeeStore objectForKey:comKey];
+		NSDictionary *committeeData = (NSDictionary *)[committeeStore objectForKey:comKey];
 		LegislativeCommittee *committee = [[LegislativeCommittee alloc] init];
 		committee.m_id = (NSString *)comKey;
 		committee.m_name = [committeeData objectForKey:kProp_CommitteeName];
@@ -137,6 +143,9 @@ static NSString *kPropTitle_Parent = @"parent";
 	// into a dictionary of PropertyList-compliant objects
 	NSMutableDictionary *committeeDict = [[NSMutableDictionary alloc] initWithCapacity:[m_committees count]];
 	
+	// save congress session
+	[committeeDict setValue:[NSString stringWithFormat:@"%d",m_congressSession] forKey:kCongressSessionKey];
+	
 	NSEnumerator *comEnum = [m_committees objectEnumerator];
 	id comObj;
 	while ( (comObj = [comEnum nextObject]) ) 
@@ -155,13 +164,14 @@ static NSString *kPropTitle_Parent = @"parent";
 }
 
 
-- (void)downloadDataFrom:(NSURL *)url
+- (void)downloadDataFrom:(NSURL *)url forCongressSession:(NSInteger)session
 {
 	// release memory and prepare for new data
 	[self clearState];
 	[self newState];
 	
-	NSLog( @"CongressionalCommittees: downloading committee data from %@ ...",[url absoluteString] );
+	m_congressSession = session;
+	NSLog( @"CongressionalCommittees: downloading %d committee data from %@ ...",session,[url absoluteString] );
 	
 	NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
 	
@@ -176,6 +186,12 @@ static NSString *kPropTitle_Parent = @"parent";
 	BOOL success = [xmlParser parse];
 	
 	NSLog( @"CongressionalCommittees: committee parsing ended %@",(success ? @"successfully." : @"in failure!") );
+}
+
+
+- (NSInteger)congressSession
+{
+	return m_congressSession;
 }
 
 
@@ -195,6 +211,8 @@ static NSString *kPropTitle_Parent = @"parent";
 {
 	[m_committees release];
 	[m_legislativeConnection release];
+	
+	m_congressSession = 0;
 	
 	[m_currentCommittee release]; m_currentCommittee = nil;
 	[m_currentSubCommittee release]; m_currentSubCommittee = nil;
