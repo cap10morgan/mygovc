@@ -51,6 +51,7 @@ static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/b
 		m_billData = [[NSMutableArray alloc] initWithCapacity:4];
 		
 		m_xmlParser = nil;
+		m_timer = nil;
 	}
 	return self;
 }
@@ -80,10 +81,24 @@ static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/b
 	isDataAvailable = NO;
 	isBusy = YES;
 	
+	// make sure we have congress data before downloading bill data - 
+	// this ensures that we grab the right congressional session!
+	if ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
+	{
+		// start a timer that will periodically check to see if
+		// congressional data is ready... no this is not the most
+		// efficient way of doing this...
+		if ( nil == m_timer )
+		{
+			m_timer = [NSTimer timerWithTimeInterval:0.75 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
+			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+		}
+		return;
+	}
+	
 	if ( nil != m_notifyTarget )
 	{
-		NSString *message = [NSString stringWithString:@"BILLS Downloading Bill Summary Data..."];
-		[m_notifyTarget performSelector:m_notifySelector withObject:message];
+		[m_notifyTarget performSelector:m_notifySelector withObject:self];
 	}
 	
 	NSString *xmlURL = [NSString stringWithFormat:kOpenCongress_BillsXMLFmt,
@@ -110,6 +125,12 @@ static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/b
 }
 
 
+- (NSInteger)totalBills
+{
+	return [m_billData count];
+}
+
+
 - (BillContainer *)billAtIndex:(NSInteger)index;
 {
 	if ( index < [m_billData count] )
@@ -131,6 +152,22 @@ static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/b
 }
 
 
+- (void)timerFireMethod:(NSTimer *)timer
+{
+	if ( timer != m_timer ) return;
+	
+	CongressDataManager *cdm = [myGovAppDelegate sharedCongressData];
+	if ( (nil != cdm) && ([cdm isDataAvailable]) )
+	{
+		// stop this timer, and start downloading some spending data!
+		[timer invalidate];
+		m_timer = nil;
+		
+		[self beginBillSummaryDownload];
+	}
+}
+
+
 #pragma mark XMLParserOperationDelegate Methods
 
 
@@ -146,8 +183,7 @@ static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/b
 	
 	if ( nil != m_notifyTarget )
 	{
-		NSString *message = [NSString stringWithFormat:@"BILLS %@",(success ? @"Download Complete." : @"ERROR")];
-		[m_notifyTarget performSelector:m_notifySelector withObject:message];
+		[m_notifyTarget performSelector:m_notifySelector withObject:self];
 	}
 	NSLog( @"BillsDataManager XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
 	

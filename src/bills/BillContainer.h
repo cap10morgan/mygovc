@@ -79,6 +79,7 @@ typedef enum
 
 + (BillType)billTypeFromString:(NSString *)string;
 + (NSString *)getBillTypeDescrip:(BillType)type;
++ (NSString *)getBillTypeShortDescrip:(BillType)type;
 
 - (void)addSponsor:(NSString *)bioguideID;
 - (void)addCoSponsor:(NSString *)bioguideID;
@@ -88,6 +89,8 @@ typedef enum
 - (NSDate *)lastActionDate;
 
 - (BillAction *)lastBillAction;
+
+- (NSString *)getShortTitle;
 
 @end
 

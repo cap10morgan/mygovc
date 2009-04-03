@@ -89,6 +89,32 @@
 }
 
 
++ (NSString *)getBillTypeShortDescrip:(BillType)type
+{
+	switch ( type )
+	{
+		case eBillType_h:
+			return @"H.R.";
+		case eBillType_s:
+			return @"S.";
+		case eBillType_hj:
+			return @"H. Joint Res.";
+		case eBillType_sj:
+			return @"S. Joint Res.";
+		case eBillType_hc:
+			return @"H. Con. Res.";
+		case eBillType_sc:
+			return @"S. Con. Res.";
+		case eBillType_hr:
+			return @"H. Res.";
+		case eBillType_sr:
+			return @"S. Res.";
+		default:
+			return @"??";
+	}
+}
+
+
 - (id)init
 {
 	if ( self = [super init] )
@@ -167,6 +193,16 @@
 - (BillAction *)lastBillAction
 {
 	return m_lastAction;
+}
+
+
+- (NSString *)getShortTitle
+{
+	NSString *shortTitle = [[[NSString alloc] initWithFormat:@"%@ %d",
+								[BillContainer getBillTypeShortDescrip:m_type],
+								m_number
+							] autorelease];
+	return shortTitle;
 }
 
 

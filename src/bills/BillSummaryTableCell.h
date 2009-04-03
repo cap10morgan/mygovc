@@ -20,7 +20,6 @@
 
 + (CGFloat)getCellHeightForBill:(BillContainer *)bill;
 
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier detailTarget:(id)tgt detailSelector:(SEL)sel;
 - (void)setContentFromBill:(BillContainer *)container;
 
 

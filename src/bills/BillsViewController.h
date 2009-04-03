@@ -9,12 +9,15 @@
 #import <UIKit/UIKit.h>
 
 @class BillsDataManager;
+@class ProgressOverlayViewController;
 
 
 @interface BillsViewController : UITableViewController 
 {
 @private
 	BillsDataManager *m_data;
+	
+	ProgressOverlayViewController *m_HUD;
 }
 
 @end

@@ -20,6 +20,7 @@
 	NSMutableArray *m_billData;
 	
 	XMLParserOperation *m_xmlParser;
+	NSTimer *m_timer;
 	
 	id m_notifyTarget;
 	SEL m_notifySelector;
@@ -34,6 +35,9 @@
 
 - (void)beginBillSummaryDownload;
 
+- (NSInteger)totalBills;
+
 - (BillContainer *)billAtIndex:(NSInteger)index;
+
 
 @end

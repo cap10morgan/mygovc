@@ -15,12 +15,12 @@
 
 enum
 {
-	eTAG_TITLE,
-	eTAG_STATUSLABEL,
-	eTAG_STATUS,
-	eTAG_VOTESTATUS,
-	eTAG_HISTORYLABEL,
-	eTAG_HISTORY,
+	eTAG_TITLE        = 999,
+	eTAG_STATUSLABEL  = 998,
+	eTAG_STATUS       = 997,
+	eTAG_VOTESTATUS   = 996,
+	eTAG_HISTORYLABEL = 995,
+	eTAG_HISTORY      = 994,
 };
 
 static const CGFloat S_CELL_PADDING = 5.0f;
@@ -39,35 +39,35 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 	NSString *title = bill.m_title;
 	CGSize titleSz = [title sizeWithFont:D_TITLE_FONT 
 							constrainedToSize:CGSizeMake(320.0f - (2.0f*S_CELL_PADDING),S_TITLE_HEIGHT) 
-							lineBreakMode:UILineBreakModeTailTruncation];
+							lineBreakMode:UILineBreakModeWordWrap];
 	
-	CGFloat height = titleSz.height + S_CELL_PADDING + 
+	CGFloat height = S_CELL_PADDING + titleSz.height + S_CELL_PADDING + 
 					 S_LABEL_HEIGHT + S_CELL_PADDING;
 	
 	return height;
 }
 
 
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier detailTarget:(id)tgt detailSelector:(SEL)sel
+- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier
 {
 	if (self = [super initWithFrame:frame reuseIdentifier:reuseIdentifier]) 
 	{
 		m_bill = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
 		
-		CGFloat frameX = 10.0f;
-		CGFloat frameY = 2.0f;
+		CGFloat frameX = S_CELL_PADDING;
+		CGFloat frameY = S_CELL_PADDING;
 		CGFloat frameW = self.contentView.bounds.size.width - (frameX * 2.0f);
 		//CGFloat frameH = self.contentView.bounds.size.height - (frameY * 2.0f);
 		
 		CGRect titleRect = CGRectMake(frameX,frameY,frameW,S_TITLE_HEIGHT);
 		UILabel *titleView = [[UILabel alloc] initWithFrame:titleRect];
 		titleView.backgroundColor = [UIColor clearColor];
-		titleView.textColor = [UIColor blackColor];
-		titleView.shadowColor = [UIColor darkGrayColor];
+		titleView.textColor = [UIColor whiteColor];
+		//titleView.shadowColor = [UIColor darkGrayColor];
 		titleView.font = D_TITLE_FONT;
 		titleView.textAlignment = UITextAlignmentLeft;
-		titleView.lineBreakMode = UILineBreakModeTailTruncation;
+		titleView.lineBreakMode = UILineBreakModeWordWrap;
 		titleView.numberOfLines = 5;
 		[titleView setTag:eTAG_TITLE];
 		
@@ -80,7 +80,7 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 		);
 		UILabel *statusLbl = [[UILabel alloc] initWithFrame:labelRect];
 		statusLbl.backgroundColor = [UIColor clearColor];
-		statusLbl.textColor = [UIColor blackColor];
+		statusLbl.textColor = [UIColor whiteColor];
 		statusLbl.font = D_LABEL_FONT;
 		statusLbl.textAlignment = UITextAlignmentLeft;
 		statusLbl.adjustsFontSizeToFitWidth = YES;
@@ -141,12 +141,34 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 
 - (void)setContentFromBill:(BillContainer *)container
 {
-	[m_bill release];
+	[m_bill release]; m_bill = nil;
+	
+	if ( nil == container )
+	{
+		UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
+		[titleView setText:@""];
+		UILabel *voteView = (UILabel *)[self viewWithTag:eTAG_VOTESTATUS];
+		[voteView setText:@""];
+		UILabel *statusView = (UILabel *)[self viewWithTag:eTAG_STATUS];
+		[statusView setText:@""];
+		return;
+	}
+	
 	m_bill = [container retain];
 	
 	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
+	
+	CGSize titleSz = [m_bill.m_title sizeWithFont:D_TITLE_FONT 
+									 constrainedToSize:CGSizeMake(320.0f - (2.0f*S_CELL_PADDING),S_TITLE_HEIGHT) 
+									 lineBreakMode:UILineBreakModeTailTruncation];
+	[titleView setFrame:CGRectMake(S_CELL_PADDING,S_CELL_PADDING,titleSz.width,titleSz.height)];
 	[titleView setText:m_bill.m_title];
-	[titleView sizeToFit];
+	titleView.textColor = [UIColor whiteColor];
+	/*
+	titleView.textAlignment = UITextAlignmentLeft;
+	titleView.lineBreakMode = UILineBreakModeWordWrap;
+	titleView.numberOfLines = 5;
+	*/
 	
 	CGRect titleRect = titleView.frame;
 	CGFloat statusY = CGRectGetMaxY(titleRect) + S_CELL_PADDING;
