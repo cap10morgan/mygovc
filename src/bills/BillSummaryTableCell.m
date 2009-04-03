@@ -31,6 +31,7 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 
 #define D_TITLE_FONT [UIFont systemFontOfSize:14.0f]
 #define D_LABEL_FONT [UIFont boldSystemFontOfSize:12.0f]
+#define D_STATUS_FONT [UIFont italicSystemFontOfSize:14.0f]
 #define D_STD_FONT   [UIFont systemFontOfSize:12.0f]
 
 
@@ -54,6 +55,7 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 	{
 		m_bill = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
+		self.backgroundColor = [UIColor darkGrayColor];
 		
 		CGFloat frameX = S_CELL_PADDING;
 		CGFloat frameY = S_CELL_PADDING;
@@ -64,7 +66,7 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 		UILabel *titleView = [[UILabel alloc] initWithFrame:titleRect];
 		titleView.backgroundColor = [UIColor clearColor];
 		titleView.textColor = [UIColor whiteColor];
-		//titleView.shadowColor = [UIColor darkGrayColor];
+		titleView.highlightedTextColor =[UIColor blackColor];
 		titleView.font = D_TITLE_FONT;
 		titleView.textAlignment = UITextAlignmentLeft;
 		titleView.lineBreakMode = UILineBreakModeWordWrap;
@@ -80,7 +82,8 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 		);
 		UILabel *statusLbl = [[UILabel alloc] initWithFrame:labelRect];
 		statusLbl.backgroundColor = [UIColor clearColor];
-		statusLbl.textColor = [UIColor whiteColor];
+		statusLbl.textColor = [UIColor yellowColor];
+		statusLbl.highlightedTextColor =[UIColor darkGrayColor];
 		statusLbl.font = D_LABEL_FONT;
 		statusLbl.textAlignment = UITextAlignmentLeft;
 		statusLbl.adjustsFontSizeToFitWidth = YES;
@@ -95,6 +98,7 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 		UILabel *voteView = [[UILabel alloc] initWithFrame:voteRect];
 		voteView.backgroundColor = [UIColor clearColor];
 		voteView.textColor = [UIColor blueColor];
+		voteView.highlightedTextColor =[UIColor darkGrayColor];
 		voteView.font = D_STD_FONT;
 		voteView.textAlignment = UITextAlignmentCenter;
 		voteView.adjustsFontSizeToFitWidth = YES;
@@ -107,7 +111,9 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 		);
 		UILabel *statusView = [[UILabel alloc] initWithFrame:statusRect];
 		statusView.backgroundColor = [UIColor clearColor];
-		statusView.textColor = [UIColor darkGrayColor];
+		statusView.textColor = [UIColor yellowColor];
+		statusView.highlightedTextColor =[UIColor darkGrayColor];
+		statusView.font = D_STATUS_FONT;
 		statusView.textAlignment = UITextAlignmentLeft;
 		statusView.adjustsFontSizeToFitWidth = YES;
 		[statusView setTag:eTAG_STATUS];
@@ -136,6 +142,14 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated 
 {
 	[super setSelected:selected animated:animated];
+	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
+	[titleView setHighlighted:selected];
+	UILabel *statusLbl = (UILabel *)[self viewWithTag:eTAG_STATUSLABEL];
+	[statusLbl setHighlighted:selected];
+	UILabel *voteView = (UILabel *)[self viewWithTag:eTAG_VOTESTATUS];
+	[voteView setHighlighted:selected];
+	UILabel *statusView = (UILabel *)[self viewWithTag:eTAG_STATUS];
+	[statusView setHighlighted:selected];
 }
 
 
@@ -147,6 +161,8 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 	{
 		UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
 		[titleView setText:@""];
+		UILabel *statusLbl = (UILabel *)[self viewWithTag:eTAG_STATUSLABEL];
+		[statusLbl setText:@""];
 		UILabel *voteView = (UILabel *)[self viewWithTag:eTAG_VOTESTATUS];
 		[voteView setText:@""];
 		UILabel *statusView = (UILabel *)[self viewWithTag:eTAG_STATUS];
@@ -157,25 +173,21 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 	m_bill = [container retain];
 	
 	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
-	
-	CGSize titleSz = [m_bill.m_title sizeWithFont:D_TITLE_FONT 
+	// trim off the characters before the first space - they're the title...
+	NSString *titleStr = [m_bill.m_title substringFromIndex:([m_bill.m_title rangeOfString:@" "].location + 1)];
+	CGSize titleSz = [titleStr sizeWithFont:D_TITLE_FONT 
 									 constrainedToSize:CGSizeMake(320.0f - (2.0f*S_CELL_PADDING),S_TITLE_HEIGHT) 
 									 lineBreakMode:UILineBreakModeTailTruncation];
 	[titleView setFrame:CGRectMake(S_CELL_PADDING,S_CELL_PADDING,titleSz.width,titleSz.height)];
-	[titleView setText:m_bill.m_title];
-	titleView.textColor = [UIColor whiteColor];
-	/*
-	titleView.textAlignment = UITextAlignmentLeft;
-	titleView.lineBreakMode = UILineBreakModeWordWrap;
-	titleView.numberOfLines = 5;
-	*/
-	
+	[titleView setText:titleStr];
+		
 	CGRect titleRect = titleView.frame;
 	CGFloat statusY = CGRectGetMaxY(titleRect) + S_CELL_PADDING;
 	
 	CGRect tmpRect = CGRectMake(CGRectGetMinX(titleRect), statusY, S_LABEL_WIDTH, S_LABEL_HEIGHT);
 	UILabel *statusLbl = (UILabel *)[self viewWithTag:eTAG_STATUSLABEL];
 	[statusLbl setFrame:tmpRect];
+	[statusLbl setText:@"Status:"];
 	
 	UILabel *voteView = (UILabel *)[self viewWithTag:eTAG_VOTESTATUS];
 	if ( eVote_novote == [[m_bill lastBillAction] m_voteResult] )
@@ -203,7 +215,7 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 		voteView.textColor = voteColor;
 	}
 	
-	CGFloat statusWidth = (CGRectGetMinX(voteView.frame) > 0) ? 
+	CGFloat statusWidth = (CGRectGetWidth(voteView.frame) > 0) ? 
 							CGRectGetMinX(voteView.frame) - CGRectGetMaxX(statusLbl.frame) - (2.0f*S_CELL_PADDING) :
 							CGRectGetMaxX(titleRect) - CGRectGetMaxX(statusLbl.frame) - (2.0f*S_CELL_PADDING);
 	tmpRect = CGRectMake(CGRectGetMaxX(statusLbl.frame) + S_CELL_PADDING,

@@ -28,7 +28,7 @@ enum
 	eTAG_ACTIVITY = 999,
 };
 
-static CGFloat S_CELL_PADDING = 7.0f;
+static CGFloat S_CELL_PADDING = 12.0f;
 static CGFloat S_HEADER_HEIGHT = 33.0f;
 /*
 - (id)initWithStyle:(UITableViewStyle)style {
@@ -194,8 +194,10 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 {
 	CGRect lblFrame = CGRectMake(S_CELL_PADDING, S_CELL_PADDING, 320.0f - S_CELL_PADDING, S_HEADER_HEIGHT);
 	UILabel *sectionLabel = [[[UILabel alloc] initWithFrame:lblFrame] autorelease];
-	sectionLabel.backgroundColor = [UIColor clearColor];
+	sectionLabel.backgroundColor = [UIColor colorWithHue:0.0f saturation:0.0f brightness:0.0f alpha:0.75f];
 	sectionLabel.textColor = [UIColor whiteColor];
+	sectionLabel.shadowColor = [UIColor darkGrayColor];
+	sectionLabel.shadowOffset = CGSizeMake(1,1);
 	sectionLabel.font = [UIFont boldSystemFontOfSize:18.0f];
 	sectionLabel.textAlignment = UITextAlignmentLeft;
 	sectionLabel.adjustsFontSizeToFitWidth = YES;
@@ -204,15 +206,22 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 	{
 		[sectionLabel setText:[[m_data billAtIndex:section] getShortTitle]];
 	}
-	else
+	else if ( [[myGovAppDelegate sharedCongressData] isDataAvailable] )
 	{
 		[sectionLabel setText:@"Downloading..."];
+		/*
 		CGSize lblSz = [sectionLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:18.0f] 
 							  constrainedToSize:CGSizeMake(320.0f - S_CELL_PADDING,S_HEADER_HEIGHT) 
 							  lineBreakMode:UILineBreakModeTailTruncation];
 		UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
 		[activity setFrame:CGRectMake(lblSz.width+S_CELL_PADDING,S_CELL_PADDING,S_HEADER_HEIGHT,S_HEADER_HEIGHT)];
+		[sectionLabel addSubview:activity];
 		[activity startAnimating];
+		*/
+	}
+	else
+	{
+		[sectionLabel setText:@""];
 	}
 	
 	return sectionLabel;
@@ -238,6 +247,8 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 	{
 		[cell setContentFromBill:[m_data billAtIndex:indexPath.section]];
 	}
+	
+	cell.contentView.backgroundColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.15 alpha:0.25];
 	
 	return cell;
 }
