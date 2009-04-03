@@ -18,6 +18,13 @@ static const CGFloat S_TABLE_TITLE_WIDTH = 15.0f;
 static const CGFloat S_INFO_OFFSET = 10.0f;
 static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
 
+enum
+{
+	eTAG_DETAIL = 999,
+	eTAG_NAME   = 998,
+	eTAG_PARTY  = 997,
+	eTAG_INFO   = 996,
+};
 
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier detailTarget:(id)tgt detailSelector:(SEL)sel
 {
@@ -38,6 +45,7 @@ static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
 									   CGRectGetWidth(detail.frame),
 									   CGRectGetHeight(detail.frame) );
 		[detail setFrame:detailRect];
+		[detail setTag:eTAG_DETAIL];
 		
 		CGRect nameRect = CGRectMake(frameX, 
 									 frameY, 
@@ -49,7 +57,7 @@ static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
 		nameView.font = [UIFont boldSystemFontOfSize:18.0f];
 		nameView.textAlignment = UITextAlignmentLeft;
 		nameView.adjustsFontSizeToFitWidth = YES;
-		[nameView setTag:999];
+		[nameView setTag:eTAG_NAME];
 		
 		CGRect partyRect = CGRectMake(CGRectGetMinX(detailRect) - S_PARTY_INDICATOR_WIDTH,
 									  frameY, 
@@ -61,7 +69,7 @@ static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
 		partyView.font = [UIFont systemFontOfSize:18.0f];
 		partyView.textAlignment = UITextAlignmentCenter;
 		partyView.adjustsFontSizeToFitWidth = YES;
-		[partyView setTag:998];
+		[partyView setTag:eTAG_PARTY];
 		
 		CGRect infoRect = CGRectMake( frameX + S_INFO_OFFSET, 
 									  frameY + CGRectGetHeight(nameRect),
@@ -73,7 +81,7 @@ static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
 		infoView.font = [UIFont systemFontOfSize:14.0f];
 		infoView.textAlignment = UITextAlignmentLeft;
 		infoView.adjustsFontSizeToFitWidth = YES;
-		[infoView setTag:997];
+		[infoView setTag:eTAG_INFO];
 		
 		
 		// set delegate for detail button press!
@@ -105,13 +113,13 @@ static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
     [super setSelected:selected animated:animated];
 	
     // Configure the view for the selected state
-	UILabel *nameView = (UILabel *)[self viewWithTag:999];
+	UILabel *nameView = (UILabel *)[self viewWithTag:eTAG_NAME];
 	nameView.highlighted = selected;
 	
-	UILabel *partyView = (UILabel *)[self viewWithTag:998];
+	UILabel *partyView = (UILabel *)[self viewWithTag:eTAG_PARTY];
 	partyView.highlighted = selected;
 	
-	UILabel *infoView = (UILabel *)[self viewWithTag:997];
+	UILabel *infoView = (UILabel *)[self viewWithTag:eTAG_INFO];
 	infoView.highlighted = selected;
 }
 
@@ -149,14 +157,14 @@ static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
 		info = [[NSString alloc] initWithFormat:@"%@.",[legislator title]];
 	}
 	
-	UILabel *nameView = (UILabel *)[self viewWithTag:999];
+	UILabel *nameView = (UILabel *)[self viewWithTag:eTAG_NAME];
 	[nameView setText:name];
 	
-	UILabel *partyView = (UILabel *)[self viewWithTag:998];
+	UILabel *partyView = (UILabel *)[self viewWithTag:eTAG_PARTY];
 	[partyView setText:party];
 	//[partyView setTextColor:([party isEqualToString:@"D"] ? [UIColor blueColor] : [UIColor redColor])];
 	
-	UILabel *infoView = (UILabel *)[self viewWithTag:997];
+	UILabel *infoView = (UILabel *)[self viewWithTag:eTAG_INFO];
 	[infoView setText:info];
 	
 	// set a background color based on party :-)

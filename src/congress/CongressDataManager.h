@@ -60,6 +60,9 @@
 - (void)setSearchLocation:(CLLocation *)loc;
 - (NSArray *)searchResultsArray;
 
+// legislator by BioGuide ID
+- (LegislatorContainer *)getLegislatorFromBioguideID:(NSString *)bioguideid;
+
 // legislators by district
 - (NSArray *)congressionalDistricts;
 - (LegislatorContainer *)districtRepresentative:(NSString *)district;

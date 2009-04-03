@@ -7,11 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XMLParserOperation.h"
 
 @class BillContainer;
-@class XMLParserOperation;
 
-@interface BillsDataManager : NSObject 
+@interface BillsDataManager : NSObject <XMLParserOperationDelegate>
 {
 @private
 	BOOL isDataAvailable;
@@ -19,8 +19,6 @@
 	
 	NSMutableArray *m_billData;
 	
-	NSMutableString *m_currentString;
-	BillContainer *m_currentBill;
 	XMLParserOperation *m_xmlParser;
 	
 	id m_notifyTarget;
@@ -33,6 +31,8 @@
 + (NSString *)dataCachePath;
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;
+
+- (void)beginBillSummaryDownload;
 
 - (BillContainer *)billAtIndex:(NSInteger)index;
 

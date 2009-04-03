@@ -12,6 +12,7 @@
 
 @interface LegislatorNameCell : UITableViewCell 
 {
+@private
 	LegislatorContainer *m_legislator;
 }
 

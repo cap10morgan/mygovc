@@ -65,9 +65,9 @@ static NSString *kTitleValue_Senator = @"Sen";
 		[self setNotifyTarget:target withSelector:sel];
 		
 		// initialize states/house/senate arrays
-		m_states = [[NSMutableArray alloc] initWithCapacity:50];
-		m_house = [[NSMutableDictionary alloc] initWithCapacity:50];
-		m_senate = [[NSMutableDictionary alloc] initWithCapacity:50];
+		m_states = [[NSMutableArray alloc] initWithCapacity:60];
+		m_house = [[NSMutableDictionary alloc] initWithCapacity:60];
+		m_senate = [[NSMutableDictionary alloc] initWithCapacity:60];
 		m_searchArray = nil;
 		
 		m_xmlParser = nil;
@@ -238,6 +238,44 @@ static NSString *kTitleValue_Senator = @"Sen";
 }
 
 
+- (LegislatorContainer *)getLegislatorFromBioguideID:(NSString *)bioguideid
+{
+	// XXX - Linear search... maybe speed this up someday?
+	
+	// house data
+	NSEnumerator *houseEnum = [m_house objectEnumerator];
+	id state;
+	id legislator;
+	while ( state = [houseEnum nextObject] ) 
+	{
+		NSEnumerator *legEnum = [state objectEnumerator];
+		while ( legislator = [legEnum nextObject] )
+		{
+			if ( [[legislator bioguide_id] isEqualToString:bioguideid] )
+			{
+				return (LegislatorContainer *)legislator;
+			}
+		}
+	}
+	
+	// senate data
+	NSEnumerator *senateEnum = [m_senate objectEnumerator];
+	while ( state = [senateEnum nextObject] ) 
+	{
+		NSEnumerator *legEnum = [state objectEnumerator];
+		while ( legislator = [legEnum nextObject] )
+		{
+			if ( [[legislator bioguide_id] isEqualToString:bioguideid] )
+			{
+				return (LegislatorContainer *)legislator;
+			}
+		}
+	}
+	
+	return nil;
+}
+
+
 - (NSArray *)congressionalDistricts
 {
 	NSDictionary *districtDict = [self districtDictionary];
@@ -347,9 +385,9 @@ static NSString *kTitleValue_Senator = @"Sen";
 	[m_house release];
 	[m_senate release];
 	[m_committees release];
-	m_states = [[NSMutableArray alloc] initWithCapacity:50];
-	m_house = [[NSMutableDictionary alloc] initWithCapacity:50];
-	m_senate = [[NSMutableDictionary alloc] initWithCapacity:50];
+	m_states = [[NSMutableArray alloc] initWithCapacity:60];
+	m_house = [[NSMutableDictionary alloc] initWithCapacity:60];
+	m_senate = [[NSMutableDictionary alloc] initWithCapacity:60];
 	
 	// includes sub-committees...
 	m_committees = [[CongressionalCommittees alloc] init];
@@ -569,7 +607,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 	{
 		// allocate a new dictionary of district->legislator pairs
 		// (cache this shit because a giant linear algorithm through all US district is NOOO GOOD!)
-		s_districts = [[NSMutableDictionary alloc] initWithCapacity:480];
+		s_districts = [[NSMutableDictionary alloc] initWithCapacity:490];
 		
 		// Painfully iterate through
 		NSEnumerator *houseEnum = [m_house objectEnumerator];

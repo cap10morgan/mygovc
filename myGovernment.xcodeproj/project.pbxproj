@@ -26,6 +26,8 @@
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
 		017C22520F721824008CA4ED /* spendingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224F0F721824008CA4ED /* spendingIcon.png */; };
 		017C22550F721E60008CA4ED /* communityIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C22540F721E60008CA4ED /* communityIcon.png */; };
+		0190167C0F8551BB00627610 /* BillSummaryXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */; };
+		019017670F85760A00627610 /* BillSummaryTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 019017660F85760A00627610 /* BillSummaryTableCell.m */; };
 		01B118360F709EC70076AFE0 /* StateAbbreviations.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B118350F709EC70076AFE0 /* StateAbbreviations.m */; };
 		01B119070F70B71E0076AFE0 /* SpendingDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B119060F70B71E0076AFE0 /* SpendingDataManager.m */; };
 		01B119440F70BD560076AFE0 /* location_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B119420F70BD560076AFE0 /* location_overlay.png */; };
@@ -83,6 +85,10 @@
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
 		017C224F0F721824008CA4ED /* spendingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spendingIcon.png; path = res/spendingIcon.png; sourceTree = "<group>"; };
 		017C22540F721E60008CA4ED /* communityIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityIcon.png; path = res/communityIcon.png; sourceTree = "<group>"; };
+		0190167A0F8551BB00627610 /* BillSummaryXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillSummaryXMLParser.h; path = src/bills/BillSummaryXMLParser.h; sourceTree = "<group>"; };
+		0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillSummaryXMLParser.m; path = src/bills/BillSummaryXMLParser.m; sourceTree = "<group>"; };
+		019017650F85760A00627610 /* BillSummaryTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillSummaryTableCell.h; path = src/bills/BillSummaryTableCell.h; sourceTree = "<group>"; };
+		019017660F85760A00627610 /* BillSummaryTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillSummaryTableCell.m; path = src/bills/BillSummaryTableCell.m; sourceTree = "<group>"; };
 		01B118340F709EC70076AFE0 /* StateAbbreviations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StateAbbreviations.h; path = src/common/StateAbbreviations.h; sourceTree = "<group>"; };
 		01B118350F709EC70076AFE0 /* StateAbbreviations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StateAbbreviations.m; path = src/common/StateAbbreviations.m; sourceTree = "<group>"; };
 		01B119050F70B71E0076AFE0 /* SpendingDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingDataManager.h; path = src/spending/SpendingDataManager.h; sourceTree = "<group>"; };
@@ -241,6 +247,10 @@
 				01E1D9E60F80817E008B3711 /* BillsDataManager.m */,
 				01E1DA070F8085D3008B3711 /* BillContainer.h */,
 				01E1DA080F8085D3008B3711 /* BillContainer.m */,
+				0190167A0F8551BB00627610 /* BillSummaryXMLParser.h */,
+				0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */,
+				019017650F85760A00627610 /* BillSummaryTableCell.h */,
+				019017660F85760A00627610 /* BillSummaryTableCell.m */,
 			);
 			name = bills;
 			sourceTree = "<group>";
@@ -401,6 +411,8 @@
 				012678610F7F3BD500CF9C46 /* CongressLocationParser.m in Sources */,
 				01E1D9E70F80817E008B3711 /* BillsDataManager.m in Sources */,
 				01E1DA090F8085D3008B3711 /* BillContainer.m in Sources */,
+				0190167C0F8551BB00627610 /* BillSummaryXMLParser.m in Sources */,
+				019017670F85760A00627610 /* BillSummaryTableCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

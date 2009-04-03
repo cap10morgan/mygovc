@@ -16,6 +16,12 @@ static const CGFloat VALUE_WIDTH = 225.0f;
 static const CGFloat CELL_OFFSET = 15.0f;
 static const CGFloat CELL_PADDING = 5.0f;
 
+enum
+{
+	eTAG_FIELD = 999,
+	eTAG_VALUE = 998,
+};
+
 + (CGFloat) cellHeightForText:(NSString *)text
 {
 	CGSize cellSz = [text sizeWithFont:[UIFont systemFontOfSize:14.0f]
@@ -53,7 +59,7 @@ static const CGFloat CELL_PADDING = 5.0f;
 		fieldView.textAlignment = UITextAlignmentLeft;
 		//fieldView.numberOfLines = 2;
 		fieldView.adjustsFontSizeToFitWidth = YES;
-		[fieldView setTag:999];
+		[fieldView setTag:eTAG_FIELD];
 		
 		CGRect valRect = CGRectMake(frameX + CGRectGetWidth(fieldRect) + CELL_PADDING, 
 									frameY, 
@@ -67,7 +73,7 @@ static const CGFloat CELL_PADDING = 5.0f;
 		valView.lineBreakMode = UILineBreakModeMiddleTruncation;
 		valView.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
 		valView.numberOfLines = 5;
-		[valView setTag:998];
+		[valView setTag:eTAG_VALUE];
 		
 		[self addSubview:fieldView];
 		[self addSubview:valView];
@@ -84,10 +90,10 @@ static const CGFloat CELL_PADDING = 5.0f;
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
-	UILabel *fieldView = (UILabel *)[self viewWithTag:999];
+	UILabel *fieldView = (UILabel *)[self viewWithTag:eTAG_FIELD];
 	fieldView.highlighted = selected;
 	
-	UILabel *valView = (UILabel *)[self viewWithTag:998];
+	UILabel *valView = (UILabel *)[self viewWithTag:eTAG_VALUE];
 	valView.highlighted = selected;
 }
 
@@ -97,7 +103,7 @@ static const CGFloat CELL_PADDING = 5.0f;
 	// adjust the height of each view
 	CGFloat height = [LegislatorInfoCell cellHeightForText:value];
 	
-	UILabel *fieldView = (UILabel *)[self viewWithTag:999];
+	UILabel *fieldView = (UILabel *)[self viewWithTag:eTAG_FIELD];
 	
 	NSString *fieldTxt = @"";
 	if ( nil != field )
@@ -116,7 +122,7 @@ static const CGFloat CELL_PADDING = 5.0f;
 	[fieldView setText:fieldTxt];
 	
 	
-	UILabel *valView = (UILabel *)[self viewWithTag:998];
+	UILabel *valView = (UILabel *)[self viewWithTag:eTAG_VALUE];
 	[valView setText:value];
 	
 	CGRect fieldFrame = CGRectMake(CGRectGetMinX(fieldView.frame),

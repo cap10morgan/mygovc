@@ -8,10 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+@class BillsDataManager;
+
 
 @interface BillsViewController : UITableViewController 
 {
-
+@private
+	BillsDataManager *m_data;
 }
 
 @end
