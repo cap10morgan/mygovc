@@ -23,7 +23,8 @@ enum
 	eTAG_HISTORY      = 994,
 };
 
-static const CGFloat S_CELL_PADDING = 5.0f;
+static const CGFloat S_CELL_BOUNDS = 15.0f;
+static const CGFloat S_CELL_PADDING = 6.0f;
 static const CGFloat S_TITLE_HEIGHT = 60.0f;
 static const CGFloat S_LABEL_WIDTH = 50.0f;
 static const CGFloat S_LABEL_HEIGHT = 15.0f;
@@ -39,7 +40,7 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 {
 	NSString *title = bill.m_title;
 	CGSize titleSz = [title sizeWithFont:D_TITLE_FONT 
-							constrainedToSize:CGSizeMake(320.0f - (2.0f*S_CELL_PADDING),S_TITLE_HEIGHT) 
+							constrainedToSize:CGSizeMake(320.0f - (2.0f*S_CELL_BOUNDS),S_TITLE_HEIGHT) 
 							lineBreakMode:UILineBreakModeWordWrap];
 	
 	CGFloat height = S_CELL_PADDING + titleSz.height + S_CELL_PADDING + 
@@ -55,9 +56,10 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 	{
 		m_bill = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
-		self.backgroundColor = [UIColor darkGrayColor];
+		self.backgroundColor = [UIColor clearColor];
+		self.contentView.backgroundColor = [UIColor colorWithRed:0.05f green:0.05f blue:0.1f alpha:0.75f];
 		
-		CGFloat frameX = S_CELL_PADDING;
+		CGFloat frameX = S_CELL_BOUNDS;
 		CGFloat frameY = S_CELL_PADDING;
 		CGFloat frameW = self.contentView.bounds.size.width - (frameX * 2.0f);
 		//CGFloat frameH = self.contentView.bounds.size.height - (frameY * 2.0f);
@@ -176,9 +178,9 @@ static const CGFloat S_VOTE_WIDTH = 40.0f;
 	// trim off the characters before the first space - they're the title...
 	NSString *titleStr = [m_bill.m_title substringFromIndex:([m_bill.m_title rangeOfString:@" "].location + 1)];
 	CGSize titleSz = [titleStr sizeWithFont:D_TITLE_FONT 
-									 constrainedToSize:CGSizeMake(320.0f - (2.0f*S_CELL_PADDING),S_TITLE_HEIGHT) 
+									 constrainedToSize:CGSizeMake(320.0f - (2.0f*S_CELL_BOUNDS),S_TITLE_HEIGHT) 
 									 lineBreakMode:UILineBreakModeTailTruncation];
-	[titleView setFrame:CGRectMake(S_CELL_PADDING,S_CELL_PADDING,titleSz.width,titleSz.height)];
+	[titleView setFrame:CGRectMake(S_CELL_BOUNDS,S_CELL_PADDING,titleSz.width,titleSz.height)];
 	[titleView setText:titleStr];
 		
 	CGRect titleRect = titleView.frame;

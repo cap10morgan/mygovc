@@ -223,7 +223,11 @@ enum
 	// get a rectangle which can minimally contain the text
 	CGSize fontSz = [text sizeWithFont:lbl.font constrainedToSize:CGSizeMake(200.0f,200.0f) lineBreakMode:UILineBreakModeWordWrap];
 	CGRect fontRect = CGRectMake(20.0f, 50.0f, fontSz.width, fontSz.height);
-	CGRect parentRect = ([self superview] ? [self superview].frame : CGRectZero);
+	CGRect parentRect = ([self superview] ? [self superview].frame : CGRectMake(0.0f,0.0f,320.0f,480.0f));
+	if ( CGRectGetWidth(parentRect) < 1 || CGRectGetHeight(parentRect) < 1 )
+	{
+		parentRect = CGRectMake(0.0f, 0.0f, 320.0f, 480.0f);
+	}
 	
 	// create a rectangle for the view which can minimally contain the whole text
 	// (with a 20 pixel margin on all sides)

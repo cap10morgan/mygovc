@@ -12,11 +12,12 @@
 @class ProgressOverlayViewController;
 
 
-@interface BillsViewController : UITableViewController 
+@interface BillsViewController : UITableViewController <UISearchBarDelegate>
 {
 @private
 	BillsDataManager *m_data;
 	
+	NSString *m_HUDTxt;
 	ProgressOverlayViewController *m_HUD;
 }
 

@@ -353,8 +353,8 @@ enum
 	if ( nil == m_locationManager )
 	{
 		m_locationManager = [[CLLocationManager alloc] init];
-		m_locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-		m_locationManager.distanceFilter = 100.0;
+		m_locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+		m_locationManager.distanceFilter = kCLDistanceFilterNone;
 		m_locationManager.delegate = self;
 	}
 	
@@ -382,9 +382,15 @@ enum
 		// Negative accuracy means an invalid or unavailable measurement
 		// XXX - stop activity wheel, and notify user of failure?
 	} 
-	else 
+	else if ( nil != oldLocation )
 	{
-		[m_data setSearchLocation:newLocation];
+		// try to smooth this a little - wait until the distance between
+		// two subsequent readings is less than 100 meters
+		if ( [newLocation getDistanceFrom:oldLocation] < 100.0f )
+		{
+			[m_locationManager stopUpdatingLocation]; // save power!
+			[m_data setSearchLocation:newLocation];
+		}
     }
 }
 
