@@ -39,6 +39,7 @@ static NSString *kName_CoSponsor_BioguideID = @"bioguideid";
 
 static NSString *kName_BillActions = @"most-recent-actions";
 static NSString *kName_Bill_Action = @"most-recent-action";
+static NSString *kName_Action_Id = @"id";
 static NSString *kName_Action_Type = @"action-type";
 static NSString *kName_Action_Date = @"date";
 static NSString *kName_Action_Descrip = @"text";
@@ -151,7 +152,7 @@ static NSString *kName_Action_How = @"how";
 	{
 		m_parsingResponse = NO;
 	}
-	else if ( m_parsingBill && !m_parsingAction )
+	else if ( m_parsingBill && !m_parsingActionList )
 	{
 		if ( [elementName isEqualToString:kName_Bill_Id] )
 		{
@@ -197,6 +198,20 @@ static NSString *kName_Action_How = @"how";
 			[m_currentBill release]; m_currentBill = nil;
 			m_parsingBill = NO;
 		}
+		else if ( m_parsingCoSponsor && [elementName isEqualToString:kName_CoSponsor_BioguideID] )
+		{
+			[m_currentBill addCoSponsor:m_currentString];
+			m_parsingCoSponsor = NO;
+		}
+		else if ( m_parsingCoSponsorList && [elementName isEqualToString:kName_BillCoSponsors] )
+		{
+			m_parsingCoSponsorList = NO;
+		}
+		else if ( m_parsingSponsor && [elementName isEqualToString:kName_Sponsor_BioguideID] )
+		{
+			[m_currentBill addSponsor:m_currentString];
+			m_parsingSponsor = NO;
+		}
 	}
 	else if ( m_parsingAction )
 	{
@@ -241,6 +256,10 @@ static NSString *kName_Action_How = @"how";
 		{
 			m_currentAction.m_date = [NSDate dateWithTimeIntervalSince1970:(NSTimeInterval)[m_currentString integerValue]];
 		}
+		else if ( [elementName isEqualToString:kName_Action_Id] )
+		{
+			m_currentAction.m_id = [m_currentString integerValue];
+		}
 		else if ( [elementName isEqualToString:kName_Bill_Action] )
 		{
 			[m_currentBill addBillAction:m_currentAction];
@@ -248,23 +267,9 @@ static NSString *kName_Action_How = @"how";
 			m_parsingAction = NO;
 		}
 	}
-	else if ( m_parsingCoSponsor && [elementName isEqualToString:kName_CoSponsor_BioguideID] )
-	{
-		[m_currentBill addCoSponsor:m_currentString];
-		m_parsingCoSponsor = NO;
-	}
-	else if ( m_parsingSponsor && [elementName isEqualToString:kName_Sponsor_BioguideID] )
-	{
-		[m_currentBill addSponsor:m_currentString];
-		m_parsingSponsor = NO;
-	}
 	else if ( m_parsingActionList && [elementName isEqualToString:kName_BillActions] )
 	{
 		m_parsingActionList = NO;
-	}
-	else if ( m_parsingCoSponsorList && [elementName isEqualToString:kName_BillCoSponsors] )
-	{
-		m_parsingCoSponsorList = NO;
 	}
 	else
 	{

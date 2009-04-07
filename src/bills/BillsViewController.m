@@ -11,6 +11,7 @@
 #import "BillContainer.h"
 #import "BillsDataManager.h"
 #import "BillSummaryTableCell.h"
+#import "MiniBrowserController.h"
 #import "ProgressOverlayViewController.h"
 
 
@@ -84,6 +85,8 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 
 - (void)viewWillAppear:(BOOL)animated 
 {
+	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+	
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	
 	if ( ![m_data isDataAvailable] )
@@ -295,16 +298,23 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 		[cell setContentFromBill:[m_data billAtIndex:indexPath.section]];
 	}
 	
-	//cell.contentView.backgroundColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.15 alpha:0.25];
-	
 	return cell;
 }
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-	// XXX - do something!
-	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+	BillContainer *bill = [m_data billAtIndex:indexPath.section];
+	if ( nil != bill )
+	{
+		// get the URL for the full-text of the bill and load-up 
+		// our mini web browser to view it!
+		MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:[bill getFullTextURL]];
+		mbc.title = @"loading...";
+		[self.navigationController pushViewController:mbc animated:YES];
+	}
+	
+	//[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 }
 
 

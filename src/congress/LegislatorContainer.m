@@ -266,20 +266,23 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 	searchRange.location = 0;
 	searchRange.length = txtLen;
 	
-	if ( NSOrderedSame == [[self firstname] compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
+	NSString *fn = [self firstname];
+	NSString *ln = [self lastname];
+	NSString *mn = [self middlename];
+	if ( fn && NSOrderedSame == [fn compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
 	{
 		return TRUE;
 	}
-	if ( NSOrderedSame == [[self lastname] compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
+	if ( ln && NSOrderedSame == [ln compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
 	{
 		return TRUE;
 	}
-	if ( NSOrderedSame == [[self middlename] compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
+	if ( mn && NSOrderedSame == [mn compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
 	{
 		return TRUE;
 	}
 	
-	NSString *shortName = [NSString stringWithFormat:@"%@ %@",([self nickname] ? [self nickname] : [self firstname]),[self lastname]];
+	NSString *shortName = [NSString stringWithFormat:@"%@ %@",([self nickname] ? [self nickname] : fn),ln];
 	if ( NSOrderedSame == [shortName compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
 	{
 		return TRUE;

@@ -385,13 +385,18 @@ enum
 	else if ( nil != oldLocation )
 	{
 		// try to smooth this a little - wait until the distance between
-		// two subsequent readings is less than 100 meters
-		if ( [newLocation getDistanceFrom:oldLocation] < 100.0f )
+		// two subsequent readings is less than ~0.5km
+		if ( [newLocation getDistanceFrom:oldLocation] < 500.0f )
 		{
 			[m_locationManager stopUpdatingLocation]; // save power!
 			[m_data setSearchLocation:newLocation];
 		}
     }
+	else if ( nil != newLocation )
+	{
+		[m_data setSearchLocation:newLocation];
+		// don't stop the updates...
+	}
 }
 
 

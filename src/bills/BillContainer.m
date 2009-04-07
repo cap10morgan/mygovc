@@ -12,7 +12,23 @@
 #import "LegislatorContainer.h"
 
 @implementation BillAction
-	@synthesize m_type, m_date, m_descrip, m_voteResult, m_how;
+
+@synthesize m_id, m_type, m_date, m_descrip, m_voteResult, m_how;
+
+- (NSString *)shortDescrip
+{
+	NSUInteger compsFlags = NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit;
+	NSDateComponents *actionDate = [[NSCalendar currentCalendar] components:compsFlags fromDate:m_date];
+	
+	NSString *desc = [[[NSString alloc] initWithFormat:@"%04d-%02d-%02d: %@",
+											[actionDate year],
+											[actionDate month],
+											[actionDate day],
+											([m_descrip length] > 0 ? m_descrip : m_type)
+					  ] autorelease];
+	return desc;
+}
+
 @end
 
 
@@ -20,6 +36,34 @@
 @implementation BillContainer
 
 @synthesize m_id, m_bornOn, m_title, m_type, m_number, m_status, m_summary;
+
+static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bills.text/%d/%@/%@%d.html";
+
+
++ (NSString *)stringFromBillType:(BillType)type
+{
+	switch ( type )
+	{
+		case eBillType_h:
+			return @"h";
+		case eBillType_s:
+			return @"s";
+		case eBillType_hj:
+			return @"hj";
+		case eBillType_sj:
+			return @"sj";
+		case eBillType_hc:
+			return @"hc";
+		case eBillType_sc:
+			return @"sc";
+		case eBillType_hr:
+			return @"hr";
+		case eBillType_sr:
+			return @"sr";
+		default:
+			return nil;
+	}
+}
 
 
 + (BillType)billTypeFromString:(NSString *)string
@@ -146,6 +190,12 @@
 }
 
 
+- (NSComparisonResult)lastActionDateCompare:(BillContainer *)that
+{
+	return [[that lastActionDate] compare:m_lastActionDate];
+}
+
+
 - (void)addSponsor:(NSString *)bioguideID
 {
 	CongressDataManager *cdm = [myGovAppDelegate sharedCongressData];
@@ -175,12 +225,23 @@
 	{
 		m_lastActionDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:1.0f];
 	}
-	if ( NSOrderedDescending == [m_lastActionDate compare:action.m_date] )
+	//if ( NSOrderedDescending == [m_lastActionDate compare:action.m_date] )
+	if ( nil == m_lastAction || action.m_id > m_lastAction.m_id )
 	{
 		[m_lastActionDate release];
 		m_lastActionDate = [action.m_date retain];
 		m_lastAction = action;
 	}
+}
+
+
+- (LegislatorContainer *)sponsor
+{
+	if ( [m_sponsors count] > 0 )
+	{
+		return [m_sponsors objectAtIndex:0];
+	}
+	else return nil;
 }
 
 
@@ -196,6 +257,12 @@
 }
 
 
+- (NSArray *)billActions
+{
+	return (NSArray *)m_history;
+}
+
+
 - (NSString *)getShortTitle
 {
 	NSString *shortTitle = [[[NSString alloc] initWithFormat:@"%@ %d",
@@ -203,6 +270,22 @@
 								m_number
 							] autorelease];
 	return shortTitle;
+}
+
+
+- (NSURL *)getFullTextURL
+{
+	CongressDataManager *cdm = [myGovAppDelegate sharedCongressData];
+	
+	NSString *urlStr = [[NSString alloc] initWithFormat:kGovtrackBillTextURL_fmt,
+											[cdm currentCongressSession],
+											[BillContainer stringFromBillType:m_type],
+											[BillContainer stringFromBillType:m_type],
+											m_number,
+											@"" // XXX - "ih", "eh" "ih.gen", "rfs", etc.
+						];
+	NSURL *url = [[[NSURL alloc] initWithString:urlStr] autorelease];
+	return url;
 }
 
 

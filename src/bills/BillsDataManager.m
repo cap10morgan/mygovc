@@ -148,7 +148,8 @@ static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/b
 {
 	[m_billData addObject:bill];
 	
-	// XXX - Order by date?
+	// Order by date!
+	[m_billData sortUsingSelector:@selector(lastActionDateCompare:)];
 }
 
 

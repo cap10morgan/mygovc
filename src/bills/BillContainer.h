@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class LegislatorContainer;
 
 typedef enum
 {
@@ -33,6 +34,7 @@ typedef enum
 
 @interface BillAction : NSObject
 {
+	NSInteger   m_id;
 	NSString   *m_type;
 	NSDate     *m_date;
 	NSString   *m_descrip;
@@ -40,11 +42,14 @@ typedef enum
 	NSString   *m_how;
 }
 
+@property (nonatomic) NSInteger m_id;
 @property (nonatomic,retain) NSString *m_type;
 @property (nonatomic,retain) NSDate *m_date;
 @property (nonatomic,retain) NSString *m_descrip;
 @property (nonatomic) VoteResult m_voteResult;
 @property (nonatomic,retain) NSString *m_how;
+
+- (NSString *)shortDescrip;
 
 @end
 
@@ -77,20 +82,29 @@ typedef enum
 @property (nonatomic,retain) NSString *m_status;
 @property (nonatomic,retain) NSString *m_summary;
 
++ (NSString *)stringFromBillType:(BillType)type;
 + (BillType)billTypeFromString:(NSString *)string;
 + (NSString *)getBillTypeDescrip:(BillType)type;
 + (NSString *)getBillTypeShortDescrip:(BillType)type;
+
+- (NSComparisonResult)lastActionDateCompare:(BillContainer *)that;
 
 - (void)addSponsor:(NSString *)bioguideID;
 - (void)addCoSponsor:(NSString *)bioguideID;
 
 - (void)addBillAction:(BillAction *)action;
 
+- (LegislatorContainer *)sponsor;
+
 - (NSDate *)lastActionDate;
 
 - (BillAction *)lastBillAction;
 
+- (NSArray *)billActions;
+
 - (NSString *)getShortTitle;
+
+- (NSURL *)getFullTextURL;
 
 @end
 

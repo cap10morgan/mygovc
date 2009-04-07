@@ -35,6 +35,10 @@
 		01B4E05F0F6449BB00219672 /* ProgressOverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */; };
 		01B4E2200F64D6EC00219672 /* LegislatorHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */; };
 		01B4E2230F64D88000219672 /* LegislatorHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */; };
+		01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6ED0F8AEACD00619441 /* backButton.png */; };
+		01B7B6F00F8AEACE00619441 /* fwdButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6EE0F8AEACD00619441 /* fwdButton.png */; };
+		01B7B6F60F8AEC5500619441 /* MiniBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B7B6F50F8AEC5500619441 /* MiniBrowserController.m */; };
+		01B7B6F80F8AECB100619441 /* MiniBrowserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6F70F8AECB100619441 /* MiniBrowserView.xib */; };
 		01BB71A10F7712C900E7065F /* PlaceSpendingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BB71A00F7712C900E7065F /* PlaceSpendingData.m */; };
 		01BB72460F773FD700E7065F /* PlaceSpendingTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BB72450F773FD700E7065F /* PlaceSpendingTableCell.m */; };
 		01BC2FAA0F5B84AD00E7ABD0 /* XMLParserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */; };
@@ -100,6 +104,11 @@
 		01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LegislatorHeaderView.xib; path = src/congress/LegislatorHeaderView.xib; sourceTree = "<group>"; };
 		01B4E2210F64D88000219672 /* LegislatorHeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorHeaderViewController.h; path = src/congress/LegislatorHeaderViewController.h; sourceTree = "<group>"; };
 		01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorHeaderViewController.m; path = src/congress/LegislatorHeaderViewController.m; sourceTree = "<group>"; };
+		01B7B6ED0F8AEACD00619441 /* backButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = backButton.png; path = res/backButton.png; sourceTree = "<group>"; };
+		01B7B6EE0F8AEACD00619441 /* fwdButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fwdButton.png; path = res/fwdButton.png; sourceTree = "<group>"; };
+		01B7B6F40F8AEC5500619441 /* MiniBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniBrowserController.h; path = src/common/MiniBrowserController.h; sourceTree = "<group>"; };
+		01B7B6F50F8AEC5500619441 /* MiniBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniBrowserController.m; path = src/common/MiniBrowserController.m; sourceTree = "<group>"; };
+		01B7B6F70F8AECB100619441 /* MiniBrowserView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MiniBrowserView.xib; path = src/common/MiniBrowserView.xib; sourceTree = "<group>"; };
 		01BB719F0F7712C900E7065F /* PlaceSpendingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaceSpendingData.h; path = src/spending/PlaceSpendingData.h; sourceTree = "<group>"; };
 		01BB71A00F7712C900E7065F /* PlaceSpendingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlaceSpendingData.m; path = src/spending/PlaceSpendingData.m; sourceTree = "<group>"; };
 		01BB72440F773FD700E7065F /* PlaceSpendingTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaceSpendingTableCell.h; path = src/spending/PlaceSpendingTableCell.h; sourceTree = "<group>"; };
@@ -258,12 +267,15 @@
 		01BC2FA00F5B840F00E7ABD0 /* common */ = {
 			isa = PBXGroup;
 			children = (
+				01B7B6F70F8AECB100619441 /* MiniBrowserView.xib */,
 				01BC2FA80F5B84AD00E7ABD0 /* XMLParserOperation.h */,
 				01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */,
 				01B4E05D0F6449BB00219672 /* ProgressOverlayViewController.h */,
 				01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */,
 				01B118340F709EC70076AFE0 /* StateAbbreviations.h */,
 				01B118350F709EC70076AFE0 /* StateAbbreviations.m */,
+				01B7B6F40F8AEC5500619441 /* MiniBrowserController.h */,
+				01B7B6F50F8AEC5500619441 /* MiniBrowserController.m */,
 			);
 			name = common;
 			sourceTree = "<group>";
@@ -290,6 +302,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01B7B6ED0F8AEACD00619441 /* backButton.png */,
+				01B7B6EE0F8AEACD00619441 /* fwdButton.png */,
 				017C22540F721E60008CA4ED /* communityIcon.png */,
 				017C224D0F721824008CA4ED /* billsIcon.png */,
 				017C224E0F721824008CA4ED /* congressIcon.png */,
@@ -372,6 +386,9 @@
 				017C22510F721824008CA4ED /* congressIcon.png in Resources */,
 				017C22520F721824008CA4ED /* spendingIcon.png in Resources */,
 				017C22550F721E60008CA4ED /* communityIcon.png in Resources */,
+				01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */,
+				01B7B6F00F8AEACE00619441 /* fwdButton.png in Resources */,
+				01B7B6F80F8AECB100619441 /* MiniBrowserView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,6 +430,7 @@
 				01E1DA090F8085D3008B3711 /* BillContainer.m in Sources */,
 				0190167C0F8551BB00627610 /* BillSummaryXMLParser.m in Sources */,
 				019017670F85760A00627610 /* BillSummaryTableCell.m in Sources */,
+				01B7B6F60F8AEC5500619441 /* MiniBrowserController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
