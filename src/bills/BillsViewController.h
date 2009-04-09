@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CongressDataManager.h"
 
 @class BillsDataManager;
 @class ProgressOverlayViewController;
@@ -16,6 +17,9 @@
 {
 @private
 	BillsDataManager *m_data;
+	
+	UISegmentedControl *m_segmentCtrl;
+	CongressChamber m_selectedChamber;
 	
 	NSString *m_HUDTxt;
 	ProgressOverlayViewController *m_HUD;

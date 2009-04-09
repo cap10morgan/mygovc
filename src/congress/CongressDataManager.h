@@ -13,6 +13,15 @@
 @class LegislatorContainer;
 @class CongressionalCommittees;
 
+
+typedef enum
+{
+	eCongressChamberHouse,
+	eCongressChamberSenate,
+	eCongressSearchResults,
+} CongressChamber;
+
+
 @interface CongressDataManager : NSObject <XMLParserOperationDelegate>
 {
 @private

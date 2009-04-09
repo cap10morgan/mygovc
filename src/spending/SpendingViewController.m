@@ -51,7 +51,7 @@
 	
 	self.title = @"Spending";
 	
-	self.tableView.rowHeight = 40.0f;
+	self.tableView.rowHeight = 50.0f;
 	
 	m_sortOrder = eSpendingSortDollars;
 	

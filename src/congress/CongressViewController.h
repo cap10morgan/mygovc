@@ -8,17 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import "CongressDataManager.h"
 
-@class CongressDataManager;
 @class ProgressOverlayViewController;
-
-typedef enum
-{
-	eCongressChamberHouse,
-	eCongressChamberSenate,
-	eCongressSearchResults,
-} CongressChamber;
-
 
 typedef enum
 {

@@ -44,6 +44,23 @@ static NSString * kField_TwitterID = @"twitter_id";
 static NSString * kField_YoutubeURL = @"youtube_url";
 
 
++ (UIColor *)partyColor:(NSString *)party
+{
+	if ( [party isEqualToString:@"D"] )
+	{
+		return [UIColor blueColor];
+	}
+	else if ( [party isEqualToString:@"R"] )
+	{
+		return [UIColor redColor];
+	}
+	else
+	{
+		return [UIColor darkGrayColor];
+	}
+}
+
+
 - (id)init
 {
 	if ( self = [super init] )

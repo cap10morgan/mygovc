@@ -16,48 +16,48 @@
 
 enum
 {
-	eTAG_TITLE        = 999,
-	eTAG_STATUSLABEL  = 998,
-	eTAG_STATUS       = 997,
-	eTAG_VOTESTATUS   = 996,
-	eTAG_HISTORYLABEL = 995,
-	eTAG_HISTORY1     = 994,
-	eTAG_HISTORY2     = 993,
-	eTAG_HISTORY3     = 992,
-	eTAG_HISTORY4     = 991,
-	eTAG_HISTORY5     = 990,
-	eTAG_SPONSOR      = 989,
+	eTAG_BILLNUM      = 999,
+	eTAG_SPONSOR      = 998,
+	eTAG_DESCRIP      = 997,
+	eTAG_STATUSLABEL  = 996,
+	eTAG_VOTESTATUS   = 995,
+	eTAG_DETAIL       = 994,
 };
 
-static const int S_MAX_HISTORY_ITEMS = 5;
+static const CGFloat S_CELL_HPADDING = 7.0f;
+static const CGFloat S_CELL_VPADDING = 3.0f;
 
-static const CGFloat S_CELL_BOUNDS = 15.0f;
-static const CGFloat S_CELL_PADDING = 6.0f;
-static const CGFloat S_TITLE_HEIGHT = 60.0f;
-static const CGFloat S_LABEL_WIDTH = 50.0f;
-static const CGFloat S_LABEL_HEIGHT = 15.0f;
+static const CGFloat S_BILLNUM_WIDTH = 120.0f;
+static const CGFloat S_DESCRIP_HEIGHT = 80.0f;
+
+static const CGFloat S_STATUS_WIDTH = 180.0f;
 static const CGFloat S_VOTE_WIDTH = 55.0f;
 
-#define D_TITLE_FONT [UIFont systemFontOfSize:14.0f]
-#define D_LABEL_FONT [UIFont boldSystemFontOfSize:12.0f]
+static const CGFloat S_ROW_HEIGHT = 25.0f;
+
+#define D_BILLNUM_FONT [UIFont boldSystemFontOfSize:16.0f]
+#define D_SPONSOR_FONT [UIFont systemFontOfSize:16.0f]
+#define D_DESCRIP_FONT [UIFont systemFontOfSize:16.0f]
 #define D_STATUS_FONT [UIFont italicSystemFontOfSize:14.0f]
-#define D_STD_FONT   [UIFont systemFontOfSize:10.0f]
+#define D_VOTE_FONT [UIFont boldSystemFontOfSize:14.0f]
+
+#define D_BILLNUM_COLOR [UIColor blackColor]
+#define D_SPONSOR_COLOR [UIColor blackColor]
+#define D_DESCRIP_COLOR [UIColor darkGrayColor]
+#define D_STATUS_COLOR [UIColor blackColor]
+#define D_VOTE_COLOR [UIColor darkGrayColor]
 
 
 + (CGFloat)getCellHeightForBill:(BillContainer *)bill
 {
-	NSString *title = bill.m_title;
-	CGSize titleSz = [title sizeWithFont:D_TITLE_FONT 
-							constrainedToSize:CGSizeMake(320.0f - (2.0f*S_CELL_BOUNDS),S_TITLE_HEIGHT) 
+	NSString *descrip = bill.m_title;
+	CGSize descripSz = [descrip sizeWithFont:D_DESCRIP_FONT 
+							constrainedToSize:CGSizeMake(320.0f - (3.0f*S_CELL_HPADDING) - 32.0f,S_DESCRIP_HEIGHT + S_ROW_HEIGHT) 
 							lineBreakMode:UILineBreakModeWordWrap];
 	
-	CGFloat height = S_CELL_PADDING + titleSz.height + S_CELL_PADDING + // title
-					 S_LABEL_HEIGHT + S_CELL_PADDING +  // sponsor 
-					 S_LABEL_HEIGHT + S_CELL_PADDING;   // status
-	
-	// history
-	NSInteger numActions = [[bill billActions] count];
-	height += (S_LABEL_HEIGHT + S_CELL_PADDING) * (numActions > S_MAX_HISTORY_ITEMS ? S_MAX_HISTORY_ITEMS : numActions);
+	CGFloat height = S_ROW_HEIGHT + S_CELL_VPADDING + // bill number + sponsor
+					 descripSz.height + S_CELL_VPADDING + // bill title/descrip
+					 S_ROW_HEIGHT + S_CELL_VPADDING;   // status
 	
 	return height;
 }
@@ -70,135 +70,70 @@ static const CGFloat S_VOTE_WIDTH = 55.0f;
 		m_bill = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
 		self.backgroundColor = [UIColor clearColor];
-		if ( nil != self.backgroundView )
-		{
-			self.contentView.backgroundColor = [UIColor clearColor];
-			self.backgroundView.backgroundColor = [UIColor colorWithRed:0.1f green:0.1f blue:0.15f alpha:1.0f];
-		}
-		else
-		{
-			self.contentView.backgroundColor = [UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.9f];
-		}
 		
-		CGFloat frameX = S_CELL_BOUNDS;
-		CGFloat frameY = S_CELL_PADDING;
-		CGFloat frameW = self.contentView.bounds.size.width - (frameX * 2.0f);
-		//CGFloat frameH = self.contentView.bounds.size.height - (frameY * 2.0f);
+		// 
+		// Detail button (next to table index)
+		// 
+		UIButton *detail = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+		[detail setTag:eTAG_DETAIL];
+		[self addSubview:detail];
 		
-		CGRect titleRect = CGRectMake(frameX,frameY,frameW,S_TITLE_HEIGHT);
-		UILabel *titleView = [[UILabel alloc] initWithFrame:titleRect];
-		titleView.backgroundColor = [UIColor clearColor];
-		titleView.textColor = [UIColor whiteColor];
-		titleView.highlightedTextColor =[UIColor blackColor];
-		titleView.font = D_TITLE_FONT;
-		titleView.textAlignment = UITextAlignmentLeft;
-		titleView.lineBreakMode = UILineBreakModeWordWrap;
-		titleView.numberOfLines = 5;
-		[titleView setTag:eTAG_TITLE];
-		[self addSubview:titleView];
-		[titleView release];
+		UILabel *billNumView = [[UILabel alloc] initWithFrame:CGRectZero];
+		billNumView.backgroundColor = [UIColor clearColor];
+		billNumView.textColor = D_BILLNUM_COLOR;
+		billNumView.highlightedTextColor =[UIColor blackColor];
+		billNumView.font = D_BILLNUM_FONT;
+		billNumView.textAlignment = UITextAlignmentLeft;
+		[billNumView setTag:eTAG_BILLNUM];
+		[self addSubview:billNumView];
+		[billNumView release];
 		
-		frameY = CGRectGetMaxY(titleRect) + S_CELL_PADDING;
+		UILabel *sponsorView = [[UILabel alloc] initWithFrame:CGRectZero];
+		sponsorView.backgroundColor = [UIColor clearColor];
+		sponsorView.textColor = D_SPONSOR_COLOR;
+		sponsorView.highlightedTextColor =[UIColor blackColor];
+		sponsorView.font = D_SPONSOR_FONT;
+		sponsorView.textAlignment = UITextAlignmentLeft;
+		sponsorView.adjustsFontSizeToFitWidth = YES;
+		[sponsorView setTag:eTAG_SPONSOR];
+		[self addSubview:sponsorView];
+		[sponsorView release];
 		
-		CGRect sponsorRect = CGRectMake(frameX, frameY, frameW, S_LABEL_HEIGHT);
-		UILabel *sponsorLbl = [[UILabel alloc] initWithFrame:sponsorRect];
-		sponsorLbl.backgroundColor = [UIColor clearColor];
-		sponsorLbl.textColor = [UIColor yellowColor];
-		sponsorLbl.highlightedTextColor =[UIColor darkGrayColor];
-		sponsorLbl.font = D_LABEL_FONT;
-		sponsorLbl.textAlignment = UITextAlignmentLeft;
-		sponsorLbl.adjustsFontSizeToFitWidth = YES;
-		sponsorLbl.text = @"Sponsor:";
-		[sponsorLbl setTag:eTAG_SPONSOR];
-		[self addSubview:sponsorLbl];
-		[sponsorLbl release];
+		UILabel *descripView = [[UILabel alloc] initWithFrame:CGRectZero];
+		descripView.backgroundColor = [UIColor clearColor];
+		descripView.textColor = D_DESCRIP_COLOR;
+		descripView.highlightedTextColor =[UIColor blackColor];
+		descripView.font = D_DESCRIP_FONT;
+		descripView.lineBreakMode = UILineBreakModeWordWrap;
+		descripView.numberOfLines = 5;
+		descripView.textAlignment = UITextAlignmentLeft;
+		descripView.adjustsFontSizeToFitWidth = YES;
+		[descripView setTag:eTAG_DESCRIP];
+		[self addSubview:descripView];
+		[descripView release];
 		
-		frameY = CGRectGetMaxY(sponsorRect) + S_CELL_PADDING;
-		
-		CGRect labelRect = CGRectMake(frameX, frameY, S_LABEL_WIDTH, S_LABEL_HEIGHT);
-		UILabel *statusLbl = [[UILabel alloc] initWithFrame:labelRect];
+		UILabel *statusLbl = [[UILabel alloc] initWithFrame:CGRectZero];
 		statusLbl.backgroundColor = [UIColor clearColor];
-		statusLbl.textColor = [UIColor yellowColor];
-		statusLbl.highlightedTextColor =[UIColor darkGrayColor];
-		statusLbl.font = D_LABEL_FONT;
+		statusLbl.textColor = D_STATUS_COLOR;
+		statusLbl.highlightedTextColor =[UIColor blackColor];
+		statusLbl.font = D_STATUS_FONT;
 		statusLbl.textAlignment = UITextAlignmentLeft;
 		statusLbl.adjustsFontSizeToFitWidth = YES;
-		statusLbl.text = @"Status:";
 		[statusLbl setTag:eTAG_STATUSLABEL];
 		[self addSubview:statusLbl];
 		[statusLbl release];
 		
-		CGRect voteRect = CGRectMake(frameW - S_VOTE_WIDTH,
-									 frameY,
-									 S_VOTE_WIDTH,
-									 S_LABEL_HEIGHT
-		);
-		UILabel *voteView = [[UILabel alloc] initWithFrame:voteRect];
+		UILabel *voteView = [[UILabel alloc] initWithFrame:CGRectZero];
 		voteView.backgroundColor = [UIColor clearColor];
-		voteView.textColor = [UIColor blueColor];
-		voteView.highlightedTextColor =[UIColor darkGrayColor];
-		voteView.font = D_LABEL_FONT;
+		voteView.textColor = D_VOTE_COLOR;
+		voteView.highlightedTextColor =[UIColor blackColor];
+		voteView.font = D_VOTE_FONT;
 		voteView.textAlignment = UITextAlignmentCenter;
 		voteView.adjustsFontSizeToFitWidth = YES;
 		[voteView setTag:eTAG_VOTESTATUS];
 		[self addSubview:voteView];
 		[voteView release];
 		
-		CGRect statusRect = CGRectMake(CGRectGetMaxX(labelRect) + S_CELL_PADDING,
-									   frameY,
-									   CGRectGetMinX(voteRect) - CGRectGetMaxX(labelRect) - (2.0f*S_CELL_PADDING),
-									   S_LABEL_HEIGHT
-		);
-		UILabel *statusView = [[UILabel alloc] initWithFrame:statusRect];
-		statusView.backgroundColor = [UIColor clearColor];
-		statusView.textColor = [UIColor yellowColor];
-		statusView.highlightedTextColor =[UIColor darkGrayColor];
-		statusView.font = D_STATUS_FONT;
-		statusView.textAlignment = UITextAlignmentLeft;
-		statusView.adjustsFontSizeToFitWidth = YES;
-		[statusView setTag:eTAG_STATUS];
-		[self addSubview:statusView];
-		[statusView release];
-		
-		frameY = (CGRectGetMaxY(labelRect) + S_CELL_PADDING);
-		
-		CGRect histLblFrame = CGRectMake(frameX, frameY, S_LABEL_WIDTH, S_LABEL_HEIGHT);
-		UILabel *histLblView = [[UILabel alloc] initWithFrame:histLblFrame];
-		histLblView.backgroundColor = [UIColor clearColor];
-		histLblView.textColor = [UIColor yellowColor];
-		histLblView.highlightedTextColor =[UIColor darkGrayColor];
-		histLblView.font = D_LABEL_FONT;
-		histLblView.textAlignment = UITextAlignmentLeft;
-		histLblView.adjustsFontSizeToFitWidth = YES;
-		histLblView.text = @" ";
-		[histLblView setTag:eTAG_HISTORYLABEL];
-		[self addSubview:histLblView];
-		[histLblView release];
-		
-		CGFloat histX = CGRectGetMaxX(histLblFrame) + S_CELL_PADDING;
-		CGFloat histY = frameY;
-		CGFloat histW = 320.0f - histX - S_CELL_PADDING;
-		CGFloat histH = S_LABEL_HEIGHT;
-		
-		// history items
-		for ( int ii = 0; ii < S_MAX_HISTORY_ITEMS; ++ii )
-		{
-			CGRect histRect = CGRectMake(histX,histY,histW,histH);
-			UILabel *histView = [[UILabel alloc] initWithFrame:histRect];
-			histView.backgroundColor = [UIColor clearColor];
-			histView.textColor = [UIColor whiteColor];
-			histView.highlightedTextColor = [UIColor darkGrayColor];
-			histView.font = D_STD_FONT;
-			histView.textAlignment = UITextAlignmentLeft;
-			histView.adjustsFontSizeToFitWidth = NO;
-			histView.lineBreakMode = UILineBreakModeTailTruncation;
-			histView.text = @" ";
-			[histView setTag:(eTAG_HISTORY1 - ii)];
-			[self addSubview:histView];
-			[histView release];
-			
-			histY = (CGRectGetMaxY(histRect) + S_CELL_PADDING);
-		}
 	}
 	return self;
 }
@@ -214,14 +149,17 @@ static const CGFloat S_VOTE_WIDTH = 55.0f;
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated 
 {
 	[super setSelected:selected animated:animated];
-	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
-	[titleView setHighlighted:selected];
+	
+	UILabel *billNumView = (UILabel *)[self viewWithTag:eTAG_BILLNUM];
+	[billNumView setHighlighted:selected];
+	UILabel *sponsorView = (UILabel *)[self viewWithTag:eTAG_SPONSOR];
+	[sponsorView setHighlighted:selected];
+	UILabel *descripView = (UILabel *)[self viewWithTag:eTAG_DESCRIP];
+	[descripView setHighlighted:selected];
 	UILabel *statusLbl = (UILabel *)[self viewWithTag:eTAG_STATUSLABEL];
 	[statusLbl setHighlighted:selected];
 	UILabel *voteView = (UILabel *)[self viewWithTag:eTAG_VOTESTATUS];
 	[voteView setHighlighted:selected];
-	UILabel *statusView = (UILabel *)[self viewWithTag:eTAG_STATUS];
-	[statusView setHighlighted:selected];
 }
 
 
@@ -231,65 +169,95 @@ static const CGFloat S_VOTE_WIDTH = 55.0f;
 	
 	if ( nil == container )
 	{
-		UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
-		[titleView setText:@""];
+		UIButton *detailButton = (UIButton *)[self viewWithTag:eTAG_DETAIL];
+		[detailButton setHidden:YES];
+		UILabel *billNumView = (UILabel *)[self viewWithTag:eTAG_BILLNUM];
+		[billNumView setText:@""];
 		UILabel *sponsorView = (UILabel *)[self viewWithTag:eTAG_SPONSOR];
 		[sponsorView setText:@""];
+		UILabel *descripView = (UILabel *)[self viewWithTag:eTAG_DESCRIP];
+		[descripView setText:@""];
 		UILabel *statusLbl = (UILabel *)[self viewWithTag:eTAG_STATUSLABEL];
 		[statusLbl setText:@""];
 		UILabel *voteView = (UILabel *)[self viewWithTag:eTAG_VOTESTATUS];
 		[voteView setText:@""];
-		UILabel *statusView = (UILabel *)[self viewWithTag:eTAG_STATUS];
-		[statusView setText:@""];
-		UILabel *histLblView = (UILabel *)[self viewWithTag:eTAG_HISTORYLABEL];
-		[histLblView setText:@""];
 		return;
 	}
 	
 	m_bill = [container retain];
 	
-	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
-	// trim off the characters before the first space - they're the title...
-	NSString *titleStr = [m_bill.m_title substringFromIndex:([m_bill.m_title rangeOfString:@" "].location + 1)];
-	CGSize titleSz = [titleStr sizeWithFont:D_TITLE_FONT 
-									 constrainedToSize:CGSizeMake(320.0f - (2.0f*S_CELL_BOUNDS),S_TITLE_HEIGHT) 
-									 lineBreakMode:UILineBreakModeTailTruncation];
-	[titleView setFrame:CGRectMake(S_CELL_BOUNDS,S_CELL_PADDING,titleSz.width,titleSz.height)];
-	[titleView setText:titleStr];
-		
-	CGRect titleRect = titleView.frame;
-	CGFloat statusY = CGRectGetMaxY(titleRect) + S_CELL_PADDING;
+	UIButton *detailButton = (UIButton *)[self viewWithTag:eTAG_DETAIL];
 	
+	CGFloat cellWidth = 320.0f - CGRectGetWidth(detailButton.frame) - (3.0f*S_CELL_HPADDING);
+	CGFloat cellY = S_CELL_VPADDING;
+	
+	// 
+	// Bill Number 
+	// 
+	UILabel *billNumView = (UILabel *)[self viewWithTag:eTAG_BILLNUM];
+	NSString *billNumStr = [m_bill getShortTitle];
+	CGSize billNumSz = [billNumStr sizeWithFont:D_BILLNUM_FONT
+								   constrainedToSize:CGSizeMake(S_BILLNUM_WIDTH,S_ROW_HEIGHT) 
+								   lineBreakMode:UILineBreakModeTailTruncation];
+	[billNumView setFrame:CGRectMake(S_CELL_HPADDING,cellY,billNumSz.width,S_ROW_HEIGHT)];
+	[billNumView setText:billNumStr];
+	
+	// 
+	// Sponsor
+	// 
+	LegislatorContainer *sponsor = [m_bill sponsor];
 	UILabel *sponsorView = (UILabel *)[self viewWithTag:eTAG_SPONSOR];
-	LegislatorContainer *sponsor = [container sponsor];
-	CGRect tmpRect = CGRectMake(S_CELL_BOUNDS, statusY, 320.0f - (2.0f*S_CELL_BOUNDS), S_LABEL_HEIGHT);
-	[sponsorView setFrame:tmpRect];
-	[sponsorView setText:[NSString stringWithFormat:@"Sponsor: %@ (%@, %@)",
-									[sponsor shortName],
-									[sponsor party],
-									[sponsor state]
-						 ]
-	];
-	if ( [[sponsor party] isEqualToString:@"R"] )
-	{
-		sponsorView.textColor = [UIColor redColor];
-	}
-	else if ( [[sponsor party] isEqualToString:@"D"] )
-	{
-		sponsorView.textColor = [UIColor blueColor];
-	}
-	else
-	{
-		sponsorView.textColor = [UIColor yellowColor];
-	}
+	CGRect sponsorRect = CGRectMake(CGRectGetMaxX(billNumView.frame) + S_CELL_HPADDING,
+									cellY,
+									cellWidth - billNumSz.width - (2.0f*S_CELL_HPADDING),
+									S_ROW_HEIGHT
+	);
+	[sponsorView setFrame:sponsorRect];
 	
-	statusY = CGRectGetMaxY(tmpRect) + S_CELL_PADDING;
+	NSString *sponsorTxt = [NSString stringWithFormat:@"%@ (%@, %@)",
+											[sponsor shortName],
+											[sponsor party],
+											[sponsor state]
+							];
+	[sponsorView setText:sponsorTxt];
+	sponsorView.textColor = [LegislatorContainer partyColor:[sponsor party]];
 	
-	tmpRect = CGRectMake(CGRectGetMinX(titleRect), statusY, S_LABEL_WIDTH, S_LABEL_HEIGHT);
+	// next row
+	cellY = CGRectGetMaxY(sponsorRect) + S_CELL_VPADDING;
+	
+	// 
+	// Bill title/description
+	// 
+	UILabel *descripView = (UILabel *)[self viewWithTag:eTAG_DESCRIP];
+	// trim off the characters before the first space - they're the title...
+	NSString *descripStr = [m_bill.m_title substringFromIndex:([m_bill.m_title rangeOfString:@" "].location + 1)];
+	CGSize descSz = [descripStr sizeWithFont:D_DESCRIP_FONT 
+								 constrainedToSize:CGSizeMake(cellWidth,S_DESCRIP_HEIGHT + S_ROW_HEIGHT) 
+								 lineBreakMode:UILineBreakModeTailTruncation];
+	[descripView setFrame:CGRectMake(S_CELL_HPADDING,cellY,descSz.width,descSz.height)];
+	[descripView setText:descripStr];
+	
+	// next row
+	cellY += descSz.height + S_CELL_VPADDING;
+	
+	// 
+	// Bill Status
+	// 
 	UILabel *statusLbl = (UILabel *)[self viewWithTag:eTAG_STATUSLABEL];
-	[statusLbl setFrame:tmpRect];
-	[statusLbl setText:@"Status:"];
+	NSString *statusTxt = [NSString stringWithFormat:@"Status: %@ ",[m_bill.m_status capitalizedString]];
+	CGSize statusSz = [statusTxt sizeWithFont:D_STATUS_FONT 
+								 constrainedToSize:CGSizeMake(S_STATUS_WIDTH,S_ROW_HEIGHT) 
+								 lineBreakMode:UILineBreakModeTailTruncation];
+	[statusLbl setFrame:CGRectMake((2.0f*S_CELL_HPADDING),
+								   cellY,
+								   statusSz.width,
+								   S_ROW_HEIGHT
+								  )];
+	[statusLbl setText:statusTxt];
 	
+	// 
+	// Was there a vote?
+	// 
 	UILabel *voteView = (UILabel *)[self viewWithTag:eTAG_VOTESTATUS];
 	if ( eVote_novote == [[m_bill lastBillAction] m_voteResult] )
 	{
@@ -298,8 +266,12 @@ static const CGFloat S_VOTE_WIDTH = 55.0f;
 	}
 	else
 	{
-		tmpRect = CGRectMake(CGRectGetMaxX(titleRect) - S_VOTE_WIDTH, statusY, S_VOTE_WIDTH, S_LABEL_HEIGHT);
-		[voteView setFrame:tmpRect];
+		CGRect voteRect = CGRectMake(CGRectGetMaxX(statusLbl.frame) + S_CELL_HPADDING,
+									 cellY,
+									 S_VOTE_WIDTH,
+									 S_ROW_HEIGHT
+		);
+		[voteView setFrame:voteRect];
 		NSString *voteTxt;
 		UIColor *voteColor;
 		if ( eVote_passed == [[m_bill lastBillAction] m_voteResult] )
@@ -310,73 +282,20 @@ static const CGFloat S_VOTE_WIDTH = 55.0f;
 		else
 		{
 			voteTxt = @"Failed";
-			voteColor = [UIColor redColor];
+			voteColor = [UIColor darkGrayColor];
 		}
 		[voteView setText:voteTxt];
 		voteView.textColor = voteColor;
 	}
+
+	cellY += S_ROW_HEIGHT + S_CELL_VPADDING;
 	
-	CGFloat statusWidth = (CGRectGetWidth(voteView.frame) > 0) ? 
-							CGRectGetMinX(voteView.frame) - CGRectGetMaxX(statusLbl.frame) - (2.0f*S_CELL_PADDING) :
-							CGRectGetMaxX(titleRect) - CGRectGetMaxX(statusLbl.frame) - (2.0f*S_CELL_PADDING);
-	tmpRect = CGRectMake(CGRectGetMaxX(statusLbl.frame) + S_CELL_PADDING,
-						 statusY,
-						 statusWidth,
-						 S_LABEL_HEIGHT);
-	UILabel *statusView = (UILabel *)[self viewWithTag:eTAG_STATUS];
-	[statusView setFrame:tmpRect];
-	[statusView setText:m_bill.m_status];
-	
-	// 
-	// set bill history info!
-	// 
-	UILabel *histLblView = (UILabel *)[self viewWithTag:eTAG_HISTORYLABEL];
-	[histLblView setFrame:CGRectMake(S_CELL_BOUNDS,
-									 CGRectGetMaxY(statusView.frame) + S_CELL_PADDING,
-									 S_LABEL_WIDTH,
-									 S_LABEL_HEIGHT
-									 )];
-	
-	CGFloat histX = CGRectGetMaxX(histLblView.frame) + S_CELL_PADDING;
-	CGFloat histY = CGRectGetMinY(histLblView.frame);
-	CGFloat histW = 320.0f - histX - S_CELL_PADDING;
-	CGFloat histH = S_LABEL_HEIGHT;
-	
-	NSArray *history = [container billActions];
-	if ( [history count] > 0 )
-	{
-		[histLblView setText: @"History:"];
-		int hTag = eTAG_HISTORY1;
-		UILabel *hlbl;
-		for ( int ii = 0; ii < S_MAX_HISTORY_ITEMS; ++ii )
-		{
-			hlbl = (UILabel *)[self viewWithTag:(hTag - ii)];
-			[hlbl setFrame:CGRectMake(histX,histY,histW,histH)];
-			histY = (CGRectGetMaxY(hlbl.frame) + S_CELL_PADDING);
-			if ( ii < [history count] )
-			{
-				[hlbl setText:[[history objectAtIndex:ii] shortDescrip]];
-			}
-			else
-			{
-				[hlbl setText:@""];
-			}
-		}
-	}
-	else
-	{
-		[histLblView setText:@""];
-		int hTag = eTAG_HISTORY1;
-		UILabel *hlbl;
-		for ( int ii = 0; ii < S_MAX_HISTORY_ITEMS; ++ii )
-		{
-			hlbl = (UILabel *)[self viewWithTag:(hTag - ii)];
-			[hlbl setFrame:CGRectMake(histX,histY,histW,histH)];
-			histY = (CGRectGetMaxY(hlbl.frame) + S_CELL_PADDING);
-			[hlbl setText:@""];
-		}
-	}
-	
+	CGRect detailRect = CGRectMake(cellWidth + (2.0f*S_CELL_HPADDING),
+								   cellY/2.0f - (CGRectGetHeight(detailButton.frame)/2.0f),
+								   CGRectGetWidth(detailButton.frame),
+								   CGRectGetHeight(detailButton.frame)
+								   );
+	[detailButton setFrame:detailRect];
 }
 
 

@@ -20,6 +20,8 @@
 	BOOL m_downloadInProgress;
 }
 
++ (UIColor *)partyColor:(NSString *)party;
+
 - (id)initFromFile:(NSString *)path;
 - (void)writeRecordToFile:(NSString *)path;
 

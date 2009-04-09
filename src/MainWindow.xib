@@ -187,17 +187,18 @@
 									<nil key="NSNextResponder"/>
 									<int key="NSvFlags">274</int>
 									<string key="NSFrameSize">{320, 367}</string>
+									<reference key="IBUIBackgroundColor" ref="622981556"/>
 									<bool key="IBUIOpaque">NO</bool>
 									<bool key="IBUIClipsSubviews">YES</bool>
 									<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
+									<bool key="IBUIShowsHorizontalScrollIndicator">NO</bool>
 									<bool key="IBUIBouncesZoom">NO</bool>
-									<int key="IBUIStyle">1</int>
 									<int key="IBUISeparatorStyle">1</int>
 									<int key="IBUISectionIndexMinimumDisplayRowCount">0</int>
 									<bool key="IBUIShowsSelectionImmediatelyOnTouchBegin">YES</bool>
 									<float key="IBUIRowHeight">4.400000e+01</float>
-									<float key="IBUISectionHeaderHeight">1.000000e+01</float>
-									<float key="IBUISectionFooterHeight">1.000000e+01</float>
+									<float key="IBUISectionHeaderHeight">2.200000e+01</float>
+									<float key="IBUISectionFooterHeight">2.200000e+01</float>
 								</object>
 								<object class="IBUINavigationItem" key="IBUINavigationItem" id="923697819">
 									<string key="IBUITitle">Bills</string>
@@ -237,6 +238,7 @@
 									<bool key="IBUIOpaque">NO</bool>
 									<bool key="IBUIClipsSubviews">YES</bool>
 									<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
+									<bool key="IBUIShowsHorizontalScrollIndicator">NO</bool>
 									<bool key="IBUIBouncesZoom">NO</bool>
 									<int key="IBUISeparatorStyle">1</int>
 									<int key="IBUISectionIndexMinimumDisplayRowCount">0</int>

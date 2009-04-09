@@ -17,6 +17,7 @@
 
 @interface BillsViewController (private)
 	- (void)dataManagerCallback:(id)sender;
+	- (void)congressSwitch: (id)sender;
 	- (void) deselectRow:(id)sender;
 @end
 
@@ -29,16 +30,6 @@ enum
 	eTAG_ACTIVITY = 999,
 };
 
-static CGFloat S_CELL_PADDING = 12.0f;
-static CGFloat S_HEADER_HEIGHT = 33.0f;
-/*
-- (id)initWithStyle:(UITableViewStyle)style {
-    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-    if (self = [super initWithStyle:style]) {
-    }
-    return self;
-}
-*/
 
 - (void)dealloc 
 {
@@ -63,9 +54,6 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 	[m_HUD show:NO];
 	[m_HUD setText:m_HUDTxt andIndicateProgress:YES];
 	
-	self.tableView.separatorColor = [UIColor blackColor];
-	self.tableView.backgroundColor = [UIColor blackColor];
-	
 	// create a search bar which will be used as our table's header view
 	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 50.0f)];
 	searchBar.delegate = self;
@@ -78,6 +66,28 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 	
 	self.tableView.tableHeaderView = searchBar;
 	self.tableView.tableHeaderView.userInteractionEnabled = YES;
+	
+	// Create a new segment control and place it in 
+	// the NavigationController's title area
+	NSArray *buttonNames = [NSArray arrayWithObjects:@"House", @"Senate", nil];
+	m_segmentCtrl = [[UISegmentedControl alloc] initWithItems:buttonNames];
+	
+	// default styles
+	m_segmentCtrl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	m_segmentCtrl.segmentedControlStyle = UISegmentedControlStyleBar;
+	m_segmentCtrl.selectedSegmentIndex = 0; // Default to the "House"
+	m_selectedChamber = eCongressChamberHouse;
+	m_segmentCtrl.frame = CGRectMake(0,0,200,30);
+	// saturation of 0.0 means black/white
+	m_segmentCtrl.tintColor = [UIColor darkGrayColor];
+	
+	// add ourself as the target
+	[m_segmentCtrl addTarget:self action:@selector(congressSwitch:) forControlEvents:UIControlEventValueChanged];
+	
+	// add the buttons to the navigation bar
+	self.navigationItem.titleView = m_segmentCtrl;
+	[m_segmentCtrl release];
+	
 	
 	[super viewDidLoad];
 }
@@ -137,14 +147,14 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 }
 */
 
-/*
+
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
 	// Return YES for supported orientations
 	return YES;
 }
-*/
+
 
 #pragma mark BillsViewController Private
 
@@ -168,12 +178,38 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 }
 
 
+- (void)congressSwitch: (id)sender
+{
+	switch ( [sender selectedSegmentIndex] )
+	{
+		default:
+		case 0:
+			// This is the House!
+			m_selectedChamber = eCongressChamberHouse;
+			break;
+			
+		case 1:
+			// This is the Senate!
+			m_selectedChamber = eCongressChamberSenate;
+			break;
+	}
+	if ( [m_data isDataAvailable] ) 
+	{
+		[self.tableView reloadData];
+		NSUInteger idx[2] = {0,0};
+		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		self.tableView.userInteractionEnabled = YES;
+	}
+}
+
+
 - (void) deselectRow:(id)sender
 {
 	// de-select the currently selected row
 	// (so the user can go back to the same row)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
+
 
 #pragma mark UISearchBarDelegate methods
 
@@ -209,7 +245,16 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
 	if ( ![m_data isDataAvailable] ) return 1;
-	else return [m_data totalBills]; // 1 section per bill
+	
+	switch ( m_selectedChamber )
+	{
+		default:
+		case eCongressChamberHouse:
+			return [m_data houseBillSections];
+			
+		case eCongressChamberSenate:
+			return [m_data senateBillSections];
+	}
 }
 
 
@@ -217,7 +262,16 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
 	if ( ![m_data isDataAvailable] ) return 0;
-	return 1; // 1 row per bill :-)
+
+	switch ( m_selectedChamber )
+	{
+		default:
+		case eCongressChamberHouse:
+			return [m_data houseBillsInSection:section];
+			
+		case eCongressChamberSenate:
+			return [m_data senateBillsInSection:section];
+	}
 }
 
 
@@ -225,56 +279,33 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 {
 	if ( ![m_data isDataAvailable] ) return 20.0f;
 	
-	return [BillSummaryTableCell getCellHeightForBill:[m_data billAtIndex:indexPath.section]];
+	BillContainer *bc = nil;
+	switch ( m_selectedChamber )
+	{
+		default:
+		case eCongressChamberHouse:
+			bc = [m_data houseBillAtIndexPath:indexPath];
+			break;
+		case eCongressChamberSenate:
+			bc = [m_data senateBillAtIndexPath:indexPath];
+			break;
+	}
+	return [BillSummaryTableCell getCellHeightForBill:bc];
 }
 
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	return (S_HEADER_HEIGHT + S_CELL_PADDING);
-}
-
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-	UIView *hdrView = [[[UIView alloc] initWithFrame:CGRectMake(0.0f,0.0f,320.0f,S_HEADER_HEIGHT+S_CELL_PADDING)] autorelease];
-	CGRect lblFrame = CGRectMake(S_CELL_PADDING, S_CELL_PADDING, (320.0f - S_CELL_PADDING), S_HEADER_HEIGHT);
-	UILabel *sectionLabel = [[UILabel alloc] initWithFrame:lblFrame];
-	sectionLabel.backgroundColor = [UIColor clearColor];
-	sectionLabel.textColor = [UIColor whiteColor];
-	sectionLabel.shadowColor = [UIColor darkGrayColor];
-	sectionLabel.shadowOffset = CGSizeMake(1,1);
-	sectionLabel.font = [UIFont boldSystemFontOfSize:18.0f];
-	sectionLabel.textAlignment = UITextAlignmentLeft;
-	sectionLabel.adjustsFontSizeToFitWidth = YES;
+	if ( ![m_data isDataAvailable] ) return nil;
 	
-	if ( [m_data isDataAvailable] )
+	switch ( m_selectedChamber )
 	{
-		[sectionLabel setText:[[m_data billAtIndex:section] getShortTitle]];
+		default:
+		case eCongressChamberHouse:
+			return [m_data houseSectionTitle:section];
+		case eCongressChamberSenate:
+			return [m_data senateSectionTitle:section];
 	}
-	else
-	{
-		[sectionLabel setText:@""];
-		if ( [[myGovAppDelegate sharedCongressData] isDataAvailable] )
-		{
-			m_HUDTxt = [[[NSString alloc] initWithString:@"Downloading Bill Data"] autorelease];
-			[m_HUD setText:m_HUDTxt andIndicateProgress:YES];
-			/*
-			 CGSize lblSz = [sectionLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:18.0f] 
-			 constrainedToSize:CGSizeMake(320.0f - S_CELL_PADDING,S_HEADER_HEIGHT) 
-			 lineBreakMode:UILineBreakModeTailTruncation];
-			 UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-			 [activity setFrame:CGRectMake(lblSz.width+S_CELL_PADDING,S_CELL_PADDING,S_HEADER_HEIGHT,S_HEADER_HEIGHT)];
-			 [sectionLabel addSubview:activity];
-			 [activity startAnimating];
-			 */
-		}
-	}
-	
-	
-	[hdrView addSubview:sectionLabel];
-	[sectionLabel release];
-	return hdrView;
 }
 
 
@@ -284,19 +315,26 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 	static NSString *CellIdentifier = @"BillCell";
     
 	BillSummaryTableCell *cell = (BillSummaryTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-	if (cell == nil) 
+	if ( nil == cell )
 	{
 		cell = [[[BillSummaryTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
 	}
 	
-	if ( ![m_data isDataAvailable] )
+	BillContainer *bc = nil;
+	if ( [m_data isDataAvailable] ) 
 	{
-		[cell setContentFromBill:nil];
+		switch ( m_selectedChamber )
+		{
+			default:
+			case eCongressChamberHouse:
+				bc = [m_data houseBillAtIndexPath:indexPath];
+				break;
+			case eCongressChamberSenate:
+				bc = [m_data senateBillAtIndexPath:indexPath];
+				break;
+		}
 	}
-	else
-	{
-		[cell setContentFromBill:[m_data billAtIndex:indexPath.section]];
-	}
+	[cell setContentFromBill:bc];
 	
 	return cell;
 }
@@ -304,7 +342,21 @@ static CGFloat S_HEADER_HEIGHT = 33.0f;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-	BillContainer *bill = [m_data billAtIndex:indexPath.section];
+	BillContainer *bill = nil;
+	if ( [m_data isDataAvailable] ) 
+	{
+		switch ( m_selectedChamber )
+		{
+			default:
+			case eCongressChamberHouse:
+				bill = [m_data houseBillAtIndexPath:indexPath];
+				break;
+			case eCongressChamberSenate:
+				bill = [m_data senateBillAtIndexPath:indexPath];
+				break;
+		}
+	}
+	
 	if ( nil != bill )
 	{
 		// get the URL for the full-text of the bill and load-up 

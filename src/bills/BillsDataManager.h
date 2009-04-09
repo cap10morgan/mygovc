@@ -17,7 +17,13 @@
 	BOOL isDataAvailable;
 	BOOL isBusy;
 	
-	NSMutableArray *m_billData;
+	NSMutableArray *m_billData; // all bill data (sorted by last action date)
+	
+	NSMutableArray *m_houseSections; // array of 'm_houseBills' key values for easy sorting
+	NSMutableDictionary *m_houseBills; // key=((year << 5) + month), Value=array of bill containers
+	
+	NSMutableArray *m_senateSections;
+	NSMutableDictionary *m_senateBills;
 	
 	XMLParserOperation *m_xmlParser;
 	NSTimer *m_timer;
@@ -37,7 +43,16 @@
 
 - (NSInteger)totalBills;
 
-- (BillContainer *)billAtIndex:(NSInteger)index;
+- (NSInteger)houseBills;
+- (NSInteger)houseBillSections;
+- (NSInteger)houseBillsInSection:(NSInteger)section;
+- (NSString *)houseSectionTitle:(NSInteger)section;
+- (BillContainer *)houseBillAtIndexPath:(NSIndexPath *)indexPath;
 
+- (NSInteger)senateBills;
+- (NSInteger)senateBillSections;
+- (NSInteger)senateBillsInSection:(NSInteger)section;
+- (NSString *)senateSectionTitle:(NSInteger)section;
+- (BillContainer *)senateBillAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
