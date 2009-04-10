@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum
+{
+	eLegislatorImage_Large = 200,
+	eLegislatorImage_Medium = 100,
+	eLegislatorImage_Small = 50,
+} LegislatorImageSize;
+
 @interface LegislatorContainer : NSObject 
 {
 @private
@@ -75,7 +82,9 @@
 // downloads the image for later. If a callback selector is provided, the 
 // function will issue a message to the callback object (setCallbackObject)
 // with 1 parameter, a UIImage *
-- (UIImage *)getImageAndBlock:(BOOL)blockUntilDownloaded withCallbackOrNil:(SEL)sel;
+- (UIImage *)getImage:(LegislatorImageSize)imgSz andBlock:(BOOL)blockUntilDownloaded withCallbackOrNil:(SEL)sel;
+
+- (BOOL)isDownloadingImage;
 
 
 // add keys to the dictionary

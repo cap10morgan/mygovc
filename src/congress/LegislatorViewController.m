@@ -5,12 +5,14 @@
 //  Created by Jeremy C. Andrus on 3/7/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
+#import <AddressBook/AddressBook.h>
 
 #import "LegislatorViewController.h"
 #import "LegislatorContainer.h"
 #import "LegislatorInfoCell.h"
 #import "LegislatorHeaderViewController.h"
 #import "CongressionalCommittees.h"
+#import "StateAbbreviations.h"
 
 @interface LegislatorViewController (private)
 	- (void) deselectRow:(id)sender;
@@ -72,6 +74,168 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 		m_activityRows = [[NSMutableDictionary alloc] initWithCapacity:10];
 	}
 	return self;
+}
+
+
+- (void)addLegislatorToContacts:(LegislatorContainer *)legislator withImage:(UIImage *)img
+{
+	ABAddressBookRef ab = ABAddressBookCreate();
+	
+	// 
+	// Query the address book to see if we've aleady added this person
+	// 
+	{
+		NSString *nameStr = [NSString stringWithFormat:@"%@ %@",
+										[legislator firstname],
+										[legislator lastname]
+							 ];
+		NSArray *searchResults = (NSArray *)ABAddressBookCopyPeopleWithName( ab, (CFStringRef)nameStr );
+		if ( [searchResults count] > 0 )
+		{
+			// we already have this legislator - use a different ViewController!
+			ABPersonViewController *pvc = [[ABPersonViewController alloc] init];
+			pvc.addressBook = ab;
+			pvc.allowsEditing = YES;
+			pvc.personViewDelegate = self;
+			pvc.displayedPerson = [searchResults objectAtIndex:0];
+			
+			CFRelease(ab);
+			
+			[self.navigationController pushViewController:pvc animated:YES];
+			[pvc release];
+			return;
+		}
+	}
+	
+	ABNewPersonViewController *np = [[ABNewPersonViewController alloc] init];
+	np.addressBook = ab;
+	np.newPersonViewDelegate = self;
+	
+	
+	ABRecordRef abRecord = ABPersonCreate();
+	CFErrorRef abError;
+	BOOL success = NO;
+	
+	// 
+	// Address 
+	// 
+	NSString *azip = nil;
+	if ( [[legislator title] isEqualToString:@"Sen"] )
+	{
+		azip = @"20510";
+	}
+	else
+	{
+		azip = @"20515";
+	}
+	NSMutableDictionary *addressDictionary = [[NSMutableDictionary alloc] initWithCapacity:6];
+	[addressDictionary setObject:[legislator congress_office] forKey:(NSString *)kABPersonAddressStreetKey];
+	[addressDictionary setObject:@"Washington" forKey:(NSString *)kABPersonAddressCityKey];
+	[addressDictionary setObject:@"DC" forKey:(NSString *)kABPersonAddressStateKey];
+	[addressDictionary setObject:azip forKey:(NSString *)kABPersonAddressZIPKey];
+	[addressDictionary setObject:@"United States" forKey:(NSString *)kABPersonAddressCountryKey];
+	[addressDictionary setObject:@"us" forKey:(NSString *)kABPersonAddressCountryCodeKey];
+	
+	ABMutableMultiValueRef addrVals = ABMultiValueCreateMutable( kABPersonAddressProperty );
+	success = ABMultiValueAddValueAndLabel( addrVals, addressDictionary, kABHomeLabel, NULL );
+	ABRecordSetValue( abRecord, kABPersonAddressProperty, addrVals, &abError );
+	
+	
+	CFDataRef imgData = (CFDataRef)UIImageJPEGRepresentation( img, 1.0 );
+	success = ABPersonSetImageData( abRecord, imgData, &abError);
+	
+	// 
+	// Personal Info
+	// 
+	ABRecordSetValue( abRecord, kABPersonPrefixProperty, [legislator title], &abError );
+	ABRecordSetValue( abRecord, kABPersonFirstNameProperty, [legislator firstname], &abError );
+	ABRecordSetValue( abRecord, kABPersonMiddleNameProperty, [legislator middlename], &abError );
+	ABRecordSetValue( abRecord, kABPersonLastNameProperty, [legislator lastname], &abError );
+	ABRecordSetValue( abRecord, kABPersonSuffixProperty, [NSString stringWithFormat:@"%@(%@)",
+																	([legislator name_suffix] ? [NSString stringWithFormat:@"%@ ",[legislator name_suffix]] : @""),
+																	[legislator party]
+														 ], &abError );
+	ABRecordSetValue( abRecord, kABPersonNicknameProperty, [legislator nickname], &abError );
+	
+	// 
+	// Organization / JobTitle
+	// 
+	ABRecordSetValue( abRecord, kABPersonOrganizationProperty, CFSTR("United States Congress"), &abError );
+	NSString *legTitle = [legislator title];
+	NSString *state = [StateAbbreviations nameFromAbbr:[legislator state]];
+	NSString *jobTitle = @" ";
+	NSString *deptStr = @" ";
+	if ( [legTitle isEqualToString:@"Sen"] )
+	{
+		jobTitle = @"US Senator";
+		deptStr = state;
+	}
+	else if ( [legTitle isEqualToString:@"Rep"] )
+	{
+		jobTitle = @"US Representative";
+		if ( 0 == [[legislator district] integerValue] )
+		{
+			// At-Large
+			deptStr = [NSString stringWithFormat:@"%@ At-Large",state];
+		}
+		else
+		{
+			deptStr = [NSString stringWithFormat:@"%@ District %@",state,[legislator district]];
+		}
+	}
+	else if ( [legTitle isEqualToString:@"Del"] )
+	{
+		jobTitle = @"US Delegate";
+		deptStr = [NSString stringWithFormat:@"%@ Delegate",state];
+	}
+	ABRecordSetValue( abRecord, kABPersonJobTitleProperty, jobTitle, &abError );
+	ABRecordSetValue( abRecord, kABPersonDepartmentProperty, deptStr, &abError );
+	
+	// 
+	// email 
+	// 
+	NSString *email = [legislator email];
+	if ( [email length] > 0 )
+	{
+		ABRecordSetValue( abRecord, kABPersonEmailProperty, email, &abError );
+	}
+	
+	// 
+	// Website / misc. URLs
+	// 
+	ABMutableMultiValueRef websites = ABMultiValueCreateMutable( kABPersonURLProperty );
+	success = ABMultiValueAddValueAndLabel( websites, [legislator website], kABPersonHomePageLabel, NULL );
+	success = ABMultiValueAddValueAndLabel( websites, [legislator webform], CFSTR("WebForm"), NULL );
+	if ( [[legislator youtube_url] length] > 0 )
+	{
+		success = ABMultiValueAddValueAndLabel( websites, [legislator youtube_url], CFSTR("YouTube"), NULL );
+	}
+	if ( [[legislator congresspedia_url] length] > 0 )
+	{
+		success = ABMultiValueAddValueAndLabel( websites, [legislator congresspedia_url], CFSTR("OpenCongress"), NULL );
+	}
+	if ( [[legislator eventful_id] length] > 0 )
+	{
+		static NSString *kEventfulBaseURLFmt = @"http://eventful.com/performers/%@";
+		NSString *url = [NSString stringWithFormat:kEventfulBaseURLFmt,[legislator eventful_id]];
+		success = ABMultiValueAddValueAndLabel( websites, url, CFSTR("Eventful"), NULL );
+	}
+	ABRecordSetValue( abRecord, kABPersonURLProperty, websites, &abError );
+	
+	// 
+	// Phone Numbers
+	//
+	ABMutableMultiValueRef phoneNums = ABMultiValueCreateMutable( kABPersonPhoneProperty );
+	success = ABMultiValueAddValueAndLabel( phoneNums, [legislator phone], kABPersonPhoneMainLabel, NULL );
+	success = ABMultiValueAddValueAndLabel( phoneNums, [legislator fax], kABPersonPhoneWorkFAXLabel, NULL );
+	ABRecordSetValue( abRecord, kABPersonPhoneProperty, phoneNums, &abError );
+		
+	np.displayedPerson = abRecord;
+	
+	[self.navigationController pushViewController:np animated:YES];
+	[np release];
+	CFRelease(abRecord);
+	CFRelease(ab);
 }
 
 
@@ -222,6 +386,7 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 	m_headerViewCtrl = [[LegislatorHeaderViewController alloc] initWithNibName:@"LegislatorHeaderView" bundle:nil ];
 	[m_headerViewCtrl.view setFrame:hframe];
 	[m_headerViewCtrl setLegislator:m_legislator];
+	[m_headerViewCtrl setNavController:self];
 	m_tableView.tableHeaderView = m_headerViewCtrl.view;
 	m_tableView.tableHeaderView.userInteractionEnabled = YES;
 }
@@ -451,6 +616,21 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 {
 	// Return NO if you do not want the specified item to be editable.
 	return NO;
+}
+
+
+#pragma mark ABNewPersonViewControllerDelegate methods
+
+
+- (void)newPersonViewController:(ABNewPersonViewController *)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person
+{
+	[self.navigationController popViewControllerAnimated:YES];
+}
+
+
+- (BOOL)personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue
+{
+	return YES;
 }
 
 

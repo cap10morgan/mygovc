@@ -44,6 +44,8 @@
 		01BC2FAA0F5B84AD00E7ABD0 /* XMLParserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */; };
 		01BC2FE10F5B973B00E7ABD0 /* CongressDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */; };
 		01BC2FEC0F5BA34000E7ABD0 /* LegislatorContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */; };
+		01C075BC0F8EE96E00F5B2A1 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */; };
+		01C075C10F8EE98700F5B2A1 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */; };
 		01C43CE10F662D0B00F8A025 /* BillsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C43CE00F662D0B00F8A025 /* BillsViewController.m */; };
 		01C43D020F662E3300F8A025 /* LegislatorNameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C43D010F662E3300F8A025 /* LegislatorNameCell.m */; };
 		01E1D9E70F80817E008B3711 /* BillsDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E1D9E60F80817E008B3711 /* BillsDataManager.m */; };
@@ -119,6 +121,8 @@
 		01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressDataManager.m; path = src/congress/CongressDataManager.m; sourceTree = "<group>"; };
 		01BC2FEA0F5BA34000E7ABD0 /* LegislatorContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorContainer.h; path = src/congress/LegislatorContainer.h; sourceTree = "<group>"; };
 		01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorContainer.m; path = src/congress/LegislatorContainer.m; sourceTree = "<group>"; };
+		01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		01C43CDF0F662D0B00F8A025 /* BillsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillsViewController.h; path = src/bills/BillsViewController.h; sourceTree = "<group>"; };
 		01C43CE00F662D0B00F8A025 /* BillsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillsViewController.m; path = src/bills/BillsViewController.m; sourceTree = "<group>"; };
 		01C43D000F662E3300F8A025 /* LegislatorNameCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorNameCell.h; path = src/congress/LegislatorNameCell.h; sourceTree = "<group>"; };
@@ -155,6 +159,8 @@
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */,
 				0126775E0F7F25CA00CF9C46 /* CoreLocation.framework in Frameworks */,
+				01C075BC0F8EE96E00F5B2A1 /* AddressBook.framework in Frameworks */,
+				01C075C10F8EE98700F5B2A1 /* AddressBookUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +331,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */,
+				01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */,
 				0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,

@@ -6,12 +6,18 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-#import "LegislatorHeaderViewController.h"
+#import "myGovAppDelegate.h"
+
 #import "LegislatorContainer.h"
+#import "LegislatorHeaderViewController.h"
+#import "LegislatorViewController.h"
+#import "MiniBrowserController.h"
 #import "StateAbbreviations.h"
 
 @interface LegislatorHeaderViewController (private)
 	- (void)imageDownloadComplete:(UIImage *)img;
+	- (void)startLargeImageDownload:(id)sender;
+	- (void)largeImageDownloadComplete:(UIImage *)img;
 @end
 
 @implementation LegislatorHeaderViewController
@@ -19,6 +25,9 @@
 @synthesize m_name;
 @synthesize m_partyInfo;
 @synthesize m_img;
+
+static NSString *kBioguideURLFmt = @"http://bioguide.congress.gov/scripts/biodisplay.pl?index=%@";
+
 
 - (void)didReceiveMemoryWarning 
 {
@@ -30,34 +39,18 @@
 - (void)dealloc 
 {
 	[m_legislator release];
+	[m_navController release];
+	[m_largeImg release];
 	[super dealloc];
 }
-
-
-/*
-// The designated initializer. Override to perform setup that is required before the view is loaded.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil 
-{
-	if ( self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil] ) 
-	{
-		m_legislator = nil;
-	}
-	return self;
-}
-*/
-
-/*
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView 
-{
-}
-*/
 
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad 
 {
 	m_legislator = nil;
+	m_navController = nil;
+	m_largeImg = nil;
 	[super viewDidLoad];
 }
 
@@ -77,17 +70,30 @@
 - (IBAction) addLegislatorToContacts:(id)sender
 {
 	if ( nil == m_legislator ) return;
+	if ( nil == m_navController ) return;
 	
-	// XXX - add legislator to contacts
-	// XXX - maybe pop-up a UIActionSheet to confirm?
+	// try to use the large image if it's available...
+	[m_navController addLegislatorToContacts:m_legislator withImage:(nil != m_largeImg ? m_largeImg : m_img.image)];
 }
 
 
 - (IBAction) getLegislatorBio:(id)sender
 {
 	if ( nil == m_legislator ) return;
+	if ( nil == m_navController ) return;
 	
-	// XXX - display bio information as retrieved from: [...]
+	NSString *urlStr = [NSString stringWithFormat:kBioguideURLFmt,[m_legislator bioguide_id]];
+	
+	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:[NSURL URLWithString:urlStr]];
+	mbc.title = @"loading...";
+	[[m_navController navigationController] pushViewController:mbc animated:YES];
+}
+
+
+- (void)setNavController:(id)controller
+{
+	[m_navController release];
+	m_navController = [controller retain];
 }
 
 
@@ -134,7 +140,7 @@
 	[partyTxt release];
 	
 	// set legislator photo
-	UIImage *img = [m_legislator getImageAndBlock:NO withCallbackOrNil:@selector(imageDownloadComplete:)];
+	UIImage *img = [m_legislator getImage:eLegislatorImage_Medium andBlock:NO withCallbackOrNil:@selector(imageDownloadComplete:)];
 	if ( nil == img )
 	{
 		// overlay a UIActivityIndicatorView on the image to
@@ -150,7 +156,12 @@
 	}
 	else
 	{
+		// must have loaded from disk :-)
 		[m_img setImage:img];
+		
+		// start a large image download (for contact adding)
+		[m_largeImg release];
+		m_largeImg = [m_legislator getImage:eLegislatorImage_Large andBlock:NO withCallbackOrNil:@selector(largeImageDownloadComplete:)];
 	}
 }
 
@@ -165,7 +176,43 @@
 	}
 	
 	if ( nil != img ) [m_img setImage:img];
+	
+	// start a large image download, but not from the callback!
+	// start image download
+	// data is available - read disk data into memory (via a worker thread)
+	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																  selector:@selector(startLargeImageDownload:) object:self];
+	
+	// Add the operation to the internal operation queue managed by the application delegate.
+	[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+	
+	[theOp release];
 }
 
+
+- (void)startLargeImageDownload:(id)sender
+{
+	if ( sender != self ) return;
+	
+	// wait until the previous image has completely downloaded
+	static const int MAX_SLEEPS = 300;
+	static const CGFloat SLEEP_INTERVAL = 0.1f;
+	int numSleeps = 0;
+	while ( [m_legislator isDownloadingImage] && (numSleeps <= MAX_SLEEPS) )
+	{
+		[NSThread sleepForTimeInterval:SLEEP_INTERVAL];
+		++numSleeps;
+	}
+	
+	// start a large image download (for contact adding)
+	[m_largeImg release];
+	m_largeImg = [m_legislator getImage:eLegislatorImage_Large andBlock:NO withCallbackOrNil:@selector(largeImageDownloadComplete:)];
+}
+
+
+- (void)largeImageDownloadComplete:(UIImage *)img
+{
+	if ( nil != img ) m_largeImg = [img retain];
+}
 
 @end

@@ -309,13 +309,14 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 }
 
 
-- (UIImage *)getImageAndBlock:(BOOL)blockUntilDownloaded withCallbackOrNil:(SEL)sel;
+//- (UIImage *)getImageAndBlock:(BOOL)blockUntilDownloaded withCallbackOrNil:(SEL)sel;
+- (UIImage *)getImage:(LegislatorImageSize)imgSz andBlock:(BOOL)blockUntilDownloaded withCallbackOrNil:(SEL)sel;
 {
 	m_imgSel = sel;
 	
 	// look for photo
 	NSString *cache = [[CongressDataManager dataCachePath] stringByAppendingPathComponent:@"photos"];
-	NSString *photoPath = [NSString stringWithFormat:@"%@/%@-100px.jpeg",cache,[self govtrack_id]];
+	NSString *photoPath = [NSString stringWithFormat:@"%@/%@-%dpx.jpeg",cache,[self govtrack_id],imgSz];
 	
 	UIImage *img = nil;
 	
@@ -346,16 +347,30 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 		
 		if ( blockUntilDownloaded )
 		{
-			while ( m_downloadInProgress /* XXX - or timeout! */ )
+			static const int MAX_NUM_SLEEPS = 300; // 30 seconds
+			static const CGFloat SLEEP_INTERVAL = 0.1f;
+			int numSleeps = 0;
+			
+			while ( m_downloadInProgress && (numSleeps <= MAX_NUM_SLEEPS) )
 			{
-				[NSThread sleepForTimeInterval:0.1f];
+				[NSThread sleepForTimeInterval:SLEEP_INTERVAL];
+				++numSleeps;
 			}
+			
+			if ( numSleeps > MAX_NUM_SLEEPS ) return nil; // timeout!
+			
 			// recurse!
-			return [self getImageAndBlock:blockUntilDownloaded withCallbackOrNil:sel];
+			return [self getImage:imgSz andBlock:blockUntilDownloaded withCallbackOrNil:sel];
 		}
 	}
 	
 	return img;
+}
+
+
+- (BOOL)isDownloadingImage
+{
+	return m_downloadInProgress;
 }
 
 

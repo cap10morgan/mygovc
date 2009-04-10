@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AddressBookUI/ABNewPersonViewController.h>
+#import <AddressBookUI/ABPersonViewController.h>
 
 @class LegislatorContainer;
 @class LegislatorHeaderViewController;
 
-@interface LegislatorViewController : UITableViewController 
+@interface LegislatorViewController : UITableViewController <ABNewPersonViewControllerDelegate, ABPersonViewControllerDelegate>
 {
 	UITableView *m_tableView;
 	LegislatorContainer *m_legislator;
@@ -30,5 +32,7 @@
 @property (nonatomic, retain, setter=setLegislator:) LegislatorContainer *m_legislator;
 
 - (void)setLegislator:(LegislatorContainer *)legislator;
+
+- (void)addLegislatorToContacts:(LegislatorContainer *)legislator withImage:(UIImage *)img;
 
 @end
