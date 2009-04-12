@@ -13,12 +13,28 @@
 	- (void)enableFwdButton:(BOOL)enable;
 @end
 
+enum
+{
+	eTAG_BACK    = 999,
+	eTAG_RELOAD  = 998,
+	eTAG_FORWARD = 997,
+	eTAG_CLOSE   = 996,
+	eTAG_STOP    = 995,
+};
+
 
 @implementation MiniBrowserController
 
 @synthesize m_toolBar, m_webView, m_shouldStopLoadingOnHide;
+@synthesize m_backButton, m_reloadButton, m_fwdButton;
 
 static MiniBrowserController *s_browser = NULL;
+
+
++ (MiniBrowserController *)sharedBrowser
+{
+	return [self sharedBrowserWithURL:nil];
+}
 
 
 + (MiniBrowserController *)sharedBrowserWithURL:(NSURL *)urlOrNil
@@ -28,6 +44,7 @@ static MiniBrowserController *s_browser = NULL;
 		s_browser = [[MiniBrowserController alloc] initWithNibName:@"MiniBrowserView" bundle:nil];
 		s_browser.m_webView.detectsPhoneNumbers = YES;
 		s_browser.m_webView.scalesPageToFit = YES;
+		[s_browser.view setNeedsDisplay];
 	}
 	
 	if ( nil != urlOrNil )
@@ -50,6 +67,10 @@ static MiniBrowserController *s_browser = NULL;
 		m_loadingInterrupted = NO;
 		m_urlToLoad = nil;
 		m_activity = nil;
+		m_parentCtrl = nil;
+		m_shouldDisplayOnViewLoad = NO;
+		m_normalItemList = nil;
+		m_loadingItemList = nil;
 		[self enableBackButton:NO];
 		[self enableFwdButton:NO];
 	}
@@ -66,6 +87,9 @@ static MiniBrowserController *s_browser = NULL;
 
 - (void)dealloc 
 {
+	[m_urlToLoad release];
+	[m_normalItemList release];
+	[m_loadingItemList release];
 	[super dealloc];
 }
 
@@ -85,6 +109,41 @@ static MiniBrowserController *s_browser = NULL;
 	[self.m_webView addSubview:m_activity];
 	[m_activity release];
 	[m_activity stopAnimating];
+	
+	// get the current list of buttons
+	m_normalItemList = [[NSArray alloc] initWithArray:m_toolBar.items];
+	
+	// generate a list of buttons to display while loading
+	// (this enables a stop button)
+	{
+		NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:[m_normalItemList count]];
+		NSEnumerator *e = [m_toolBar.items objectEnumerator];
+		id bbi;
+		while ( bbi = [e nextObject] )
+		{
+			UIBarButtonItem *button = (UIBarButtonItem *)bbi;
+			if ( eTAG_RELOAD == [button tag] )
+			{
+				UIBarButtonItem *stopButton = [[UIBarButtonItem alloc] 
+													initWithBarButtonSystemItem:UIBarButtonSystemItemStop 
+													target:self action:@selector(refreshButtonPressed:)];
+				[stopButton setTag:eTAG_STOP];
+				[tmpArray addObject:stopButton];
+				[stopButton release];
+			}
+			else
+			{
+				[tmpArray addObject:bbi];
+			}
+		}
+		m_loadingItemList = (NSArray *)tmpArray;
+	}
+	
+	if ( m_shouldDisplayOnViewLoad )
+	{
+		m_shouldDisplayOnViewLoad = NO;
+		[m_parentCtrl presentModalViewController:self animated:YES];
+	}
 }
 
 
@@ -122,7 +181,6 @@ static MiniBrowserController *s_browser = NULL;
 	
 	[super viewWillDisappear:animated];
 }
- 
 
 
 // Override to allow orientations other than the default portrait orientation.
@@ -130,6 +188,28 @@ static MiniBrowserController *s_browser = NULL;
 {
 	// Return YES for supported orientations
 	return YES;
+}
+
+
+- (void)display:(id)parentController
+{
+	m_parentCtrl = parentController;
+	if ( nil != m_webView )
+	{
+		[m_parentCtrl presentModalViewController:self animated:YES];
+	}
+	else
+	{
+		m_shouldDisplayOnViewLoad = YES;
+		[self.view setNeedsDisplay];
+	}
+}
+
+
+- (IBAction)closeButtonPressed:(id)button
+{
+	// dismiss the view
+	[m_parentCtrl dismissModalViewControllerAnimated:YES];
 }
 
 
@@ -147,7 +227,14 @@ static MiniBrowserController *s_browser = NULL;
 
 - (IBAction)refreshButtonPressed:(id)button
 {
-	[m_webView reload];
+	if ( m_webView.loading )
+	{
+		[self stopLoading];
+	}
+	else 
+	{
+		[m_webView reload];
+	}
 }
 
 
@@ -164,15 +251,22 @@ static MiniBrowserController *s_browser = NULL;
 	}
 	else
 	{
+		// do it this goofy way just in case (url == m_urlToLoad)
+		[url retain];
 		[m_urlToLoad release];
 		m_urlToLoad = [[NSURL alloc] initWithString:[url absoluteString]];
+		[url release];
 	}
 }
 
 
 - (void)stopLoading
 {
-	if ( m_webView.loading ) [m_webView stopLoading];
+	if ( m_webView.loading )
+	{
+		[m_webView stopLoading];
+		[m_activity stopAnimating];
+	}
 }
 
 
@@ -181,33 +275,13 @@ static MiniBrowserController *s_browser = NULL;
 
 - (void)enableBackButton:(BOOL)enable
 {
-	NSEnumerator *e = [m_toolBar.items objectEnumerator];
-	id bb;
-	while ( bb = [e nextObject] )
-	{
-		UIBarButtonItem *backButton = (UIBarButtonItem *)bb;
-		if ( 999 == [backButton tag] )
-		{
-			[backButton setEnabled:enable];
-			return;
-		}
-	}
+	[m_backButton setEnabled:enable];
 }
 
 
 - (void)enableFwdButton:(BOOL)enable
 {
-	NSEnumerator *e = [m_toolBar.items objectEnumerator];
-	id bb;
-	while ( bb = [e nextObject] )
-	{
-		UIBarButtonItem *fwdButton = (UIBarButtonItem *)bb;
-		if ( 997 == [fwdButton tag] )
-		{
-			[fwdButton setEnabled:enable];
-			return;
-		}
-	}
+	[m_fwdButton setEnabled:enable];
 }
 
 
@@ -217,20 +291,24 @@ static MiniBrowserController *s_browser = NULL;
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
 	// notify of an error?
+	[m_toolBar setItems:m_normalItemList animated:NO];
 }
 
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
-	// always start loading - we're not real restrictive here...
+	[m_toolBar setItems:m_loadingItemList animated:NO];
+	
 	[m_activity startAnimating];
 	
+	// always start loading - we're not real restrictive here...
 	return YES;
 }
 
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
+	[m_toolBar setItems:m_normalItemList animated:NO];
 	[m_activity stopAnimating];
 	[self enableBackButton:m_webView.canGoBack];
 	[self enableFwdButton:m_webView.canGoForward];

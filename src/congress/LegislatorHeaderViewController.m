@@ -85,8 +85,7 @@ static NSString *kBioguideURLFmt = @"http://bioguide.congress.gov/scripts/biodis
 	NSString *urlStr = [NSString stringWithFormat:kBioguideURLFmt,[m_legislator bioguide_id]];
 	
 	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:[NSURL URLWithString:urlStr]];
-	mbc.title = @"loading...";
-	[[m_navController navigationController] pushViewController:mbc animated:YES];
+	[mbc display:m_navController];
 }
 
 

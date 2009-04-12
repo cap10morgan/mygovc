@@ -16,6 +16,8 @@
 		0102D3020F58E31C005AE0EA /* SpendingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D3010F58E31C005AE0EA /* SpendingViewController.m */; };
 		0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D40A0F58F2D2005AE0EA /* CongressViewController.m */; };
 		011592C40F6A36D2008BECCD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 011592C30F6A36D2008BECCD /* Default.png */; };
+		011EF3CA0F91A47400932BBE /* ComposeMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 011EF3C90F91A47400932BBE /* ComposeMessageView.xib */; };
+		011EF3CD0F91A48E00932BBE /* ComposeMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 011EF3CC0F91A48E00932BBE /* ComposeMessageViewController.m */; };
 		0126775E0F7F25CA00CF9C46 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */; };
 		0126785E0F7F3BB900CF9C46 /* CongressDatabaseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 0126785D0F7F3BB900CF9C46 /* CongressDatabaseParser.m */; };
 		012678610F7F3BD500CF9C46 /* CongressLocationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 012678600F7F3BD500CF9C46 /* CongressLocationParser.m */; };
@@ -76,6 +78,9 @@
 		0102D4090F58F2D2005AE0EA /* CongressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressViewController.h; path = src/congress/CongressViewController.h; sourceTree = "<group>"; };
 		0102D40A0F58F2D2005AE0EA /* CongressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressViewController.m; path = src/congress/CongressViewController.m; sourceTree = "<group>"; };
 		011592C30F6A36D2008BECCD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		011EF3C90F91A47400932BBE /* ComposeMessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ComposeMessageView.xib; path = src/common/ComposeMessageView.xib; sourceTree = "<group>"; };
+		011EF3CB0F91A48E00932BBE /* ComposeMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ComposeMessageViewController.h; path = src/common/ComposeMessageViewController.h; sourceTree = "<group>"; };
+		011EF3CC0F91A48E00932BBE /* ComposeMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ComposeMessageViewController.m; path = src/common/ComposeMessageViewController.m; sourceTree = "<group>"; };
 		0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		0126785C0F7F3BB900CF9C46 /* CongressDatabaseParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressDatabaseParser.h; path = src/congress/CongressDatabaseParser.h; sourceTree = "<group>"; };
 		0126785D0F7F3BB900CF9C46 /* CongressDatabaseParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressDatabaseParser.m; path = src/congress/CongressDatabaseParser.m; sourceTree = "<group>"; };
@@ -274,14 +279,17 @@
 			isa = PBXGroup;
 			children = (
 				01B7B6F70F8AECB100619441 /* MiniBrowserView.xib */,
+				01B7B6F40F8AEC5500619441 /* MiniBrowserController.h */,
+				01B7B6F50F8AEC5500619441 /* MiniBrowserController.m */,
 				01BC2FA80F5B84AD00E7ABD0 /* XMLParserOperation.h */,
 				01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */,
 				01B4E05D0F6449BB00219672 /* ProgressOverlayViewController.h */,
 				01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */,
 				01B118340F709EC70076AFE0 /* StateAbbreviations.h */,
 				01B118350F709EC70076AFE0 /* StateAbbreviations.m */,
-				01B7B6F40F8AEC5500619441 /* MiniBrowserController.h */,
-				01B7B6F50F8AEC5500619441 /* MiniBrowserController.m */,
+				011EF3C90F91A47400932BBE /* ComposeMessageView.xib */,
+				011EF3CB0F91A48E00932BBE /* ComposeMessageViewController.h */,
+				011EF3CC0F91A48E00932BBE /* ComposeMessageViewController.m */,
 			);
 			name = common;
 			sourceTree = "<group>";
@@ -397,6 +405,7 @@
 				01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */,
 				01B7B6F00F8AEACE00619441 /* fwdButton.png in Resources */,
 				01B7B6F80F8AECB100619441 /* MiniBrowserView.xib in Resources */,
+				011EF3CA0F91A47400932BBE /* ComposeMessageView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,6 +448,7 @@
 				0190167C0F8551BB00627610 /* BillSummaryXMLParser.m in Sources */,
 				019017670F85760A00627610 /* BillSummaryTableCell.m in Sources */,
 				01B7B6F60F8AEC5500619441 /* MiniBrowserController.m in Sources */,
+				011EF3CD0F91A48E00932BBE /* ComposeMessageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

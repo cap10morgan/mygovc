@@ -8,6 +8,7 @@
 
 #import "myGovAppDelegate.h"
 
+#import "ComposeMessageViewController.h"
 #import "CongressDataManager.h"
 #import "CongressViewController.h"
 #import "LegislatorContainer.h"
@@ -476,18 +477,37 @@ enum
 {
 	if ( eActionContact == m_actionType )
 	{
+		MessageData *msg = [[MessageData alloc] init];
+		msg.m_transport = eMT_Invalid;
+		
 		// use currently selected legislator to perfom the following action:
 		switch ( buttonIndex )
 		{
 			case 0:
-				// XXX - email!
+				msg.m_transport = eMT_PhoneCall;
+				break;
 			case 1:
-				// XXX - Call
+				msg.m_transport = eMT_Email;
+				// XXX - setup message
+				break;
 			case 2:
-				// XXX - Tweet
+				msg.m_transport = eMT_Twitter;
+				break;
+			case 3:
+				msg.m_transport = eMT_MyGov;
+				break;
+				
 			default:
 				break;
 		}
+		
+		if ( msg.m_transport != eMT_Invalid )
+		{
+			// display the message composer
+			ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+			[cmvc display:msg fromParent:self];
+		}
+		
 		// deselect the selected row (after we've used it to get phone/email/twitter)
 		[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 	}
@@ -683,7 +703,7 @@ enum
 	UIActionSheet *contactAlert =
 	[[UIActionSheet alloc] initWithTitle:[legislator shortName]
 							delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-							otherButtonTitles:@"Email",@"Call",@"Tweet",nil,nil];
+							otherButtonTitles:@"Call",@"Email",@"Tweet",@"Comment!",nil];
 	
 	// use the same style as the nav bar
 	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;

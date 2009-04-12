@@ -362,8 +362,7 @@ enum
 		// get the URL for the full-text of the bill and load-up 
 		// our mini web browser to view it!
 		MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:[bill getFullTextURL]];
-		mbc.title = @"loading...";
-		[self.navigationController pushViewController:mbc animated:YES];
+		[mbc display:self];
 	}
 	
 	//[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
