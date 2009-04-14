@@ -100,6 +100,15 @@ static ComposeMessageViewController *s_composer = NULL;
 		case eMT_Email:
 			titleTxt = @"Email";
 			break;
+		
+		case eMT_PhoneCall:
+		{
+			// make a phone call!
+			NSString *telStr = [[[NSString alloc] initWithFormat:@"tel:%@",data.m_to] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+			NSURL *telURL = [[NSURL alloc] initWithString:telStr];
+			[[UIApplication sharedApplication] openURL:telURL];
+		}
+			return;
 	}
 	
 	m_titleButton.title = titleTxt;
@@ -143,6 +152,9 @@ static ComposeMessageViewController *s_composer = NULL;
 			transportType = @"Email";
 			sendOp = nil;
 			break;
+		
+		case eMT_PhoneCall:
+			return; // what is this?
 	}
 	
 	NSString *msg = [[[NSString alloc] initWithFormat:@"Sending %@...",transportType] autorelease];
