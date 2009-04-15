@@ -14,6 +14,7 @@
 #import "LegislatorContainer.h"
 #import "LegislatorNameCell.h"
 #import "LegislatorViewController.h"
+#import "MiniBrowserController.h"
 #import "ProgressOverlayViewController.h"
 #import "StateAbbreviations.h"
 
@@ -24,7 +25,10 @@
 	- (void)congressSwitch: (id)sender;
 	- (void)reloadCongressData;
 	- (void)deselectRow:(id)sender;
-	-(void)findLocalLegislators:(id)sender;
+	- (void)findLocalLegislators:(id)sender;
+	- (void)scrollToInitialPosition;
+	- (void)showInitialLegislator:(LegislatorContainer *)legislator;
+	- (LegislatorContainer *)legislatorFromIndexPath:(NSIndexPath *)idx;
 @end
 
 enum
@@ -46,6 +50,8 @@ enum
 	[m_data release];
 	[m_locationManager release];
 	[m_currentLocation release];
+	[m_initialIndexPath release];
+	[m_initialLegislatorID release];
     [super dealloc];
 }
 
@@ -65,6 +71,9 @@ enum
 	
 	m_locationManager = nil;
 	m_currentLocation = nil;
+	
+	m_initialIndexPath = nil;
+	m_initialLegislatorID = nil;
 	
 	m_actionType = eActionReload;
 	
@@ -143,6 +152,18 @@ enum
 	if ( [m_data isDataAvailable] )
 	{
 		self.tableView.userInteractionEnabled = YES;
+		
+		[self scrollToInitialPosition];
+		
+		if ( nil != m_initialLegislatorID )
+		{
+			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:m_initialLegislatorID];
+			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																		  selector:@selector(showInitialLegislator:) object:legislator];
+			// Add the operation to the internal operation queue managed by the application delegate.
+			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+			[theOp release];
+		}
 	}
 	else
 	{
@@ -214,11 +235,32 @@ enum
 	}
 	else if ( [m_data isDataAvailable] )
 	{
-		[self.tableView reloadData];
-		NSUInteger idx[2] = {0,0};
-		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
 		[m_HUD show:NO];
 		self.tableView.userInteractionEnabled = YES;
+		
+		if ( nil != m_initialIndexPath )
+		{
+			[self scrollToInitialPosition];
+		}
+		else
+		{
+			// scroll to the top of the table
+			[self.tableView reloadData];
+			NSUInteger idx[2] = {0,0};
+			[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		}
+		
+		// load an initial legislator if we were told to do so!
+		if ( nil != m_initialLegislatorID )
+		{
+			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:m_initialLegislatorID];
+			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																		  selector:@selector(showInitialLegislator:) object:legislator];
+			
+			// Add the operation to the internal operation queue managed by the application delegate.
+			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+			[theOp release];
+		}
 	}
 	else
 	{
@@ -245,6 +287,126 @@ enum
 	[self.navigationController pushViewController:legViewCtrl animated:YES];
 	[legViewCtrl release];
 }
+
+
+- (NSString *)areaName
+{
+	return @"congress";
+}
+
+
+- (NSString *)getURLStateParms
+{
+	NSMutableString *state = [[[NSMutableString alloc] init] autorelease];
+	
+	// current selected chamber
+	switch ( m_selectedChamber )
+	{
+		default:
+		case eCongressChamberHouse:
+			[state appendString:@"house"];
+			break;
+		case eCongressChamberSenate:
+			[state appendString:@"senate"];
+			break;
+	}
+	
+	// current selected table row ?!
+	{
+		NSArray *cells = [self.tableView visibleCells];
+		if ( [cells count] > 0 )
+		{
+			id cell = [cells objectAtIndex:0];
+			if ( [cell respondsToSelector:@selector(m_tableRange)] )
+			{
+				NSRange range = (NSRange)[cell m_tableRange];
+				[state appendFormat:@":%d:%d",range.location,range.length];
+			}
+			else
+			{
+				[state appendString:@":0:0"];
+			}
+		}
+		else
+		{
+			[state appendString:@":0:0"];
+		}
+	}
+	
+	// Are we looking at a legislator?
+	id topView = self.navigationController.visibleViewController;
+	if ( [topView respondsToSelector:@selector(m_legislator)] )
+	{
+		// grab the legislator currently being viewed
+		LegislatorContainer *legislator = [topView performSelector:@selector(m_legislator)];
+		[state appendFormat:@":%@",[legislator bioguide_id]];
+	}
+	
+	return state;
+}
+
+
+- (void)handleURLParms:(NSString *)parms
+{
+	if ( nil == parms ) return;
+	
+	NSArray *pArray = [parms componentsSeparatedByString:@":"];
+	if ( [pArray count] < 1 ) return;
+	
+	NSString *chamber = [pArray objectAtIndex:0];
+	if ( [chamber isEqualToString:@"senate"] )
+	{
+		m_selectedChamber = eCongressChamberSenate;
+		m_segmentCtrl.selectedSegmentIndex = 1;
+	}
+	else
+	{
+		m_selectedChamber = eCongressChamberHouse;
+		m_segmentCtrl.selectedSegmentIndex = 0;
+	}
+	
+	if ( [pArray count] > 2 )
+	{
+		NSInteger section = [[pArray objectAtIndex:1] integerValue];
+		NSInteger row = [[pArray objectAtIndex:2] integerValue];
+		[m_initialIndexPath release];
+		NSUInteger idx[2] = {section,row};
+		m_initialIndexPath = [[NSIndexPath alloc] initWithIndexes:idx length:2];
+	}
+	
+	NSString *bioguideID = nil;
+	if ( [pArray count] > 3 )
+	{
+		bioguideID = [pArray objectAtIndex:3];
+	}
+	
+	// the parms should be a legislator ID
+	if ( [m_data isDataAvailable] )
+	{
+		[self scrollToInitialPosition];
+		
+		[m_initialLegislatorID release]; m_initialLegislatorID = nil;
+		if ( nil != bioguideID )
+		{
+			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:m_initialLegislatorID];
+			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																		  selector:@selector(showInitialLegislator:) object:legislator];
+			
+			// Add the operation to the internal operation queue managed by the application delegate.
+			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+			[theOp release];
+		}
+	}
+	else
+	{
+		// stash the ID for later (when data is ready)
+		if ( nil != bioguideID )
+		{
+			m_initialLegislatorID = [[NSString alloc] initWithString:bioguideID];
+		}
+	}
+}
+
 
 
 #pragma mark CongressViewController Private
@@ -373,6 +535,67 @@ enum
 }
 
 
+- (void)scrollToInitialPosition
+{
+	if ( nil != m_initialIndexPath )
+	{
+		[self.tableView reloadData];
+		// make sure the new index is within the bounds of our table
+		if ( [self.tableView numberOfSections] > m_initialIndexPath.section &&
+			 [self.tableView numberOfRowsInSection:m_initialIndexPath.section] > m_initialIndexPath.row )
+		{
+			// scroll there!
+			[self.tableView scrollToRowAtIndexPath:m_initialIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		}
+	}
+	// clear this state
+	[m_initialIndexPath release]; m_initialIndexPath = nil;
+}
+
+
+- (void)showInitialLegislator:(LegislatorContainer *)legislator
+{
+	// we should be running in a thread, so this should give my table
+	// enough time to load itself up before I go and cover it up.
+	// (yeah, it's a bit of a hack...)
+	[NSThread sleepForTimeInterval:0.50f]; 
+	
+	[m_initialLegislatorID release]; m_initialLegislatorID = nil;
+	if ( nil != legislator )
+	{
+		LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+		[legViewCtrl setLegislator:legislator];
+		[self.navigationController pushViewController:legViewCtrl animated:YES];
+		[legViewCtrl release];
+	}
+}
+
+
+- (LegislatorContainer *)legislatorFromIndexPath:(NSIndexPath *)idx
+{
+	LegislatorContainer *legislator = nil;
+	//NSString *state = [[m_data states] objectAtIndex:indexPath.section];
+	NSString *state = [[StateAbbreviations abbrList] objectAtIndex:idx.section];
+	switch ( m_selectedChamber )
+	{
+		case eCongressChamberHouse:
+			legislator = [[m_data houseMembersInState:state] objectAtIndex:idx.row];
+			break;
+		case eCongressChamberSenate:
+			legislator = [[m_data senateMembersInState:state] objectAtIndex:idx.row];
+			break;
+		case eCongressSearchResults:
+			legislator = [[m_data searchResultsArray] objectAtIndex:idx.row];
+			break;
+		default:
+			legislator = nil;
+			break;
+	}
+	
+	return legislator;
+}
+
+
 #pragma mark CLLocationManagerDelegate methods
 
 
@@ -480,21 +703,79 @@ enum
 		MessageData *msg = [[MessageData alloc] init];
 		msg.m_transport = eMT_Invalid;
 		
+		LegislatorContainer *legislator = [self legislatorFromIndexPath:[self.tableView indexPathForSelectedRow]];
+		if ( nil == legislator )
+		{
+			goto deselect_and_return;
+		}
+		
 		// use currently selected legislator to perfom the following action:
 		switch ( buttonIndex )
 		{
 			case 0:
-				msg.m_transport = eMT_PhoneCall;
+				if ( [[legislator phone] length] > 0 )
+				{
+					msg.m_transport = eMT_PhoneCall;
+					msg.m_to = [legislator phone];
+				}
 				break;
 			case 1:
-				msg.m_transport = eMT_Email;
-				// XXX - setup message
+			{
+				if ( [[legislator email] length] > 0 )
+				{
+					msg.m_transport = eMT_Email;
+					msg.m_to = [legislator email];
+					msg.m_subject = @"Message from a concerned citizen";
+				}
+				else
+				{
+					if ( [[legislator webform] length] > 0 ) 
+					{
+						// open a web browser to view the congress person's
+						// web-based contact form (because they'e too luddite 
+						// and/or paranoid to provide a standard email)
+						MiniBrowserController *mbc = [MiniBrowserController sharedBrowser];
+						[mbc loadURL:[NSURL URLWithString:[legislator webform]]];
+						[mbc display:self];
+					}
+					else
+					{
+						// No twitter ID
+						UIAlertView *alert = [[UIAlertView alloc] 
+											  initWithTitle:@"Email Unavailable"
+											  message:[NSString stringWithFormat:@"%@ has not registered any form of email contact!",[legislator shortName]]
+											  delegate:self
+											  cancelButtonTitle:nil
+											  otherButtonTitles:@"OK",nil];
+						[alert show];
+					}
+					goto deselect_and_return;
+				}
+			}
 				break;
 			case 2:
-				msg.m_transport = eMT_Twitter;
+				if ( [[legislator twitter_id] length] > 0 )
+				{
+					msg.m_transport = eMT_Twitter;
+					msg.m_to = [NSString stringWithFormat:@"@%@",[legislator twitter_id]];
+					msg.m_subject = @"";
+				}
+				else
+				{
+					// No twitter ID
+					UIAlertView *alert = [[UIAlertView alloc] 
+											initWithTitle:@"Twitter Unavailable"
+											message:[NSString stringWithFormat:@"%@ does not have a registered twitter account.",[legislator shortName]]
+											delegate:self
+											cancelButtonTitle:nil
+											otherButtonTitles:@"OK",nil];
+					[alert show];
+				}
 				break;
 			case 3:
 				msg.m_transport = eMT_MyGov;
+				msg.m_to = @"MyGovernment Community";
+				msg.m_subject = [NSString stringWithFormat:@"Comment on %@",[legislator shortName]];
 				break;
 				
 			default:
@@ -509,6 +790,8 @@ enum
 		}
 		
 		// deselect the selected row (after we've used it to get phone/email/twitter)
+	deselect_and_return:
+		[msg release];
 		[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 	}
 	else if ( eActionReload == m_actionType )
@@ -520,7 +803,8 @@ enum
 				// don't start another download if the data store is busy!
 				if ( ![m_data isBusy] ) 
 				{
-					if ( [self.tableView numberOfSections] > 0 && [self.tableView numberOfRowsInSection:0] > 0 )
+					if ( [self.tableView numberOfSections] > 0 && 
+						 [self.tableView numberOfRowsInSection:0] > 0 )
 					{
 						// scroll to the top of the table so that our progress HUD
 						// is displayed properly
@@ -536,6 +820,15 @@ enum
 				break;
 		}
 	}
+}
+
+
+#pragma mark UIAlertViewDelegate Methods
+
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+	// Do something here?!
 }
 
 
@@ -637,26 +930,11 @@ enum
 		cell = [[[LegislatorNameCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier detailTarget:self detailSelector:@selector(showLegislatorDetail:)] autorelease];
 	}
 	
+	cell.m_tableRange = (NSRange){indexPath.section, indexPath.row};
+	
 	if ( ![m_data isDataAvailable] ) return cell;
 	
-	//NSString *state = [[m_data states] objectAtIndex:indexPath.section];
-	NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.section];
-	LegislatorContainer *legislator;
-	switch ( m_selectedChamber )
-	{
-		case eCongressChamberHouse:
-			legislator = [[m_data houseMembersInState:state] objectAtIndex:indexPath.row];
-			break;
-		case eCongressChamberSenate:
-			legislator = [[m_data senateMembersInState:state] objectAtIndex:indexPath.row];
-			break;
-		case eCongressSearchResults:
-			legislator = [[m_data searchResultsArray] objectAtIndex:indexPath.row];
-			break;
-		default:
-			legislator = nil;
-			break;
-	}
+	LegislatorContainer *legislator = [self legislatorFromIndexPath:indexPath];
 	
 	if ( nil == legislator ) 
 	{
@@ -672,24 +950,7 @@ enum
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	//NSString *state = [[m_data states] objectAtIndex:indexPath.section];
-	NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.section];
-	LegislatorContainer *legislator;
-	switch ( m_selectedChamber )
-	{
-		case eCongressChamberHouse:
-			legislator = [[m_data houseMembersInState:state] objectAtIndex:indexPath.row];
-			break;
-		case eCongressChamberSenate:
-			legislator = [[m_data senateMembersInState:state] objectAtIndex:indexPath.row];
-			break;
-		case eCongressSearchResults:
-			legislator = [[m_data searchResultsArray] objectAtIndex:indexPath.row];
-			break;
-		default:
-			legislator = nil;
-			break;
-	}
+	LegislatorContainer *legislator = [self legislatorFromIndexPath:indexPath];
 	
 	// no legislator here...
 	if ( nil == legislator )

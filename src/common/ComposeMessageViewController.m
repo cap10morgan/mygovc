@@ -16,10 +16,17 @@
 @end
 
 
+@interface ComposeMessageViewController (private)
+	- (void)opMakePhoneCall;
+	- (void)opSendEmail;
+	- (void)opSendTweet;
+	- (void)opSendMyGovComment;
+@end
+
 
 @implementation ComposeMessageViewController
 
-@synthesize m_titleButton, m_fieldTo, m_fieldSubject, m_fieldMessage;
+@synthesize m_titleButton, m_fieldTo, m_labelSubject, m_fieldSubject, m_fieldMessage;
 
 
 static ComposeMessageViewController *s_composer = NULL;
@@ -91,23 +98,31 @@ static ComposeMessageViewController *s_composer = NULL;
 		default:
 		case eMT_MyGov:
 			titleTxt = @"Comment";
+			[m_fieldSubject setHidden:NO];
+			[m_labelSubject setHidden:NO];
 			break;
 		
 		case eMT_Twitter:
 			titleTxt = @"Tweet";
+			[m_fieldSubject setHidden:YES];
+			[m_labelSubject setHidden:YES];
 			break;
 			
 		case eMT_Email:
 			titleTxt = @"Email";
-			break;
+			[m_fieldSubject setHidden:NO];
+			[m_labelSubject setHidden:NO];
+			// don't display the UI (for now) - call the application
+			// email send routine
+			[self opSendEmail];
+			return;
 		
 		case eMT_PhoneCall:
-		{
-			// make a phone call!
-			NSString *telStr = [[[NSString alloc] initWithFormat:@"tel:%@",data.m_to] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-			NSURL *telURL = [[NSURL alloc] initWithString:telStr];
-			[[UIApplication sharedApplication] openURL:telURL];
-		}
+			titleTxt = @"PhoneCall";
+			[m_fieldSubject setHidden:YES];
+			[m_labelSubject setHidden:YES];
+			// don't display the UI - just make the phone call
+			[self opMakePhoneCall];
 			return;
 	}
 	
@@ -116,6 +131,8 @@ static ComposeMessageViewController *s_composer = NULL;
 	[m_fieldTo setText:m_message.m_to];
 	[m_fieldSubject setText:m_message.m_subject];
 	[m_fieldMessage setText:m_message.m_body];
+	
+	[m_fieldTo setEnabled:NO];
 	
 	m_parentCtrl = parentController;
 	[m_parentCtrl presentModalViewController:self animated:YES];
@@ -134,49 +151,51 @@ static ComposeMessageViewController *s_composer = NULL;
 	hud = [[ProgressOverlayViewController alloc] initWithWindow:self.view];
 	
 	SEL sendOp = nil;
-	NSString *transportType;
+	NSString *transportDescrip;
 	switch ( m_message.m_transport )
 	{
 		default:
 		case eMT_MyGov:
-			transportType = @"MyGov Comment";
-			sendOp = nil;
+			transportDescrip = @"MyGov Comment";
+			sendOp = @selector(opSendMyGovComment);
 			break;
 			
 		case eMT_Twitter:
-			transportType = @"Tweet";
-			sendOp = nil;
+			transportDescrip = @"Tweet";
+			sendOp = @selector(opSendTweet);
 			break;
 			
 		case eMT_Email:
-			transportType = @"Email";
-			sendOp = nil;
+			transportDescrip = @"Email";
+			sendOp = @selector(opSendEmail);
 			break;
 		
 		case eMT_PhoneCall:
-			return; // what is this?
+			transportDescrip = @"Phone Call";
+			sendOp = nil;
+			break;
 	}
 	
-	NSString *msg = [[[NSString alloc] initWithFormat:@"Sending %@...",transportType] autorelease];
-	[hud setText:msg andIndicateProgress:YES];
-	[hud show:YES];
-	
-	// XXX - do the sending here!
 	if ( nil != sendOp )
 	{
+		NSString *msg = [[[NSString alloc] initWithFormat:@"Sending %@...",transportDescrip] autorelease];
+		[hud setText:msg andIndicateProgress:YES];
+		[hud show:YES];
+		
 		[self performSelector:sendOp];
+		
+		[msg release];
 	}
 	
 	[hud show:NO];
 	[hud release];
-	[msg release];
 	
 	// XXX - warn about errors here!
 	
 	[m_parentCtrl dismissModalViewControllerAnimated:YES];
 }
 
-	
+
 #pragma mark UITextViewDelegate Methods 
 	
 - (BOOL)textViewShouldEndEditing:(UITextView *)textView
@@ -184,5 +203,44 @@ static ComposeMessageViewController *s_composer = NULL;
 	return YES;
 }
 
+
+#pragma mark ComposeMessageViewController Private 
+
+- (void)opMakePhoneCall
+{
+	// make a phone call!
+	NSString *telStr = [[[NSString alloc] initWithFormat:@"tel:%@",m_message.m_to] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	NSURL *telURL = [[NSURL alloc] initWithString:telStr];
+	[[UIApplication sharedApplication] openURL:telURL];
+	[telStr release];
+	[telURL release];
+}
+
+
+- (void)opSendEmail
+{
+	NSString *emailStr = [[NSString alloc] initWithFormat:@"mailto:%@?subject=%@&body=%@",
+												[m_message.m_to stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding], 
+												[m_message.m_subject stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+												([m_message.m_body length] < 1 ? @" " : [m_message.m_body stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding])
+						];
+	NSURL *emailURL = [[NSURL alloc] initWithString:emailStr];
+	[[UIApplication sharedApplication] openURL:emailURL];
+	[emailStr release];
+	[emailURL release];
+}
+
+
+- (void)opSendTweet
+{
+	// XXX - use twitter engine!
+}
+
+
+- (void)opSendMyGovComment
+{
+	// XXX - fill me in!!
+	[NSThread sleepForTimeInterval:5.0f];
+}
 
 @end

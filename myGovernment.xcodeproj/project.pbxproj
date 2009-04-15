@@ -24,12 +24,14 @@
 		0132E7500F68D22A00DF33DC /* CongressionalCommittees.m in Sources */ = {isa = PBXBuildFile; fileRef = 0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */; };
 		0168727D0F7B15EE00D23E78 /* ContractorSpendingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */; };
 		0168730A0F7B34E100D23E78 /* ContractorSpendingTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 016873090F7B34E100D23E78 /* ContractorSpendingTableCell.m */; };
+		0178E3AF0F944AFF00B96BD1 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0178E3AE0F944AFF00B96BD1 /* Settings.bundle */; };
 		017C22500F721824008CA4ED /* billsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224D0F721824008CA4ED /* billsIcon.png */; };
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
 		017C22520F721824008CA4ED /* spendingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224F0F721824008CA4ED /* spendingIcon.png */; };
 		017C22550F721E60008CA4ED /* communityIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C22540F721E60008CA4ED /* communityIcon.png */; };
 		0190167C0F8551BB00627610 /* BillSummaryXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */; };
 		019017670F85760A00627610 /* BillSummaryTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 019017660F85760A00627610 /* BillSummaryTableCell.m */; };
+		01AD659F0F957259003AECE0 /* LegislatorInfoData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AD659E0F957259003AECE0 /* LegislatorInfoData.m */; };
 		01B118360F709EC70076AFE0 /* StateAbbreviations.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B118350F709EC70076AFE0 /* StateAbbreviations.m */; };
 		01B119070F70B71E0076AFE0 /* SpendingDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B119060F70B71E0076AFE0 /* SpendingDataManager.m */; };
 		01B119440F70BD560076AFE0 /* location_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B119420F70BD560076AFE0 /* location_overlay.png */; };
@@ -92,6 +94,7 @@
 		0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContractorSpendingData.m; path = src/spending/ContractorSpendingData.m; sourceTree = "<group>"; };
 		016873080F7B34E100D23E78 /* ContractorSpendingTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContractorSpendingTableCell.h; path = src/spending/ContractorSpendingTableCell.h; sourceTree = "<group>"; };
 		016873090F7B34E100D23E78 /* ContractorSpendingTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContractorSpendingTableCell.m; path = src/spending/ContractorSpendingTableCell.m; sourceTree = "<group>"; };
+		0178E3AE0F944AFF00B96BD1 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		017C224D0F721824008CA4ED /* billsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = billsIcon.png; path = res/billsIcon.png; sourceTree = "<group>"; };
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
 		017C224F0F721824008CA4ED /* spendingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spendingIcon.png; path = res/spendingIcon.png; sourceTree = "<group>"; };
@@ -100,6 +103,8 @@
 		0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillSummaryXMLParser.m; path = src/bills/BillSummaryXMLParser.m; sourceTree = "<group>"; };
 		019017650F85760A00627610 /* BillSummaryTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillSummaryTableCell.h; path = src/bills/BillSummaryTableCell.h; sourceTree = "<group>"; };
 		019017660F85760A00627610 /* BillSummaryTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillSummaryTableCell.m; path = src/bills/BillSummaryTableCell.m; sourceTree = "<group>"; };
+		01AD659D0F957259003AECE0 /* LegislatorInfoData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorInfoData.h; path = src/congress/LegislatorInfoData.h; sourceTree = "<group>"; };
+		01AD659E0F957259003AECE0 /* LegislatorInfoData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorInfoData.m; path = src/congress/LegislatorInfoData.m; sourceTree = "<group>"; };
 		01B118340F709EC70076AFE0 /* StateAbbreviations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StateAbbreviations.h; path = src/common/StateAbbreviations.h; sourceTree = "<group>"; };
 		01B118350F709EC70076AFE0 /* StateAbbreviations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StateAbbreviations.m; path = src/common/StateAbbreviations.m; sourceTree = "<group>"; };
 		01B119050F70B71E0076AFE0 /* SpendingDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingDataManager.h; path = src/spending/SpendingDataManager.h; sourceTree = "<group>"; };
@@ -198,6 +203,8 @@
 				01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */,
 				01EDDFC60F6380020098A7B6 /* LegislatorInfoCell.h */,
 				01EDDFC70F6380020098A7B6 /* LegislatorInfoCell.m */,
+				01AD659D0F957259003AECE0 /* LegislatorInfoData.h */,
+				01AD659E0F957259003AECE0 /* LegislatorInfoData.m */,
 				01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */,
 				01B4E2210F64D88000219672 /* LegislatorHeaderViewController.h */,
 				01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */,
@@ -305,6 +312,7 @@
 		29B97314FDCFA39411CA2CEA /* myGov */ = {
 			isa = PBXGroup;
 			children = (
+				0178E3AE0F944AFF00B96BD1 /* Settings.bundle */,
 				0102D2D90F58DB5D005AE0EA /* src */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -406,6 +414,7 @@
 				01B7B6F00F8AEACE00619441 /* fwdButton.png in Resources */,
 				01B7B6F80F8AECB100619441 /* MiniBrowserView.xib in Resources */,
 				011EF3CA0F91A47400932BBE /* ComposeMessageView.xib in Resources */,
+				0178E3AF0F944AFF00B96BD1 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,6 +458,7 @@
 				019017670F85760A00627610 /* BillSummaryTableCell.m in Sources */,
 				01B7B6F60F8AEC5500619441 /* MiniBrowserController.m in Sources */,
 				011EF3CD0F91A48E00932BBE /* ComposeMessageViewController.m in Sources */,
+				01AD659F0F957259003AECE0 /* LegislatorInfoData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

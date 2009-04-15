@@ -11,6 +11,8 @@
 #import "CongressDataManager.h"
 #import "SpendingDataManager.h"
 
+#import <objc/runtime.h>
+
 @implementation myGovAppDelegate
 
 static myGovAppDelegate *s_myGovApp = NULL;
@@ -77,6 +79,8 @@ static SpendingDataManager *s_mySpendingData = NULL;
 	// this needs to be initialized before the congress data!
 	m_operationQueue = [[NSOperationQueue alloc] init];
 	
+	m_urlHandler = [[NSMutableDictionary alloc] initWithCapacity:8];
+	
 	if ( !s_myCongressData )
 	{
 		NSLog( @"Initializing Congress Data..." );
@@ -99,14 +103,140 @@ static SpendingDataManager *s_mySpendingData = NULL;
 	[m_operationQueue release];
 	[s_myCongressData release];
 	
+	[m_urlHandler release];
+	
     [super dealloc];
 }
 
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application 
 {    
+	// run through all of the view controllers managed by the tab bar
+	// and setup our dictionary of view controllers which can handle URLs
+	NSArray *tabViews = m_tabBarController.viewControllers;
+	NSEnumerator *tabsEnum = [tabViews objectEnumerator];
+	id tab;
+	while ( tab = [tabsEnum nextObject] )
+	{
+		if ( [tab respondsToSelector:@selector(topViewController)] )
+		{
+			UINavigationController *navCtrl = (UINavigationController *)tab;
+			if ( [navCtrl.topViewController respondsToSelector:@selector(areaName)] )
+			{
+				[m_urlHandler setValue:tab forKey:[navCtrl.topViewController performSelector:@selector(areaName)]];
+			}
+		}
+		else if ( [tab respondsToSelector:@selector(areaName)] )
+		{
+			[m_urlHandler setValue:tab forKey:[tab performSelector:@selector(areaName)]];
+		}
+		
+	}
+	
     // Add the tab bar controller's current view as a subview of the window
     [m_window addSubview:m_tabBarController.view];
+	
+	NSString *appURLStr = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_last_url"];
+	if ( nil != appURLStr )
+	{
+		// make sure it's absolute!
+		if ( NSOrderedSame != [appURLStr compare:@"mygov://" options:NSCaseInsensitiveSearch range:(NSRange){0,8}] )
+		{
+			appURLStr = [NSString stringWithFormat:@"mygov://%@",appURLStr];
+		}
+		NSURL *appURL = [NSURL URLWithString:appURLStr];
+		[self application:application handleOpenURL:appURL];
+	}
+}
+
+
+- (void)applicationWillTerminate:(UIApplication *)application
+{
+	NSString *appURL = nil;
+	NSString *area = nil;
+	NSString *areaParms = nil;
+	
+	id currentView = m_tabBarController.selectedViewController;
+	if ( [currentView respondsToSelector:@selector(viewControllers)] )
+	{
+		NSArray *views = [currentView performSelector:@selector(viewControllers)];
+		if ( [views count] > 0 )
+		{
+			// the root will be the first view controller in the array
+			// (that's the one we want)
+			currentView = [views objectAtIndex:0]; 
+		}
+	}
+	
+	if ( [currentView respondsToSelector:@selector(areaName)] )
+	{
+		area = [currentView performSelector:@selector(areaName)];
+	}
+	if ( [currentView respondsToSelector:@selector(getURLStateParms)] )
+	{
+		areaParms = [currentView performSelector:@selector(getURLStateParms)];
+	}
+	
+	if ( nil != area )
+	{
+		// save the state!
+		appURL = [NSString stringWithFormat:@"mygov://%@/%@",area,(nil != areaParms ? areaParms : @"")];
+		[[NSUserDefaults standardUserDefaults] setObject:appURL forKey:@"mygov_last_url"];
+		[[NSUserDefaults standardUserDefaults] synchronize];
+	}
+}
+
+
+// 
+// Handle URLs with the following format:
+// 
+//		mygov://area/parameters_for_area
+// 
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+	if ( !url ) return NO;
+	
+	BOOL handled = NO;
+	NSString *urlStr = [url absoluteString];
+	NSArray *urlArray = [urlStr componentsSeparatedByString:@"/"];
+	NSString *area = nil;
+	NSString *areaParms = nil;
+	
+	if ( [urlArray count] > 2 )
+	{
+		area = [urlArray objectAtIndex:2];
+		if ( [urlArray count] > 3 && [[urlArray objectAtIndex:3] length] > 0 )
+		{
+			// get any parameters
+			NSRange areaRange = [urlStr rangeOfString:area];
+			NSInteger parmIdx = areaRange.location + areaRange.length + 1;
+			areaParms = [urlStr substringFromIndex:parmIdx];
+		}
+	}
+	
+	UIViewController *areaView = (UIViewController *)[m_urlHandler objectForKey:area];
+	if ( nil != areaView )
+	{
+		handled = YES;
+		m_tabBarController.selectedViewController = areaView;
+		if ( [areaView respondsToSelector:@selector(topViewController)] )
+		{
+			NSArray *views = [areaView performSelector:@selector(viewControllers)];
+			if ( [views count] > 0 )
+			{
+				// the root will be the first view controller in the array
+				// (that's the one we want)
+				areaView = [views objectAtIndex:0]; 
+			}
+		}
+		
+		if ( [areaView respondsToSelector:@selector(handleURLParms:)] )
+		{
+			[areaView performSelector:@selector(handleURLParms:) withObject:areaParms];
+		}
+	}
+	
+	return handled;
 }
 
 

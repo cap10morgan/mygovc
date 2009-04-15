@@ -13,7 +13,7 @@
 {
 }
 
-+ (CGFloat) cellHeightForText:(NSString *)text;
++ (CGFloat) cellHeightForText:(NSString *)text withKeyname:(NSString *)field;
 
 - (void)setField:(NSString *)field withValue:(NSString *)value;
 

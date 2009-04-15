@@ -38,6 +38,7 @@ typedef enum
 {
 	IBOutlet UIBarButtonItem *m_titleButton;
 	IBOutlet UITextField *m_fieldTo;
+	IBOutlet UILabel *m_labelSubject;
 	IBOutlet UITextField *m_fieldSubject;
 	IBOutlet UITextView  *m_fieldMessage;
 @private
@@ -48,6 +49,7 @@ typedef enum
 
 @property (nonatomic,retain) IBOutlet UIBarButtonItem *m_titleButton;
 @property (nonatomic,retain) IBOutlet UITextField *m_fieldTo;
+@property (nonatomic,retain) IBOutlet UILabel *m_labelSubject;
 @property (nonatomic,retain) IBOutlet UITextField *m_fieldSubject;
 @property (nonatomic,retain) IBOutlet UITextView  *m_fieldMessage;
 

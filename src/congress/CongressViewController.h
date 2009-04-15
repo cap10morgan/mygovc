@@ -19,13 +19,16 @@ typedef enum
 } CongressActionType;
 
 
-@interface CongressViewController : UITableViewController <UIActionSheetDelegate, UISearchBarDelegate, CLLocationManagerDelegate>
+@interface CongressViewController : UITableViewController <UIActionSheetDelegate, UIAlertViewDelegate, UISearchBarDelegate, CLLocationManagerDelegate>
 {	
 @private
 	CongressDataManager *m_data;
 	CongressChamber m_selectedChamber;
 	CongressActionType m_actionType;
 	UISegmentedControl *m_segmentCtrl;
+	
+	NSIndexPath *m_initialIndexPath;
+	NSString *m_initialLegislatorID;
 	
 	NSString *m_searchResultsTitle;
 	
@@ -37,6 +40,10 @@ typedef enum
 
 - (void)dataManagerCallback:(id)message;
 - (void)showLegislatorDetail:(id)sender;
+
+- (NSString *)areaName;
+- (NSString *)getURLStateParms;
+- (void)handleURLParms:(NSString *)parms;
 
 @end
 

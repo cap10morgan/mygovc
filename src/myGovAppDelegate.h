@@ -16,8 +16,10 @@
 {
     UIWindow *m_window;
     UITabBarController *m_tabBarController;
-	
+
+@private
 	NSOperationQueue *m_operationQueue;
+	NSMutableDictionary *m_urlHandler;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *m_window;

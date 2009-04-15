@@ -318,7 +318,19 @@ static MiniBrowserController *s_browser = NULL;
 	if ( [urlComponents count] > 0 )
 	{
 		NSString *str = [urlComponents objectAtIndex:([urlComponents count]-1)];
-		self.title = [[str substringToIndex:[str rangeOfString:@"."].location] uppercaseString];
+		NSRange dot = [str rangeOfString:@"."];
+		if ( dot.length > 0 )
+		{
+			self.title = [str substringToIndex:dot.location];
+		}
+		else
+		{
+			self.title = str;
+		}
+	}
+	else
+	{
+		self.title = @"...";
 	}
 }
 

@@ -12,12 +12,15 @@
 
 @class LegislatorContainer;
 @class LegislatorHeaderViewController;
+@class LegislatorInfoData;
 
 @interface LegislatorViewController : UITableViewController <ABNewPersonViewControllerDelegate, ABPersonViewControllerDelegate>
 {
 	UITableView *m_tableView;
 	LegislatorContainer *m_legislator;
 	LegislatorHeaderViewController *m_headerViewCtrl;
+	
+	LegislatorInfoData *m_data;
 	
 	NSMutableDictionary *m_contactRows;
 	NSMutableDictionary *m_committeeRows;

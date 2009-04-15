@@ -28,5 +28,16 @@
 	<string>MainWindow</string>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleBlackOpaque</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.mygov.appurl</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mygov</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

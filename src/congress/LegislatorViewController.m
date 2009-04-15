@@ -10,6 +10,7 @@
 #import "LegislatorViewController.h"
 #import "LegislatorContainer.h"
 #import "LegislatorInfoCell.h"
+#import "LegislatorInfoData.h"
 #import "LegislatorHeaderViewController.h"
 #import "CongressionalCommittees.h"
 #import "StateAbbreviations.h"
@@ -22,20 +23,6 @@
 @implementation LegislatorViewController
 
 @synthesize m_legislator;
-
-static const int  kNumTableSections = 4;
-
-static const int  kContactSectionIdx = 0;
-static NSString  *kContactHeaderTxt = @" Contact Information";
-
-static const int  kCommitteeSectionIdx = 1;
-static NSString * kCommitteeSectionTxt = @" Committee Membership";
-
-static const int  kStreamSectionIdx = 2;
-static NSString  *kStreamHeaderTxt = @" Legislator Info Stream";
-
-static const int  kActivitySectionIdx = 3;
-static NSString  *kActivityHeaderTxt = @" Recent Activity";
 
 
 - (void)didReceiveMemoryWarning 
@@ -50,15 +37,7 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 	[m_legislator release];
 	[m_headerViewCtrl release];
 	
-	[m_contactFields release];
-	[m_committeeFields release];
-	[m_streamFields release];
-	[m_activityFields release];
-	
-	[m_contactRows release];
-	[m_committeeRows release];
-	[m_streamRows release];
-	[m_activityRows release];
+	[m_data release];
 	
 	[super dealloc];
 }
@@ -68,10 +47,7 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 	if ( self = [super init] )
 	{
 		self.title = @"Legislator"; // this will be updated later...
-		m_contactRows = [[NSMutableDictionary alloc] initWithCapacity:10];
-		m_committeeRows = [[NSMutableDictionary alloc] initWithCapacity:10];
-		m_streamRows = [[NSMutableDictionary alloc] initWithCapacity:10];
-		m_activityRows = [[NSMutableDictionary alloc] initWithCapacity:10];
+		m_data = nil;
 	}
 	return self;
 }
@@ -214,11 +190,9 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 	{
 		success = ABMultiValueAddValueAndLabel( websites, [legislator congresspedia_url], CFSTR("OpenCongress"), NULL );
 	}
-	if ( [[legislator eventful_id] length] > 0 )
+	if ( [[legislator eventful_url] length] > 0 )
 	{
-		static NSString *kEventfulBaseURLFmt = @"http://eventful.com/performers/%@";
-		NSString *url = [NSString stringWithFormat:kEventfulBaseURLFmt,[legislator eventful_id]];
-		success = ABMultiValueAddValueAndLabel( websites, url, CFSTR("Eventful"), NULL );
+		success = ABMultiValueAddValueAndLabel( websites, [legislator eventful_url], CFSTR("Eventful"), NULL );
 	}
 	ABRecordSetValue( abRecord, kABPersonURLProperty, websites, &abError );
 	
@@ -242,17 +216,15 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 - (void)setLegislator:(LegislatorContainer *)legislator
 {
 	[m_legislator release];
-	[m_contactFields release];
-	[m_streamFields release];
-	[m_activityFields release];
-	
-	
 	m_legislator = [legislator retain];
+	
+	m_data = [[LegislatorInfoData alloc] init];
+	[m_data setLegislator:m_legislator];
 	
 	// 
 	// setup the table data
 	//
-	
+/*
 	// Contact Section --------------
 	[m_contactRows removeAllObjects];
 	
@@ -360,7 +332,7 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 	
 	[m_activityRows setObject:[NSString stringWithString:@"Download from OpenCongress.org..."] forKey:@"01_..."];
 	m_activityFields = [[NSArray alloc] initWithArray:[[m_activityRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
-	
+*/
 	[m_headerViewCtrl setLegislator:legislator];
 	[self.tableView reloadData];
 }
@@ -434,7 +406,7 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
 	// Return YES for supported orientations
-	return (interfaceOrientation == UIInterfaceOrientationPortrait);
+	return YES;
 }
 
 
@@ -453,35 +425,17 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
-    return kNumTableSections;
+	return [m_data numberOfSections];
 }
 
 
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
+	
 	if ( nil ==  m_legislator ) return 0;
 	
-	if ( kContactSectionIdx == section )
-	{
-		return [m_contactRows count];
-	}
-	else if ( kCommitteeSectionIdx == section )
-	{
-		return [m_committeeRows count];
-	}
-	else if ( kStreamSectionIdx == section )
-	{
-		return [m_streamRows count];
-	}
-	else if ( kActivitySectionIdx == section )
-	{
-		return [m_activityRows count];
-	}
-	else
-	{
-		return 0;
-	}
+	return [m_data numberOfRowsInSection:section];
 }
 
 
@@ -502,22 +456,7 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 	sectionLabel.textAlignment = UITextAlignmentLeft;
 	sectionLabel.adjustsFontSizeToFitWidth = YES;
 	
-	if ( kContactSectionIdx == section )
-	{
-		[sectionLabel setText:kContactHeaderTxt];
-	}
-	else if ( kCommitteeSectionIdx == section )
-	{
-		[sectionLabel setText:kCommitteeSectionTxt];
-	}
-	else if ( kStreamSectionIdx == section )
-	{
-		[sectionLabel setText:kStreamHeaderTxt];
-	}
-	else if ( kActivitySectionIdx == section )
-	{
-		[sectionLabel setText:kActivityHeaderTxt];
-	}
+	[sectionLabel setText:[m_data titleForSection:section]];
 	
 	return sectionLabel;
 }
@@ -525,32 +464,7 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSString *keyName = nil;
-	NSString *val = nil;
-	if ( kContactSectionIdx == indexPath.section )
-	{
-		keyName = [m_contactFields objectAtIndex:indexPath.row];
-		val = [m_contactRows objectForKey:keyName];
-	}
-	else if ( kCommitteeSectionIdx == indexPath.section )
-	{
-		keyName = [m_committeeFields objectAtIndex:indexPath.row];
-		val = [m_committeeRows objectForKey:keyName];
-	}
-	else if ( kStreamSectionIdx == indexPath.section )
-	{
-		keyName = [m_streamFields objectAtIndex:indexPath.row];
-		val = [m_streamRows objectForKey:keyName];
-	}
-	else if ( kActivitySectionIdx == indexPath.section )
-	{
-		keyName = [m_activityFields objectAtIndex:indexPath.row];
-		val = [m_activityRows objectForKey:keyName];
-	}
-	
-	CGFloat cellSz = [LegislatorInfoCell cellHeightForText:val];
-	
-	return cellSz;
+	return [m_data heightForDataAtIndexPath:indexPath];
 }
 
 
@@ -566,32 +480,7 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 	}
 	
 	// Set up the cell...
-	NSString *keyName;
-	NSString *val;
-	if ( kContactSectionIdx == indexPath.section )
-	{
-		keyName = [m_contactFields objectAtIndex:indexPath.row];
-		val = [m_contactRows objectForKey:keyName];
-		[cell setField:keyName withValue:val];
-	}
-	else if ( kCommitteeSectionIdx == indexPath.section )
-	{
-		keyName = [m_committeeFields objectAtIndex:indexPath.row];
-		val = [m_committeeRows objectForKey:keyName];
-		[cell setField:keyName withValue:val];
-	}
-	else if ( kStreamSectionIdx == indexPath.section )
-	{
-		keyName = [m_streamFields objectAtIndex:indexPath.row];
-		val = [m_streamRows objectForKey:keyName];
-		[cell setField:keyName withValue:val];
-	}
-	else if ( kActivitySectionIdx == indexPath.section )
-	{
-		keyName = [m_activityFields objectAtIndex:indexPath.row];
-		val = [m_activityRows objectForKey:keyName];
-		[cell setField:keyName withValue:val];
-	}
+	[m_data setInfoCell:cell forIndex:indexPath];
 	
 	return cell;
 }
@@ -601,21 +490,9 @@ static NSString  *kActivityHeaderTxt = @" Recent Activity";
 {
 	// XXX - perform a custom action based on the section/row
 	// XXX - i.e. make a phone call, send an email, view a map, etc.
+	[m_data performActionForIndex:indexPath withParent:self];
 	
 	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
-	
-    // Navigation logic may go here. Create and push another view controller.
-	// AnotherViewController *anotherViewController = [[AnotherViewController alloc] initWithNibName:@"AnotherView" bundle:nil];
-	// [self.navigationController pushViewController:anotherViewController];
-	// [anotherViewController release];
-}
-
-
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath 
-{
-	// Return NO if you do not want the specified item to be editable.
-	return NO;
 }
 
 

@@ -13,9 +13,11 @@
 @interface LegislatorNameCell : UITableViewCell 
 {
 @private
+	NSRange m_tableRange;
 	LegislatorContainer *m_legislator;
 }
 
+@property (nonatomic) NSRange m_tableRange;
 @property (readonly) LegislatorContainer *m_legislator;
 
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier detailTarget:(id)tgt detailSelector:(SEL)sel;

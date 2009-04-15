@@ -12,7 +12,7 @@
 
 @implementation LegislatorNameCell
 
-@synthesize m_legislator;
+@synthesize m_tableRange, m_legislator;
 
 static const CGFloat S_TABLE_TITLE_WIDTH = 15.0f;
 static const CGFloat S_INFO_OFFSET = 10.0f;

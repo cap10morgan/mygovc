@@ -57,8 +57,10 @@ typedef enum
 - (NSString *)govtrack_id;	// ID assigned by Govtrack.us
 - (NSString *)crp_id;		// ID provided by Center for Responsive Politics
 - (NSString *)eventful_id;	// Performer ID on eventful.com
+- (NSString *)eventful_url; // Return eventful.com absolute URL
 - (NSString *)congresspedia_url;	// URL of Legislator's entry on Congresspedia
 - (NSString *)twitter_id;	// Congressperson's official Twitter account
+- (NSString *)twitter_url;  // Convert twitter ID to absolute URL
 - (NSString *)youtube_url;	// Congressperson's official Youtube account
 
 - (NSString *)shortName;

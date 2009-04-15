@@ -124,7 +124,7 @@ enum
 	if ( self = [super initWithFrame:frame] )
 	{
 		m_animating = NO;
-		m_txtArray = [[NSMutableArray alloc] initWithCapacity:4];
+		m_txtArray = [[NSMutableArray alloc] init];
 		m_framePlacementHack = 1;
 		[self setupLabelAndActivityViews];
 	}
@@ -177,30 +177,33 @@ enum
 	UILabel *lbl = (UILabel *)[self viewWithTag:eTAG_LABEL];
 	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
 	
-	[lbl removeFromSuperview];
-	[activity removeFromSuperview];
+	if ( nil == activity )
+	{
+		activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+		activity.hidesWhenStopped = YES;
+		[activity setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
+		[activity setCenter:CGPointMake(100.0f, 20.0f)];
+		[activity setTag:eTAG_ACTIVITY];
+		[self addSubview:activity];
+		//[activity release];
+	}
 	
-	activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-	activity.hidesWhenStopped = YES;
-	[activity setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
-	[activity setCenter:CGPointMake(100.0f, 20.0f)];
-	[activity setTag:eTAG_ACTIVITY];
-	[self addSubview:activity];
-	[activity release];
-	
-	lbl = [[UILabel alloc] initWithFrame:CGRectMake(0.0f,40.0f,200.0f,160.0f)];
-	lbl.font = [UIFont boldSystemFontOfSize:26.0f];
-	lbl.adjustsFontSizeToFitWidth = YES;
-	lbl.numberOfLines = 3;
-	lbl.backgroundColor = [UIColor clearColor];
-	lbl.lineBreakMode = UILineBreakModeWordWrap;
-	lbl.textAlignment = UITextAlignmentCenter;
-	lbl.textColor = [UIColor whiteColor];
-	lbl.shadowColor = [UIColor blackColor];
-	lbl.shadowOffset = CGSizeMake(0.0f, -1.0f);
-	[lbl setTag:eTAG_LABEL];
-	[self addSubview:lbl];
-	[lbl release];
+	if ( nil == lbl )
+	{
+		lbl = [[UILabel alloc] initWithFrame:CGRectMake(0.0f,40.0f,200.0f,160.0f)];
+		lbl.font = [UIFont boldSystemFontOfSize:26.0f];
+		lbl.adjustsFontSizeToFitWidth = YES;
+		lbl.numberOfLines = 3;
+		lbl.backgroundColor = [UIColor clearColor];
+		lbl.lineBreakMode = UILineBreakModeWordWrap;
+		lbl.textAlignment = UITextAlignmentCenter;
+		lbl.textColor = [UIColor whiteColor];
+		lbl.shadowColor = [UIColor blackColor];
+		lbl.shadowOffset = CGSizeMake(0.0f, -1.0f);
+		[lbl setTag:eTAG_LABEL];
+		[self addSubview:lbl];
+		//[lbl release];
+	}
 }
 
 
@@ -299,7 +302,10 @@ enum
 
 - (void)setNewText:(id)txt
 {
-	[m_txtArray addObject:txt];
+	NSString *myTxtCopy = [[NSString alloc] initWithString:txt];
+	[m_txtArray addObject:myTxtCopy];
+	[myTxtCopy release];
+	
 	if ( !m_animating )
 	{
 		[self animateNextMessage];

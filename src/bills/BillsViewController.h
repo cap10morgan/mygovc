@@ -25,4 +25,7 @@
 	ProgressOverlayViewController *m_HUD;
 }
 
+- (NSString *)areaName;
+- (void)handleURLParms:(NSString *)parms;
+
 @end

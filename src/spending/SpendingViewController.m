@@ -153,6 +153,18 @@
 }
 
 
+- (NSString *)areaName
+{
+	return @"spending";
+}
+
+
+- (void)handleURLParms:(NSString *)parms
+{
+	// XXX - do something to handle URL parameters!
+}
+
+
 #pragma mark SpendingViewController Private 
 
 

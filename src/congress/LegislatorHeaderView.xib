@@ -131,7 +131,7 @@
 					<object class="IBUILabel" id="130112261">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{118, 10}, {194, 21}}</string>
+						<string key="NSFrame">{{118, 10}, {194, 30}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -161,7 +161,7 @@
 					<object class="IBUILabel" id="867394369">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{118, 39}, {182, 21}}</string>
+						<string key="NSFrame">{{118, 38}, {182, 22}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -397,12 +397,14 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>m_img</string>
 							<string>m_name</string>
+							<string>m_navController</string>
 							<string>m_partyInfo</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>UIImageView</string>
 							<string>UILabel</string>
+							<string>id</string>
 							<string>UILabel</string>
 						</object>
 					</object>

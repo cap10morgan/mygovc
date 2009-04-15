@@ -156,6 +156,18 @@ enum
 }
 
 
+- (NSString *)areaName
+{
+	return @"bills";
+}
+
+
+- (void)handleURLParms:(NSString *)parms
+{
+	// XXX - do something to handle URL parameters!
+}
+
+
 #pragma mark BillsViewController Private
 
 

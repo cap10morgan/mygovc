@@ -205,7 +205,21 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 
 - (NSString *)congress_office
 {
-	return [m_info objectForKey:kField_CongressOffice];
+	NSString *office = [m_info objectForKey:kField_CongressOffice];
+	NSString *zip;
+	if ( [office length] > 0 )
+	{
+		if ( [[self title] isEqualToString:@"Sen"] )
+		{
+			zip = @"Washington, DC 20510";
+		}
+		else
+		{
+			zip = @"Washington, DC 20515";
+		}
+		office = [NSString stringWithFormat:@"%@\n%@",office,zip];
+	}
+	return office;
 }
 
 - (NSString *)bioguide_id
@@ -238,6 +252,16 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 	return [m_info objectForKey:kField_EventfulID];
 }
 
+- (NSString *)eventful_url
+{
+	static NSString *kEventfulBaseURLFmt = @"http://eventful.com/performers/%@";
+	
+	NSString *eid = [self eventful_id];
+	if ( [eid length] < 1 ) return nil;
+	
+	return [NSString stringWithFormat:kEventfulBaseURLFmt,eid];
+}
+
 - (NSString *)congresspedia_url
 {
 	return [m_info objectForKey:kField_CongresspediaURL];
@@ -246,6 +270,15 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 - (NSString *)twitter_id
 {
 	return [m_info objectForKey:kField_TwitterID];
+}
+
+- (NSString *)twitter_url
+{
+	static NSString *kTwitterBaseURLFmt = @"http://twitter.com/%@";
+	
+	NSString *tid = [self twitter_id];
+	if ( [tid length] < 1 ) return nil;
+	return [NSString stringWithFormat:kTwitterBaseURLFmt,tid];
 }
 
 - (NSString *)youtube_url
