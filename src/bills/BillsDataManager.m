@@ -7,6 +7,7 @@
 //
 
 #import "myGovAppDelegate.h"
+#import "DataProviders.h"
 
 #import "BillContainer.h"
 #import "BillsDataManager.h"
@@ -22,10 +23,6 @@
 
 
 @implementation BillsDataManager
-
-static NSString *kOpenCongress_APIKey = @"32aea132a66093e9bf9ebe9fc2e2a4c66b888777";
-static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/bills?key=%@&congress=%d";
-
 
 @synthesize isDataAvailable;
 @synthesize isBusy;
@@ -107,10 +104,7 @@ static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/b
 		[m_notifyTarget performSelector:m_notifySelector withObject:self];
 	}
 	
-	NSString *xmlURL = [NSString stringWithFormat:kOpenCongress_BillsXMLFmt,
-									kOpenCongress_APIKey,
-									[[myGovAppDelegate sharedCongressData] currentCongressSession]
-						];
+	NSString *xmlURL = [DataProviders OpenCongress_BillsURL];
 	
 	if ( nil != m_xmlParser )
 	{

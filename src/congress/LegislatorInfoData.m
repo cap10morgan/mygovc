@@ -7,19 +7,23 @@
 //
 
 #import "CongressionalCommittees.h"
+#import "DataProviders.h"
 #import "LegislatorContainer.h"
 #import "LegislatorInfoCell.h"
 #import "LegislatorInfoData.h"
 #import "MiniBrowserController.h"
 
+
 @interface SectionRowData : NSObject
 {
 	NSString *field;
 	NSString *value;
+	NSURL *url;
 	SEL action;
 }
 @property (nonatomic,retain) NSString *field;
 @property (nonatomic,retain) NSString *value;
+@property (nonatomic,retain) NSURL *url;
 @property (nonatomic) SEL action;
 
 - (NSComparisonResult)compareField:(SectionRowData *)other;
@@ -28,7 +32,7 @@
 
 @implementation SectionRowData
 
-@synthesize field, value, action;
+@synthesize field, value, url, action;
 
 - (NSComparisonResult)compareField:(SectionRowData *)other
 {
@@ -93,6 +97,7 @@ enum
 @interface LegislatorInfoData (private)
 	- (NSArray *)setupDataSection:(NSInteger)section;
 	- (SectionRowData *)dataForIndexPath:(NSIndexPath *)indexPath;
+	- (void)startActivityDownload;
 	- (void)rowActionNone:(NSIndexPath *)indexPath;
 	- (void)rowActionMailto:(NSIndexPath *)indexPath;
 	- (void)rowActionPhoneCall:(NSIndexPath *)indexPath;
@@ -108,6 +113,26 @@ static NSInteger        s_sectionRefCount = 0;
 static NSMutableArray * s_dataSections = NULL;
 static NSMutableArray * s_sectionKeys = NULL;
 
+static NSString *kName_Response = @"person";
+static NSString *kName_NewsItem = @"recent-news";
+static NSString *kNewsItem_Attr_Type = @"type";
+static NSString *kNewsItem_responseArray = @"array";
+static NSString *kNewsItem_Excerpt = @"excerpt";
+static NSString *kNewsItem_URL = @"url";
+static NSString *kNewsItem_Source = @"source";
+static NSString *kNewsItem_Title = @"title";
+
+/*
+	For the future: more person stats!
+ *
+static NSString *kName_PersonStats = @"person-stats";
+static NSString *kName_CosponsoredBills = @"cosponsored-bills"; // integer
+static NSString *kName_CosponsoredBillsPassed = @"cosponsored-bills-passed"; // integer
+static NSString *kName_SponsoredBills = @"sponsored-bills"; // integer
+static NSString *kName_SponsoredBillsPassed = @"sponsored-bills-passed"; // integer
+static NSString *kName_AbstainsPct = @"abstains-percentage"; // float
+static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
+*/
 
 - (id)init
 {
@@ -118,7 +143,17 @@ static NSMutableArray * s_sectionKeys = NULL;
 		m_legislator = nil;
 		m_data = nil;
 		
-		m_opQ = [[NSOperationQueue alloc] init];
+		m_activityDownloaded = NO;
+		m_activityData = nil;
+		
+		m_parsingResponse = NO;
+		m_storingCharacters = NO;
+		m_currentString = nil;
+		m_currentTitle = nil;
+		m_currentExcerpt = nil;
+		m_currentSource = nil;
+		m_currentRowData = nil;
+		m_xmlParser = nil;
 		
 		// build up the array of data sections if necessary
 		if ( NULL == s_dataSections )
@@ -136,7 +171,14 @@ static NSMutableArray * s_sectionKeys = NULL;
 	[m_notifyTarget release];
 	[m_legislator release];
 	[m_data release];
-	[m_opQ release];
+	[m_activityData release];
+	
+	[m_currentString release];
+	[m_currentTitle release];
+	[m_currentExcerpt release];
+	[m_currentSource release];
+	[m_currentRowData release];
+	[m_xmlParser release];
 	
 	if ( 0 == --s_sectionRefCount )
 	{
@@ -160,9 +202,7 @@ static NSMutableArray * s_sectionKeys = NULL;
 {
 	[m_data release]; m_data = nil;
 	[m_legislator release]; m_legislator = [legislator retain];
-	
-	// stop all download activity...
-	[m_opQ cancelAllOperations];
+	m_activityDownloaded = NO;
 	
 	// allocate data
 	m_data = [[NSMutableArray alloc] initWithCapacity:[s_dataSections count]];
@@ -318,6 +358,27 @@ static NSMutableArray * s_sectionKeys = NULL;
 			break;
 		case eSection_Recent:
 		{
+			if ( m_activityDownloaded )
+			{
+				[retVal addObjectsFromArray:m_activityData];
+			}
+			else
+			{
+				if ( nil != m_activityData )
+				{
+					// there might be an error message in here!
+					[retVal addObjectsFromArray:m_activityData];
+				}
+				else
+				{
+					SectionRowData *rd = [[SectionRowData alloc] init];
+					rd.value = @"Downloading...";
+					rd.field = @"";
+					rd.action = @selector(rowActionNone:);
+					[retVal addObject:rd];
+				}
+				[self startActivityDownload];
+			}
 		}
 			break;
 	}
@@ -343,6 +404,27 @@ static NSMutableArray * s_sectionKeys = NULL;
 	// in the 'm_data' object at: m_data[indexPath.section][indexPath.row]
 	// 
 	return [secArray objectAtIndex:row];
+}
+
+
+- (void)startActivityDownload
+{
+	[m_activityData release];
+	m_activityData = [[NSMutableArray alloc] init];
+	
+	if ( nil != m_xmlParser )
+	{
+		// abort any previous attempt at parsing/downloading
+		[m_xmlParser abort];
+	}
+	else
+	{
+		m_xmlParser = [[XMLParserOperation alloc] initWithOpDelegate:self];
+	}
+	m_xmlParser.m_opDelegate = self;
+	
+	NSString *urlStr = [DataProviders OpenCongress_PersonURL:m_legislator];
+	[m_xmlParser parseXML:[NSURL URLWithString:urlStr] withParserDelegate:self];
 }
 
 
@@ -388,7 +470,17 @@ static NSMutableArray * s_sectionKeys = NULL;
 	SectionRowData *rd = [self dataForIndexPath:indexPath];
 	if ( nil == rd ) return;
 	
-	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:[NSURL URLWithString:rd.value]];
+	NSURL *url;
+	if ( [[rd.url absoluteString] length] > 0 )
+	{
+		url = rd.url;
+	}
+	else
+	{
+		url = [NSURL URLWithString:rd.value];
+	}
+	
+	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:url];
 	[mbc display:m_actionParent];
 }
 
@@ -420,6 +512,8 @@ static NSMutableArray * s_sectionKeys = NULL;
 									title,
 									genderTitle, 
 									name];
+	
+	// open GoogleMaps application!
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlStr]];
 	/*
 	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:[NSURL URLWithString:urlStr]];
@@ -428,22 +522,93 @@ static NSMutableArray * s_sectionKeys = NULL;
 }
 
 
+#pragma mark XMLParserOperationDelegate Methods
+
+
+- (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
+{
+	NSLog( @"LegislatorInfoData started OpenCongress download for %@...",[m_legislator shortName] );
+}
+
+
+- (void)xmlParseOp:(XMLParserOperation *)parseOp endedWith:(BOOL)success
+{
+	m_activityDownloaded = success;
+	if ( !m_activityDownloaded )
+	{
+		[m_activityData release]; 
+		m_activityData = [[NSMutableArray alloc] init];
+		
+		SectionRowData *rd = [[SectionRowData alloc] init];
+		rd.field = @"";
+		if ( [m_currentString length] > 0 )
+		{
+			rd.value = m_currentString; // the error string
+		}
+		else
+		{
+			rd.value = @"Error downloading activity...";
+		}
+		rd.url = nil;
+		rd.action = @selector(rowActionNone:);
+		[m_activityData addObject:rd];
+	}
+	
+	// add the activity data to our main data stucture
+	if ( [m_data count] > eSection_Recent )
+	{
+		[m_data replaceObjectAtIndex:eSection_Recent withObject:m_activityData];
+	}
+	
+	if ( nil != m_notifyTarget )
+	{
+		NSString *str = @"LINFO Success!";
+		[m_notifyTarget performSelector:m_notifySelector withObject:str];
+	}
+	NSLog( @"LegislatorInfoData XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
+}
+
+
 #pragma mark XMLParser Delegate Methods
 
-#if 0
 
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *) qualifiedName attributes:(NSDictionary *)attributeDict 
 {
 	if ( [elementName isEqualToString:kName_Response] )
 	{
 		m_parsingResponse = YES;
-		[m_currentState release]; m_currentState = nil;
-		m_currentDistrict = 0;
+		[m_currentRowData release]; m_currentRowData = nil;
+		
+		[m_currentString release]; 
+		m_currentString = [[NSMutableString alloc] init];
     } 
 	else if ( m_parsingResponse ) 
 	{
-		m_currentString = [[NSMutableString alloc] initWithString:@""];
-		m_storingCharacters = YES;
+		NSString *niType = [attributeDict objectForKey:kNewsItem_Attr_Type];
+		if ( [elementName isEqualToString:kName_NewsItem] )
+		{
+			[m_currentTitle release]; m_currentTitle = nil;
+			[m_currentExcerpt release]; m_currentExcerpt = nil;
+			[m_currentSource release]; m_currentSource = nil;
+			[m_currentRowData release]; m_currentRowData = nil;
+			
+			if ( [niType isEqualToString:kNewsItem_responseArray] )
+			{
+				// This is the beginning of the recent new array
+				m_storingCharacters = NO;
+				
+				// allocate the activity data array
+				m_activityData = [[NSMutableArray alloc] init];
+			}
+			else
+			{
+				// start a news item
+				m_currentRowData = [[SectionRowData alloc] init]; 
+				
+				m_storingCharacters = YES;
+			}
+		}
+		[m_currentString setString:@""];
     }
 	else
 	{
@@ -455,25 +620,55 @@ static NSMutableArray * s_sectionKeys = NULL;
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName 
 {
-	m_storingCharacters = NO;
 	if ( [elementName isEqualToString:kName_Response] ) 
 	{
 		m_parsingResponse = NO;
-		[m_data setCurrentState:m_currentState andDistrict:m_currentDistrict];
+		// This is the end of the data!
 	}
-	else if ( m_parsingResponse && [elementName isEqualToString:kName_State] )
+	else if ( m_parsingResponse && (nil != m_currentRowData) )
 	{
-		m_currentState = [[NSString alloc] initWithString:m_currentString];
-	}
-	else if ( m_parsingResponse && [elementName isEqualToString:kName_District] )
-	{
-		m_currentDistrict = [m_currentString integerValue];
+		if ( [elementName isEqualToString:kNewsItem_URL] )
+		{
+			NSURL *url = [[NSURL alloc] initWithString:m_currentString];
+			m_currentRowData.url = url;
+			[url release];
+		}
+		else if ( [elementName isEqualToString:kNewsItem_Title] )
+		{
+			m_currentTitle = [[NSString alloc] initWithString:m_currentString];
+		}
+		else if ( [elementName isEqualToString:kNewsItem_Source] )
+		{
+			m_currentSource = [[NSString alloc] initWithString:m_currentString];
+		}
+		else if ( [elementName isEqualToString:kNewsItem_Excerpt] )
+		{
+			m_currentExcerpt = [[NSString alloc] initWithString:m_currentString];
+		}
+		else if ( [elementName isEqualToString:kName_NewsItem]  )
+		{
+			// put together the final 'value'
+			NSString *valStr = [[NSString alloc] initWithFormat:@"%@\n\n%@",
+													m_currentSource,
+													//m_currentTitle,
+													m_currentExcerpt
+								];
+			m_currentRowData.field = @"";
+			m_currentRowData.value = valStr;
+			m_currentRowData.action = @selector(rowActionURL:);
+			[valStr release];
+			
+			[m_activityData addObject:m_currentRowData];
+			[m_currentRowData release]; m_currentRowData = nil;
+		}
 	}
 	else
 	{
 		// XXX - nothing to do!
 	}
-	[m_currentString release]; m_currentString = nil;
+	
+	// reset the current string
+	[m_currentString setString:@""];
 }
 
 
@@ -488,8 +683,9 @@ static NSMutableArray * s_sectionKeys = NULL;
 {
 	m_parsingResponse = NO;
 	m_storingCharacters = NO;
-	[m_currentString release]; 
-	m_currentString = [[NSString alloc] initWithString:@"ERROR XML parsing error"];
+	[m_currentString setString:[NSString stringWithFormat:@"ERROR XML parse error: %@",
+											[parseError localizedDescription]]
+	];
 	if ( nil != m_notifyTarget )
 	{
 		[m_notifyTarget performSelector:m_notifySelector withObject:m_currentString];
@@ -501,15 +697,14 @@ static NSMutableArray * s_sectionKeys = NULL;
 {
 	m_parsingResponse = NO;
 	m_storingCharacters = NO;
-	[m_currentString release];
-	m_currentString = [[NSString alloc] initWithString:@"ERROR XML validation error"];
+	[m_currentString setString:[NSString stringWithFormat:@"ERROR XML validation error: %@",
+								[validError localizedDescription]]
+	];
 	if ( nil != m_notifyTarget )
 	{
 		[m_notifyTarget performSelector:m_notifySelector withObject:m_currentString];
 	}
 }
-
-#endif
 
 
 @end

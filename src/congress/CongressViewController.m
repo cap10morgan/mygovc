@@ -206,8 +206,6 @@ enum
 {
 	NSString *msg = message;
 	
-	NSLog( @"dataManagerCallback: %@",msg );
-	
 	NSRange msgTypeRange = {0, 5};
 	if ( NSOrderedSame == [msg compare:@"ERROR" options:NSCaseInsensitiveSearch range:msgTypeRange] )
 	{

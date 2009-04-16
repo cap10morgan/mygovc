@@ -17,6 +17,7 @@
 
 @interface LegislatorViewController (private)
 	- (void) deselectRow:(id)sender;
+	- (void)dataCallback:(NSString *)msg;
 @end
 
 
@@ -221,118 +222,8 @@
 	m_data = [[LegislatorInfoData alloc] init];
 	[m_data setLegislator:m_legislator];
 	
-	// 
-	// setup the table data
-	//
-/*
-	// Contact Section --------------
-	[m_contactRows removeAllObjects];
+	[m_data setNotifyTarget:self andSelector:@selector(dataCallback:)];
 	
-	if ( [[m_legislator email] length] > 0 )
-	{
-		[m_contactRows setObject:[m_legislator email] forKey:@"01_email"];
-	}
-	
-	if ( [[m_legislator phone] length] > 0 )
-	{
-		[m_contactRows setObject:[m_legislator phone] forKey:@"02_phone"];
-	}
-	
-	if ( [[m_legislator fax] length] > 0 )
-	{
-		[m_contactRows setObject:[m_legislator fax] forKey:@"03_fax"];
-	}
-	
-	if ( [[m_legislator webform] length] > 0 )
-	{
-		[m_contactRows setObject:[m_legislator webform] forKey:@"04_webform"];
-	}
-	
-	if ( [[m_legislator website] length] > 0 )
-	{
-		[m_contactRows setObject:[m_legislator website] forKey:@"05_website"];
-	}
-	
-	if ( [[m_legislator congress_office] length] > 0 )
-	{
-		NSString *zip;
-		if ( [[m_legislator title] isEqualToString:@"Sen"] )
-		{
-			zip = @"Washington, DC 20510";
-		}
-		else
-		{
-			zip = @"Washington, DC 20515";
-		}
-		NSString * office = [NSString stringWithFormat:@"%@\n%@",[m_legislator congress_office],zip];
-		[m_contactRows setObject:office forKey:@"05_office"];
-	}
-	
-	m_contactFields = [[NSArray alloc] initWithArray:[[m_contactRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
-	
-	
-	// Committee Membership Section --------------
-	[m_committeeRows removeAllObjects];
-	
-	NSArray *comData = [m_legislator committee_data];
-	if ( nil != comData )
-	{
-		// XXX - fill this in!
-		//[m_committeeRows setObject:[NSString stringWithString:@""] forKey:@"S111"];
-		NSEnumerator *comEnum = [comData objectEnumerator];
-		id obj;
-		while (obj = [comEnum nextObject]) 
-		{
-			LegislativeCommittee *committee = (LegislativeCommittee *)obj;
-			NSString *cID = [NSString stringWithFormat:@"%@_%@",
-										committee.m_id,
-										(nil == committee.m_parentCommittee ? 
-											@"" : 
-											[NSString stringWithFormat:@"[%@]",committee.m_parentCommittee]
-										)
-							];
-			NSString *cNM = [NSString stringWithFormat:@"%@\n%@",
-										(nil == committee.m_parentCommittee ? committee.m_id : @""),
-										committee.m_name
-							];
-			
-			[m_committeeRows setObject:cNM forKey:cID];
-		}
-		
-		m_committeeFields = [[NSArray alloc] initWithArray:[[m_committeeRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
-	}
-	
-	
-	// Stream Section --------------
-	[m_streamRows removeAllObjects];
-	
-	if ( [[m_legislator twitter_id] length] > 0 )
-	{
-		[m_streamRows setObject:[m_legislator twitter_id] forKey:@"01_twitter"];
-	}
-	
-	if ( [[m_legislator youtube_url] length] > 0 )
-	{
-		[m_streamRows setObject:[m_legislator youtube_url] forKey:@"02_youtube"];
-	}
-	
-	if ( [[m_legislator eventful_id] length] > 0 )
-	{
-		[m_streamRows setObject:[m_legislator eventful_id] forKey:@"03_eventful"];
-	}
-	
-	if ( [[m_legislator congresspedia_url] length] > 0 )
-	{
-		[m_streamRows setObject:[m_legislator congresspedia_url] forKey:@"04_O.C."];
-	}
-	
-	m_streamFields = [[NSArray alloc] initWithArray:[[m_streamRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
-	
-	// XXX - kick off a data download from OpenCongress.org
-	
-	[m_activityRows setObject:[NSString stringWithString:@"Download from OpenCongress.org..."] forKey:@"01_..."];
-	m_activityFields = [[NSArray alloc] initWithArray:[[m_activityRows allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
-*/
 	[m_headerViewCtrl setLegislator:legislator];
 	[self.tableView reloadData];
 }
@@ -413,11 +304,25 @@
 #pragma mark LegislatorViewController Private
 
 
-- (void) deselectRow:(id)sender
+- (void)deselectRow:(id)sender
 {
 	// de-select the currently selected row
 	// (so the user can go back to the same legislator)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+}
+
+
+- (void)dataCallback:(NSString *)msg
+{
+	NSRange msgTypeRange = {0, 5};
+	if ( NSOrderedSame == [msg compare:@"ERROR" options:NSCaseInsensitiveSearch range:msgTypeRange] )
+	{
+		// XXX - notify the user of an error?
+	}
+	else
+	{
+		[self.tableView reloadData];
+	}
 }
 
 

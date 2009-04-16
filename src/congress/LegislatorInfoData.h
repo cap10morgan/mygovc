@@ -7,21 +7,35 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XMLParserOperation.h"
+
 @class LegislatorContainer;
 @class LegislatorInfoCell;
+@class SectionRowData;
 
-@interface LegislatorInfoData : NSObject 
+@interface LegislatorInfoData : NSObject <XMLParserOperationDelegate>
 {
 @private
 	id m_notifyTarget;
 	SEL m_notifySelector;
+	
 	LegislatorContainer *m_legislator;
 	
 	NSMutableArray *m_data; // Array of Arrays of single-object-dictionaries (fieldname -> value pairs)
 	
+	BOOL m_activityDownloaded;
+	NSMutableArray *m_activityData;
+	
 	id m_actionParent;
 	
-	NSOperationQueue *m_opQ;
+	BOOL m_parsingResponse;
+	BOOL m_storingCharacters;
+	NSMutableString *m_currentString;
+	NSString *m_currentTitle;
+	NSString *m_currentExcerpt;
+	NSString *m_currentSource;
+	SectionRowData *m_currentRowData;
+	XMLParserOperation *m_xmlParser;
 }
 
 

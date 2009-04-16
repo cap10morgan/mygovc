@@ -280,6 +280,7 @@ enum
 	if ( [m_txtArray count] > 0 )
 	{
 		// start the next animation!
+		[NSThread sleepForTimeInterval:0.2f];
 		[self animateNextMessage];
 	}
 	else
