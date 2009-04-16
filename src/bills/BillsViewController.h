@@ -13,7 +13,7 @@
 @class ProgressOverlayViewController;
 
 
-@interface BillsViewController : UITableViewController <UISearchBarDelegate>
+@interface BillsViewController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate>
 {
 @private
 	BillsDataManager *m_data;
@@ -27,5 +27,7 @@
 
 - (NSString *)areaName;
 - (void)handleURLParms:(NSString *)parms;
+
+- (void)showBillDetail:(id)sender;
 
 @end

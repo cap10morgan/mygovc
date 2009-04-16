@@ -17,6 +17,7 @@
 
 
 @interface CongressDataManager (private)
+	- (void)setStatus:(NSString *)status;
 	- (void)destroyDataCache;
 	- (void)discoverCurrentCongressSession;
 	- (void)beginDataDownload;
@@ -64,6 +65,8 @@ static NSString *kTitleValue_Senator = @"Sen";
 		
 		[self setNotifyTarget:target withSelector:sel];
 		
+		m_currentStatusMessage = [[NSMutableString alloc] init];
+		
 		// initialize states/house/senate arrays
 		m_states = [[NSMutableArray alloc] initWithCapacity:60];
 		m_house = [[NSMutableDictionary alloc] initWithCapacity:60];
@@ -102,14 +105,19 @@ static NSString *kTitleValue_Senator = @"Sen";
 {
 	isDataAvailable = NO;
 	isBusy = YES;
+	
+	[m_xmlParser abort];
+	[m_xmlParser release];
+	
 	[m_notifyTarget release];
 	[m_states release];
 	[m_house release];
 	[m_senate release];
 	[m_searchArray release];
 	[m_committees release];
-	[m_xmlParser release];
+	
 	[m_currentString release];
+	[m_currentStatusMessage release];
 	[super dealloc];
 }
 
@@ -119,6 +127,12 @@ static NSString *kTitleValue_Senator = @"Sen";
 	[m_notifyTarget release];
 	m_notifyTarget = [target retain];
 	m_notifySelector = sel;
+}
+
+
+- (NSString *)currentStatusMessage
+{
+	return m_currentStatusMessage;
 }
 
 
@@ -371,11 +385,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 	isDataAvailable = NO;
 	isBusy = YES;
 	
-	if ( nil != m_notifyTarget )
-	{
-		NSString *message = [NSString stringWithString:@"Removing Cached Congress Data..."];
-		[m_notifyTarget performSelector:m_notifySelector withObject:message];
-	}
+	[self setStatus:@"Removing Cached Congress Data..."];
 	
 	[self destroyDataCache];
 	
@@ -397,6 +407,16 @@ static NSString *kTitleValue_Senator = @"Sen";
 
 
 #pragma mark CongressDataManager Private
+
+
+- (void)setStatus:(NSString *)status
+{
+	[m_currentStatusMessage setString:status];
+	if ( nil != m_notifyTarget )
+	{
+		[m_notifyTarget performSelector:m_notifySelector withObject:m_currentStatusMessage];
+	}
+}
 
 
 - (void)destroyDataCache
@@ -445,11 +465,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 	isDataAvailable = NO;
 	isBusy = YES;
 	
-	if ( nil != m_notifyTarget )
-	{
-		NSString *message = [NSString stringWithString:@"Downloading Congress Data..."];
-		[m_notifyTarget performSelector:m_notifySelector withObject:message];
-	}
+	[self setStatus:@"Preparing Congress Data Download..."];
 	
 	NSString *xmlURL = [NSString stringWithFormat:@"%@?apikey=%@",kSunlight_getListXML,kSunlight_APIKey];
 	
@@ -475,11 +491,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 - (void)initFromDisk:(id)sender
 {
 	isDataAvailable = NO;
-	if ( nil != m_notifyTarget )
-	{
-		NSString *message = [NSString stringWithString:@"Reading cached data..."];
-		[m_notifyTarget performSelector:m_notifySelector withObject:message];
-	}
+	[self setStatus:@"Reading cached data..."];
 	
 	NSString *congressDataPath = [[CongressDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
 	
@@ -514,11 +526,8 @@ static NSString *kTitleValue_Senator = @"Sen";
 	m_currentCongressSession = [m_committees congressSession];
 	
 	isDataAvailable = YES;
-	if ( nil != m_notifyTarget )
-	{
-		NSString *message = [NSString stringWithString:@"Finished."];
-		[m_notifyTarget performSelector:m_notifySelector withObject:message];
-	}
+	[self setStatus:@"Finished."];
+	
 	NSLog( @"CongressDataManager cached data parsing complete." );
 }
 
@@ -546,11 +555,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 		[m_searchArray addObject:legislator];
 	}
 	
-	if ( nil != m_notifyTarget )
-	{
-		NSString *msg = @"LOCTN Search Complete";
-		[m_notifyTarget performSelector:m_notifySelector withObject:msg];
-	}
+	[self setStatus:@"LOCTN Search Complete"];
 }
 
 
@@ -633,11 +638,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
-	if ( nil != m_notifyTarget )
-	{
-		NSString *message = [NSString stringWithString:@"Downloading Congress Data..."];
-		[m_notifyTarget performSelector:m_notifySelector withObject:message];
-	}
+	[self setStatus:@"Downloading Congress Data..."];
 	NSLog( @"CongessDataManager started XML parsing..." );
 }
 
@@ -646,11 +647,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 {
 	if ( success )
 	{
-		if ( nil != m_notifyTarget )
-		{
-			NSString *message = [NSString stringWithString:@"Downloading Committee Data..."];;
-			[m_notifyTarget performSelector:m_notifySelector withObject:message];
-		}
+		[self setStatus:@"Downloading Committee Data..."];
 		
 		[self discoverCurrentCongressSession];
 		
@@ -661,11 +658,8 @@ static NSString *kTitleValue_Senator = @"Sen";
 	
 	isDataAvailable = success;
 	
-	if ( nil != m_notifyTarget )
-	{
-		NSString *message = [NSString stringWithFormat:@"%@",(success ? @"Finished." : m_currentString)];
-		[m_notifyTarget performSelector:m_notifySelector withObject:message];
-	}
+	[self setStatus:(success ? @"Finished." : m_currentString)];
+	
 	NSLog( @"CongressDataManager XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
 	
 	if ( isDataAvailable )

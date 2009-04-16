@@ -10,15 +10,19 @@
 #import "BillsViewController.h"
 #import "BillContainer.h"
 #import "BillsDataManager.h"
+#import "BillInfoViewController.h"
 #import "BillSummaryTableCell.h"
+#import "ComposeMessageViewController.h"
+#import "LegislatorContainer.h"
 #import "MiniBrowserController.h"
 #import "ProgressOverlayViewController.h"
 
 
 @interface BillsViewController (private)
+	- (BillContainer *)billAtIndexPath:(NSIndexPath *)indexPath;
 	- (void)dataManagerCallback:(id)sender;
 	- (void)congressSwitch: (id)sender;
-	- (void) deselectRow:(id)sender;
+	- (void)deselectRow:(id)sender;
 @end
 
 
@@ -50,9 +54,11 @@ enum
 	m_data = [[myGovAppDelegate sharedBillsData] retain];
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
-	m_HUDTxt = [[[NSString alloc] initWithString:@"Waiting for data..."] autorelease];
 	[m_HUD show:NO];
-	[m_HUD setText:m_HUDTxt andIndicateProgress:YES];
+	if ( ![m_data isDataAvailable] )
+	{
+		[m_HUD setText:@"Waiting for data..." andIndicateProgress:YES];
+	}
 	
 	// create a search bar which will be used as our table's header view
 	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 50.0f)];
@@ -95,25 +101,18 @@ enum
 
 - (void)viewWillAppear:(BOOL)animated 
 {
-	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+	[super viewWillAppear:animated];
 	
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	
-	if ( ![m_data isDataAvailable] )
-	{
-		self.tableView.userInteractionEnabled = NO;
-	}
-	else
-	{
-		self.tableView.userInteractionEnabled = YES;
-	}
-	
-	[super viewWillAppear:animated];
+	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 }
 
 
 - (void)viewDidAppear:(BOOL)animated
 {
+	[super viewDidAppear:animated];
+	
 	if ( ![m_data isDataAvailable] )
 	{
 		if ( ![m_data isBusy] )
@@ -121,17 +120,18 @@ enum
 			[m_data beginBillSummaryDownload];
 		}
 		[m_HUD show:YES];
+		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
 	}
 	else
 	{
 		[m_HUD show:NO];
 	}
 	
+	[self.tableView setNeedsDisplay];
+	
 	// de-select the currently selected row
 	// (so the user can go back to the same district/state/contractor)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
-	
-	[super viewDidAppear:animated];
 }
 
 /*
@@ -156,6 +156,21 @@ enum
 }
 
 
+- (void)showBillDetail:(id)sender
+{
+	UIButton *button = (UIButton *)sender;
+	if ( nil == button ) return;
+	
+	BillSummaryTableCell *tcell = (BillSummaryTableCell *)[button superview];
+	if ( nil == tcell ) return;
+	
+	BillInfoViewController *biView = [[BillInfoViewController alloc] init];
+	[biView setBill:[tcell m_bill]];
+	[self.navigationController pushViewController:biView animated:YES];
+	[biView release];
+}
+
+
 - (NSString *)areaName
 {
 	return @"bills";
@@ -171,13 +186,34 @@ enum
 #pragma mark BillsViewController Private
 
 
-- (void)dataManagerCallback:(id)sender
+- (BillContainer *)billAtIndexPath:(NSIndexPath *)indexPath
+{
+	BillContainer *bc = nil;
+	if ( [m_data isDataAvailable] ) 
+	{
+		switch ( m_selectedChamber )
+		{
+			default:
+			case eCongressChamberHouse:
+				bc = [m_data houseBillAtIndexPath:indexPath];
+				break;
+			case eCongressChamberSenate:
+				bc = [m_data senateBillAtIndexPath:indexPath];
+				break;
+		}
+	}
+	return bc;
+}
+
+
+- (void)dataManagerCallback:(id)msg
 {
 	if ( [m_data isDataAvailable] )
 	{
-		[self.tableView reloadData];
-		[m_HUD show:NO];
 		self.tableView.userInteractionEnabled = YES;
+		[m_HUD show:NO];
+		
+		[self.tableView reloadData];
 	}
 	else
 	{
@@ -185,7 +221,7 @@ enum
 		// update the user with some progress
 		self.tableView.userInteractionEnabled = NO;
 		[m_HUD show:YES];
-		[m_HUD setText:m_HUDTxt andIndicateProgress:YES];
+		[m_HUD setText:msg andIndicateProgress:YES];
 	}
 }
 
@@ -251,6 +287,68 @@ enum
 }
 
 
+#pragma mark UIActionSheetDelegate methods
+
+
+// action sheet callback: maybe start a re-download on congress data
+- (void)actionSheet:(UIActionSheet *)modalView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+	BillContainer *bill = [self billAtIndexPath:[self.tableView indexPathForSelectedRow]];
+	if ( nil == bill )
+	{
+		goto deselect_and_return;
+	}
+	
+	// use currently selected legislator to perfom the following action:
+	switch ( buttonIndex )
+	{
+		// Sponsor Info
+		case 0:
+		{
+			// put together an in-app URL and open it!
+			NSString *urlStr = [NSString stringWithFormat:@"mygov://congress/house:0:0:%@",
+											[[bill sponsor] bioguide_id]
+								];
+			NSURL *url = [NSURL URLWithString:urlStr];
+			[[UIApplication sharedApplication] openURL:url];
+		}
+			break;
+			
+		// Full Bill Text
+		case 1:
+		{
+			 // get the URL for the full-text of the bill and load-up 
+			 // our mini web browser to view it!
+			 MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:[bill getFullTextURL]];
+			 [mbc display:self];
+		}
+			break;
+			
+		// Comment!
+		case 2:
+		{
+			MessageData *msg = [[MessageData alloc] init];
+			msg.m_transport = eMT_MyGov;
+			msg.m_to = @"MyGovernment Community";
+			msg.m_subject = [NSString stringWithFormat:@"Comment on %@",[bill m_title]];
+			msg.m_body = @" ";
+			// display the message composer
+			ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+			[cmvc display:msg fromParent:self];
+		}
+			break;
+			
+		default:
+			break;
+	}
+	
+	// deselect the selected row 
+deselect_and_return:
+	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+}
+
+
+
 #pragma mark Table view methods
 
 
@@ -291,17 +389,8 @@ enum
 {
 	if ( ![m_data isDataAvailable] ) return 20.0f;
 	
-	BillContainer *bc = nil;
-	switch ( m_selectedChamber )
-	{
-		default:
-		case eCongressChamberHouse:
-			bc = [m_data houseBillAtIndexPath:indexPath];
-			break;
-		case eCongressChamberSenate:
-			bc = [m_data senateBillAtIndexPath:indexPath];
-			break;
-	}
+	BillContainer *bc = [self billAtIndexPath:indexPath];
+	
 	return [BillSummaryTableCell getCellHeightForBill:bc];
 }
 
@@ -330,22 +419,10 @@ enum
 	if ( nil == cell )
 	{
 		cell = [[[BillSummaryTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		[cell setDetailTarget:self andSelector:@selector(showBillDetail:)];
 	}
 	
-	BillContainer *bc = nil;
-	if ( [m_data isDataAvailable] ) 
-	{
-		switch ( m_selectedChamber )
-		{
-			default:
-			case eCongressChamberHouse:
-				bc = [m_data houseBillAtIndexPath:indexPath];
-				break;
-			case eCongressChamberSenate:
-				bc = [m_data senateBillAtIndexPath:indexPath];
-				break;
-		}
-	}
+	BillContainer *bc = [self billAtIndexPath:indexPath];
 	[cell setContentFromBill:bc];
 	
 	return cell;
@@ -354,30 +431,19 @@ enum
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-	BillContainer *bill = nil;
-	if ( [m_data isDataAvailable] ) 
-	{
-		switch ( m_selectedChamber )
-		{
-			default:
-			case eCongressChamberHouse:
-				bill = [m_data houseBillAtIndexPath:indexPath];
-				break;
-			case eCongressChamberSenate:
-				bill = [m_data senateBillAtIndexPath:indexPath];
-				break;
-		}
-	}
+	BillContainer *bill = [self billAtIndexPath:indexPath];
 	
-	if ( nil != bill )
-	{
-		// get the URL for the full-text of the bill and load-up 
-		// our mini web browser to view it!
-		MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:[bill getFullTextURL]];
-		[mbc display:self];
-	}
+	// pop up an alert asking the user what action to perform
+	UIActionSheet *contactAlert =
+	[[UIActionSheet alloc] initWithTitle:[bill m_title]
+								delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
+					   otherButtonTitles:@"Sponsor Info",@"Full Bill Text",@"Comment!",nil,nil];
 	
-	//[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+	// use the same style as the nav bar
+	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
+	
+	[contactAlert showInView:self.view];
+	[contactAlert release];
 }
 
 

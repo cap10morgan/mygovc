@@ -20,6 +20,8 @@
 
 + (CGFloat)getCellHeightForBill:(BillContainer *)bill;
 
+- (void)setDetailTarget:(id)target andSelector:(SEL)selector;
+
 - (void)setContentFromBill:(BillContainer *)container;
 
 

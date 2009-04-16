@@ -29,6 +29,8 @@
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
 		017C22520F721824008CA4ED /* spendingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224F0F721824008CA4ED /* spendingIcon.png */; };
 		017C22550F721E60008CA4ED /* communityIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C22540F721E60008CA4ED /* communityIcon.png */; };
+		01846B900F96BFE200444529 /* BillInfoData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01846B8F0F96BFE200444529 /* BillInfoData.m */; };
+		01846B930F96C02C00444529 /* BillInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01846B920F96C02C00444529 /* BillInfoViewController.m */; };
 		0190167C0F8551BB00627610 /* BillSummaryXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */; };
 		019017670F85760A00627610 /* BillSummaryTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 019017660F85760A00627610 /* BillSummaryTableCell.m */; };
 		01AD659F0F957259003AECE0 /* LegislatorInfoData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AD659E0F957259003AECE0 /* LegislatorInfoData.m */; };
@@ -100,6 +102,10 @@
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
 		017C224F0F721824008CA4ED /* spendingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spendingIcon.png; path = res/spendingIcon.png; sourceTree = "<group>"; };
 		017C22540F721E60008CA4ED /* communityIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityIcon.png; path = res/communityIcon.png; sourceTree = "<group>"; };
+		01846B8E0F96BFE200444529 /* BillInfoData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillInfoData.h; path = src/bills/BillInfoData.h; sourceTree = "<group>"; };
+		01846B8F0F96BFE200444529 /* BillInfoData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillInfoData.m; path = src/bills/BillInfoData.m; sourceTree = "<group>"; };
+		01846B910F96C02C00444529 /* BillInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillInfoViewController.h; path = src/bills/BillInfoViewController.h; sourceTree = "<group>"; };
+		01846B920F96C02C00444529 /* BillInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillInfoViewController.m; path = src/bills/BillInfoViewController.m; sourceTree = "<group>"; };
 		0190167A0F8551BB00627610 /* BillSummaryXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillSummaryXMLParser.h; path = src/bills/BillSummaryXMLParser.h; sourceTree = "<group>"; };
 		0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillSummaryXMLParser.m; path = src/bills/BillSummaryXMLParser.m; sourceTree = "<group>"; };
 		019017650F85760A00627610 /* BillSummaryTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillSummaryTableCell.h; path = src/bills/BillSummaryTableCell.h; sourceTree = "<group>"; };
@@ -281,6 +287,10 @@
 				0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */,
 				019017650F85760A00627610 /* BillSummaryTableCell.h */,
 				019017660F85760A00627610 /* BillSummaryTableCell.m */,
+				01846B8E0F96BFE200444529 /* BillInfoData.h */,
+				01846B8F0F96BFE200444529 /* BillInfoData.m */,
+				01846B910F96C02C00444529 /* BillInfoViewController.h */,
+				01846B920F96C02C00444529 /* BillInfoViewController.m */,
 			);
 			name = bills;
 			sourceTree = "<group>";
@@ -465,6 +475,8 @@
 				011EF3CD0F91A48E00932BBE /* ComposeMessageViewController.m in Sources */,
 				01AD659F0F957259003AECE0 /* LegislatorInfoData.m in Sources */,
 				01D998FF0F96995200961A76 /* DataProviders.m in Sources */,
+				01846B900F96BFE200444529 /* BillInfoData.m in Sources */,
+				01846B930F96C02C00444529 /* BillInfoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

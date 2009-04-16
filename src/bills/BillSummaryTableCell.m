@@ -163,6 +163,15 @@ static const CGFloat S_ROW_HEIGHT = 25.0f;
 }
 
 
+- (void)setDetailTarget:(id)target andSelector:(SEL)selector
+{
+	UIButton *detail = (UIButton *)[self viewWithTag:eTAG_DETAIL];
+	
+	// set delegate for detail button press!
+	[detail addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+}
+
+
 - (void)setContentFromBill:(BillContainer *)container
 {
 	[m_bill release]; m_bill = nil;

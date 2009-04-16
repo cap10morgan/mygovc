@@ -55,4 +55,6 @@
 
 - (void)performActionForIndex:(NSIndexPath *)indexPath withParent:(id)parent;
 
+- (void)stopAnyWebActivity;
+
 @end

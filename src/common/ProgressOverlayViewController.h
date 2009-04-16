@@ -20,4 +20,6 @@
 - (void)show:(BOOL)yesOrNo;
 - (void)setText:(NSString *)text andIndicateProgress:(BOOL)shouldAnimate;
 
+- (NSString *)currentText;
+
 @end

@@ -17,6 +17,7 @@
 
 
 @interface BillsDataManager (private)
+	- (void)setStatus:(NSString *)status;
 	- (void)addNewBill:(BillContainer *)bill;
 @end
 
@@ -41,6 +42,8 @@
 		isDataAvailable = NO;
 		isBusy = NO;
 		
+		m_currentStatusMessage = [[NSMutableString alloc] init];
+		
 		m_notifyTarget = nil;
 		m_notifySelector = nil;
 		
@@ -61,12 +64,17 @@
 {
 	isDataAvailable = NO;
 	isBusy = NO;
+	
+	[m_xmlParser abort];
+	[m_xmlParser release];
+	
 	[m_notifyTarget release];
 	[m_houseSections release];
 	[m_houseBills release];
 	[m_senateSections release];
 	[m_senateBills release];
-	[m_xmlParser release];
+	
+	[m_currentStatusMessage release];
 	[super dealloc];
 }
 
@@ -76,6 +84,12 @@
 	[m_notifyTarget release];
 	m_notifyTarget = [target retain];
 	m_notifySelector = sel;
+}
+
+
+- (NSString *)currentStatusMessage
+{
+	return m_currentStatusMessage;
 }
 
 
@@ -99,10 +113,7 @@
 		return;
 	}
 	
-	if ( nil != m_notifyTarget )
-	{
-		[m_notifyTarget performSelector:m_notifySelector withObject:self];
-	}
+	[self setStatus:@"Preparing Bill Download..."];
 	
 	NSString *xmlURL = [DataProviders OpenCongress_BillsURL];
 	
@@ -266,6 +277,16 @@
 #pragma BillsDataManager Private 
 
 
+- (void)setStatus:(NSString *)status
+{
+	[m_currentStatusMessage setString:status];
+	if ( nil != m_notifyTarget )
+	{
+		[m_notifyTarget performSelector:m_notifySelector withObject:m_currentStatusMessage];
+	}
+}
+
+
 - (void)addNewBill:(BillContainer *)bill
 {
 	NSMutableDictionary *chamberDict;
@@ -336,6 +357,7 @@
 
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
+	[self setStatus:@"Downloading Bill Data..."];
 	NSLog( @"BillsDataManager started XML download..." );
 }
 
@@ -344,10 +366,8 @@
 {
 	isDataAvailable = success;
 	
-	if ( nil != m_notifyTarget )
-	{
-		[m_notifyTarget performSelector:m_notifySelector withObject:self];
-	}
+	[self setStatus:@"Finished."];
+	
 	NSLog( @"BillsDataManager XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
 	
 	if ( isDataAvailable )

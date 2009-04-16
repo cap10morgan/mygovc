@@ -16,7 +16,7 @@ static const CGFloat CELL_XSTART = 16.0f;
 static const CGFloat CELL_HPADDING = 6.0f;
 static const CGFloat CELL_VPADDING = 5.0f;
 
-static const CGFloat CELL_DISCLOSURE_WIDTH = 15.0f;
+static const CGFloat CELL_DISCLOSURE_WIDTH = 18.0f;
 
 static const CGFloat CELL_MAX_WIDTH = 306.0f;
 static const CGFloat VALUE_MAX_HEIGHT = 150.0f;
@@ -141,7 +141,7 @@ enum
 	CGFloat cellHeight = [LegislatorInfoCell cellHeightForText:value withKeyname:field];
 	
 	CGFloat cellMinX = CELL_XSTART;
-	CGFloat cellWidth = CGRectGetWidth(self.contentView.frame) - (3.0f*CELL_HPADDING) - CELL_DISCLOSURE_WIDTH;
+	CGFloat cellWidth = CELL_MAX_WIDTH - (3.0f*CELL_HPADDING) - CELL_DISCLOSURE_WIDTH;
 	
 	CGRect fieldFrame = CGRectMake(cellMinX,
 								   CELL_VPADDING,
@@ -163,7 +163,7 @@ enum
 		// make sure the value rectangle is in its proper place
 		valFrame = CGRectMake(CGRectGetMaxX(fieldFrame) + CELL_HPADDING,
 							  CELL_VPADDING,
-							  cellWidth - CGRectGetWidth(fieldFrame) - (3.0f*CELL_HPADDING),
+							  cellWidth - CGRectGetWidth(fieldFrame) - CELL_HPADDING,
 							  cellHeight);
 		valView.font = VALUE_FONT;
 		valView.textColor = VALUE_COLOR;

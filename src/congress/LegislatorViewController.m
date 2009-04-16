@@ -16,7 +16,7 @@
 #import "StateAbbreviations.h"
 
 @interface LegislatorViewController (private)
-	- (void) deselectRow:(id)sender;
+	- (void)deselectRow:(id)sender;
 	- (void)dataCallback:(NSString *)msg;
 @end
 
@@ -219,7 +219,10 @@
 	[m_legislator release];
 	m_legislator = [legislator retain];
 	
-	m_data = [[LegislatorInfoData alloc] init];
+	if ( nil == m_data )
+	{
+		m_data = [[LegislatorInfoData alloc] init];
+	}
 	[m_data setLegislator:m_legislator];
 	
 	[m_data setNotifyTarget:self andSelector:@selector(dataCallback:)];
@@ -279,12 +282,14 @@
 }
 */
 
-/*
+
 - (void)viewWillDisappear:(BOOL)animated 
 {
 	[super viewWillDisappear:animated];
+	
+	[m_data stopAnyWebActivity];
 }
-*/
+
 /*
 - (void)viewDidDisappear:(BOOL)animated 
 {
@@ -393,8 +398,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-	// XXX - perform a custom action based on the section/row
-	// XXX - i.e. make a phone call, send an email, view a map, etc.
+	// perform a custom action based on the section/row
+	// i.e. make a phone call, send an email, view a map, etc.
 	[m_data performActionForIndex:indexPath withParent:self];
 	
 	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];

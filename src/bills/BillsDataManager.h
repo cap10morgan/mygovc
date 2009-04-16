@@ -28,6 +28,8 @@
 	XMLParserOperation *m_xmlParser;
 	NSTimer *m_timer;
 	
+	NSMutableString *m_currentStatusMessage;
+	
 	id m_notifyTarget;
 	SEL m_notifySelector;
 }
@@ -38,6 +40,8 @@
 + (NSString *)dataCachePath;
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;
+
+- (NSString *)currentStatusMessage;
 
 - (void)beginBillSummaryDownload;
 

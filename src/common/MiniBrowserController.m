@@ -150,8 +150,7 @@ static MiniBrowserController *s_browser = NULL;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-	[self enableBackButton:m_webView.canGoBack];
-	[self enableFwdButton:m_webView.canGoForward];
+	[super viewWillAppear:animated];
 	
 	if ( nil != m_urlToLoad )
 	{
@@ -163,8 +162,15 @@ static MiniBrowserController *s_browser = NULL;
 		[m_webView reload];
 	}
 	m_loadingInterrupted = NO;
+}
+
+
+- (void)viewDidAppear:(BOOL)animated 
+{
+	[super viewDidAppear:animated];
 	
-	[super viewWillAppear:animated];
+	[self enableBackButton:m_webView.canGoBack];
+	[self enableFwdButton:m_webView.canGoForward];
 }
 
 
@@ -241,6 +247,8 @@ static MiniBrowserController *s_browser = NULL;
 - (void)loadURL:(NSURL *)url
 {
 	if ( nil == url ) return;
+	
+	m_loadingInterrupted = NO;
 	
 	// cancel any transaction currently taking place
 	if ( m_webView.loading ) [m_webView stopLoading];
@@ -338,6 +346,17 @@ static MiniBrowserController *s_browser = NULL;
 {
 	[m_activity startAnimating];
 	self.title = @"loading...";
+}
+
+
+- (void)webView:(UIWebView *)webView 
+		decidePolicyForNavigationAction:(NSDictionary *)actionInformation 
+		request:(NSURLRequest *)request 
+		frame:(WebFrame *)frame 
+		decisionListener:(id)listener
+{
+	// XXX - ?!?!
+	return;
 }
 
 

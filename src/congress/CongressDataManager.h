@@ -44,6 +44,8 @@ typedef enum
 	
 	XMLParserOperation *m_xmlParser;
 	
+	NSMutableString *m_currentStatusMessage;
+	
 	id m_notifyTarget;
 	SEL m_notifySelector;
 }
@@ -56,6 +58,8 @@ typedef enum
 - (id)initWithNotifyTarget:(id)target andSelector:(SEL)sel;
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;
+
+- (NSString *)currentStatusMessage;
 
 - (NSInteger)currentCongressSession;
 

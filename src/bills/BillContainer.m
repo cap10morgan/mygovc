@@ -235,6 +235,29 @@ static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bil
 }
 
 
+- (NSString *)titleNoBillNum
+{
+	NSRange space = [m_title rangeOfString:@" "];
+	NSInteger spaceIdx = (space.length > 0 ? space.location + 1 : 0);
+	
+	return [m_title substringFromIndex:spaceIdx];
+}
+
+
+- (NSString *)bornOnString
+{
+	NSUInteger compsFlags = NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit;
+	NSDateComponents *actionDate = [[NSCalendar currentCalendar] components:compsFlags fromDate:m_bornOn];
+	
+	NSString *str = [[[NSString alloc] initWithFormat:@"%04d-%02d-%02d",
+					  [actionDate year],
+					  [actionDate month],
+					  [actionDate day]
+					  ] autorelease];
+	return str;
+}
+
+
 - (LegislatorContainer *)sponsor
 {
 	if ( [m_sponsors count] > 0 )
@@ -245,9 +268,29 @@ static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bil
 }
 
 
+- (NSArray *)cosponsors
+{
+	return (NSArray *)m_cosponsors;
+}
+
+
 - (NSDate *)lastActionDate
 {
 	return m_lastActionDate;
+}
+
+
+- (NSString *)lastActionString
+{
+	NSUInteger compsFlags = NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit;
+	NSDateComponents *actionDate = [[NSCalendar currentCalendar] components:compsFlags fromDate:m_lastActionDate];
+	
+	NSString *str = [[[NSString alloc] initWithFormat:@"%04d-%02d-%02d",
+										   [actionDate year],
+										   [actionDate month],
+										   [actionDate day]
+					   ] autorelease];
+	return str;
 }
 
 

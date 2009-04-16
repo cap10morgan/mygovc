@@ -79,7 +79,9 @@ enum
                           @selector(rowActionURL:), \
                           @selector(rowActionMap:)
 
-
+// 
+// Setup the infostream section data 
+// 
 #define INFOSTREAM_ROWKEY @"01_twitter",@"02_youtube", \
                           @"03_OpenCongress", \
                           @"04_eventful", \
@@ -111,7 +113,6 @@ enum
 
 static NSInteger        s_sectionRefCount = 0;
 static NSMutableArray * s_dataSections = NULL;
-static NSMutableArray * s_sectionKeys = NULL;
 
 static NSString *kName_Response = @"person";
 static NSString *kName_NewsItem = @"recent-news";
@@ -168,22 +169,22 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 
 - (void)dealloc
 {
-	[m_notifyTarget release];
-	[m_legislator release];
-	[m_data release];
-	[m_activityData release];
-	
+	[m_xmlParser abort];
+	[m_xmlParser release];
 	[m_currentString release];
 	[m_currentTitle release];
 	[m_currentExcerpt release];
 	[m_currentSource release];
 	[m_currentRowData release];
-	[m_xmlParser release];
+
+	[m_notifyTarget release];
+	[m_legislator release];
+	[m_data release];
+	[m_activityData release];
 	
 	if ( 0 == --s_sectionRefCount )
 	{
 		[s_dataSections release]; s_dataSections = NULL;
-		[s_sectionKeys release]; s_sectionKeys = NULL;
 	}
 	
 	[super dealloc];
@@ -277,6 +278,12 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 	}
 	
 	[m_actionParent release]; m_actionParent = nil;
+}
+
+
+- (void)stopAnyWebActivity
+{
+	[m_xmlParser abort];
 }
 
 
@@ -394,7 +401,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 	NSInteger section = indexPath.section;
 	NSInteger row = indexPath.row;
 	
-	if ( section >= [m_data count] ) 30.0f; // some arbitrary default...
+	if ( section >= [m_data count] ) return nil; // some arbitrary default...
 	
 	NSArray *secArray = [m_data objectAtIndex:section];
 	if ( row >= [secArray count] ) return nil;
@@ -527,6 +534,10 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
+	// delay the downloading of recent info so that the
+	// legislator's image download has a chance to start first...
+	// (yes this is a bit of a hack)
+	[NSThread sleepForTimeInterval:1.1f]; 
 	NSLog( @"LegislatorInfoData started OpenCongress download for %@...",[m_legislator shortName] );
 }
 

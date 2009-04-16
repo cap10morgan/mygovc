@@ -21,15 +21,6 @@
 	LegislatorHeaderViewController *m_headerViewCtrl;
 	
 	LegislatorInfoData *m_data;
-	
-	NSMutableDictionary *m_contactRows;
-	NSMutableDictionary *m_committeeRows;
-	NSMutableDictionary *m_streamRows;
-	NSMutableDictionary *m_activityRows;
-	NSArray *m_contactFields;
-	NSArray *m_committeeFields;
-	NSArray *m_streamFields;
-	NSArray *m_activityFields;
 }
 
 @property (nonatomic, retain, setter=setLegislator:) LegislatorContainer *m_legislator;

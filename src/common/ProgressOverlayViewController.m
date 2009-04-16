@@ -103,6 +103,21 @@ enum
 	[pov setNeedsDisplay];
 }
 
+
+- (NSString *)currentText
+{
+	UILabel *lbl = (UILabel *)[self.view viewWithTag:eTAG_LABEL];
+	if ( nil != lbl )
+	{
+		return lbl.text;
+	}
+	else
+	{
+		return nil;
+	}
+}
+
+
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
@@ -215,6 +230,7 @@ enum
 		return;
 	}
 	
+	[self setHidden:NO];
 	m_animating = YES;
 	
 	NSString *text = [[m_txtArray objectAtIndex:0] retain];
@@ -238,6 +254,10 @@ enum
 	CGFloat dx = CGRectGetWidth(parentRect) - fontSz.width - S_MARGIN + m_framePlacementHack;
 	CGFloat dy = CGRectGetHeight(parentRect) - fontSz.height - 50.0f - S_MARGIN + m_framePlacementHack;
 	CGRect viewRect = CGRectInset(parentRect, dx/2.0f, dy/2.0f );
+	if ( CGRectGetMinX(viewRect) <= 0 || CGRectGetMinY(viewRect) > 480.0f )
+	{
+		viewRect = CGRectMake(100.0f,180.0f,120.0f,120.0f);
+	}
 	m_framePlacementHack = (m_framePlacementHack == 1) ? -1 : 1;
 	
 	// re-center the activity indicator
@@ -273,6 +293,7 @@ enum
 	
 	[text release];
 	[self setNeedsDisplay];
+	[self.superview setNeedsDisplay];
 }
 
 - (void)textAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context
@@ -280,7 +301,6 @@ enum
 	if ( [m_txtArray count] > 0 )
 	{
 		// start the next animation!
-		[NSThread sleepForTimeInterval:0.2f];
 		[self animateNextMessage];
 	}
 	else
@@ -303,6 +323,8 @@ enum
 
 - (void)setNewText:(id)txt
 {
+	if ( nil == txt ) return;
+	
 	NSString *myTxtCopy = [[NSString alloc] initWithString:txt];
 	[m_txtArray addObject:myTxtCopy];
 	[myTxtCopy release];

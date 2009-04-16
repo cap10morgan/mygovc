@@ -96,7 +96,15 @@ typedef enum
 
 - (LegislatorContainer *)sponsor;
 
+- (NSArray *)cosponsors;
+
+- (NSString *)titleNoBillNum;
+
+- (NSString *)bornOnString;
+
 - (NSDate *)lastActionDate;
+
+- (NSString *)lastActionString;
 
 - (BillAction *)lastBillAction;
 

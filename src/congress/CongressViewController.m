@@ -79,7 +79,10 @@ enum
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
-	[m_HUD setText:@"Loading..." andIndicateProgress:YES];
+	if ( ![m_data isDataAvailable] )
+	{
+		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
+	}
 	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
@@ -136,22 +139,20 @@ enum
 
 - (void)viewWillAppear:(BOOL)animated 
 {
-	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	[super viewWillAppear:animated];
 	
-	if ( ![m_data isDataAvailable] )
-	{
-		self.tableView.userInteractionEnabled = NO;
-	}
-		
-    [super viewWillAppear:animated];
+	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 }
 
 
 - (void)viewDidAppear:(BOOL)animated 
 {
+	[super viewDidAppear:animated];
+	
 	if ( [m_data isDataAvailable] )
 	{
 		self.tableView.userInteractionEnabled = YES;
+		[m_HUD show:NO];
 		
 		[self scrollToInitialPosition];
 		
@@ -168,14 +169,14 @@ enum
 	else
 	{
 		[m_HUD show:YES]; // with whatever text is there...
-		//[m_HUD setText:m_HUD.m_label.text andIndicateProgress:YES];
+		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
 	}
+	
+	[self.tableView setNeedsDisplay];
 	
 	// de-select the currently selected row
 	// (so the user can go back to the same legislator)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
-	
-	[super viewDidAppear:animated];
 }
 
 /*
@@ -386,7 +387,7 @@ enum
 		[m_initialLegislatorID release]; m_initialLegislatorID = nil;
 		if ( nil != bioguideID )
 		{
-			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:m_initialLegislatorID];
+			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:bioguideID];
 			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																		  selector:@selector(showInitialLegislator:) object:legislator];
 			
@@ -561,6 +562,9 @@ enum
 	[m_initialLegislatorID release]; m_initialLegislatorID = nil;
 	if ( nil != legislator )
 	{
+		// only 1 legislator at a time!
+		[self.navigationController popToRootViewControllerAnimated:NO];
+		
 		LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
 		[legViewCtrl setLegislator:legislator];
 		[self.navigationController pushViewController:legViewCtrl animated:YES];
@@ -957,7 +961,7 @@ enum
 		return;
 	}
 	
-	// pop up an alert asking the user if this is what they really want
+	// pop up an alert asking the user what action to perform
 	m_actionType = eActionContact;
 	UIActionSheet *contactAlert =
 	[[UIActionSheet alloc] initWithTitle:[legislator shortName]
