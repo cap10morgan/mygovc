@@ -7,6 +7,7 @@
 //
 #import <AddressBook/AddressBook.h>
 
+#import "CustomTableCell.h"
 #import "LegislatorViewController.h"
 #import "LegislatorContainer.h"
 #import "LegislatorInfoCell.h"
@@ -383,6 +384,16 @@
 {
 	static NSString *CellIdentifier = @"LegInfoCell";
 
+	CustomTableCell *cell = (CustomTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+	if ( nil == cell )
+	{
+		cell = [[[CustomTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+	}
+	
+	TableRowData *rd = [m_data dataAtIndexPath:indexPath];
+	[cell setRowData:rd];
+	
+	/*
 	LegislatorInfoCell *cell = (LegislatorInfoCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if (cell == nil) 
 	{
@@ -391,7 +402,7 @@
 	
 	// Set up the cell...
 	[m_data setInfoCell:cell forIndex:indexPath];
-	
+	*/
 	return cell;
 }
 

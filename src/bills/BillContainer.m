@@ -332,4 +332,22 @@ static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bil
 }
 
 
+- (NSString *)voteString
+{
+	VoteResult v = [m_lastAction m_voteResult];
+	if ( eVote_passed == v )
+	{
+		return @"Passed";
+	}
+	else if ( eVote_failed == v )
+	{
+		return @"Failed";
+	}
+	else
+	{
+		return nil;
+	}
+}
+
+
 @end

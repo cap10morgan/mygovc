@@ -41,6 +41,8 @@
 		01B4E05F0F6449BB00219672 /* ProgressOverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */; };
 		01B4E2200F64D6EC00219672 /* LegislatorHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */; };
 		01B4E2230F64D88000219672 /* LegislatorHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */; };
+		01B78F180F97E72E00E1364F /* TableDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B78F170F97E72E00E1364F /* TableDataManager.m */; };
+		01B78F630F9828C100E1364F /* CustomTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B78F620F9828C100E1364F /* CustomTableCell.m */; };
 		01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6ED0F8AEACD00619441 /* backButton.png */; };
 		01B7B6F00F8AEACE00619441 /* fwdButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6EE0F8AEACD00619441 /* fwdButton.png */; };
 		01B7B6F60F8AEC5500619441 /* MiniBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B7B6F50F8AEC5500619441 /* MiniBrowserController.m */; };
@@ -58,7 +60,6 @@
 		01E1D9E70F80817E008B3711 /* BillsDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E1D9E60F80817E008B3711 /* BillsDataManager.m */; };
 		01E1DA090F8085D3008B3711 /* BillContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E1DA080F8085D3008B3711 /* BillContainer.m */; };
 		01EDDF9F0F6363D00098A7B6 /* LegislatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */; };
-		01EDDFC80F6380020098A7B6 /* LegislatorInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01EDDFC70F6380020098A7B6 /* LegislatorInfoCell.m */; };
 		0461A05A0F5A471400BE17FF /* CommunityItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 0461A0590F5A471400BE17FF /* CommunityItem.m */; };
 		04B603120F59BE3000815A86 /* CommunityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B603110F59BE3000815A86 /* CommunityViewController.m */; };
 		04B603940F5A1A2700815A86 /* CommunityTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B603930F5A1A2700815A86 /* CommunityTableViewCell.m */; };
@@ -123,6 +124,10 @@
 		01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LegislatorHeaderView.xib; path = src/congress/LegislatorHeaderView.xib; sourceTree = "<group>"; };
 		01B4E2210F64D88000219672 /* LegislatorHeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorHeaderViewController.h; path = src/congress/LegislatorHeaderViewController.h; sourceTree = "<group>"; };
 		01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorHeaderViewController.m; path = src/congress/LegislatorHeaderViewController.m; sourceTree = "<group>"; };
+		01B78F160F97E72E00E1364F /* TableDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableDataManager.h; path = src/common/TableDataManager.h; sourceTree = "<group>"; };
+		01B78F170F97E72E00E1364F /* TableDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableDataManager.m; path = src/common/TableDataManager.m; sourceTree = "<group>"; };
+		01B78F610F9828C100E1364F /* CustomTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomTableCell.h; path = src/common/CustomTableCell.h; sourceTree = "<group>"; };
+		01B78F620F9828C100E1364F /* CustomTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CustomTableCell.m; path = src/common/CustomTableCell.m; sourceTree = "<group>"; };
 		01B7B6ED0F8AEACD00619441 /* backButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = backButton.png; path = res/backButton.png; sourceTree = "<group>"; };
 		01B7B6EE0F8AEACD00619441 /* fwdButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fwdButton.png; path = res/fwdButton.png; sourceTree = "<group>"; };
 		01B7B6F40F8AEC5500619441 /* MiniBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniBrowserController.h; path = src/common/MiniBrowserController.h; sourceTree = "<group>"; };
@@ -152,8 +157,6 @@
 		01E1DA080F8085D3008B3711 /* BillContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillContainer.m; path = src/bills/BillContainer.m; sourceTree = "<group>"; };
 		01EDDF9D0F6363D00098A7B6 /* LegislatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorViewController.h; path = src/congress/LegislatorViewController.h; sourceTree = "<group>"; };
 		01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorViewController.m; path = src/congress/LegislatorViewController.m; sourceTree = "<group>"; };
-		01EDDFC60F6380020098A7B6 /* LegislatorInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorInfoCell.h; path = src/congress/LegislatorInfoCell.h; sourceTree = "<group>"; };
-		01EDDFC70F6380020098A7B6 /* LegislatorInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorInfoCell.m; path = src/congress/LegislatorInfoCell.m; sourceTree = "<group>"; };
 		0461A0580F5A471400BE17FF /* CommunityItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityItem.h; sourceTree = "<group>"; };
 		0461A0590F5A471400BE17FF /* CommunityItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityItem.m; sourceTree = "<group>"; };
 		04B603100F59BE3000815A86 /* CommunityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityViewController.h; sourceTree = "<group>"; };
@@ -210,8 +213,6 @@
 				01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */,
 				01EDDF9D0F6363D00098A7B6 /* LegislatorViewController.h */,
 				01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */,
-				01EDDFC60F6380020098A7B6 /* LegislatorInfoCell.h */,
-				01EDDFC70F6380020098A7B6 /* LegislatorInfoCell.m */,
 				01AD659D0F957259003AECE0 /* LegislatorInfoData.h */,
 				01AD659E0F957259003AECE0 /* LegislatorInfoData.m */,
 				01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */,
@@ -312,6 +313,10 @@
 				011EF3CC0F91A48E00932BBE /* ComposeMessageViewController.m */,
 				01D998FD0F96995200961A76 /* DataProviders.h */,
 				01D998FE0F96995200961A76 /* DataProviders.m */,
+				01B78F160F97E72E00E1364F /* TableDataManager.h */,
+				01B78F170F97E72E00E1364F /* TableDataManager.m */,
+				01B78F610F9828C100E1364F /* CustomTableCell.h */,
+				01B78F620F9828C100E1364F /* CustomTableCell.m */,
 			);
 			name = common;
 			sourceTree = "<group>";
@@ -453,7 +458,6 @@
 				01BC2FE10F5B973B00E7ABD0 /* CongressDataManager.m in Sources */,
 				01BC2FEC0F5BA34000E7ABD0 /* LegislatorContainer.m in Sources */,
 				01EDDF9F0F6363D00098A7B6 /* LegislatorViewController.m in Sources */,
-				01EDDFC80F6380020098A7B6 /* LegislatorInfoCell.m in Sources */,
 				01B4E05F0F6449BB00219672 /* ProgressOverlayViewController.m in Sources */,
 				01B4E2230F64D88000219672 /* LegislatorHeaderViewController.m in Sources */,
 				01C43CE10F662D0B00F8A025 /* BillsViewController.m in Sources */,
@@ -477,6 +481,8 @@
 				01D998FF0F96995200961A76 /* DataProviders.m in Sources */,
 				01846B900F96BFE200444529 /* BillInfoData.m in Sources */,
 				01846B930F96C02C00444529 /* BillInfoViewController.m in Sources */,
+				01B78F180F97E72E00E1364F /* TableDataManager.m in Sources */,
+				01B78F630F9828C100E1364F /* CustomTableCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

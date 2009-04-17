@@ -114,5 +114,7 @@ typedef enum
 
 - (NSURL *)getFullTextURL;
 
+- (NSString *)voteString;
+
 @end
 

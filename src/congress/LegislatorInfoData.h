@@ -8,11 +8,34 @@
 
 #import <Foundation/Foundation.h>
 #import "XMLParserOperation.h"
+#import "TableDataManager.h"
 
 @class LegislatorContainer;
-@class LegislatorInfoCell;
-@class SectionRowData;
+//@class LegislatorInfoCell;
+//@class SectionRowData;
 
+@interface LegislatorInfoData : TableDataManager <XMLParserOperationDelegate>
+{
+	LegislatorContainer *m_legislator;
+	
+	BOOL m_activityDownloaded;
+	NSMutableArray *m_activityData;
+	
+	BOOL m_parsingResponse;
+	BOOL m_storingCharacters;
+	NSMutableString *m_currentString;
+	NSString *m_currentTitle;
+	NSString *m_currentExcerpt;
+	NSString *m_currentSource;
+	TableRowData *m_currentRowData;
+	XMLParserOperation *m_xmlParser;
+}
+
+- (void)setLegislator:(LegislatorContainer *)legislator;
+
+- (void)stopAnyWebActivity;
+
+/*
 @interface LegislatorInfoData : NSObject <XMLParserOperationDelegate>
 {
 @private
@@ -56,5 +79,6 @@
 - (void)performActionForIndex:(NSIndexPath *)indexPath withParent:(id)parent;
 
 - (void)stopAnyWebActivity;
+*/
 
 @end

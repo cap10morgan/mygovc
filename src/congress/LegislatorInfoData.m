@@ -14,34 +14,6 @@
 #import "MiniBrowserController.h"
 
 
-@interface SectionRowData : NSObject
-{
-	NSString *field;
-	NSString *value;
-	NSURL *url;
-	SEL action;
-}
-@property (nonatomic,retain) NSString *field;
-@property (nonatomic,retain) NSString *value;
-@property (nonatomic,retain) NSURL *url;
-@property (nonatomic) SEL action;
-
-- (NSComparisonResult)compareField:(SectionRowData *)other;
-
-@end
-
-@implementation SectionRowData
-
-@synthesize field, value, url, action;
-
-- (NSComparisonResult)compareField:(SectionRowData *)other
-{
-	return [field compare:other.field];
-}
-
-@end
-
-
 enum
 {
 	eSection_Contact = 0,
@@ -50,7 +22,7 @@ enum
 	eSection_Recent = 3,
 };
 
-#define KEY_CONTACT    @"ContactInformation" 
+#define KEY_CONTACT    @"Contact Information" 
 #define KEY_COMMITTEE  @"Committee Membership"
 #define KEY_INFOSTREAM @"Legislator Info Stream"
 #define KEY_RECENT     @"Recent Activity"
@@ -77,7 +49,7 @@ enum
                           @selector(rowActionNone:), \
                           @selector(rowActionURL:), \
                           @selector(rowActionURL:), \
-                          @selector(rowActionMap:)
+                          @selector(rowActionLegislatorMap:)
 
 // 
 // Setup the infostream section data 
@@ -98,21 +70,13 @@ enum
 
 @interface LegislatorInfoData (private)
 	- (NSArray *)setupDataSection:(NSInteger)section;
-	- (SectionRowData *)dataForIndexPath:(NSIndexPath *)indexPath;
 	- (void)startActivityDownload;
-	- (void)rowActionNone:(NSIndexPath *)indexPath;
-	- (void)rowActionMailto:(NSIndexPath *)indexPath;
-	- (void)rowActionPhoneCall:(NSIndexPath *)indexPath;
-	- (void)rowActionURL:(NSIndexPath *)indexPath;
-	- (void)rowActionMap:(NSIndexPath *)indexPath;
+	- (void)rowActionLegislatorMap:(NSIndexPath *)indexPath;
 @end
 
 
 
 @implementation LegislatorInfoData
-
-static NSInteger        s_sectionRefCount = 0;
-static NSMutableArray * s_dataSections = NULL;
 
 static NSString *kName_Response = @"person";
 static NSString *kName_NewsItem = @"recent-news";
@@ -139,10 +103,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 {
 	if ( self = [super init] )
 	{
-		m_notifyTarget = nil;
-		m_notifySelector = nil;
 		m_legislator = nil;
-		m_data = nil;
 		
 		m_activityDownloaded = NO;
 		m_activityData = nil;
@@ -156,12 +117,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 		m_currentRowData = nil;
 		m_xmlParser = nil;
 		
-		// build up the array of data sections if necessary
-		if ( NULL == s_dataSections )
-		{
-			s_dataSections = [[NSArray alloc] initWithObjects:DATA_SECTIONS];
-		} // if ( NULL == s_dataSections )
-		++s_sectionRefCount;
+		m_dataSections = [[NSArray alloc] initWithObjects:DATA_SECTIONS];
 	}
 	return self;
 }
@@ -177,25 +133,10 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 	[m_currentSource release];
 	[m_currentRowData release];
 
-	[m_notifyTarget release];
 	[m_legislator release];
-	[m_data release];
 	[m_activityData release];
 	
-	if ( 0 == --s_sectionRefCount )
-	{
-		[s_dataSections release]; s_dataSections = NULL;
-	}
-	
 	[super dealloc];
-}
-
-
-- (void)setNotifyTarget:(id)target andSelector:(SEL)sel
-{
-	[m_notifyTarget release];
-	m_notifyTarget = target;
-	m_notifySelector = sel;
 }
 
 
@@ -206,78 +147,14 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 	m_activityDownloaded = NO;
 	
 	// allocate data
-	m_data = [[NSMutableArray alloc] initWithCapacity:[s_dataSections count]];
+	m_data = [[NSMutableArray alloc] initWithCapacity:[m_dataSections count]];
 	
-	for ( NSInteger ii = 0; ii < [s_dataSections count]; ++ii )
+	for ( NSInteger ii = 0; ii < [m_dataSections count]; ++ii )
 	{
 		NSArray *sectionData = [self setupDataSection:ii];
 		[m_data addObject:sectionData];
 		[sectionData release];
 	}
-}
-
-
-- (NSInteger)numberOfSections
-{
-	return [m_data count];
-}
-
-
-- (NSString *)titleForSection:(NSInteger)section
-{
-	if ( section < [s_dataSections count] )
-	{
-		return [s_dataSections objectAtIndex:section];
-	}
-	return nil;
-}
-
-
-- (NSInteger)numberOfRowsInSection:(NSInteger)section
-{
-	if ( section >= [m_data count] ) return 0;
-	return [[m_data objectAtIndex:section] count];
-}
-
-
-- (CGFloat)heightForDataAtIndexPath:(NSIndexPath *)indexPath
-{
-	SectionRowData *rd = [self dataForIndexPath:indexPath];
-	return [LegislatorInfoCell cellHeightForText:rd.value withKeyname:rd.field];
-}
-
-
-- (void)setInfoCell:(LegislatorInfoCell *)cell forIndex:(NSIndexPath *)indexPath
-{
-	if ( nil == cell ) return;
-	if ( nil == indexPath ) return;
-	
-	SectionRowData *rd = [self dataForIndexPath:indexPath];
-	[cell setField:rd.field withValue:rd.value];
-	
-	SEL none = @selector(rowActionNone:);
-	if ( rd.action == none )
-	{
-		cell.accessoryType = UITableViewCellAccessoryNone;
-	}
-	else
-	{
-		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	}
-}
-
-
-- (void)performActionForIndex:(NSIndexPath *)indexPath withParent:(id)parent
-{
-	m_actionParent = [parent retain];
-	
-	SectionRowData *rd = [self dataForIndexPath:indexPath];
-	if ( nil != rd )
-	{
-		[self performSelector:rd.action withObject:indexPath];
-	}
-	
-	[m_actionParent release]; m_actionParent = nil;
 }
 
 
@@ -306,9 +183,12 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 				NSString *value = [m_legislator performSelector:dataSelector[ii]];
 				if ( [value length] > 0 )
 				{
-					SectionRowData *rd = [[SectionRowData alloc] init];
-					rd.value = value;
-					rd.field = [keys objectAtIndex:ii];
+					TableRowData *rd = [[TableRowData alloc] init];
+					rd.title = [keys objectAtIndex:ii];
+					rd.titleFont = [UIFont boldSystemFontOfSize:12.0f];
+					rd.line1 = value;
+					rd.line1Font = [UIFont systemFontOfSize:12.0f];
+					
 					rd.action = dataAction[ii];
 					[retVal addObject:rd];
 				}
@@ -326,9 +206,12 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 				NSString *value = [m_legislator performSelector:dataSelector[ii]];
 				if ( [value length] > 0 )
 				{
-					SectionRowData *rd = [[SectionRowData alloc] init];
-					rd.value = value;
-					rd.field = [keys objectAtIndex:ii];
+					TableRowData *rd = [[TableRowData alloc] init];
+					rd.title = [keys objectAtIndex:ii];
+					rd.titleFont = [UIFont boldSystemFontOfSize:12.0f];
+					rd.line1 = value;
+					rd.line1Font = [UIFont systemFontOfSize:12.0f];
+					
 					rd.action = dataAction[ii];
 					[retVal addObject:rd];
 				}
@@ -343,21 +226,20 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 			while (obj = [comEnum nextObject]) 
 			{
 				LegislativeCommittee *committee = (LegislativeCommittee *)obj;
+				
 				NSString *cID = [NSString stringWithFormat:@"%@_%@",
 											committee.m_id,
 											(nil == committee.m_parentCommittee ? 
-												@"" : 
+												committee.m_id : 
 												[NSString stringWithFormat:@"[%@]",committee.m_parentCommittee]
 											 )
 								 ];
-				NSString *cNM = [NSString stringWithFormat:@"%@\n%@",
-											(nil == committee.m_parentCommittee ? committee.m_id : @""),
-											committee.m_name
-								 ];
+				TableRowData *rd = [[TableRowData alloc] init];
+				rd.title = cID;
+				rd.titleFont = [UIFont boldSystemFontOfSize:14.0f];
+				rd.line2 = committee.m_name;
+				rd.line2Font = [UIFont systemFontOfSize:14.0f];
 				
-				SectionRowData *rd = [[SectionRowData alloc] init];
-				rd.value = cNM;
-				rd.field = cID;
 				rd.action = @selector(rowActionNone:);
 				[retVal addObject:rd];
 			}
@@ -378,9 +260,8 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 				}
 				else
 				{
-					SectionRowData *rd = [[SectionRowData alloc] init];
-					rd.value = @"Downloading...";
-					rd.field = @"";
+					TableRowData *rd = [[TableRowData alloc] init];
+					rd.title = @"Downloading...";
 					rd.action = @selector(rowActionNone:);
 					[retVal addObject:rd];
 				}
@@ -390,27 +271,9 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 			break;
 	}
 	
-	[retVal sortUsingSelector:@selector(compareField:)];
+	[retVal sortUsingSelector:@selector(compareTitle:)];
 	
 	return retVal;
-}
-
-
-- (SectionRowData *)dataForIndexPath:(NSIndexPath *)indexPath
-{
-	NSInteger section = indexPath.section;
-	NSInteger row = indexPath.row;
-	
-	if ( section >= [m_data count] ) return nil; // some arbitrary default...
-	
-	NSArray *secArray = [m_data objectAtIndex:section];
-	if ( row >= [secArray count] ) return nil;
-	
-	// 
-	// Get the key/value pair from the single-object-dictionary stored
-	// in the 'm_data' object at: m_data[indexPath.section][indexPath.row]
-	// 
-	return [secArray objectAtIndex:row];
 }
 
 
@@ -435,64 +298,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 }
 
 
-- (void)rowActionNone:(NSIndexPath *)indexPath
-{
-	(void)indexPath;
-	return;
-}
-
-
-- (void)rowActionMailto:(NSIndexPath *)indexPath
-{
-	SectionRowData *rd = [self dataForIndexPath:indexPath];
-	if ( nil == rd ) return;
-	
-	NSString *emailStr = [[NSString alloc] initWithFormat:@"mailto:%@?subject=%@",
-						  [rd.value stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding], 
-						  @"Message from a concerned citizen"
-						  ];
-	NSURL *emailURL = [[NSURL alloc] initWithString:emailStr];
-	[[UIApplication sharedApplication] openURL:emailURL];
-	[emailStr release];
-	[emailURL release];
-}
-
-
-- (void)rowActionPhoneCall:(NSIndexPath *)indexPath
-{
-	SectionRowData *rd = [self dataForIndexPath:indexPath];
-	if ( nil == rd ) return;
-	
-	// make a phone call!
-	NSString *telStr = [[[NSString alloc] initWithFormat:@"tel:%@",rd.value] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	NSURL *telURL = [[NSURL alloc] initWithString:telStr];
-	[[UIApplication sharedApplication] openURL:telURL];
-	[telStr release];
-	[telURL release];
-}
-
-
-- (void)rowActionURL:(NSIndexPath *)indexPath
-{
-	SectionRowData *rd = [self dataForIndexPath:indexPath];
-	if ( nil == rd ) return;
-	
-	NSURL *url;
-	if ( [[rd.url absoluteString] length] > 0 )
-	{
-		url = rd.url;
-	}
-	else
-	{
-		url = [NSURL URLWithString:rd.value];
-	}
-	
-	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:url];
-	[mbc display:m_actionParent];
-}
-
-
-- (void)rowActionMap:(NSIndexPath *)indexPath
+- (void)rowActionLegislatorMap:(NSIndexPath *)indexPath
 {
 	static NSString * kGoogleMapsURLFmt = @"http://maps.google.com/maps?q=%@+%@+%@+Washington+DC&ie=UTF&z=17&cd=1";
 	
@@ -522,11 +328,8 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 	
 	// open GoogleMaps application!
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlStr]];
-	/*
-	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:[NSURL URLWithString:urlStr]];
-	[mbc display:m_actionParent];
-	 */
 }
+
 
 
 #pragma mark XMLParserOperationDelegate Methods
@@ -550,15 +353,14 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 		[m_activityData release]; 
 		m_activityData = [[NSMutableArray alloc] init];
 		
-		SectionRowData *rd = [[SectionRowData alloc] init];
-		rd.field = @"";
+		TableRowData *rd = [[TableRowData alloc] init];
 		if ( [m_currentString length] > 0 )
 		{
-			rd.value = m_currentString; // the error string
+			rd.title = m_currentString; // the error string
 		}
 		else
 		{
-			rd.value = @"Error downloading activity...";
+			rd.title = @"Error downloading activity...";
 		}
 		rd.url = nil;
 		rd.action = @selector(rowActionNone:);
@@ -614,7 +416,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 			else
 			{
 				// start a news item
-				m_currentRowData = [[SectionRowData alloc] init]; 
+				m_currentRowData = [[TableRowData alloc] init]; 
 				
 				m_storingCharacters = YES;
 			}
@@ -659,15 +461,11 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 		else if ( [elementName isEqualToString:kName_NewsItem]  )
 		{
 			// put together the final 'value'
-			NSString *valStr = [[NSString alloc] initWithFormat:@"%@\n\n%@",
-													m_currentSource,
-													//m_currentTitle,
-													m_currentExcerpt
-								];
-			m_currentRowData.field = @"";
-			m_currentRowData.value = valStr;
+			m_currentRowData.title = m_currentSource;
+			m_currentRowData.titleFont = [UIFont boldSystemFontOfSize:14.0f];
+			m_currentRowData.line2 = m_currentExcerpt;
+			m_currentRowData.line2Font = [UIFont systemFontOfSize:12.0f];
 			m_currentRowData.action = @selector(rowActionURL:);
-			[valStr release];
 			
 			[m_activityData addObject:m_currentRowData];
 			[m_currentRowData release]; m_currentRowData = nil;

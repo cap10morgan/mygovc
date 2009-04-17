@@ -9,7 +9,7 @@
 #import "BillInfoViewController.h"
 #import "BillContainer.h"
 #import "BillInfoData.h"
-
+#import "CustomTableCell.h"
 
 @implementation BillInfoViewController
 
@@ -56,6 +56,7 @@
 	}
 	[m_data setBill:m_bill];
 	
+	self.title = [m_bill getShortTitle];
 	[self.tableView reloadData];
 }
 
@@ -190,17 +191,14 @@
 {
 	static NSString *CellIdentifier = @"BillInfoCell";
 	
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+	CustomTableCell *cell = (CustomTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if ( nil == cell )
 	{
-		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		cell = [[[CustomTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
 	}
 	
-	BillRowData *brd = [m_data billForIndex:indexPath];
-	if ( nil != brd )
-	{
-		cell.text = brd.line1;
-	}
+	TableRowData *rd = [m_data dataAtIndexPath:indexPath];
+	[cell setRowData:rd];
 	/*
 	BillInfoCell *cell = (BillInfoCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if (cell == nil) 

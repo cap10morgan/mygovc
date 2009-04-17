@@ -8,20 +8,9 @@
 
 #import "BillInfoData.h"
 #import "BillContainer.h"
+#import "CustomTableCell.h"
 #import "LegislatorContainer.h"
 #import "MiniBrowserController.h"
-
-@implementation BillRowData
-
-@synthesize title, line1, line2, url, action;
-
-- (NSComparisonResult)compareTitle:(BillRowData *)other
-{
-	return [title compare:other.title];
-}
-
-@end
-
 
 
 enum
@@ -57,43 +46,35 @@ enum
                     @selector(bornOnString),\
                     @selector(lastActionString)
 
-#define INFO_ROWACTION  @selector(rowActionNone:), \
+#define INFO_ROWSUBSEL nil, \
+					   nil, \
+					   @selector(voteString), \
+					   nil,\
+					   nil
+
+#define INFO_ROWACTION  @selector(rowActionURL:), \
                         @selector(rowActionNone:), \
                         @selector(rowActionNone:), \
                         @selector(rowActionNone:), \
                         @selector(rowActionNone:)
 
+#define INFO_ROWURLSEL  @selector(getFullTextURL), \
+                        nil, nil, nil, nil
+
 
 @interface BillInfoData (private)
-	- (BillRowData *)dataForIndexPath:(NSIndexPath *)indexPath;
 	- (NSArray *)setupDataSection:(NSInteger)section;
-	- (void)rowActionNone:(NSIndexPath *)indexPath;
-	- (void)rowActionURL:(NSIndexPath *)indexPath;
 @end
 
 
 @implementation BillInfoData
 
-static NSInteger        s_sectionRefCount = 0;
-static NSMutableArray * s_dataSections = NULL;
-
-
 - (id)init
 {
 	if ( self = [super init] )
 	{
-		m_notifyTarget = nil;
-		m_notifySelector = nil;
 		m_bill = nil;
-		m_data = nil;
-		m_actionParent = nil;
-		
-		// build up the array of data sections if necessary
-		if ( NULL == s_dataSections )
-		{
-			s_dataSections = [[NSArray alloc] initWithObjects:DATA_SECTIONS];
-		} // if ( NULL == s_dataSections )
-		++s_sectionRefCount;
+		m_dataSections = [[NSMutableArray alloc] initWithObjects:DATA_SECTIONS];
 	}
 	return self;
 }
@@ -101,24 +82,9 @@ static NSMutableArray * s_dataSections = NULL;
 
 - (void)dealloc
 {
-	[m_notifyTarget release];
 	[m_bill release];
-	[m_data release];
-	
-	if ( 0 == --s_sectionRefCount )
-	{
-		[s_dataSections release]; s_dataSections = NULL;
-	}
-	
+	// we don't have to release 'm_dataSections' - that happens in our super class :-)
 	[super dealloc];
-}
-
-
-- (void)setNotifyTarget:(id)target andSelector:(SEL)sel
-{
-	[m_notifyTarget release];
-	m_notifyTarget = target;
-	m_notifySelector = sel;
 }
 
 
@@ -127,10 +93,12 @@ static NSMutableArray * s_dataSections = NULL;
 	[m_data release]; m_data = nil;
 	[m_bill release]; m_bill = [bill retain];
 	
-	// allocate data
-	m_data = [[NSMutableArray alloc] initWithCapacity:[s_dataSections count]];
+	if ( nil == m_bill ) return;
 	
-	for ( NSInteger ii = 0; ii < [s_dataSections count]; ++ii )
+	// allocate data
+	m_data = [[NSMutableArray alloc] initWithCapacity:[m_dataSections count]];
+	
+	for ( NSInteger ii = 0; ii < [m_dataSections count]; ++ii )
 	{
 		NSArray *sectionData = [self setupDataSection:ii];
 		if ( nil != sectionData )
@@ -142,99 +110,7 @@ static NSMutableArray * s_dataSections = NULL;
 }
 
 
-- (NSInteger)numberOfSections
-{
-	return [m_data count];
-}
-
-
-- (NSString *)titleForSection:(NSInteger)section
-{
-	if ( section < [s_dataSections count] )
-	{
-		return [s_dataSections objectAtIndex:section];
-	}
-	return nil;
-}
-
-
-- (NSInteger)numberOfRowsInSection:(NSInteger)section
-{
-	if ( section >= [m_data count] ) return 0;
-	return [[m_data objectAtIndex:section] count];
-}
-
-
-- (CGFloat)heightForDataAtIndexPath:(NSIndexPath *)indexPath
-{
-	return 35.0f;
-	/*
-	BillRowData *rd = [self dataForIndexPath:indexPath];
-	return [LegislatorInfoCell cellHeightForText:rd.value withKeyname:rd.field];
-	*/
-}
-
-/*
-- (void)setInfoCell:(LegislatorInfoCell *)cell forIndex:(NSIndexPath *)indexPath
-{
-	if ( nil == cell ) return;
-	if ( nil == indexPath ) return;
-	
-	BillRowData *rd = [self dataForIndexPath:indexPath];
-	[cell setField:rd.field withValue:rd.value];
-	
-	SEL none = @selector(rowActionNone:);
-	if ( rd.action == none )
-	{
-		cell.accessoryType = UITableViewCellAccessoryNone;
-	}
-	else
-	{
-		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	}
-}
-*/
-
-
-- (BillRowData *)billForIndex:(NSIndexPath *)indexPath
-{
-	return [self dataForIndexPath:indexPath];
-}
-
-
-- (void)performActionForIndex:(NSIndexPath *)indexPath withParent:(id)parent
-{
-	m_actionParent = [parent retain];
-	
-	BillRowData *rd = [self dataForIndexPath:indexPath];
-	if ( nil != rd && nil != rd.action )
-	{
-		[self performSelector:rd.action withObject:indexPath];
-	}
-	
-	[m_actionParent release]; m_actionParent = nil;
-}
-
-
 #pragma mark BillInfoData Private 
-
-
-- (BillRowData *)dataForIndexPath:(NSIndexPath *)indexPath
-{
-	NSInteger section = indexPath.section;
-	NSInteger row = indexPath.row;
-	
-	if ( section >= [m_data count] ) return nil;
-	
-	NSArray *secArray = [m_data objectAtIndex:section];
-	if ( row >= [secArray count] ) return nil;
-	
-	// 
-	// Get the key/value pair from the single-object-dictionary stored
-	// in the 'm_data' object at: m_data[indexPath.section][indexPath.row]
-	// 
-	return [secArray objectAtIndex:row];
-}
 
 
 - (NSArray *)setupDataSection:(NSInteger)section
@@ -247,16 +123,44 @@ static NSMutableArray * s_dataSections = NULL;
 		{
 			NSArray *keys = [NSArray arrayWithObjects:INFO_ROWKEY];
 			SEL dataSelector[] = { INFO_ROWSEL };
+			SEL dataSubSel[] = { INFO_ROWSUBSEL };
+			SEL dataUrlSel[] = { INFO_ROWURLSEL };
 			SEL dataAction[] = { INFO_ROWACTION };
+			
 			for ( NSInteger ii = 0; ii < [keys count]; ++ii )
 			{
 				NSString *value = [m_bill performSelector:dataSelector[ii]];
 				if ( [value length] > 0 )
 				{
-					BillRowData *rd = [[BillRowData alloc] init];
+					TableRowData *rd = [[TableRowData alloc] init];
 					rd.title = [keys objectAtIndex:ii];
+					rd.titleColor = [UIColor blackColor];
 					rd.line1 = value;
+					rd.line1Color = [UIColor darkGrayColor];
+					if ( nil != dataSubSel[ii] )
+					{
+						rd.line2 = [m_bill performSelector:dataSubSel[ii]];
+						rd.line2Font = [UIFont boldSystemFontOfSize:14.0f];
+						if ( [rd.line2 isEqualToString:@"Passed"] )
+						{
+							rd.line2 = [NSString stringWithFormat:@"                    %@",rd.line2];
+							rd.line2Color = [UIColor greenColor];
+						}
+						else if ( [rd.line2 isEqualToString:@"Failed"] )
+						{
+							rd.line2 = [NSString stringWithFormat:@"                    %@",rd.line2];
+							rd.line2Color = [UIColor blackColor];
+						}
+						else
+						{
+							rd.line2Color = [UIColor darkGrayColor];
+						}
+					}
 					rd.url = nil;
+					if ( nil != dataUrlSel[ii] )
+					{
+						rd.url = [m_bill performSelector:dataUrlSel[ii]];
+					}
 					rd.action = dataAction[ii];
 					[retVal addObject:rd];
 					[rd release];
@@ -264,12 +168,19 @@ static NSMutableArray * s_dataSections = NULL;
 			}
 		}
 			break;
+			
 		case eSection_Sponsor:
 		{
+			TableRowData *rd = [[TableRowData alloc] init];
 			LegislatorContainer *lc = [m_bill sponsor];
-			BillRowData *rd = [[BillRowData alloc] init];
-			rd.title = @"";
-			rd.line1 = [lc shortName];
+			NSInteger district = [[lc district] integerValue];
+			rd.title = [NSString stringWithFormat:@"%@ (%@), %@%@",
+									[lc shortName],
+									[lc party],
+									[lc state],
+									([[lc district] length] > 0 ? [NSString stringWithFormat:@"-%02d",district] : @"")
+			           ];
+			rd.titleColor = [LegislatorContainer partyColor:[lc party]];
 			NSString *appUrlStr = [NSString stringWithFormat:@"mygov://congress/house:0:0:%@",[lc bioguide_id]];
 			NSURL *appUrl = [[NSURL alloc] initWithString:appUrlStr];
 			rd.url = appUrl;
@@ -279,6 +190,7 @@ static NSMutableArray * s_dataSections = NULL;
 			[rd release];
 		}
 			break;
+			
 		case eSection_CoSponsors:
 		{
 			NSArray *csArray = [m_bill cosponsors];
@@ -286,10 +198,16 @@ static NSMutableArray * s_dataSections = NULL;
 			id legislator;
 			while ( legislator = [csEnum nextObject] )
 			{
+				TableRowData *rd = [[TableRowData alloc] init];
 				LegislatorContainer *lc = (LegislatorContainer *)legislator;
-				BillRowData *rd = [[BillRowData alloc] init];
-				rd.title = @"";
-				rd.line1 = [lc shortName];
+				NSInteger district = [[lc district] integerValue];
+				rd.title = [NSString stringWithFormat:@"%@ (%@), %@%@",
+										[lc shortName],
+										[lc party],
+										[lc state],
+										([[lc district] length] > 0 ? [NSString stringWithFormat:@"-%02d",district] : @"")
+							];
+				rd.titleColor = [LegislatorContainer partyColor:[lc party]];
 				NSString *appUrlStr = [NSString stringWithFormat:@"mygov://congress/house:0:0:%@",[lc bioguide_id]];
 				NSURL *appUrl = [[NSURL alloc] initWithString:appUrlStr];
 				rd.url = appUrl;
@@ -300,6 +218,7 @@ static NSMutableArray * s_dataSections = NULL;
 			}
 		}
 			break;
+		
 		case eSection_History:
 		{
 			NSArray *hArray = [m_bill billActions];
@@ -307,10 +226,11 @@ static NSMutableArray * s_dataSections = NULL;
 			id bi;
 			while ( bi = [hEnum nextObject] )
 			{
+				TableRowData *rd = [[TableRowData alloc] init];
 				BillAction *bAction = (BillAction *)bi;
-				BillRowData *rd = [[BillRowData alloc] init];
 				rd.title = @"";
 				rd.line1 = [bAction shortDescrip];
+				rd.line1Color = [UIColor blackColor];
 				rd.url = nil;
 				rd.action = @selector(rowActionNone:);
 				[retVal addObject:rd];
@@ -318,52 +238,12 @@ static NSMutableArray * s_dataSections = NULL;
 			}
 		}
 			break;
-	}
+		
+	} // switch ( section )
 	
 	
 	[retVal sortUsingSelector:@selector(compareTitle:)];
 	return retVal;
-}
-
-
-- (void)rowActionNone:(NSIndexPath *)indexPath
-{
-	(void)indexPath;
-	return;
-}
-
-
-- (void)rowActionURL:(NSIndexPath *)indexPath
-{
-	BillRowData *rd = [self dataForIndexPath:indexPath];
-	if ( nil == rd ) return;
-	
-	NSURL *url;
-	if ( [[rd.url absoluteString] length] > 0 )
-	{
-		url = rd.url;
-	}
-	else
-	{
-		url = [NSURL URLWithString:rd.line2];
-	}
-	
-	NSString *urlStr = [url absoluteString];
-	
-	// look for in-app URLS and open them appropriately
-	NSRange mgRange = {0,5};
-	if ( ([urlStr length] >= mgRange.length) && 
-		 (NSOrderedSame == [urlStr compare:@"mygov" options:NSCaseInsensitiveSearch range:mgRange])
-		)
-	{
-		[[UIApplication sharedApplication] openURL:url];
-	}
-	else
-	{
-		// open other URLs in our mini browser
-		MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:url];
-		[mbc display:m_actionParent];
-	}
 }
 
 
