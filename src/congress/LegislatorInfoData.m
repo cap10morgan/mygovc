@@ -9,7 +9,6 @@
 #import "CongressionalCommittees.h"
 #import "DataProviders.h"
 #import "LegislatorContainer.h"
-#import "LegislatorInfoCell.h"
 #import "LegislatorInfoData.h"
 #import "MiniBrowserController.h"
 

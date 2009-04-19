@@ -10,7 +10,6 @@
 #import "CustomTableCell.h"
 #import "LegislatorViewController.h"
 #import "LegislatorContainer.h"
-#import "LegislatorInfoCell.h"
 #import "LegislatorInfoData.h"
 #import "LegislatorHeaderViewController.h"
 #import "CongressionalCommittees.h"
