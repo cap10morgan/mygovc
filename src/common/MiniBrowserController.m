@@ -151,6 +151,12 @@ static MiniBrowserController *s_browser = NULL;
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+}
+
+
+- (void)viewDidAppear:(BOOL)animated 
+{
+	[super viewDidAppear:animated];
 	
 	if ( nil != m_urlToLoad )
 	{
@@ -162,12 +168,6 @@ static MiniBrowserController *s_browser = NULL;
 		[m_webView reload];
 	}
 	m_loadingInterrupted = NO;
-}
-
-
-- (void)viewDidAppear:(BOOL)animated 
-{
-	[super viewDidAppear:animated];
 	
 	[self enableBackButton:m_webView.canGoBack];
 	[self enableFwdButton:m_webView.canGoForward];
@@ -253,17 +253,17 @@ static MiniBrowserController *s_browser = NULL;
 	// cancel any transaction currently taking place
 	if ( m_webView.loading ) [m_webView stopLoading];
 	
-	if ( nil != m_webView )
-	{
-		[m_webView loadRequest:[NSURLRequest requestWithURL:url]];
-	}
-	else
+	if ( [self.view isHidden] )
 	{
 		// do it this goofy way just in case (url == m_urlToLoad)
 		[url retain];
 		[m_urlToLoad release];
 		m_urlToLoad = [[NSURL alloc] initWithString:[url absoluteString]];
 		[url release];
+	}
+	else
+	{
+		[m_webView loadRequest:[NSURLRequest requestWithURL:url]];
 	}
 }
 

@@ -7,30 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DataProviders.h"
 
 @class PlaceSpendingData;
 @class ContractorSpendingData;
 @class ContractorInfo;
 @class ContractorSpendingData;
-
-typedef enum
-{
-	eSpendingSortDate,
-	eSpendingSortAgency,
-	eSpendingSortContractor,
-	eSpendingSortCategory,
-	eSpendingSortDollars,
-} SpendingSortMethod;
-
-
-typedef enum
-{
-	eSpendingDetailSummary,
-	eSpendingDetailLow,
-	eSpendingDetailMed,
-	eSpendingDetailHigh,
-	eSpendingDetailComplete,
-} SpendingDetail;
 
 
 @interface SpendingDataManager : NSObject 
@@ -56,9 +38,6 @@ typedef enum
 @property (readonly) BOOL isBusy;
 
 + (NSString *)dataCachePath;
-+ (NSURL *)getURLForDistrict:(NSString *)district forYear:(NSInteger)year withDetail:(SpendingDetail)detail sortedBy:(SpendingSortMethod)order;
-+ (NSURL *)getURLForState:(NSString *)state forYear:(NSInteger)year withDetail:(SpendingDetail)detail sortedBy:(SpendingSortMethod)order;
-+ (NSURL *)getURLForTopContractors:(NSInteger)year maxNumContractors:(NSInteger)maxRecords withDetail:(SpendingDetail)detail sortedBy:(SpendingSortMethod)order;
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;
 

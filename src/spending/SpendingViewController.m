@@ -20,11 +20,14 @@
 
 
 @interface SpendingViewController (private)
-	- (void)dataManagerCallback:(id)sender;
+	- (PlaceSpendingData *)getDataForIndexPath:(NSIndexPath *)indexPath;
+	- (void)dataManagerCallback:(id)msg;
 	- (void)queryMethodSwitch:(id)sender;
 	- (void)sortSpendingData;
 	- (void)findLocalSpenders:(id)sender;
-	- (void) deselectRow:(id)sender;
+	- (void)deselectRow:(id)sender;
+	- (void)showPlaceDetail:(id)sender;
+	- (void)showContractorDetail:(id)sender;
 @end
 
 @implementation SpendingViewController
@@ -84,6 +87,7 @@
 	// Add a "location" button which will be used to find senators/representatives
 	// which represent a users current district
 	// 
+	/*
 	UIImage *locImg = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"location_overlay.png"]];
 	UIBarButtonItem *locBarButton = [[[UIBarButtonItem alloc] 
 									  initWithImage:locImg 
@@ -92,6 +96,7 @@
 									  action:@selector(findLocalSpenders:)] autorelease];
 	self.navigationItem.leftBarButtonItem = locBarButton;
 	self.navigationItem.leftBarButtonItem.width = self.navigationItem.rightBarButtonItem.width;
+	*/
 	
 	[super viewDidLoad];
 }
@@ -100,11 +105,6 @@
 - (void)viewWillAppear:(BOOL)animated 
 {
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
-	
-	if ( ![m_data isDataAvailable] )
-	{
-		self.tableView.userInteractionEnabled = NO;
-	}
 	
     [super viewWillAppear:animated];
 }
@@ -119,7 +119,8 @@
 	else
 	{
 		[m_HUD show:YES]; // with whatever text is there...
-		//[m_HUD setText:m_HUD.m_label.text andIndicateProgress:YES];
+		[m_HUD setText:[m_HUD currentText] andIndicateProgress:YES];
+		self.tableView.userInteractionEnabled = NO;
 	}
 	
 	// de-select the currently selected row
@@ -168,7 +169,25 @@
 #pragma mark SpendingViewController Private 
 
 
-- (void)dataManagerCallback:(id)sender
+- (PlaceSpendingData *)getDataForIndexPath:(NSIndexPath *)indexPath
+{
+	PlaceSpendingData *psd;
+	if ( eSQMState == m_selectedQueryMethod )
+	{
+		NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.row];
+		psd = [m_data getStateData:state andWaitForDownload:NO];
+	}
+	else if ( eSQMDistrict == m_selectedQueryMethod )
+	{
+		NSString *state = [[StateAbbreviations abbrList] objectAtIndex:indexPath.section];
+		NSString *districtStr = [NSString stringWithFormat:@"%@%.2d",state,([m_data numDistrictsInState:state] > 1 ? (indexPath.row + 1) : indexPath.row)];
+		psd = [m_data getDistrictData:districtStr andWaitForDownload:NO];
+	}
+	return psd;
+}
+
+
+- (void)dataManagerCallback:(id)msg
 {
 	NSLog( @"SpendingViewController: dataManagerCallback!" );
 	if ( [m_data isDataAvailable] )
@@ -276,11 +295,44 @@
 }
 
 
-- (void) deselectRow:(id)sender
+- (void)deselectRow:(id)sender
 {
 	// de-select the currently selected row
 	// (so the user can go back to the same row)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+}
+
+
+- (void)showPlaceDetail:(id)sender
+{
+	UIButton *button = (UIButton *)sender;
+	if ( nil == button ) return;
+	
+	PlaceSpendingTableCell *tcell = (PlaceSpendingTableCell *)[button superview];
+	if ( nil == tcell ) return;
+	/*
+	PlaceDetailViewController *placeViewCtrl = [[PlaceDetailViewController alloc] init];
+	[placeViewCtrl setLegislator:[tcell m_legislator]];
+	[self.navigationController pushViewController:placeViewCtrl animated:YES];
+	[placeViewCtrl release];
+	 */
+}
+
+
+- (void)showContractorDetail:(id)sender
+{
+	UIButton *button = (UIButton *)sender;
+	if ( nil == button ) return;
+	
+	ContractorSpendingTableCell *tcell = (ContractorSpendingTableCell *)[button superview];
+	if ( nil == tcell ) return;
+	
+	/*
+	 PlaceDetailViewController *placeViewCtrl = [[PlaceDetailViewController alloc] init];
+	 [placeViewCtrl setLegislator:[tcell m_legislator]];
+	 [self.navigationController pushViewController:placeViewCtrl animated:YES];
+	 [placeViewCtrl release];
+	 */
 }
 
 
@@ -426,7 +478,7 @@
 		ContractorSpendingTableCell *cell = (ContractorSpendingTableCell *)[tableView dequeueReusableCellWithIdentifier:CtorCellIdendifier];
 		if ( cell == nil )
 		{
-			cell = [[[ContractorSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CtorCellIdendifier detailTarget:self detailSelector:nil] autorelease];
+			cell = [[[ContractorSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CtorCellIdendifier detailTarget:self detailSelector:@selector(showContractorDetail:)] autorelease];
 		}
 		
 		ContractorInfo *ctrInfo = [m_data contractorData:indexPath.row whenSortedBy:m_sortOrder];
@@ -438,7 +490,7 @@
 		PlaceSpendingTableCell *cell = (PlaceSpendingTableCell *)[tableView dequeueReusableCellWithIdentifier:PlaceCellIdentifier];
 		if ( cell == nil ) 
 		{
-			cell = [[[PlaceSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:PlaceCellIdentifier detailTarget:self detailSelector:nil] autorelease];
+			cell = [[[PlaceSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:PlaceCellIdentifier detailTarget:self detailSelector:@selector(showPlaceDetail:)] autorelease];
 		}
 	
 		PlaceSpendingData *psd;
@@ -464,8 +516,21 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	// XXX - do something !
-	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+	PlaceSpendingData *psd = [self getDataForIndexPath:indexPath];
+	
+	// pop up an alert asking the user what action to perform
+	UIActionSheet *contactAlert =
+	[[UIActionSheet alloc] initWithTitle:psd.m_place
+								delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
+					   otherButtonTitles:@"District Rep. Info",@"Something Else!",@"Comment!",nil,nil];
+	
+	// use the same style as the nav bar
+	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
+	
+	[contactAlert showInView:self.view];
+	[contactAlert release];
+	
+	//[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 }
 
 

@@ -16,8 +16,9 @@
 	BOOL m_shouldAnimate;
 	BOOL m_animating;
 	BOOL m_needsToHide;
-	NSInteger m_framePlacementHack;
+	//NSInteger m_framePlacementHack;
 	NSMutableArray *m_txtArray;
+	NSString *m_hackTxtDisplay;
 }
 	- (void)setShouldAnimate:(BOOL)yesOrNo;
 	- (void)setupLabelAndActivityViews;
@@ -140,7 +141,8 @@ enum
 	{
 		m_animating = NO;
 		m_txtArray = [[NSMutableArray alloc] init];
-		m_framePlacementHack = 1;
+		//m_framePlacementHack = 1;
+		m_hackTxtDisplay = nil;
 		[self setupLabelAndActivityViews];
 	}
 	return self;
@@ -150,6 +152,7 @@ enum
 - (void)dealloc
 {
 	[m_txtArray release];
+	[m_hackTxtDisplay release];
     [super dealloc];
 }
 
@@ -224,7 +227,7 @@ enum
 
 - (void)animateNextMessage
 {
-	if ( [m_txtArray count] < 1 )
+	if ( ([m_txtArray count] < 1) && (nil == m_hackTxtDisplay) )
 	{
 		m_animating = NO;
 		return;
@@ -233,8 +236,23 @@ enum
 	[self setHidden:NO];
 	m_animating = YES;
 	
-	NSString *text = [[m_txtArray objectAtIndex:0] retain];
-	[m_txtArray removeObjectAtIndex:0];
+	NSString *text;
+	if ( nil != m_hackTxtDisplay )
+	{
+		text = m_hackTxtDisplay;
+		m_hackTxtDisplay = nil;
+	}
+	else
+	{
+		text = [[m_txtArray objectAtIndex:0] retain];
+		[m_txtArray removeObjectAtIndex:0];
+		if ( [m_txtArray count] < 1 )
+		{
+			// HACK: animate the last element twice
+			[m_hackTxtDisplay release];
+			m_hackTxtDisplay = [text retain];
+		}
+	}
 	
 	UILabel *lbl = (UILabel *)[self viewWithTag:eTAG_LABEL];
 	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
@@ -251,14 +269,14 @@ enum
 	// create a rectangle for the view which can minimally contain the whole text
 	// (with a 20 pixel margin on all sides)
 	static CGFloat S_MARGIN = 40.0f;
-	CGFloat dx = CGRectGetWidth(parentRect) - fontSz.width - S_MARGIN + m_framePlacementHack;
-	CGFloat dy = CGRectGetHeight(parentRect) - fontSz.height - 50.0f - S_MARGIN + m_framePlacementHack;
+	CGFloat dx = CGRectGetWidth(parentRect) - fontSz.width - S_MARGIN;// + m_framePlacementHack;
+	CGFloat dy = CGRectGetHeight(parentRect) - fontSz.height - 50.0f - S_MARGIN;// + m_framePlacementHack;
 	CGRect viewRect = CGRectInset(parentRect, dx/2.0f, dy/2.0f );
 	if ( CGRectGetMinX(viewRect) <= 0 || CGRectGetMinY(viewRect) > 480.0f )
 	{
 		viewRect = CGRectMake(100.0f,180.0f,120.0f,120.0f);
 	}
-	m_framePlacementHack = (m_framePlacementHack == 1) ? -1 : 1;
+	//m_framePlacementHack = (m_framePlacementHack == 1) ? -1 : 1;
 	
 	// re-center the activity indicator
 	[activity setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
@@ -298,7 +316,7 @@ enum
 
 - (void)textAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context
 {
-	if ( [m_txtArray count] > 0 )
+	if ( [m_txtArray count] > 0 || (nil != m_hackTxtDisplay) )
 	{
 		// start the next animation!
 		[self animateNextMessage];

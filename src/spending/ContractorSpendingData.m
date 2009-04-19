@@ -186,10 +186,11 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 	NSInteger year = [[gregorian components:NSYearCalendarUnit fromDate:[NSDate date]] year];
 	[gregorian release];
 	
-	NSURL *dataURL = [SpendingDataManager getURLForTopContractors:year 
-											maxNumContractors:kNumContractorsToQuery 
-											withDetail:eSpendingDetailLow 
-											sortedBy:eSpendingSortDollars];
+	NSString *urlStr = [DataProviders USASpending_topContractorURL:year 
+												 maxNumContractors:kNumContractorsToQuery 
+														withDetail:eSpendingDetailLow 
+														  sortedBy:eSpendingSortDollars];
+	NSURL *dataURL = [NSURL URLWithString:urlStr];
 	
 	// kick off the download/parsing of XML data 
 	if ( !waitForData )

@@ -102,6 +102,8 @@
 	// this ensures that we grab the right congressional session!
 	if ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
 	{
+		[self setStatus:@"Waiting for congress data..."];
+		
 		// start a timer that will periodically check to see if
 		// congressional data is ready... no this is not the most
 		// efficient way of doing this...
@@ -194,7 +196,7 @@
 		NSDateFormatter *dateFmt = [[NSDateFormatter alloc] init];
 		
 		NSString *title = [NSString stringWithFormat:@"%@ %4d",
-										[[dateFmt monthSymbols] objectAtIndex:month],
+										[[dateFmt monthSymbols] objectAtIndex:(month-1)],
 										year
 						   ];
 		return title;
@@ -255,11 +257,11 @@
 		NSDateFormatter *dateFmt = [[NSDateFormatter alloc] init];
 		
 		NSString *title = [NSString stringWithFormat:@"%@ %4d",
-						   [[dateFmt monthSymbols] objectAtIndex:month],
+						   [[dateFmt monthSymbols] objectAtIndex:(month-1)],
 						   year
 						   ];
 		return title;
-	}	
+	}
 }
 
 

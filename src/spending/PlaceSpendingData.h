@@ -56,6 +56,8 @@ typedef enum
 	CGFloat m_currentFloatVal;
 	DistrictSummaryElement m_currentParseElement;
 	
+	BOOL m_tryAlternateURL;
+	
 	id  m_notifyTarget;
 	SEL m_notifySelector;
 }

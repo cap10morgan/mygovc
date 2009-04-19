@@ -81,6 +81,8 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	m_currentXMLStr = nil;
 	m_currentParseElement = eDSE_None;
 	
+	m_tryAlternateURL = NO;
+	
 	m_notifyTarget = nil;
 }
 
@@ -174,20 +176,36 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	[gregorian release];
 	m_year = year;
 	
+	NSString *altPlace = nil;
+	if ( m_tryAlternateURL )
+	{
+		m_tryAlternateURL = NO;
+		if ( [m_place length] > 2 )
+		{
+			altPlace = [NSString stringWithFormat:@"%@98",[m_place substringToIndex:2]];
+		}
+		else
+		{
+			altPlace = [m_place stringByAppendingString:@"98"];
+		}
+	}
+	
 	NSURL *detailSummaryURL;
 	if ( eSPT_District == m_placeType )
 	{
-		detailSummaryURL = [SpendingDataManager getURLForDistrict:m_place 
-												forYear:year 
-												withDetail:eSpendingDetailSummary 
-												sortedBy:eSpendingSortDollars];
+		NSString *urlStr = [DataProviders USASpending_districtURL:(nil == altPlace ? m_place : altPlace)
+														  forYear:year 
+													   withDetail:eSpendingDetailSummary 
+														 sortedBy:eSpendingSortDollars];
+		detailSummaryURL = [NSURL URLWithString:urlStr];
 	}
 	else if ( eSPT_State == m_placeType )
 	{
-		detailSummaryURL = [SpendingDataManager getURLForState:m_place
-												forYear:year 
-												withDetail:eSpendingDetailSummary 
-												sortedBy:eSpendingSortDollars];
+		NSString *urlStr = [DataProviders USASpending_stateURL:(nil == altPlace ? m_place : altPlace) 
+													   forYear:year 
+													withDetail:eSpendingDetailSummary 
+													  sortedBy:eSpendingSortDollars];
+		detailSummaryURL = [NSURL URLWithString:urlStr];
 	}
 	
 	// kick off the download/parsing of XML data 
@@ -428,6 +446,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError 
 {
 	NSLog( @"[PlaceSpendingData:%@] XMLParser error: %@",m_place,[parseError localizedDescription] );
+	m_tryAlternateURL = YES;
 	if ( nil != m_notifyTarget )
 	{
 		[m_notifyTarget performSelector:m_notifySelector withObject:self];

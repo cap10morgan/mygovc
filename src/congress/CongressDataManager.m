@@ -12,6 +12,7 @@
 #import "CongressDataManager.h"
 #import "CongressionalCommittees.h"
 #import "CongressLocationParser.h"
+#import "DataProviders.h"
 #import "LegislatorContainer.h"
 #import "XMLParserOperation.h"
 
@@ -36,15 +37,6 @@
 
 // [KEY:state_district] -> [VALUE:legislator_container]
 static NSMutableDictionary *s_districts = NULL;
-
-
-static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
-//static NSString *kPVS_APIKey = @"e9c18da5999464958518614cfa7c6e1c";
-static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/legislators.getList.xml";
-static NSString *kGovtrack_dataDir = @"http://www.govtrack.us/data/us/";
-static NSString *kGovtrack_committeeListXMLFmt = @"http://www.govtrack.us/data/us/%d/committees.xml";
-static NSString *kGovtrack_locLookupXML = @"http://www.govtrack.us/perl/district-lookup.cgi?";
-static NSString *kGovtrack_latLongFmt = @"lat=%f&long=%f";
 
 static NSString *kTitleValue_Senator = @"Sen";
 
@@ -226,7 +218,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 {
 	[m_searchArray release]; m_searchArray = nil;
 	
-	NSString *searchStr = [kGovtrack_locLookupXML stringByAppendingFormat:kGovtrack_latLongFmt, loc.coordinate.latitude, loc.coordinate.longitude];
+	NSString *searchStr = [DataProviders Govtrack_DistrictURLFromLocation:loc];
 	if ( nil != m_xmlParser )
 	{
 		// abort any previous attempt at parsing/downloading
@@ -430,7 +422,8 @@ static NSString *kTitleValue_Senator = @"Sen";
 - (void)discoverCurrentCongressSession
 {
 	// get current congress session!
-	NSData *govTrackDirData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:kGovtrack_dataDir]];
+	NSString *govTrackDataURL = [DataProviders Govtrack_DataDirURL];
+	NSData *govTrackDirData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:govTrackDataURL]];
 	NSString *dirListHtmlStr = [[NSString alloc] initWithData:govTrackDirData encoding:NSUTF8StringEncoding];
 	
 	// we have to stat somewhere :-)
@@ -467,7 +460,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 	
 	[self setStatus:@"Preparing Congress Data Download..."];
 	
-	NSString *xmlURL = [NSString stringWithFormat:@"%@?apikey=%@",kSunlight_getListXML,kSunlight_APIKey];
+	NSString *xmlURL = [DataProviders SunlightLabs_LegislatorListURL];
 	
 	if ( nil != m_xmlParser )
 	{
@@ -652,7 +645,8 @@ static NSString *kTitleValue_Senator = @"Sen";
 		[self discoverCurrentCongressSession];
 		
 		// download the committee data (wait for this...)
-		NSURL *committeeURL = [NSURL URLWithString:[NSString stringWithFormat:kGovtrack_committeeListXMLFmt,m_currentCongressSession]];
+		NSString *committeeStr = [DataProviders Govtrack_CommitteeURL:m_currentCongressSession];
+		NSURL *committeeURL = [NSURL URLWithString:committeeStr];
 		[m_committees downloadDataFrom:committeeURL forCongressSession:m_currentCongressSession];
 	}
 	

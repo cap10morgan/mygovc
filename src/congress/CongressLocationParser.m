@@ -19,7 +19,7 @@
 static NSString *kName_Response = @"congressional-district";
 static NSString *kName_State = @"state";
 static NSString *kName_District = @"district";
-static NSString *kName_Member = @"member";
+//static NSString *kName_Member = @"member";
 
 
 - (id)initWithCongressData:(CongressDataManager *)data;
