@@ -16,6 +16,8 @@
 	ContractorInfo *m_contractor;
 }
 
+@property (readonly) ContractorInfo *m_contractor;
+
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)identifier detailTarget:(id)tgt detailSelector:(SEL)sel;
 
 - (void)setContractor:(ContractorInfo *)contractor;

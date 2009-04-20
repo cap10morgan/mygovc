@@ -15,6 +15,7 @@
 #import "PlaceSpendingTableCell.h"
 #import "ProgressOverlayViewController.h"
 #import "SpendingDataManager.h"
+#import "SpendingSummaryViewController.h"
 #import "SpendingViewController.h"
 #import "StateAbbreviations.h"
 
@@ -31,6 +32,13 @@
 @end
 
 @implementation SpendingViewController
+
+typedef enum
+{
+	eAST_ContractorSort   = 0,
+	eAST_PlaceAction      = 1,
+	eAST_ContractorAction = 2,
+} ActionSheetType;
 
 
 - (void)didReceiveMemoryWarning 
@@ -57,6 +65,7 @@
 	self.tableView.rowHeight = 50.0f;
 	
 	m_sortOrder = eSpendingSortDollars;
+	m_actionSheetType = eAST_ContractorSort;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
@@ -285,6 +294,7 @@
 	// use the same style as the nav bar
 	sortAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
 	
+	m_actionSheetType = eAST_ContractorSort;
 	[sortAlert showInView:self.view];
 	[sortAlert release];
 }
@@ -310,12 +320,12 @@
 	
 	PlaceSpendingTableCell *tcell = (PlaceSpendingTableCell *)[button superview];
 	if ( nil == tcell ) return;
-	/*
-	PlaceDetailViewController *placeViewCtrl = [[PlaceDetailViewController alloc] init];
-	[placeViewCtrl setLegislator:[tcell m_legislator]];
-	[self.navigationController pushViewController:placeViewCtrl animated:YES];
-	[placeViewCtrl release];
-	 */
+	
+	PlaceSpendingData *psd = [tcell m_data];
+	SpendingSummaryViewController *summaryViewCtrl = [[SpendingSummaryViewController alloc] init];
+	[summaryViewCtrl setPlaceData:psd];
+	[self.navigationController pushViewController:summaryViewCtrl animated:YES];
+	[summaryViewCtrl release];
 }
 
 
@@ -327,12 +337,12 @@
 	ContractorSpendingTableCell *tcell = (ContractorSpendingTableCell *)[button superview];
 	if ( nil == tcell ) return;
 	
-	/*
-	 PlaceDetailViewController *placeViewCtrl = [[PlaceDetailViewController alloc] init];
-	 [placeViewCtrl setLegislator:[tcell m_legislator]];
-	 [self.navigationController pushViewController:placeViewCtrl animated:YES];
-	 [placeViewCtrl release];
-	 */
+	ContractorInfo *ci = [tcell m_contractor];
+	
+	SpendingSummaryViewController *summaryViewCtrl = [[SpendingSummaryViewController alloc] init];
+	[summaryViewCtrl setContractorData:ci];
+	[self.navigationController pushViewController:summaryViewCtrl animated:YES];
+	[summaryViewCtrl release];
 }
 
 
@@ -342,21 +352,35 @@
 // action sheet callback: choose a sort method for spending data!
 - (void)actionSheet:(UIActionSheet *)modalView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-	switch ( buttonIndex )
+	switch ( m_actionSheetType )
 	{
-		// sort by dollars
-		case 0:
-			m_sortOrder = eSpendingSortDollars;
+		case eAST_ContractorSort:
+			switch ( buttonIndex )
+			{
+				// sort by dollars
+				case 0:
+					m_sortOrder = eSpendingSortDollars;
+					break;
+				// sort by name
+				case 1:
+					m_sortOrder = eSpendingSortContractor;
+					break;
+				case 2:
+					// XXX
+				default:
+					break;
+			}
 			break;
-		// sort by name
-		case 1:
-			m_sortOrder = eSpendingSortContractor;
+		case eAST_PlaceAction:
 			break;
-		case 2:
-			// XXX
-		default:
+		case eAST_ContractorAction:
 			break;
 	}
+	
+	// deselect the row
+	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+	
+	// reload table data
 	if ( [m_data isDataAvailable] )
 	{
 		[self.tableView reloadData];
@@ -516,21 +540,49 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	PlaceSpendingData *psd = [self getDataForIndexPath:indexPath];
-	
-	// pop up an alert asking the user what action to perform
-	UIActionSheet *contactAlert =
-	[[UIActionSheet alloc] initWithTitle:psd.m_place
-								delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-					   otherButtonTitles:@"District Rep. Info",@"Something Else!",@"Comment!",nil,nil];
-	
-	// use the same style as the nav bar
-	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
-	
-	[contactAlert showInView:self.view];
-	[contactAlert release];
-	
-	//[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+	switch ( m_selectedQueryMethod )
+	{
+		case eSQMDistrict:
+		case eSQMState:
+		{
+			PlaceSpendingData *psd = [self getDataForIndexPath:indexPath];
+			
+			// pop up an alert asking the user what action to perform
+			UIActionSheet *contactAlert =
+			[[UIActionSheet alloc] initWithTitle:psd.m_place
+										delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
+							   otherButtonTitles:@"District Rep. Info",@"Something Else!",@"Comment!",nil,nil];
+			
+			// use the same style as the nav bar
+			contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
+			
+			m_actionSheetType = eAST_PlaceAction;
+			[contactAlert showInView:self.view];
+			[contactAlert release];
+		}
+			break;
+		case eSQMContractor:
+		{
+			ContractorInfo *ci = [m_data contractorData:indexPath.row whenSortedBy:m_sortOrder];
+			
+			// pop up an alert asking the user what action to perform
+			UIActionSheet *contactAlert =
+			[[UIActionSheet alloc] initWithTitle:ci.m_parentCompany
+										delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
+							   otherButtonTitles:@"Something!",@"Comment!",nil,nil,nil];
+			
+			// use the same style as the nav bar
+			contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
+			
+			m_actionSheetType = eAST_ContractorAction;
+			[contactAlert showInView:self.view];
+			[contactAlert release];
+		}
+			break;
+		default:
+			[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+			break;
+	}
 }
 
 

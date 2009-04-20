@@ -24,6 +24,8 @@
 
 @implementation PlaceSpendingTableCell
 
+@synthesize m_data;
+
 enum
 {
 	eTAG_DETAIL     = 999,
@@ -285,7 +287,7 @@ static const CGFloat S_ROW_HEIGHT = 23.0f;
 		if ( ![party1 isEqualToString:party2] )
 		{
 			// a purple haze...
-			legColor = [UIColor colorWithRed:0.5f green:0.1f blue:0.5f alpha:1.0f];
+			legColor = [UIColor colorWithRed:0.4f green:0.09f blue:0.4f alpha:1.0f];
 		}
 		else
 		{
@@ -306,23 +308,10 @@ static const CGFloat S_ROW_HEIGHT = 23.0f;
 								 S_ROW_HEIGHT);
 	[rankView setFrame:rankRect];
 	
-	NSUInteger rankTotal = [[StateAbbreviations abbrList] count];
+	[rankView setText:[m_data rankStr]];
 	
-	CGFloat millionsOfDollars = m_data.m_totalDollarsObligated / 1000000;
-	BOOL top25 = (millionsOfDollars > 0.1 && ((CGFloat)(m_data.m_rank) / (CGFloat)rankTotal) <= 0.25);
-	
-	NSString *rankText = [[[NSString alloc] initWithFormat:@"$%.2fM %@%d/%d%@",
-											millionsOfDollars,
-											(top25 ? @" » " : @" : "),
-											m_data.m_rank,
-											rankTotal,
-											(top25 ? @" «" : @"")
-						  ] autorelease];
-	
-	[rankView setText:rankText];
-	
-	// make big spenders stand out a little more
-	if ( top25 )
+	// color high-spenders in red!
+	if ( [m_data rankIsTop25Pct] )
 	{
 		rankView.font = RANK_FONT_BIGSPENDER;
 		rankView.textColor = RANK_COLOR_BIGSPENDER;
@@ -395,23 +384,10 @@ static const CGFloat S_ROW_HEIGHT = 23.0f;
 								 S_ROW_HEIGHT);
 	[rankView setFrame:rankRect];
 	
-	NSUInteger rankTotal = [[[myGovAppDelegate sharedSpendingData] congressionalDistricts] count];
-		
-	CGFloat millionsOfDollars = m_data.m_totalDollarsObligated / 1000000;
-	BOOL top25 = (millionsOfDollars > 0.1 && ((CGFloat)(m_data.m_rank) / (CGFloat)rankTotal) <= 0.25);
-	
-	NSString *rankText = [[[NSString alloc] initWithFormat:@"$%.1fM %@%d/%d%@",
-											millionsOfDollars,
-											(top25 ?  @" » " : @" : "),
-											m_data.m_rank,	
-											rankTotal,
-											(top25 ? @" «" : @"")
-						  ] autorelease];
-	
-	[rankView setText:rankText];
+	[rankView setText:[m_data rankStr]];
 	
 	// color high-spenders in red!
-	if ( top25 )
+	if ( [m_data rankIsTop25Pct] )
 	{
 		rankView.font = RANK_FONT_BIGSPENDER;
 		rankView.textColor = RANK_COLOR_BIGSPENDER;

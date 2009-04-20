@@ -25,6 +25,8 @@
 @property (nonatomic, retain) NSString *m_parentCommittee;
 @property (readonly) NSMutableArray *m_members;
 
+- (NSComparisonResult)compareCommittee:(LegislativeCommittee *)other;
+
 @end // LegislativeCommittee
 
 

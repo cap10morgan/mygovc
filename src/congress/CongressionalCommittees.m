@@ -52,6 +52,39 @@ static NSString *kPropTitle_Parent = @"parent";
 	[super dealloc];
 }
 
+- (NSComparisonResult)compareCommittee:(LegislativeCommittee *)other
+{
+	return [m_id compare:other.m_id];
+/*
+	// sort committees by name, but also by parent->child relationship
+	if ( (nil == m_parentCommittee) && (other.m_parentCommittee != nil) )
+	{
+		if ( NSOrderedSame == [other.m_parentCommittee compare:m_id] )
+		{
+			return NSOrderedAscending;
+		}
+		else
+		{
+			return NSOrderedDescending;
+		}
+	}
+	else
+	{
+		// compare by ID
+		NSComparisonResult cmp = [m_id compare:other.m_id];
+		if ( NSOrderedSame == cmp )
+		{
+			// compare by name
+			return [m_name compare:other.m_name];
+		}
+		else
+		{
+			return cmp;
+		}
+	}
+*/
+}
+
 @end
 
 
@@ -200,7 +233,8 @@ static NSString *kPropTitle_Parent = @"parent";
 	LegislativeCommittee *emptyContainer = [[LegislativeCommittee alloc] init];
 	NSArray *retVal = [m_committees objectsForKeys:[m_legislativeConnection objectForKey:[legislator govtrack_id]] notFoundMarker:emptyContainer];
 	[emptyContainer release];
-	return retVal;
+	
+	return [retVal sortedArrayUsingSelector:@selector(compareCommittee:)];
 }
 
 

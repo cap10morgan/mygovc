@@ -189,7 +189,8 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 	NSString *urlStr = [DataProviders USASpending_topContractorURL:year 
 												 maxNumContractors:kNumContractorsToQuery 
 														withDetail:eSpendingDetailLow 
-														  sortedBy:eSpendingSortDollars];
+														  sortedBy:eSpendingSortDollars 
+															xmlURL:YES];
 	NSURL *dataURL = [NSURL URLWithString:urlStr];
 	
 	// kick off the download/parsing of XML data 

@@ -22,6 +22,8 @@
 		0126785E0F7F3BB900CF9C46 /* CongressDatabaseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 0126785D0F7F3BB900CF9C46 /* CongressDatabaseParser.m */; };
 		012678610F7F3BD500CF9C46 /* CongressLocationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 012678600F7F3BD500CF9C46 /* CongressLocationParser.m */; };
 		0132E7500F68D22A00DF33DC /* CongressionalCommittees.m in Sources */ = {isa = PBXBuildFile; fileRef = 0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */; };
+		014955380F9BB80B00032423 /* SpendingSummaryData.m in Sources */ = {isa = PBXBuildFile; fileRef = 014955370F9BB80B00032423 /* SpendingSummaryData.m */; };
+		0149553B0F9BB83A00032423 /* SpendingSummaryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0149553A0F9BB83A00032423 /* SpendingSummaryViewController.m */; };
 		0168727D0F7B15EE00D23E78 /* ContractorSpendingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */; };
 		0168730A0F7B34E100D23E78 /* ContractorSpendingTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 016873090F7B34E100D23E78 /* ContractorSpendingTableCell.m */; };
 		0178E3AF0F944AFF00B96BD1 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0178E3AE0F944AFF00B96BD1 /* Settings.bundle */; };
@@ -94,6 +96,10 @@
 		012678600F7F3BD500CF9C46 /* CongressLocationParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressLocationParser.m; path = src/congress/CongressLocationParser.m; sourceTree = "<group>"; };
 		0132E74E0F68D22A00DF33DC /* CongressionalCommittees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressionalCommittees.h; path = src/congress/CongressionalCommittees.h; sourceTree = "<group>"; };
 		0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressionalCommittees.m; path = src/congress/CongressionalCommittees.m; sourceTree = "<group>"; };
+		014955360F9BB80B00032423 /* SpendingSummaryData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingSummaryData.h; path = src/spending/SpendingSummaryData.h; sourceTree = "<group>"; };
+		014955370F9BB80B00032423 /* SpendingSummaryData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpendingSummaryData.m; path = src/spending/SpendingSummaryData.m; sourceTree = "<group>"; };
+		014955390F9BB83A00032423 /* SpendingSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingSummaryViewController.h; path = src/spending/SpendingSummaryViewController.h; sourceTree = "<group>"; };
+		0149553A0F9BB83A00032423 /* SpendingSummaryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpendingSummaryViewController.m; path = src/spending/SpendingSummaryViewController.m; sourceTree = "<group>"; };
 		0168727B0F7B15EE00D23E78 /* ContractorSpendingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContractorSpendingData.h; path = src/spending/ContractorSpendingData.h; sourceTree = "<group>"; };
 		0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContractorSpendingData.m; path = src/spending/ContractorSpendingData.m; sourceTree = "<group>"; };
 		016873080F7B34E100D23E78 /* ContractorSpendingTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContractorSpendingTableCell.h; path = src/spending/ContractorSpendingTableCell.h; sourceTree = "<group>"; };
@@ -261,6 +267,10 @@
 				0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */,
 				016873080F7B34E100D23E78 /* ContractorSpendingTableCell.h */,
 				016873090F7B34E100D23E78 /* ContractorSpendingTableCell.m */,
+				014955360F9BB80B00032423 /* SpendingSummaryData.h */,
+				014955370F9BB80B00032423 /* SpendingSummaryData.m */,
+				014955390F9BB83A00032423 /* SpendingSummaryViewController.h */,
+				0149553A0F9BB83A00032423 /* SpendingSummaryViewController.m */,
 			);
 			name = spending;
 			sourceTree = "<group>";
@@ -483,6 +493,8 @@
 				01846B930F96C02C00444529 /* BillInfoViewController.m in Sources */,
 				01B78F180F97E72E00E1364F /* TableDataManager.m in Sources */,
 				01B78F630F9828C100E1364F /* CustomTableCell.m in Sources */,
+				014955380F9BB80B00032423 /* SpendingSummaryData.m in Sources */,
+				0149553B0F9BB83A00032423 /* SpendingSummaryViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

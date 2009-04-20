@@ -19,6 +19,7 @@ typedef enum
 	eCongressChamberHouse,
 	eCongressChamberSenate,
 	eCongressSearchResults,
+	eCongressCommittee,
 } CongressChamber;
 
 

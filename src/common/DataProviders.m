@@ -42,25 +42,30 @@ static NSString *kGovtrack_latLongFmt = @"http://www.govtrack.us/perl/district-l
 // 
 // USASpending.gov
 // 
-static NSString *kUSASpending_fpdsURL = @"http://www.usaspending.gov/fpds/fpds.php?database=fpds&reptype=r&datype=X";
+static NSString *kUSASpending_fpdsURL = @"http://www.usaspending.gov/fpds/fpds.php?database=fpds&reptype=r";
 
-static NSString *kDetailLevel_Summary = @"&detail=-1";
-static NSString *kDetailLevel_Low = @"&detail=0";
-static NSString *kDetailLevel_Medium = @"&detail=1";
-static NSString *kDetailLevel_High = @"&detail=2";
-static NSString *kDetailLevel_Complete = @"&detail=4";
+static NSString *kUSASpending_DataTypeXML = @"&datype=X";
+static NSString *kUSASpending_DataTypeHTML = @"&datype=T";
 
-static NSString *kSortByContractor = @"&sortby=r";
-static NSString *kSortByDollars = @"&sortby=f";
-static NSString *kSortByContractingAgency = @"&sortby=g";
-static NSString *kSortByCategory = @"&sortby=p";
-static NSString *kSortByDate = @"&sortby=d";
+static NSString *kUSASpending_DetailLevel_Summary = @"&detail=-1";
+static NSString *kUSASpending_DetailLevel_Low = @"&detail=0";
+static NSString *kUSASpending_DetailLevel_Medium = @"&detail=1";
+static NSString *kUSASpending_DetailLevel_High = @"&detail=2";
+static NSString *kUSASpending_DetailLevel_Complete = @"&detail=4";
 
-static NSString *kFiscalYearKey = @"&fiscal_year";
-static NSString *kDistrictKey = @"&pop_cd2";
-static NSString *kStateKey = @"&stateCode";
-static NSString *kMaxRecordsKey = @"&max_records";
-static NSString *kContractorKey = @"&company_name";
+static NSString *kUSASpending_SortByContractor = @"&sortby=r";
+static NSString *kUSASpending_SortByDollars = @"&sortby=f";
+static NSString *kUSASpending_SortByContractingAgency = @"&sortby=g";
+static NSString *kUSASpending_SortByCategory = @"&sortby=p";
+static NSString *kUSASpending_SortByDate = @"&sortby=d";
+
+static NSString *kUSASpending_FiscalYearKey = @"&fiscal_year";
+static NSString *kUSASpending_DistrictKey = @"&pop_cd2";
+static NSString *kUSASpending_StateKey = @"&stateCode";
+static NSString *kUSASpending_MaxRecordsKey = @"&max_records";
+static NSString *kUSASpending_ContractorKey = @"&company_name";
+
+static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 
 
 
@@ -138,26 +143,30 @@ static NSString *kContractorKey = @"&company_name";
 }
 
 
-+ (NSString *)USASpending_districtURL:(NSString *)district forYear:(NSInteger)year withDetail:(SpendingDetail)detail sortedBy:(SpendingSortMethod)order
++ (NSString *)USASpending_districtURL:(NSString *)district 
+							  forYear:(NSInteger)year 
+						   withDetail:(SpendingDetail)detail 
+							 sortedBy:(SpendingSortMethod)order 
+							   xmlURL:(BOOL)xmldata
 {
 	NSString *sortStr;
 	switch ( order )
 	{
 		case eSpendingSortDate:
-			sortStr = kSortByDate;
+			sortStr = kUSASpending_SortByDate;
 			break;
 		case eSpendingSortAgency:
-			sortStr = kSortByContractingAgency;
+			sortStr = kUSASpending_SortByContractingAgency;
 			break;
 		case eSpendingSortContractor:
-			sortStr = kSortByContractor;
+			sortStr = kUSASpending_SortByContractor;
 			break;
 		case eSpendingSortCategory:
-			sortStr = kSortByCategory;
+			sortStr = kUSASpending_SortByCategory;
 			break;
 		default:
 		case eSpendingSortDollars:
-			sortStr = kSortByDollars;
+			sortStr = kUSASpending_SortByDollars;
 			break;
 	}
 	
@@ -166,26 +175,27 @@ static NSString *kContractorKey = @"&company_name";
 	{
 		default:
 		case eSpendingDetailSummary:
-			detailStr = kDetailLevel_Summary;
+			detailStr = kUSASpending_DetailLevel_Summary;
 			break;
 		case eSpendingDetailLow:
-			detailStr = kDetailLevel_Low;
+			detailStr = kUSASpending_DetailLevel_Low;
 			break;
 		case eSpendingDetailMed:
-			detailStr = kDetailLevel_Medium;
+			detailStr = kUSASpending_DetailLevel_Medium;
 			break;
 		case eSpendingDetailHigh:
-			detailStr = kDetailLevel_High;
+			detailStr = kUSASpending_DetailLevel_High;
 			break;
 		case eSpendingDetailComplete:
-			detailStr = kDetailLevel_Complete;
+			detailStr = kUSASpending_DetailLevel_Complete;
 			break;
 	}
 	
 	NSMutableString *urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_fpdsURL] autorelease];
-	[urlStr appendFormat:@"%@=%@%@=%0d%@%@",
-							kDistrictKey,district,
-							kFiscalYearKey,year,
+	[urlStr appendFormat:@"%@%@=%@%@=%0d%@%@",
+							(xmldata ? kUSASpending_DataTypeXML : kUSASpending_DataTypeHTML),
+							kUSASpending_DistrictKey,district,
+							kUSASpending_FiscalYearKey,year,
 							sortStr,
 							detailStr
 	];
@@ -193,26 +203,30 @@ static NSString *kContractorKey = @"&company_name";
 }
 
 
-+ (NSString *)USASpending_stateURL:(NSString *)state forYear:(NSInteger)year withDetail:(SpendingDetail)detail sortedBy:(SpendingSortMethod)order
++ (NSString *)USASpending_stateURL:(NSString *)state 
+						   forYear:(NSInteger)year 
+						withDetail:(SpendingDetail)detail 
+						  sortedBy:(SpendingSortMethod)order 
+							xmlURL:(BOOL)xmldata
 {
 	NSString *sortStr;
 	switch ( order )
 	{
 		case eSpendingSortDate:
-			sortStr = kSortByDate;
+			sortStr = kUSASpending_SortByDate;
 			break;
 		case eSpendingSortAgency:
-			sortStr = kSortByContractingAgency;
+			sortStr = kUSASpending_SortByContractingAgency;
 			break;
 		case eSpendingSortContractor:
-			sortStr = kSortByContractor;
+			sortStr = kUSASpending_SortByContractor;
 			break;
 		case eSpendingSortCategory:
-			sortStr = kSortByCategory;
+			sortStr = kUSASpending_SortByCategory;
 			break;
 		default:
 		case eSpendingSortDollars:
-			sortStr = kSortByDollars;
+			sortStr = kUSASpending_SortByDollars;
 			break;
 	}
 	
@@ -221,26 +235,27 @@ static NSString *kContractorKey = @"&company_name";
 	{
 		default:
 		case eSpendingDetailSummary:
-			detailStr = kDetailLevel_Summary;
+			detailStr = kUSASpending_DetailLevel_Summary;
 			break;
 		case eSpendingDetailLow:
-			detailStr = kDetailLevel_Low;
+			detailStr = kUSASpending_DetailLevel_Low;
 			break;
 		case eSpendingDetailMed:
-			detailStr = kDetailLevel_Medium;
+			detailStr = kUSASpending_DetailLevel_Medium;
 			break;
 		case eSpendingDetailHigh:
-			detailStr = kDetailLevel_High;
+			detailStr = kUSASpending_DetailLevel_High;
 			break;
 		case eSpendingDetailComplete:
-			detailStr = kDetailLevel_Complete;
+			detailStr = kUSASpending_DetailLevel_Complete;
 			break;
 	}
 	
 	NSMutableString *urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_fpdsURL] autorelease];
-	[urlStr appendFormat:@"%@=%@%@=%0d%@%@",
-							kStateKey,state,
-							kFiscalYearKey,year,
+	[urlStr appendFormat:@"%@%@=%@%@=%0d%@%@",
+							(xmldata ? kUSASpending_DataTypeXML : kUSASpending_DataTypeHTML),
+							kUSASpending_StateKey,state,
+							kUSASpending_FiscalYearKey,year,
 							sortStr,
 							detailStr
 	];
@@ -248,26 +263,30 @@ static NSString *kContractorKey = @"&company_name";
 }
 
 
-+ (NSString *)USASpending_topContractorURL:(NSInteger)year maxNumContractors:(NSInteger)maxRecords withDetail:(SpendingDetail)detail sortedBy:(SpendingSortMethod)order
++ (NSString *)USASpending_topContractorURL:(NSInteger)year 
+						 maxNumContractors:(NSInteger)maxRecords 
+								withDetail:(SpendingDetail)detail 
+								  sortedBy:(SpendingSortMethod)order 
+									xmlURL:(BOOL)xmldata
 {
 	NSString *sortStr;
 	switch ( order )
 	{
 		case eSpendingSortDate:
-			sortStr = kSortByDate;
+			sortStr = kUSASpending_SortByDate;
 			break;
 		case eSpendingSortAgency:
-			sortStr = kSortByContractingAgency;
+			sortStr = kUSASpending_SortByContractingAgency;
 			break;
 		case eSpendingSortContractor:
-			sortStr = kSortByContractor;
+			sortStr = kUSASpending_SortByContractor;
 			break;
 		case eSpendingSortCategory:
-			sortStr = kSortByCategory;
+			sortStr = kUSASpending_SortByCategory;
 			break;
 		default:
 		case eSpendingSortDollars:
-			sortStr = kSortByDollars;
+			sortStr = kUSASpending_SortByDollars;
 			break;
 	}
 	
@@ -276,29 +295,91 @@ static NSString *kContractorKey = @"&company_name";
 	{
 		default:
 		case eSpendingDetailSummary:
-			detailStr = kDetailLevel_Summary;
+			detailStr = kUSASpending_DetailLevel_Summary;
 			break;
 		case eSpendingDetailLow:
-			detailStr = kDetailLevel_Low;
+			detailStr = kUSASpending_DetailLevel_Low;
 			break;
 		case eSpendingDetailMed:
-			detailStr = kDetailLevel_Medium;
+			detailStr = kUSASpending_DetailLevel_Medium;
 			break;
 		case eSpendingDetailHigh:
-			detailStr = kDetailLevel_High;
+			detailStr = kUSASpending_DetailLevel_High;
 			break;
 		case eSpendingDetailComplete:
-			detailStr = kDetailLevel_Complete;
+			detailStr = kUSASpending_DetailLevel_Complete;
 			break;
 	}
 	
 	NSMutableString *urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_fpdsURL] autorelease];
-	[urlStr appendFormat:@"%@=%0d%@=%0d%@%@",
-							kMaxRecordsKey,maxRecords,
-							kFiscalYearKey,year,
+	[urlStr appendFormat:@"%@%@=%0d%@=%0d%@%@",
+							(xmldata ? kUSASpending_DataTypeXML : kUSASpending_DataTypeHTML),
+							kUSASpending_MaxRecordsKey,maxRecords,
+							kUSASpending_FiscalYearKey,year,
 							detailStr,
 							sortStr
 	];
+	return (NSString *)urlStr;
+}
+
+
++ (NSString *)USASpending_contractorSearchURL:(NSString *)companyName 
+									  forYear:(NSInteger)year 
+								   withDetail:(SpendingDetail)detail 
+									 sortedBy:(SpendingSortMethod)order 
+									   xmlURL:(BOOL)xmldata
+{
+	NSString *sortStr;
+	switch ( order )
+	{
+		case eSpendingSortDate:
+			sortStr = kUSASpending_SortByDate;
+			break;
+		case eSpendingSortAgency:
+			sortStr = kUSASpending_SortByContractingAgency;
+			break;
+		case eSpendingSortContractor:
+			sortStr = kUSASpending_SortByContractor;
+			break;
+		case eSpendingSortCategory:
+			sortStr = kUSASpending_SortByCategory;
+			break;
+		default:
+		case eSpendingSortDollars:
+			sortStr = kUSASpending_SortByDollars;
+			break;
+	}
+	
+	NSString *detailStr;
+	switch ( detail )
+	{
+		default:
+		case eSpendingDetailSummary:
+			detailStr = kUSASpending_DetailLevel_Summary;
+			break;
+		case eSpendingDetailLow:
+			detailStr = kUSASpending_DetailLevel_Low;
+			break;
+		case eSpendingDetailMed:
+			detailStr = kUSASpending_DetailLevel_Medium;
+			break;
+		case eSpendingDetailHigh:
+			detailStr = kUSASpending_DetailLevel_High;
+			break;
+		case eSpendingDetailComplete:
+			detailStr = kUSASpending_DetailLevel_Complete;
+			break;
+	}
+	
+	NSMutableString *urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_fpdsURL] autorelease];
+	[urlStr appendFormat:@"%@%@=%0d%@=%@%@%@%@",
+				(xmldata ? kUSASpending_DataTypeXML : kUSASpending_DataTypeHTML),
+				kUSASpending_FiscalYearKey,year,
+				kUSASpending_ContractorKey,[companyName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+				detailStr,
+				kUSASpending_SearchAppendKey,
+				sortStr
+	 ];
 	return (NSString *)urlStr;
 }
 

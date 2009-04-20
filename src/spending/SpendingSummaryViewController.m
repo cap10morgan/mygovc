@@ -1,20 +1,26 @@
 //
-//  BillInfoViewController.m
+//  SpendingSummaryViewController.m
 //  myGovernment
 //
-//  Created by Jeremy C. Andrus on 4/15/09.
+//  Created by Jeremy C. Andrus on 4/19/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
-
-#import "BillInfoViewController.h"
-#import "BillContainer.h"
-#import "BillInfoData.h"
+#import "ContractorSpendingData.h"
 #import "CustomTableCell.h"
+#import "PlaceSpendingData.h"
+#import "SpendingSummaryData.h"
+#import "SpendingSummaryViewController.h"
 
-@implementation BillInfoViewController
 
-@synthesize m_bill;
+@interface SpendingSummaryViewController (private)
+	- (void)deselectRow:(id)sender;
+@end
 
+
+
+@implementation SpendingSummaryViewController
+
+@synthesize m_placeData, m_contractorData;
 
 - (void)didReceiveMemoryWarning 
 {
@@ -25,7 +31,8 @@
 
 - (void)dealloc 
 {
-	[m_bill release];
+	[m_placeData release];
+	[m_contractorData release];
 	
 	[m_data release];
 	
@@ -37,26 +44,45 @@
 {
 	if ( self = [super init] )
 	{
-		self.title = @"Bill"; // this will be updated later...
-		m_bill = nil;
+		self.title = @"Spending Summary"; // this will be updated later...
+		m_placeData = nil;
+		m_contractorData = nil;
 		m_data = nil;
 	}
 	return self;
 }
 
 
-- (void)setBill:(BillContainer *)bill
+- (void)setPlaceData:(PlaceSpendingData *)data
 {
-	[m_bill release];
-	m_bill = [bill retain];
+	[m_contractorData release]; m_contractorData = nil;
+	[m_placeData release];
+	m_placeData = [data retain];
 	
 	if ( nil == m_data )
 	{
-		m_data = [[BillInfoData alloc] init];
+		m_data = [[SpendingSummaryData alloc] init];
 	}
-	[m_data setBill:m_bill];
+	[m_data setPlaceData:m_placeData];
 	
-	self.title = [m_bill getShortTitle];
+	self.title = [data placeDescrip];
+	[self.tableView reloadData];
+}
+
+
+- (void)setContractorData:(ContractorInfo *)data
+{
+	[m_placeData release]; m_placeData = nil;
+	[m_contractorData release];
+	m_contractorData = [data retain];
+	
+	if ( nil == m_data )
+	{
+		m_data = [[SpendingSummaryData alloc] init];
+	}
+	[m_data setContractorData:m_contractorData];
+	
+	self.title = m_contractorData.m_parentCompany;
 	[self.tableView reloadData];
 }
 
@@ -75,19 +101,28 @@
 	m_tableView.backgroundColor = [UIColor blackColor];
 	
 	/*
-	// XXX - set tableHeaderView to a custom UIView which has legislator
-	//       photo, name, major info (party, state, district), add to contacts link
-	// m_tableView.tableHeaderView = headerView;
-	CGRect hframe = CGRectMake(0,0,320,150);
-	m_headerViewCtrl = [[LegislatorHeaderViewController alloc] initWithNibName:@"LegislatorHeaderView" bundle:nil ];
-	[m_headerViewCtrl.view setFrame:hframe];
-	[m_headerViewCtrl setLegislator:m_legislator];
-	[m_headerViewCtrl setNavController:self];
-	m_tableView.tableHeaderView = m_headerViewCtrl.view;
-	m_tableView.tableHeaderView.userInteractionEnabled = YES;
-	*/
+	 // XXX - set tableHeaderView to a custom UIView which has legislator
+	 //       photo, name, major info (party, state, district), add to contacts link
+	 // m_tableView.tableHeaderView = headerView;
+	 CGRect hframe = CGRectMake(0,0,320,150);
+	 m_headerViewCtrl = [[LegislatorHeaderViewController alloc] initWithNibName:@"LegislatorHeaderView" bundle:nil ];
+	 [m_headerViewCtrl.view setFrame:hframe];
+	 [m_headerViewCtrl setLegislator:m_legislator];
+	 [m_headerViewCtrl setNavController:self];
+	 m_tableView.tableHeaderView = m_headerViewCtrl.view;
+	 m_tableView.tableHeaderView.userInteractionEnabled = YES;
+	 */
 }
 
+
+/*
+- (id)initWithStyle:(UITableViewStyle)style {
+    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
+    if (self = [super initWithStyle:style]) {
+    }
+    return self;
+}
+*/
 
 /*
 - (void)viewDidLoad {
@@ -119,6 +154,7 @@
 }
 */
 
+
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
@@ -127,7 +163,7 @@
 }
 
 
-#pragma mark LegislatorViewController Private
+#pragma mark SpendingSummaryViewController Private
 
 
 - (void)deselectRow:(id)sender
@@ -151,7 +187,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
 	
-	if ( nil ==  m_bill ) return 0;
+	if ( nil ==  m_placeData && nil == m_contractorData ) return 0;
 	
 	return [m_data numberOfRowsInSection:section];
 }
@@ -189,7 +225,7 @@
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-	static NSString *CellIdentifier = @"BillInfoCell";
+	static NSString *CellIdentifier = @"SpendingSummaryInfoCell";
 	
 	CustomTableCell *cell = (CustomTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if ( nil == cell )

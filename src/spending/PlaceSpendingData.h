@@ -36,6 +36,7 @@ typedef enum
 	
 	NSString  *m_place;
 	NSUInteger m_year;
+	CGFloat    m_pctOfYear;
 	NSUInteger m_rank;
 	CGFloat    m_totalDollarsObligated;
 	NSUInteger m_totalContractors;
@@ -66,6 +67,7 @@ typedef enum
 @property (readonly) BOOL isBusy;
 @property (readonly) NSString *m_place;
 @property (readonly) NSUInteger m_year;
+@property (readonly) CGFloat m_pctOfYear;
 @property (readonly) NSUInteger m_rank;
 @property (readonly) CGFloat m_totalDollarsObligated;
 @property (readonly) NSUInteger m_totalContractors;
@@ -75,10 +77,24 @@ typedef enum
 - (id)initWithDistrict:(NSString *)district;
 - (id)initWithState:(NSString *)state;
 
+- (NSArray *)placeLegislators:(BOOL)includeSenators;
+
+- (NSString *)placeDescrip;
+- (NSString *)fiscalYearDescrip;
+- (NSString *)totalDollarsStr;
+- (NSString *)rankStr;
+- (NSString *)rankStrAlt;
+- (BOOL)rankIsTop25Pct;
+- (NSString *)totalContractorsStr;
+- (NSString *)totalTransactionsStr;
+
 - (NSDictionary *)topCDistsWhereWorkPerformed;
 - (NSDictionary *)topContractors;
 - (NSDictionary *)topAgencies;
 - (NSDictionary *)topCategories;
+
+- (NSURL *)getContractorListURL;
+- (NSURL *)getTransactionListURL;
 
 - (void)downloadDataWithCallback:(SEL)sel onObject:(id)obj synchronously:(BOOL)waitForData;
 

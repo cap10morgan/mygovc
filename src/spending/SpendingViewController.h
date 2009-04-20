@@ -30,6 +30,8 @@ typedef enum
 	
 	int m_sortOrder;
 	
+	int m_actionSheetType;
+	
 	ProgressOverlayViewController *m_HUD;
 }
 

@@ -16,6 +16,8 @@
 	PlaceSpendingData *m_data;
 }
 
+@property (readonly) PlaceSpendingData * m_data;
+
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)identifier detailTarget:(id)tgt detailSelector:(SEL)sel;
 
 - (void)setPlaceData:(PlaceSpendingData *)data;

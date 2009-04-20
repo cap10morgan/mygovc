@@ -6,7 +6,8 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 #import <Foundation/NSCalendar.h>
-
+#import "CongressDataManager.h"
+#import "myGovAppDelegate.h"
 #import "PlaceSpendingData.h"
 #import "SpendingDataManager.h"
 #import "StateAbbreviations.h"
@@ -24,6 +25,7 @@
 @synthesize isBusy;
 @synthesize m_place;
 @synthesize m_year;
+@synthesize m_pctOfYear;
 @synthesize m_rank;
 @synthesize m_totalDollarsObligated;
 @synthesize m_totalContractors;
@@ -65,6 +67,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	isBusy = NO;
 	
 	m_year = 0;
+	m_pctOfYear = 0.0;
 	m_rank = 0;
 	m_totalDollarsObligated = 0.0;
 	m_totalContractors = 0;
@@ -127,6 +130,180 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 }
 
 
+- (NSArray *)placeLegislators:(BOOL)includeSenators
+{
+	NSMutableArray *legislators = [[[NSMutableArray alloc] init] autorelease];
+	switch ( m_placeType )
+	{
+		case eSPT_District:
+		{
+			LegislatorContainer *lc =  [[myGovAppDelegate sharedCongressData] districtRepresentative:m_place];
+			if ( nil != lc ) [legislators addObject:lc];
+		}
+			if ( !includeSenators ) break;
+		case eSPT_State:
+		{
+			NSString *state = ([m_place length] > 1) ? [m_place substringToIndex:2] : m_place;
+			NSArray *senateMembers = [[myGovAppDelegate sharedCongressData] senateMembersInState:state];
+			NSEnumerator *senum = [senateMembers objectEnumerator];
+			id senator;
+			while ( senator = [senum nextObject] )
+			{
+				[legislators addObject:senator];
+			}
+		}
+			break;
+		default:
+			break;
+	}
+	return (NSArray *)legislators;
+}
+
+
+- (NSString *)placeDescrip
+{
+	switch ( m_placeType )
+	{
+		case eSPT_District:
+		{
+			if ( [m_place length] > 3 )
+			{
+				NSString *state = [StateAbbreviations nameFromAbbr:[m_place substringToIndex:2]];
+				NSString *district = [m_place substringFromIndex:2];
+				if ( [district integerValue] <= 0 )
+				{
+					return [NSString stringWithFormat:@"%@ At-Large",state];
+				}
+				else
+				{
+					return [NSString stringWithFormat:@"%@ District %@",state,district];
+				}
+			}
+			else return m_place;
+		}
+			break;
+		case eSPT_State:
+		{
+			if ( [m_place length] > 1 )
+			{
+				return [StateAbbreviations nameFromAbbr:[m_place substringToIndex:2]];
+			}
+			else return m_place;
+		}
+			break;
+		default:
+			return m_place;
+	}
+}
+
+
+- (NSString *)fiscalYearDescrip
+{
+	return [NSString stringWithFormat:@"   %04d (%.2f%%)",m_year,(m_pctOfYear*100.0f)];
+}
+
+
+- (NSString *)totalDollarsStr
+{
+	return [NSString stringWithFormat:@"   $%0.3f M",m_totalDollarsObligated / 1000000];
+}
+
+
+- (NSString *)rankStr
+{
+	NSInteger rankTotal;
+	CGFloat millionsOfDollars = m_totalDollarsObligated / 1000000;
+	
+	switch ( m_placeType )
+	{
+		case eSPT_District:
+			rankTotal = [[[myGovAppDelegate sharedSpendingData] congressionalDistricts] count];
+			break;
+		case eSPT_State:
+			rankTotal = [[StateAbbreviations abbrList] count];
+			break;
+		default:
+			rankTotal = -1;
+			break;
+	}
+	
+	BOOL top25 = (millionsOfDollars > 0.1 && ((CGFloat)(m_rank) / (CGFloat)rankTotal) <= 0.25);
+	
+	NSString *rankText = [[[NSString alloc] initWithFormat:@"$%.1fM %@%d/%d%@",
+											   millionsOfDollars,
+											   (top25 ?  @" » " : @" : "),
+											   m_rank,	
+											   rankTotal,
+											   (top25 ? @" «" : @"")
+						   ] autorelease];
+	return rankText;
+}
+
+
+- (NSString *)rankStrAlt
+{
+	NSInteger rankTotal;
+	CGFloat millionsOfDollars = m_totalDollarsObligated / 1000000;
+	
+	switch ( m_placeType )
+	{
+		case eSPT_District:
+			rankTotal = [[[myGovAppDelegate sharedSpendingData] congressionalDistricts] count];
+			break;
+		case eSPT_State:
+			rankTotal = [[StateAbbreviations abbrList] count];
+			break;
+		default:
+			rankTotal = -1;
+			break;
+	}
+	
+	BOOL top25 = (millionsOfDollars > 0.1 && ((CGFloat)(m_rank) / (CGFloat)rankTotal) <= 0.25);
+	
+	NSString *rankText = [[[NSString alloc] initWithFormat:@"%@%d / %d%@",
+											   (top25 ?  @" » " : @"   "),
+											   m_rank,	
+											   rankTotal,
+											   (top25 ? @" «" : @"")
+						   ] autorelease];
+	return rankText;
+}
+
+
+- (BOOL)rankIsTop25Pct
+{
+	NSInteger rankTotal;
+	CGFloat millionsOfDollars = m_totalDollarsObligated / 1000000;
+	
+	switch ( m_placeType )
+	{
+		case eSPT_District:
+			rankTotal = [[[myGovAppDelegate sharedSpendingData] congressionalDistricts] count];
+			break;
+		case eSPT_State:
+			rankTotal = [[StateAbbreviations abbrList] count];
+			break;
+		default:
+			rankTotal = -1;
+			break;
+	}
+	BOOL top25 = (millionsOfDollars > 0.1 && ((CGFloat)(m_rank) / (CGFloat)rankTotal) <= 0.25);
+	return top25;
+}
+
+
+- (NSString *)totalContractorsStr
+{
+	return [NSString stringWithFormat:@"   %0d",m_totalContractors];
+}
+
+
+- (NSString *)totalTransactionsStr
+{
+	return [NSString stringWithFormat:@"   %0d",m_totalTransactions];
+}
+
+
 - (NSDictionary *)topCDistsWhereWorkPerformed
 {
 	return (NSDictionary *)m_topCDists;
@@ -148,6 +325,48 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 - (NSDictionary *)topCategories
 {
 	return (NSDictionary *)m_topCategories;
+}
+
+
+- (NSURL *)getContractorListURL
+{
+	NSString *urlStr;
+	switch ( m_placeType )
+	{
+		case eSPT_District:
+			urlStr = [DataProviders USASpending_districtURL:m_place forYear:m_year withDetail:eSpendingDetailLow sortedBy:eSpendingSortDollars xmlURL:NO];
+			break;
+		case eSPT_State:
+			urlStr = [DataProviders USASpending_stateURL:m_place forYear:m_year withDetail:eSpendingDetailLow sortedBy:eSpendingSortDollars xmlURL:NO];
+			break;
+		default:
+			urlStr = nil;
+			break;
+	}
+	
+	NSURL *url = [[[NSURL alloc] initWithString:urlStr] autorelease];
+	return url;
+}
+
+
+- (NSURL *)getTransactionListURL
+{
+	NSString *urlStr;
+	switch ( m_placeType )
+	{
+		case eSPT_District:
+			urlStr = [DataProviders USASpending_districtURL:m_place forYear:m_year withDetail:eSpendingDetailHigh sortedBy:eSpendingSortDollars xmlURL:NO];
+			break;
+		case eSPT_State:
+			urlStr = [DataProviders USASpending_stateURL:m_place forYear:m_year withDetail:eSpendingDetailHigh sortedBy:eSpendingSortDollars xmlURL:NO];
+			break;
+		default:
+			urlStr = nil;
+			break;
+	}
+	
+	NSURL *url = [[[NSURL alloc] initWithString:urlStr] autorelease];
+	return url;
 }
 
 
@@ -196,7 +415,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 		NSString *urlStr = [DataProviders USASpending_districtURL:(nil == altPlace ? m_place : altPlace)
 														  forYear:year 
 													   withDetail:eSpendingDetailSummary 
-														 sortedBy:eSpendingSortDollars];
+														 sortedBy:eSpendingSortDollars xmlURL:YES];
 		detailSummaryURL = [NSURL URLWithString:urlStr];
 	}
 	else if ( eSPT_State == m_placeType )
@@ -204,7 +423,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 		NSString *urlStr = [DataProviders USASpending_stateURL:(nil == altPlace ? m_place : altPlace) 
 													   forYear:year 
 													withDetail:eSpendingDetailSummary 
-													  sortedBy:eSpendingSortDollars];
+													  sortedBy:eSpendingSortDollars xmlURL:YES];
 		detailSummaryURL = [NSURL URLWithString:urlStr];
 	}
 	
@@ -362,6 +581,10 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 						NSUInteger year =  [m_currentXMLStr integerValue];
 						//if ( year != m_year ) NSLog( @"District %@: year in returned data (%d) doesn't match current year (%d)!", m_place, year, m_year );
 						m_year = year;
+					}
+					else if ( [elementName isEqualToString:kName_SummaryPercentFY] )
+					{
+						m_pctOfYear = [m_currentXMLStr doubleValue];
 					}
 					else if ( [elementName isEqualToString:kName_SummaryTotalDollars] )
 					{

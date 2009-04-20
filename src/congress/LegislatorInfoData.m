@@ -193,6 +193,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 				}
 			}
 		}
+			[retVal sortUsingSelector:@selector(compareTitle:)];
 			break;
 		
 		case eSection_InfoStream:
@@ -216,6 +217,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 				}
 			}
 		}
+			[retVal sortUsingSelector:@selector(compareTitle:)];
 			break;
 		case eSection_Committe:
 		{
@@ -269,8 +271,6 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 		}
 			break;
 	}
-	
-	[retVal sortUsingSelector:@selector(compareTitle:)];
 	
 	return retVal;
 }

@@ -11,6 +11,8 @@
 
 @implementation ContractorSpendingTableCell
 
+@synthesize m_contractor;
+
 enum
 {
 	eTAG_DETAIL   = 999,
