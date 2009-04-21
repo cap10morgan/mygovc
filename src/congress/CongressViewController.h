@@ -29,6 +29,7 @@ typedef enum
 	
 	NSIndexPath *m_initialIndexPath;
 	NSString *m_initialLegislatorID;
+	NSString *m_initialSearchString;
 	
 	NSString *m_searchResultsTitle;
 	

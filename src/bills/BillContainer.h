@@ -89,6 +89,9 @@ typedef enum
 
 - (NSComparisonResult)lastActionDateCompare:(BillContainer *)that;
 
+- (NSDictionary *)getBillDictionaryForCache;
+- (id)initWithDictionary:(NSDictionary *)billData;
+
 - (void)addSponsor:(NSString *)bioguideID;
 - (void)addCoSponsor:(NSString *)bioguideID;
 

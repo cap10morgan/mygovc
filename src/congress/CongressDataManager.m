@@ -58,6 +58,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 		[self setNotifyTarget:target withSelector:sel];
 		
 		m_currentStatusMessage = [[NSMutableString alloc] init];
+		m_currentSearchString = nil;
 		
 		// initialize states/house/senate arrays
 		m_states = [[NSMutableArray alloc] initWithCapacity:60];
@@ -110,6 +111,8 @@ static NSString *kTitleValue_Senator = @"Sen";
 	
 	[m_currentString release];
 	[m_currentStatusMessage release];
+	[m_currentSearchString release];
+	
 	[super dealloc];
 }
 
@@ -155,7 +158,9 @@ static NSString *kTitleValue_Senator = @"Sen";
 - (void)setSearchString:(NSString *)string
 {
 	[m_searchArray release]; m_searchArray = nil;
+	[m_currentSearchString release]; m_currentSearchString = nil;
 	if ( 0 == [string length] ) return;
+	m_currentSearchString = [[NSString alloc] initWithString:string];
 	
 	// build a new search array
 	m_searchArray = [[NSMutableArray alloc] initWithCapacity:10];
@@ -165,7 +170,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 	{
 		// XXX - fix for At-Large districts...
 		
-		NSString *state = [string substringToIndex:2];
+		NSString *state = [[string substringToIndex:2] uppercaseString];
 		
 		// representative
 		LegislatorContainer *lc = [self districtRepresentative:string]; 
@@ -219,6 +224,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 	[m_searchArray release]; m_searchArray = nil;
 	
 	NSString *searchStr = [DataProviders Govtrack_DistrictURLFromLocation:loc];
+	
 	if ( nil != m_xmlParser )
 	{
 		// abort any previous attempt at parsing/downloading
@@ -241,6 +247,12 @@ static NSString *kTitleValue_Senator = @"Sen";
 - (NSArray *)searchResultsArray
 {
 	return (NSArray *)m_searchArray;
+}
+
+
+- (NSString *)currentSearchString
+{
+	return m_currentSearchString;
 }
 
 
@@ -529,6 +541,9 @@ static NSString *kTitleValue_Senator = @"Sen";
 {
 	[m_searchArray release]; m_searchArray = nil;
 	m_searchArray = [[NSMutableArray alloc] initWithCapacity:3];
+	
+	[m_currentSearchString release];
+	m_currentSearchString = [[NSString alloc] initWithFormat:@"%@%02d",stateAbbr,district];
 	
 	// linearly search the house members in the current state
 	NSEnumerator *houseEnum = [[self houseMembersInState:stateAbbr] objectEnumerator];

@@ -47,6 +47,7 @@ typedef enum
 	XMLParserOperation *m_xmlParser;
 	
 	NSMutableString *m_currentStatusMessage;
+	NSString *m_currentSearchString;
 	
 	id m_notifyTarget;
 	SEL m_notifySelector;

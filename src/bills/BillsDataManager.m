@@ -19,6 +19,8 @@
 @interface BillsDataManager (private)
 	- (void)setStatus:(NSString *)status;
 	- (void)addNewBill:(BillContainer *)bill;
+	- (void)writeBillDataDataToCache:(id)sender;
+	- (void)clearData;
 @end
 
 
@@ -338,6 +340,98 @@
 }
 
 
+- (void)writeBillDataDataToCache:(id)sender
+{
+	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
+	
+	// make sure the directoy exists!
+	[[NSFileManager defaultManager] createDirectoryAtPath:dataPath withIntermediateDirectories:YES attributes:nil error:NULL];
+	
+	NSString *billDataPath = [dataPath stringByAppendingPathComponent:@"bills.cache"];
+	NSLog( @"BillsDataManager: writing bill cache to: %@",billDataPath );
+	
+	NSMutableArray *billData = [[NSMutableArray alloc] initWithCapacity:([m_houseBills count] + [m_senateBills count])];
+	
+	// gather house bill data
+	NSEnumerator *e = [m_houseBills objectEnumerator];
+	id monthArray;
+	while ( monthArray = [e nextObject] )
+	{
+		NSEnumerator *me = [monthArray objectEnumerator];
+		id bc;
+		while ( bc = [me nextObject] )
+		{
+			NSDictionary *billDict = [bc getBillDictionaryForCache];
+			[billData addObject:billDict];
+		}
+	}
+	
+	// Gather senate bill data
+	e = [m_senateBills objectEnumerator];
+	while ( monthArray = [e nextObject] )
+	{
+		NSEnumerator *me = [monthArray objectEnumerator];
+		id bc;
+		while ( bc = [me nextObject] )
+		{
+			NSDictionary *billDict = [bc getBillDictionaryForCache];
+			[billData addObject:billDict];
+		}
+	}
+	
+	BOOL success = [billData writeToFile:billDataPath atomically:YES];
+	if ( !success )
+	{
+		NSLog( @"BillsDataManager: error writing bill data to cache!" );
+	}
+}
+
+
+- (void)readBillDataFromCache
+{
+	[self setStatus:@"Reading Cached Bills..."];
+	
+	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
+	NSString *billDataPath = [dataPath stringByAppendingPathComponent:@"bills.cache"];
+	NSLog( @"BillsDataManager: reading bill cache from: %@", billDataPath );
+	
+	NSArray *billData = [NSArray arrayWithContentsOfFile:billDataPath];
+	if ( nil == billData )
+	{
+		NSLog( @"BillsDataManager: error reading cached data from file" );
+		return;
+	}
+	
+	// remove any current data 
+	[self clearData];
+	
+	NSEnumerator *e = [billData objectEnumerator];
+	id billDict;
+	while ( billDict = [e nextObject] )
+	{
+		BillContainer *bc = [[BillContainer alloc] initWithDictionary:billDict];
+		if ( nil != bc )
+		{
+			[self addNewBill:bc];
+		}
+	}
+}
+
+
+- (void)clearData
+{
+	[m_houseSections release];
+	[m_houseBills release];
+	[m_senateSections release];
+	[m_senateBills release];
+	
+	m_houseSections = [[NSMutableArray alloc] initWithCapacity:12];
+	m_houseBills = [[NSMutableDictionary alloc] initWithCapacity:12];
+	m_senateSections = [[NSMutableArray alloc] initWithCapacity:12];
+	m_senateBills = [[NSMutableDictionary alloc] initWithCapacity:12];
+}
+
+
 - (void)timerFireMethod:(NSTimer *)timer
 {
 	if ( timer != m_timer ) return;
@@ -374,19 +468,17 @@
 	
 	if ( isDataAvailable )
 	{
-		// XXX - archive the bill summary data !
-		/*
+		// archive the bill summary data !
 		isBusy = YES; // we're writing the cache!
 		
 		// kick off the caching of this data
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																			selector:@selector(writeLegislatorDataToCache:) object:self];
+																	  selector:@selector(writeBillDataDataToCache:) object:self];
 		
 		// Add the operation to the internal operation queue managed by the application delegate.
 		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
 		
 		[theOp release];
-		*/
 	}
 	else
 	{

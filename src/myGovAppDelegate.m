@@ -144,6 +144,7 @@ static SpendingDataManager *s_mySpendingData = NULL;
 		{
 			appURLStr = [NSString stringWithFormat:@"mygov://%@",appURLStr];
 		}
+		appURLStr = [appURLStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 		NSURL *appURL = [NSURL URLWithString:appURLStr];
 		[self application:application handleOpenURL:appURL];
 	}
@@ -181,6 +182,7 @@ static SpendingDataManager *s_mySpendingData = NULL;
 	{
 		// save the state!
 		appURL = [NSString stringWithFormat:@"mygov://%@/%@",area,(nil != areaParms ? areaParms : @"")];
+		appURL = [appURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 		[[NSUserDefaults standardUserDefaults] setObject:appURL forKey:@"mygov_last_url"];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 	}

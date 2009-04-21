@@ -52,6 +52,8 @@ enum
 	[m_currentLocation release];
 	[m_initialIndexPath release];
 	[m_initialLegislatorID release];
+	[m_initialSearchString release];
+	[m_searchResultsTitle release];
     [super dealloc];
 }
 
@@ -67,13 +69,14 @@ enum
 	m_data = [[myGovAppDelegate sharedCongressData] retain];
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	
-	m_searchResultsTitle = @"Search Results";
+	m_searchResultsTitle = [[NSString alloc] initWithString:@"Search Results"];
 	
 	m_locationManager = nil;
 	m_currentLocation = nil;
 	
 	m_initialIndexPath = nil;
 	m_initialLegislatorID = nil;
+	m_initialSearchString = nil;
 	
 	m_actionType = eActionReload;
 	
@@ -237,7 +240,7 @@ enum
 		[m_HUD show:NO];
 		self.tableView.userInteractionEnabled = YES;
 		
-		if ( nil != m_initialIndexPath )
+		if ( nil != m_initialIndexPath || nil != m_initialSearchString )
 		{
 			[self scrollToInitialPosition];
 		}
@@ -270,6 +273,7 @@ enum
 		[m_HUD setText:msg andIndicateProgress:YES];
 		[self.tableView setNeedsDisplay];
 	}
+	
 }
 
 
@@ -391,9 +395,10 @@ enum
 	else if ( [chamber isEqualToString:@"search"] )
 	{
 		m_selectedChamber = eCongressSearchResults;
-		NSString *searchStr = nil;
-		if ( ++parmIdx < [pArray count] ) searchStr = [pArray objectAtIndex:parmIdx];
-		if ( ++parmIdx < [pArray count] ) m_searchResultsTitle = [pArray objectAtIndex:parmIdx];
+		[m_initialSearchString release]; m_initialSearchString = nil;
+		[m_searchResultsTitle release]; m_searchResultsTitle = nil;
+		if ( ++parmIdx < [pArray count] ) m_initialSearchString = [[NSString alloc] initWithString:[pArray objectAtIndex:parmIdx]];
+		if ( ++parmIdx < [pArray count] ) m_searchResultsTitle = [[NSString alloc] initWithString:[pArray objectAtIndex:parmIdx]];
 	}
 	
 	if ( ++parmIdx < [pArray count] )
@@ -563,7 +568,8 @@ show_legislator:
 	else
 	{
 		[self setActivityViewInNavBar];
-		m_searchResultsTitle = @"Local Legislators";
+		[m_searchResultsTitle release];
+		m_searchResultsTitle = [[NSString alloc] initWithString:@"Local Legislators"];
 		
 		[m_locationManager startUpdatingLocation];
 	}
@@ -572,9 +578,20 @@ show_legislator:
 
 - (void)scrollToInitialPosition
 {
+	BOOL isReloading = NO;
+	
+	if ( nil != m_initialSearchString )
+	{
+		UISearchBar *searchBar = (UISearchBar *)(self.tableView.tableHeaderView);
+		[searchBar setText:m_initialSearchString];
+		[m_data setSearchString:m_initialSearchString];
+		isReloading = YES;
+		[self.tableView reloadData];
+	}
+	
 	if ( nil != m_initialIndexPath )
 	{
-		[self.tableView reloadData];
+		if ( !isReloading ) [self.tableView reloadData];
 		// make sure the new index is within the bounds of our table
 		if ( [self.tableView numberOfSections] > m_initialIndexPath.section &&
 			 [self.tableView numberOfRowsInSection:m_initialIndexPath.section] > m_initialIndexPath.row )
@@ -583,7 +600,9 @@ show_legislator:
 			[self.tableView scrollToRowAtIndexPath:m_initialIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
 		}
 	}
-	// clear this state
+	
+	// clear all the state (no matter what)
+	[m_initialSearchString release]; m_initialSearchString = nil;
 	[m_initialIndexPath release]; m_initialIndexPath = nil;
 }
 
@@ -675,7 +694,8 @@ show_legislator:
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-	m_searchResultsTitle = @"Search Results";
+	[m_searchResultsTitle release];
+	m_searchResultsTitle = [[NSString alloc] initWithString:@"Search Results"];
 	
 	if ( [searchText length] == 0 )
 	{
@@ -918,7 +938,7 @@ show_legislator:
 		switch ( m_selectedChamber )
 		{
 			case eCongressSearchResults:
-				return m_searchResultsTitle;
+				return [m_searchResultsTitle stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 			default:
 				// get full state name
 				return [[StateAbbreviations nameList] objectAtIndex:section];

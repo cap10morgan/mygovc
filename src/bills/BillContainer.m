@@ -9,7 +9,9 @@
 #import "myGovAppDelegate.h"
 #import "BillContainer.h"
 #import "CongressDataManager.h"
+#import "DataProviders.h"
 #import "LegislatorContainer.h"
+
 
 @implementation BillAction
 
@@ -37,7 +39,22 @@
 
 @synthesize m_id, m_bornOn, m_title, m_type, m_number, m_status, m_summary;
 
-static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bills.text/%d/%@/%@%d.html";
+static NSString *kCache_IDKey                = @"BillID";
+static NSString *kCache_TypeKey              = @"BillType";
+static NSString *kCache_TitleKey             = @"BillTitle";
+static NSString *kCache_NumberKey            = @"BillNumber";
+static NSString *kCache_BornOnKey            = @"BillBornOn";
+static NSString *kCache_StatusKey            = @"BillStatus";
+static NSString *kCache_SummaryKey           = @"BillSummary";
+static NSString *kCache_SponsorKey           = @"BillSponsor";
+static NSString *kCache_CoSponsorKey         = @"BillCoSponsors";
+static NSString *kCache_BillActionsKey       = @"BillHistory";
+static NSString *kCache_Action_IDKey         = @"ActionID";
+static NSString *kCache_Action_DateKey       = @"ActionDate";
+static NSString *kCache_Action_HowKey        = @"ActionHow";
+static NSString *kCache_Action_TypeKey       = @"ActionType";
+static NSString *kCache_Action_DescripKey    = @"ActionDescrip";
+static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 
 
 + (NSString *)stringFromBillType:(BillType)type
@@ -196,6 +213,97 @@ static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bil
 }
 
 
+- (NSDictionary *)getBillDictionaryForCache
+{
+	NSMutableDictionary *billDict = [[[NSMutableDictionary alloc] init] autorelease];
+	
+	[billDict setValue:[NSNumber numberWithInt:m_id] forKey:kCache_IDKey];
+	[billDict setValue:[NSNumber numberWithInt:[m_bornOn timeIntervalSince1970]] forKey:kCache_BornOnKey];
+	[billDict setValue:m_title forKey:kCache_TitleKey];
+	[billDict setValue:[NSNumber numberWithInt:(int)m_type] forKey:kCache_TypeKey];
+	[billDict setValue:[NSNumber numberWithInt:m_number] forKey:kCache_NumberKey];
+	[billDict setValue:[m_status stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey:kCache_StatusKey];
+	[billDict setValue:[m_summary stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey:kCache_SummaryKey];
+	[billDict setValue:[[m_sponsors objectAtIndex:0] bioguide_id] forKey:kCache_SponsorKey];
+	
+	// co-sponsors
+	NSMutableArray *coSponsorArray = [[NSMutableArray alloc] init];
+	NSEnumerator *e = [m_cosponsors objectEnumerator];
+	id lc;
+	while ( lc = [e nextObject] )
+	{
+		[coSponsorArray addObject:[lc bioguide_id]];
+	}
+	
+	if ( [coSponsorArray count] > 0 )
+	{
+		[billDict setValue:coSponsorArray forKey:kCache_CoSponsorKey];
+	}
+	[coSponsorArray release];
+	
+	// actions
+	NSMutableArray *actions = [[NSMutableArray alloc] init];
+	e = [m_history objectEnumerator];
+	id ba;
+	while ( ba = [e nextObject] )
+	{
+		NSMutableDictionary *actionDict = [[NSMutableDictionary alloc] init];
+		[actionDict setValue:[NSNumber numberWithInt:[ba m_id]] forKey:kCache_Action_IDKey];
+		[actionDict setValue:[ba m_type] forKey:kCache_Action_TypeKey];
+		[actionDict setValue:[NSNumber numberWithInt:[[ba m_date] timeIntervalSince1970]] forKey:kCache_Action_DateKey];
+		[actionDict setValue:[[ba m_descrip] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey:kCache_Action_DescripKey];
+		[actionDict setValue:[NSNumber numberWithInt:(int)[ba m_voteResult]] forKey:kCache_Action_VoteResultKey];
+		[actionDict setValue:[ba m_how] forKey:kCache_Action_HowKey];
+		
+		[actions addObject:actionDict];
+		[actionDict release];
+	}
+	
+	if ( [actions count] > 0 )
+	{
+		[billDict setValue:actions forKey:kCache_BillActionsKey];
+	}
+	[actions release];
+	
+	return (NSDictionary *)billDict;
+}
+
+
+- (id)initWithDictionary:(NSDictionary *)billData
+{
+	if ( self = [super init] )
+	{
+		m_id = [[billData objectForKey:kCache_IDKey] integerValue];
+		m_bornOn = [NSDate dateWithTimeIntervalSince1970:[[billData objectForKey:kCache_BornOnKey] integerValue]];
+		m_title = [billData objectForKey:kCache_TitleKey];
+		m_type = (BillType)[[billData objectForKey:kCache_TypeKey] integerValue];
+		m_number = [[billData objectForKey:kCache_NumberKey] integerValue];
+		m_status = [[billData objectForKey:kCache_StatusKey] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+		m_summary = [[billData objectForKey:kCache_SummaryKey] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]; 
+		
+		NSString *bioguideID = [billData objectForKey:kCache_SponsorKey];
+		[self addSponsor:bioguideID];
+		
+		NSArray *cosponsors = [billData objectForKey:kCache_CoSponsorKey];
+		NSEnumerator *e = [cosponsors objectEnumerator];
+		id bID;
+		while ( bID = [e nextObject] )
+		{
+			[self addCoSponsor:(NSString *)bID];
+		}
+		
+		NSArray *actions = [billData objectForKey:kCache_BillActionsKey];
+		e = [actions objectEnumerator];
+		id bAction;
+		while ( bAction = [e nextObject] )
+		{
+			// XXX - initialize the BillAction!
+		}
+	}
+	return self;
+}
+
+
 - (void)addSponsor:(NSString *)bioguideID
 {
 	CongressDataManager *cdm = [myGovAppDelegate sharedCongressData];
@@ -318,6 +426,7 @@ static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bil
 
 - (NSURL *)getFullTextURL
 {
+	/*
 	CongressDataManager *cdm = [myGovAppDelegate sharedCongressData];
 	
 	NSString *urlStr = [[NSString alloc] initWithFormat:kGovtrackBillTextURL_fmt,
@@ -327,6 +436,8 @@ static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bil
 											m_number,
 											@"" // XXX - "ih", "eh" "ih.gen", "rfs", etc.
 						];
+	 */
+	NSString *urlStr = [DataProviders Govtrack_FullBillTextURL:m_number withBillType:m_type];
 	NSURL *url = [[[NSURL alloc] initWithString:urlStr] autorelease];
 	return url;
 }

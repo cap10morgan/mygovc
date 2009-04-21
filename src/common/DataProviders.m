@@ -5,11 +5,12 @@
 //  Created by Jeremy C. Andrus on 4/15/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
-#import "myGovAppDelegate.h"
-#import "DataProviders.h"
-#import "CongressDataManager.h"
-#import "LegislatorContainer.h"
 
+#import "myGovAppDelegate.h"
+#import "BillContainer.h"
+#import "CongressDataManager.h"
+#import "DataProviders.h"
+#import "LegislatorContainer.h"
 
 @implementation DataProviders
 
@@ -38,6 +39,7 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 static NSString *kGovtrack_dataDir = @"http://www.govtrack.us/data/us/";
 static NSString *kGovtrack_committeeListXMLFmt = @"http://www.govtrack.us/data/us/%d/committees.xml";
 static NSString *kGovtrack_latLongFmt = @"http://www.govtrack.us/perl/district-lookup.cgi?lat=%f&long=%f";
+static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bills.text/%d/%@/%@%d.html";
 
 // 
 // USASpending.gov
@@ -136,6 +138,20 @@ static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 						] autorelease];
 	return urlStr;
 }
+
+
++ (NSString *)Govtrack_FullBillTextURL:(NSInteger)number withBillType:(BillType)type
+{
+	NSString *urlStr = [[NSString alloc] initWithFormat:kGovtrackBillTextURL_fmt,
+											[[myGovAppDelegate sharedCongressData] currentCongressSession],
+											[BillContainer stringFromBillType:type],
+											[BillContainer stringFromBillType:type],
+											number,
+											@"" // XXX - "ih", "eh" "ih.gen", "rfs", etc.
+						];
+	return urlStr;
+}
+
 
 + (NSString *)USASpending_fpdsURL
 {

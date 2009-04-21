@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import "BillContainer.h"
 
 @class LegislatorContainer;
 
@@ -44,6 +45,7 @@ typedef enum
 + (NSString *)Govtrack_DataDirURL;
 + (NSString *)Govtrack_CommitteeURL:(NSInteger)congressSession;
 + (NSString *)Govtrack_DistrictURLFromLocation:(CLLocation *)latLong;
++ (NSString *)Govtrack_FullBillTextURL:(NSInteger)number withBillType:(BillType)type;
 
 + (NSString *)USASpending_fpdsURL;
 + (NSString *)USASpending_districtURL:(NSString *)district 
