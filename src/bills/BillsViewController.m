@@ -306,7 +306,7 @@ enum
 		case 0:
 		{
 			// put together an in-app URL and open it!
-			NSString *urlStr = [NSString stringWithFormat:@"mygov://congress/house:0:0:%@",
+			NSString *urlStr = [NSString stringWithFormat:@"mygov://congress/%@",
 											[[bill sponsor] bioguide_id]
 								];
 			NSURL *url = [NSURL URLWithString:urlStr];

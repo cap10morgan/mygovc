@@ -181,7 +181,7 @@ enum
 									([[lc district] length] > 0 ? [NSString stringWithFormat:@"-%02d",district] : @"")
 			           ];
 			rd.titleColor = [LegislatorContainer partyColor:[lc party]];
-			NSString *appUrlStr = [NSString stringWithFormat:@"mygov://congress/house:0:0:%@",[lc bioguide_id]];
+			NSString *appUrlStr = [NSString stringWithFormat:@"mygov://congress/%@",[lc bioguide_id]];
 			NSURL *appUrl = [[NSURL alloc] initWithString:appUrlStr];
 			rd.url = appUrl;
 			rd.action = @selector(rowActionURL:);
@@ -208,7 +208,7 @@ enum
 										([[lc district] length] > 0 ? [NSString stringWithFormat:@"-%02d",district] : @"")
 							];
 				rd.titleColor = [LegislatorContainer partyColor:[lc party]];
-				NSString *appUrlStr = [NSString stringWithFormat:@"mygov://congress/house:0:0:%@",[lc bioguide_id]];
+				NSString *appUrlStr = [NSString stringWithFormat:@"mygov://congress/%@",[lc bioguide_id]];
 				NSURL *appUrl = [[NSURL alloc] initWithString:appUrlStr];
 				rd.url = appUrl;
 				rd.action = @selector(rowActionURL:);

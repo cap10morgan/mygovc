@@ -38,6 +38,7 @@ typedef enum
 	NSMutableDictionary *m_house;
 	NSMutableDictionary *m_senate;
 	
+	NSString *m_searchString;
 	NSMutableArray *m_searchArray;
 	
 	NSInteger m_currentCongressSession;
@@ -73,6 +74,7 @@ typedef enum
 - (void)setSearchString:(NSString *)string;
 - (void)setSearchLocation:(CLLocation *)loc;
 - (NSArray *)searchResultsArray;
+- (NSString *)currentSearchString;
 
 // legislator by BioGuide ID
 - (LegislatorContainer *)getLegislatorFromBioguideID:(NSString *)bioguideid;

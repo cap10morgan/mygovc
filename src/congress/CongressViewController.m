@@ -308,6 +308,13 @@ enum
 		case eCongressChamberSenate:
 			[state appendString:@"senate"];
 			break;
+		case eCongressSearchResults:
+			[state appendString:@"search"];
+			[state appendString:[NSString stringWithFormat:@":%@:%@",[m_data currentSearchString],m_searchResultsTitle]];
+			break;
+		case eCongressCommittee:
+			[state appendString:@"committee"];
+			break;
 	}
 	
 	// current selected table row ?!
@@ -347,39 +354,68 @@ enum
 
 - (void)handleURLParms:(NSString *)parms
 {
+	NSString *bioguideID = nil;
+	NSString *chamber = nil;
+	int parmIdx = 0;
+	
 	if ( nil == parms ) return;
 	
 	NSArray *pArray = [parms componentsSeparatedByString:@":"];
 	if ( [pArray count] < 1 ) return;
 	
-	NSString *chamber = [pArray objectAtIndex:0];
+	if ( [pArray count] == 1 )
+	{
+		// this is a simple legislator URL, and the parameter should
+		// be the legislator's bioguide_id 
+		bioguideID = [pArray objectAtIndex:0];
+		goto show_legislator;
+	}
+	
+	
+	chamber = [pArray objectAtIndex:parmIdx];
 	if ( [chamber isEqualToString:@"senate"] )
 	{
 		m_selectedChamber = eCongressChamberSenate;
 		m_segmentCtrl.selectedSegmentIndex = 1;
 	}
-	else
+	else if ( [chamber isEqualToString:@"house"] )
 	{
 		m_selectedChamber = eCongressChamberHouse;
 		m_segmentCtrl.selectedSegmentIndex = 0;
 	}
-	
-	if ( [pArray count] > 2 )
+	else if ( [chamber isEqualToString:@"committee"] )
 	{
-		NSInteger section = [[pArray objectAtIndex:1] integerValue];
-		NSInteger row = [[pArray objectAtIndex:2] integerValue];
+		m_selectedChamber = eCongressCommittee;
+		// XXX - fill me in!
+	}
+	else if ( [chamber isEqualToString:@"search"] )
+	{
+		m_selectedChamber = eCongressSearchResults;
+		NSString *searchStr = nil;
+		if ( ++parmIdx < [pArray count] ) searchStr = [pArray objectAtIndex:parmIdx];
+		if ( ++parmIdx < [pArray count] ) m_searchResultsTitle = [pArray objectAtIndex:parmIdx];
+	}
+	
+	if ( ++parmIdx < [pArray count] )
+	{
+		NSInteger section = 0;
+		NSInteger row = 0;
+		section = [[pArray objectAtIndex:parmIdx] integerValue];
+		if ( ++parmIdx < [pArray count] ) row = [[pArray objectAtIndex:parmIdx] integerValue];
+		
 		[m_initialIndexPath release];
 		NSUInteger idx[2] = {section,row};
 		m_initialIndexPath = [[NSIndexPath alloc] initWithIndexes:idx length:2];
 	}
 	
-	NSString *bioguideID = nil;
-	if ( [pArray count] > 3 )
+	// a Bioguide ID can be tacked onto the end
+	if ( ++parmIdx < [pArray count] )
 	{
-		bioguideID = [pArray objectAtIndex:3];
+		bioguideID = [pArray objectAtIndex:parmIdx];
 	}
 	
 	// the parms should be a legislator ID
+show_legislator:
 	if ( [m_data isDataAvailable] )
 	{
 		[self scrollToInitialPosition];

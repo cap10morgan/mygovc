@@ -7,6 +7,7 @@
 //
 #import "myGovAppDelegate.h"
 
+#import "ComposeMessageViewController.h"
 #import "CongressDataManager.h"
 #import "ContractorSpendingData.h"
 #import "ContractorSpendingTableCell.h"
@@ -245,14 +246,14 @@ typedef enum
 		// Add an "organize button which will present the user with a method of
 		// sorting the displayed data
 		// 
-		self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] 
+		self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] 
 												   initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize 
 												   target:self 
 												   action:@selector(sortSpendingData)] autorelease];
 	}
 	else
 	{
-		self.navigationItem.rightBarButtonItem = nil;
+		self.navigationItem.leftBarButtonItem = nil;
 	}
 	
 	if ( [m_data isDataAvailable] )
@@ -355,6 +356,7 @@ typedef enum
 	switch ( m_actionSheetType )
 	{
 		case eAST_ContractorSort:
+		{
 			switch ( buttonIndex )
 			{
 				// sort by dollars
@@ -370,23 +372,96 @@ typedef enum
 				default:
 					break;
 			}
+			// reload table data
+			if ( [m_data isDataAvailable] )
+			{
+				[self.tableView reloadData];
+				NSUInteger idx[2] = {0,0};
+				[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+			}
+		}
 			break;
 		case eAST_PlaceAction:
+		{
+			BOOL shouldComment = NO;
+			PlaceSpendingData *psd = [self getDataForIndexPath:[self.tableView indexPathForSelectedRow]];
+			NSArray *plArray = [psd placeLegislators:YES];
+			NSString *legName = [psd m_place];
+			NSURL *appUrl;
+			switch ( buttonIndex )
+			{
+				case 0:
+					if ( [plArray count] < 1 ) shouldComment = YES;
+					else
+					{
+						LegislatorContainer *lc = [plArray objectAtIndex:0];
+						legName = [lc shortName];
+						NSString *urlStr = [NSString stringWithFormat:@"mygov://congress/%@",[lc bioguide_id]];
+						appUrl = [NSURL URLWithString:urlStr];
+					}
+					break;
+				case 1:
+					if ( [plArray count] < 2 ) shouldComment = YES;
+					else
+					{
+						LegislatorContainer *lc = [plArray objectAtIndex:1];
+						legName = [lc shortName];
+						NSString *urlStr = [NSString stringWithFormat:@"mygov://congress/%@",[lc bioguide_id]];
+						appUrl = [NSURL URLWithString:urlStr];
+					}
+					break;
+				case 2:
+					if ( [plArray count] < 3 ) shouldComment = YES;
+					else
+					{
+						LegislatorContainer *lc = [plArray objectAtIndex:2];
+						legName = [lc shortName];
+						NSString *urlStr = [NSString stringWithFormat:@"mygov://congress/%@",[lc bioguide_id]];
+						appUrl = [NSURL URLWithString:urlStr];
+					}
+					break;
+				case 3:
+					shouldComment = YES;
+					break;
+				default:
+					break;
+			}
+			
+			if ( shouldComment )
+			{
+				MessageData *msg = [[MessageData alloc] init];
+				msg.m_transport = eMT_MyGov;
+				msg.m_to = @"MyGovernment Community";
+				msg.m_subject = [NSString stringWithFormat:@"Spending: %@",legName];
+				ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+				[cmvc display:msg fromParent:self];
+				[msg release];
+			}
+			else if ( nil != appUrl )
+			{
+				[[UIApplication sharedApplication] openURL:appUrl];
+			}
+		}
 			break;
 		case eAST_ContractorAction:
+		{
+			ContractorInfo *ci = [m_data contractorData:[self.tableView indexPathForSelectedRow].row whenSortedBy:m_sortOrder];
+			
+			// only 1 action here - comment!
+			// 
+			MessageData *msg = [[MessageData alloc] init];
+			msg.m_transport = eMT_MyGov;
+			msg.m_to = @"MyGovernment Community";
+			msg.m_subject = [NSString stringWithFormat:@"Spending: %@",ci.m_parentCompany];
+			ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+			[cmvc display:msg fromParent:self];
+			[msg release];
+		}
 			break;
 	}
 	
 	// deselect the row
 	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
-	
-	// reload table data
-	if ( [m_data isDataAvailable] )
-	{
-		[self.tableView reloadData];
-		NSUInteger idx[2] = {0,0};
-		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
-	}
 }
 
 
@@ -546,12 +621,23 @@ typedef enum
 		case eSQMState:
 		{
 			PlaceSpendingData *psd = [self getDataForIndexPath:indexPath];
-			
+			NSString *buttonName[4] = { nil, nil, nil, nil };
+			{
+				NSArray *plArray = [psd placeLegislators:YES];
+				NSEnumerator *plEnum = [plArray objectEnumerator];
+				id legislator;
+				int ii = 0;
+				while ( legislator = [plEnum nextObject] )
+				{
+					buttonName[ii++] = [legislator shortName];
+				}
+				buttonName[ii++] = @"Comment!";
+			}
 			// pop up an alert asking the user what action to perform
 			UIActionSheet *contactAlert =
 			[[UIActionSheet alloc] initWithTitle:psd.m_place
 										delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-							   otherButtonTitles:@"District Rep. Info",@"Something Else!",@"Comment!",nil,nil];
+							   otherButtonTitles:buttonName[0],buttonName[1],buttonName[2],buttonName[3],nil];
 			
 			// use the same style as the nav bar
 			contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
@@ -569,7 +655,7 @@ typedef enum
 			UIActionSheet *contactAlert =
 			[[UIActionSheet alloc] initWithTitle:ci.m_parentCompany
 										delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-							   otherButtonTitles:@"Something!",@"Comment!",nil,nil,nil];
+							   otherButtonTitles:@"Comment!",nil,nil,nil,nil];
 			
 			// use the same style as the nav bar
 			contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;

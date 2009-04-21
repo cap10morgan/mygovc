@@ -184,8 +184,7 @@ enum
 				
 				UIColor *c = [LegislatorContainer partyColor:[lc party]];
 				
-				NSString *urlStr = [NSString stringWithFormat:@"mygov://congress/%@:0:0:%@",
-												([[lc title] isEqualToString:@"Sen"] ? @"senate" : @"house"),
+				NSString *urlStr = [NSString stringWithFormat:@"mygov://congress/%@",
 												[lc bioguide_id]
 									];
 				rd.title = legName;
@@ -365,8 +364,9 @@ enum
 			rd.line1 = m_contractorData.m_parentCompany;
 			rd.line1Color = [UIColor darkGrayColor];
 			rd.line1Font = [UIFont systemFontOfSize:16.0f];
-			rd.url = nil;
-			rd.action = @selector(rowActionNone:);
+			NSString *urlStr = [DataProviders USASpending_contractorSearchURL:m_contractorData.m_parentCompany forYear:m_contractorData.m_fiscalYear withDetail:eSpendingDetailMed sortedBy:eSpendingSortDollars xmlURL:NO];
+			rd.url = [NSURL URLWithString:urlStr];
+			rd.action = @selector(rowActionURL:);
 			[retVal addObject:rd];
 			[rd release];
 			

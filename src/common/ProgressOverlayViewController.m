@@ -269,25 +269,22 @@ enum
 	// create a rectangle for the view which can minimally contain the whole text
 	// (with a 20 pixel margin on all sides)
 	static CGFloat S_MARGIN = 40.0f;
-	CGFloat dx = CGRectGetWidth(parentRect) - fontSz.width - S_MARGIN;// + m_framePlacementHack;
-	CGFloat dy = CGRectGetHeight(parentRect) - fontSz.height - 50.0f - S_MARGIN;// + m_framePlacementHack;
+	CGFloat dx = CGRectGetWidth(parentRect) - fontSz.width - S_MARGIN;
+	CGFloat dy = CGRectGetHeight(parentRect) - fontSz.height - 50.0f - S_MARGIN;
 	CGRect viewRect = CGRectInset(parentRect, dx/2.0f, dy/2.0f );
 	if ( CGRectGetMinX(viewRect) <= 0 || CGRectGetMinY(viewRect) > 480.0f )
 	{
 		viewRect = CGRectMake(100.0f,180.0f,120.0f,120.0f);
 	}
-	//m_framePlacementHack = (m_framePlacementHack == 1) ? -1 : 1;
 	
 	// re-center the activity indicator
-	[activity setFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
-	[activity setCenter:CGPointMake(CGRectGetWidth(viewRect)/2.0f, 30.0f)];
-	
+	//[activity setFrame:CGRectMake(0.0f,0.0f,CGRectGetWidth(viewRect),CGRectGetHeight(viewRect))];
 	
 	// animate the transition!
 	[UIView setAnimationBeginsFromCurrentState:YES];
 	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
-	[UIView setAnimationDuration:0.25f];
+	[UIView setAnimationDuration:0.27f];
 	[UIView setAnimationDelegate:self];
 	[UIView setAnimationDidStopSelector:@selector(textAnimationFinished:finished:context:)];
 	
@@ -298,20 +295,11 @@ enum
 	[lbl setFrame:fontRect];
 	[self setFrame:viewRect];
 	
+	[activity setHidden:YES];
+	
 	[UIView commitAnimations];
 	
-	if ( m_shouldAnimate )
-	{
-		[activity startAnimating];
-	}
-	else
-	{
-		[activity stopAnimating];
-	}
-	
 	[text release];
-	[self setNeedsDisplay];
-	[self.superview setNeedsDisplay];
 }
 
 - (void)textAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context
@@ -324,6 +312,16 @@ enum
 	else
 	{
 		m_animating = NO;
+		
+		// set the activity indicator here to avoid
+		// a crazy-looking flicker in the main animation :-)
+		UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
+		[activity setFrame:CGRectMake(0.0f,0.0f,32.0f,32.0f)];
+		[activity setCenter:CGPointMake(CGRectGetWidth(self.frame)/2.0f, 30.0f)];
+		if ( m_shouldAnimate ) { [activity startAnimating]; [activity setHidden:NO]; }
+		else [activity stopAnimating];
+		[self setNeedsDisplay];
+		
 		if ( m_needsToHide )
 		{
 			m_needsToHide = NO;
