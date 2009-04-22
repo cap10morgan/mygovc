@@ -18,7 +18,7 @@
 
 @interface BillsDataManager (private)
 	- (void)beginBillSummaryDownload;
-	- (void)writeBillDataDataToCache:(id)sender;
+	- (void)writeBillDataToCache:(id)sender;
 	- (void)readBillDataFromCache:(id)sender;
 	- (void)setStatus:(NSString *)status;
 	- (void)addNewBill:(BillContainer *)bill;
@@ -65,6 +65,9 @@
 		m_senateSections = [[NSMutableArray alloc] initWithCapacity:12];
 		m_senateBills = [[NSMutableDictionary alloc] initWithCapacity:12];
 		
+		m_searching = NO;
+		m_searchResults = nil;
+		
 		m_xmlParser = nil;
 		m_timer = nil;
 	}
@@ -85,6 +88,8 @@
 	[m_houseBills release];
 	[m_senateSections release];
 	[m_senateBills release];
+	
+	[m_searchResults release];
 	
 	[m_currentStatusMessage release];
 	[super dealloc];
@@ -284,6 +289,50 @@
 }
 
 
+- (void)searchForBillsLike:(NSString *)searchText
+{
+	// 
+	// NOTE: This is _completely_ blocking!
+	// 
+	
+	NSString *searchUrlStr = [DataProviders OpenCongress_BillQueryURL:searchText];
+	NSURL *searchURL = [NSURL URLWithString:searchUrlStr];
+	
+	NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:searchURL];
+	
+	if ( nil == xmlParser ) return;
+	
+	BillSummaryXMLParser *bsxp = [[BillSummaryXMLParser alloc] initWithBillsData:self];
+	[bsxp setNotifyTarget:nil andSelector:nil];
+	
+	if ( nil == bsxp ) return;
+	
+	m_searching = YES;
+	
+	[m_searchResults release];
+	m_searchResults = [[NSMutableArray alloc] initWithCapacity:10];
+	
+	[xmlParser setDelegate:bsxp];
+	[xmlParser parse];
+	
+	m_searching = NO;
+}
+
+
+- (NSInteger)numSearchResults
+{
+	return [m_searchResults count];
+}
+
+
+- (BillContainer *)searchResultAtIndexPath:(NSIndexPath *)indexPath
+{
+	if ( indexPath.row >= [m_searchResults count] ) return nil;
+	
+	return [m_searchResults objectAtIndex:indexPath.row];
+}
+
+
 #pragma BillsDataManager Private 
 
 
@@ -311,6 +360,21 @@
 	
 	[self setStatus:@"Preparing Bill Download..."];
 	
+	// XXX - 
+	// XXX - Use [DataProviders OpenCongress_BillsURLIntroducedSinceDate:];
+	// XXX - (somehow) 
+	// XXX - 
+	/*
+	NSDateComponents *comps = [[NSDateComponents alloc] init];
+	[comps setDay:1];
+	[comps setMonth:1];
+	[comps setYear:2009];
+	NSCalendar *gregorian = [[NSCalendar alloc]
+							 initWithCalendarIdentifier:NSGregorianCalendar];
+	NSDate *date = [gregorian dateFromComponents:comps];
+	[comps release];
+	*/
+	
 	NSString *xmlURL = [DataProviders OpenCongress_BillsURL];
 	
 	if ( nil != m_xmlParser )
@@ -332,7 +396,7 @@
 }
 
 
-- (void)writeBillDataDataToCache:(id)sender
+- (void)writeBillDataToCache:(id)sender
 {	
 	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
 	
@@ -453,23 +517,31 @@
 {
 	NSMutableDictionary *chamberDict;
 	NSMutableArray *chamberSections;
-	switch ( bill.m_type ) 
+	if ( m_searching )
 	{
-		default:
-		case eBillType_h:
-		case eBillType_hj:
-		case eBillType_hc:
-		case eBillType_hr:
-			chamberDict = m_houseBills;
-			chamberSections = m_houseSections;
-			break;
-		case eBillType_s:
-		case eBillType_sj:
-		case eBillType_sc:
-		case eBillType_sr:
-			chamberDict = m_senateBills;
-			chamberSections = m_senateSections;
-			break;
+		[m_searchResults addObject:bill];
+		return;
+	}
+	else
+	{
+		switch ( bill.m_type ) 
+		{
+			default:
+			case eBillType_h:
+			case eBillType_hj:
+			case eBillType_hc:
+			case eBillType_hr:
+				chamberDict = m_houseBills;
+				chamberSections = m_houseSections;
+				break;
+			case eBillType_s:
+			case eBillType_sj:
+			case eBillType_sc:
+			case eBillType_sr:
+				chamberDict = m_senateBills;
+				chamberSections = m_senateSections;
+				break;
+		}
 	}
 	
 	NSInteger yearMonth = NSYearCalendarUnit | NSMonthCalendarUnit;
@@ -553,7 +625,7 @@
 		
 		// kick off the caching of this data
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																	  selector:@selector(writeBillDataDataToCache:) object:self];
+																	  selector:@selector(writeBillDataToCache:) object:self];
 		
 		// Add the operation to the internal operation queue managed by the application delegate.
 		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];

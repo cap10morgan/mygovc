@@ -58,6 +58,7 @@
 		01C075C10F8EE98700F5B2A1 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */; };
 		01C43CE10F662D0B00F8A025 /* BillsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C43CE00F662D0B00F8A025 /* BillsViewController.m */; };
 		01C43D020F662E3300F8A025 /* LegislatorNameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C43D010F662E3300F8A025 /* LegislatorNameCell.m */; };
+		01C729D80F9EEBBF00EA3FF9 /* recoveryIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */; };
 		01D998FF0F96995200961A76 /* DataProviders.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D998FE0F96995200961A76 /* DataProviders.m */; };
 		01E1D9E70F80817E008B3711 /* BillsDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E1D9E60F80817E008B3711 /* BillsDataManager.m */; };
 		01E1DA090F8085D3008B3711 /* BillContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E1DA080F8085D3008B3711 /* BillContainer.m */; };
@@ -155,6 +156,7 @@
 		01C43CE00F662D0B00F8A025 /* BillsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillsViewController.m; path = src/bills/BillsViewController.m; sourceTree = "<group>"; };
 		01C43D000F662E3300F8A025 /* LegislatorNameCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorNameCell.h; path = src/congress/LegislatorNameCell.h; sourceTree = "<group>"; };
 		01C43D010F662E3300F8A025 /* LegislatorNameCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorNameCell.m; path = src/congress/LegislatorNameCell.m; sourceTree = "<group>"; };
+		01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = recoveryIcon.png; path = res/recoveryIcon.png; sourceTree = "<group>"; };
 		01D998FD0F96995200961A76 /* DataProviders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataProviders.h; path = src/common/DataProviders.h; sourceTree = "<group>"; };
 		01D998FE0F96995200961A76 /* DataProviders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataProviders.m; path = src/common/DataProviders.m; sourceTree = "<group>"; };
 		01E1D9E50F80817E008B3711 /* BillsDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillsDataManager.h; path = src/bills/BillsDataManager.h; sourceTree = "<group>"; };
@@ -354,6 +356,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */,
 				01B7B6ED0F8AEACD00619441 /* backButton.png */,
 				01B7B6EE0F8AEACD00619441 /* fwdButton.png */,
 				017C22540F721E60008CA4ED /* communityIcon.png */,
@@ -445,6 +448,7 @@
 				01B7B6F80F8AECB100619441 /* MiniBrowserView.xib in Resources */,
 				011EF3CA0F91A47400932BBE /* ComposeMessageView.xib in Resources */,
 				0178E3AF0F944AFF00B96BD1 /* Settings.bundle in Resources */,
+				01C729D80F9EEBBF00EA3FF9 /* recoveryIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

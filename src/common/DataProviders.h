@@ -37,7 +37,9 @@ typedef enum
 
 + (NSString *)OpenCongress_APIKey;
 + (NSString *)OpenCongress_BillsURL;
++ (NSString *)OpenCongress_BillsURLIntroducedSinceDate:(NSDate *)date;
 + (NSString *)OpenCongress_PersonURL:(LegislatorContainer *)person;
++ (NSString *)OpenCongress_BillQueryURL:(NSString *)queryStr;
 
 + (NSString *)SunlightLabs_APIKey;
 + (NSString *)SunlightLabs_LegislatorListURL;

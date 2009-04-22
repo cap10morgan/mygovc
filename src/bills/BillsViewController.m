@@ -27,6 +27,7 @@
 	- (void)deselectRow:(id)sender;
 	- (void)setRefreshButtonInNavBar;
 	- (void)setActivityViewInNavBar;
+	- (void)searchForBills:(id)searchBar;
 @end
 
 
@@ -220,6 +221,8 @@ enum
 			case eCongressChamberSenate:
 				bc = [m_data senateBillAtIndexPath:indexPath];
 				break;
+			case eCongressSearchResults:
+				bc = [m_data searchResultAtIndexPath:indexPath];
 		}
 	}
 	return bc;
@@ -373,6 +376,37 @@ enum
 }
 
 
+- (void)searchForBills:(id)searchBar
+{
+	NSString *srchTxt = ((UISearchBar *)searchBar).text;
+	if ( [srchTxt length] > 0 )
+	{
+		// the blocking call which does all the searching!
+		[m_data searchForBillsLike:srchTxt];
+		
+		[m_HUD show:NO];
+		
+		if ( [m_data numSearchResults] > 0 )
+		{
+			m_selectedChamber = eCongressSearchResults;
+		}
+		else
+		{
+			// Search results!
+			UIAlertView *alert = [[UIAlertView alloc] 
+										  initWithTitle:@"Not Found"
+										  message:[NSString stringWithString:@"Sorry, no bills were found which matched your search string. Did you spell it right?"]
+										  delegate:self
+										  cancelButtonTitle:nil
+										  otherButtonTitles:@"OK",nil];
+			[alert show];
+		}
+		
+		[self.tableView reloadData];
+	}
+}
+
+
 #pragma mark UISearchBarDelegate methods
 
 
@@ -384,9 +418,21 @@ enum
 {
 	[searchBar resignFirstResponder];
 	
-	// XXX - fill this in!!!
-	
-	[self.tableView reloadData];
+	NSString *srchTxt = searchBar.text;
+	if ( [srchTxt length] > 0 )
+	{
+		[m_HUD setText:@"Searching Bills..." andIndicateProgress:YES];
+		[m_HUD show:YES];
+		
+		// kick off the search in a thread
+		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+															selector:@selector(searchForBills:) object:searchBar];
+		
+		// Add the operation to the internal operation queue managed by the application delegate.
+		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+		
+		[theOp release];
+	}
 }
 
 
@@ -395,9 +441,15 @@ enum
 	searchBar.text = @"";
 	[searchBar resignFirstResponder];
 	
-	// XXX - fill this in!!!
-	
-	[self.tableView reloadData];
+	if ( eCongressSearchResults ==  m_selectedChamber )
+	{
+		// switch back (resets scroll position)
+		[self congressSwitch:m_segmentCtrl];
+	}
+	else
+	{
+		[self.tableView reloadData];
+	}
 }
 
 
@@ -462,6 +514,15 @@ deselect_and_return:
 }
 
 
+#pragma mark UIAlertViewDelegate Methods
+
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+	// Do something here?!
+}
+
+
 
 #pragma mark Table view methods
 
@@ -478,6 +539,9 @@ deselect_and_return:
 			
 		case eCongressChamberSenate:
 			return [m_data senateBillSections];
+		
+		case eCongressSearchResults:
+			return 1;
 	}
 }
 
@@ -495,6 +559,9 @@ deselect_and_return:
 			
 		case eCongressChamberSenate:
 			return [m_data senateBillsInSection:section];
+			
+		case eCongressSearchResults:
+			return [m_data numSearchResults];
 	}
 }
 
@@ -520,6 +587,8 @@ deselect_and_return:
 			return [m_data houseSectionTitle:section];
 		case eCongressChamberSenate:
 			return [m_data senateSectionTitle:section];
+		case eCongressSearchResults:
+			return @"Search Results";
 	}
 }
 

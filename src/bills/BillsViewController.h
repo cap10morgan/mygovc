@@ -13,7 +13,7 @@
 @class ProgressOverlayViewController;
 
 
-@interface BillsViewController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate>
+@interface BillsViewController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, UIAlertViewDelegate>
 {
 @private
 	BillsDataManager *m_data;

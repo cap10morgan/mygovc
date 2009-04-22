@@ -25,6 +25,9 @@
 	NSMutableArray *m_senateSections;
 	NSMutableDictionary *m_senateBills;
 	
+	BOOL            m_searching;
+	NSMutableArray *m_searchResults;
+	
 	XMLParserOperation *m_xmlParser;
 	NSTimer *m_timer;
 	
@@ -59,5 +62,9 @@
 - (NSInteger)senateBillsInSection:(NSInteger)section;
 - (NSString *)senateSectionTitle:(NSInteger)section;
 - (BillContainer *)senateBillAtIndexPath:(NSIndexPath *)indexPath;
+
+- (void)searchForBillsLike:(NSString *)searchText;
+- (NSInteger)numSearchResults;
+- (BillContainer *)searchResultAtIndexPath:(NSIndexPath *)indexPath;
 
 @end

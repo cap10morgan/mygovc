@@ -26,7 +26,9 @@ static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
 // OpenCongress.org 
 // 
 static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/bills?key=%@&congress=%d";
+static NSString *kOpenCongress_BillsSinceFmt = @"http://www.opencongress.org/api/bills_introduced_since?key=%@&date=%@";
 static NSString *kOpenCongress_PersonXMLFmt = @"http://www.opencongress.org/api/people?key=%@&state=%@&first_name=%@&last_name=%@";
+static NSString *kOpenCongress_BillQueryFmt = @"http://www.opencongress.org/api/bills_by_query?key=%@&congress=%d&q=%@"; 
 
 // 
 // SunlightLabs 
@@ -87,6 +89,22 @@ static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 }
 
 
++ (NSString *)OpenCongress_BillsURLIntroducedSinceDate:(NSDate *)date
+{
+	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+	[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+	[dateFormatter setTimeStyle:NSDateFormatterNoStyle];
+	
+	NSString *formattedDateString = [[dateFormatter stringFromDate:date] stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
+	
+	NSString *urlStr = [[[NSString alloc] initWithFormat:kOpenCongress_BillsSinceFmt,
+											kOpenCongress_APIKey,
+											formattedDateString
+						] autorelease];
+	return urlStr;
+}
+
+
 + (NSString *)OpenCongress_PersonURL:(LegislatorContainer *)person
 {
 	NSString *urlStr = [[[NSString alloc] initWithFormat:kOpenCongress_PersonXMLFmt,
@@ -95,6 +113,17 @@ static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 											[person firstname],
 											[person lastname]
 						 ] autorelease];
+	return urlStr;
+}
+
+
++ (NSString *)OpenCongress_BillQueryURL:(NSString *)queryStr
+{
+	NSString *urlStr = [[[NSString alloc] initWithFormat:kOpenCongress_BillQueryFmt,
+											kOpenCongress_APIKey,
+											[[myGovAppDelegate sharedCongressData] currentCongressSession],
+											[queryStr stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]
+						] autorelease];
 	return urlStr;
 }
 
