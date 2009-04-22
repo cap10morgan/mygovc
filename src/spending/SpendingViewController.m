@@ -387,7 +387,7 @@ typedef enum
 			PlaceSpendingData *psd = [self getDataForIndexPath:[self.tableView indexPathForSelectedRow]];
 			NSArray *plArray = [psd placeLegislators:YES];
 			NSString *legName = [psd m_place];
-			NSURL *appUrl;
+			NSURL *appUrl = nil;
 			switch ( buttonIndex )
 			{
 				case 0:
@@ -445,17 +445,29 @@ typedef enum
 			break;
 		case eAST_ContractorAction:
 		{
-			ContractorInfo *ci = [m_data contractorData:[self.tableView indexPathForSelectedRow].row whenSortedBy:m_sortOrder];
-			
-			// only 1 action here - comment!
-			// 
-			MessageData *msg = [[MessageData alloc] init];
-			msg.m_transport = eMT_MyGov;
-			msg.m_to = @"MyGovernment Community";
-			msg.m_subject = [NSString stringWithFormat:@"Spending: %@",ci.m_parentCompany];
-			ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
-			[cmvc display:msg fromParent:self];
-			[msg release];
+			BOOL shouldComment = NO;
+			switch ( buttonIndex )
+			{
+				case 0:
+					shouldComment = YES;
+					break;
+				default:
+					break;
+			}
+			if ( shouldComment )
+			{
+				ContractorInfo *ci = [m_data contractorData:[self.tableView indexPathForSelectedRow].row whenSortedBy:m_sortOrder];
+				
+				// only 1 action here - comment!
+				// 
+				MessageData *msg = [[MessageData alloc] init];
+				msg.m_transport = eMT_MyGov;
+				msg.m_to = @"MyGovernment Community";
+				msg.m_subject = [NSString stringWithFormat:@"Spending: %@",ci.m_parentCompany];
+				ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+				[cmvc display:msg fromParent:self];
+				[msg release];
+			}
 		}
 			break;
 	}

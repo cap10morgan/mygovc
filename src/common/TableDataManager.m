@@ -173,7 +173,7 @@
 	if ( nil == rd ) return;
 	
 	NSString *emailStr = [[NSString alloc] initWithFormat:@"mailto:%@?subject=%@",
-						  [rd.line1 stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding], 
+						  [rd.line1 stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding], 
 						  @"Message from a concerned citizen"
 						  ];
 	NSURL *emailURL = [[NSURL alloc] initWithString:emailStr];
@@ -189,7 +189,7 @@
 	if ( nil == rd ) return;
 	
 	// make a phone call!
-	NSString *telStr = [[[NSString alloc] initWithFormat:@"tel:%@",rd.line1] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	NSString *telStr = [[[NSString alloc] initWithFormat:@"tel:%@",rd.line1] stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
 	NSURL *telURL = [[NSURL alloc] initWithString:telStr];
 	[[UIApplication sharedApplication] openURL:telURL];
 	[telStr release];
@@ -209,7 +209,7 @@
 	}
 	else
 	{
-		url = [NSURL URLWithString:[rd.line1 stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+		url = [NSURL URLWithString:[rd.line1 stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]];
 	}
 	
 	NSString *urlStr = [url absoluteString];
@@ -243,7 +243,7 @@
 	}
 	else
 	{
-		url = [NSURL URLWithString:[rd.line1 stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+		url = [NSURL URLWithString:[rd.line1 stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]];
 	}
 	
 	// just open the URL via the shared application and hope

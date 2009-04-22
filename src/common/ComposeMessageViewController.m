@@ -209,7 +209,7 @@ static ComposeMessageViewController *s_composer = NULL;
 - (void)opMakePhoneCall
 {
 	// make a phone call!
-	NSString *telStr = [[[NSString alloc] initWithFormat:@"tel:%@",m_message.m_to] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	NSString *telStr = [[[NSString alloc] initWithFormat:@"tel:%@",m_message.m_to] stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
 	NSURL *telURL = [[NSURL alloc] initWithString:telStr];
 	[[UIApplication sharedApplication] openURL:telURL];
 	[telStr release];
@@ -220,9 +220,9 @@ static ComposeMessageViewController *s_composer = NULL;
 - (void)opSendEmail
 {
 	NSString *emailStr = [[NSString alloc] initWithFormat:@"mailto:%@?subject=%@&body=%@",
-												[m_message.m_to stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding], 
-												[m_message.m_subject stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
-												([m_message.m_body length] < 1 ? @" " : [m_message.m_body stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding])
+												[m_message.m_to stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding], 
+												[m_message.m_subject stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding],
+												([m_message.m_body length] < 1 ? @" " : [m_message.m_body stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding])
 						];
 	NSURL *emailURL = [[NSURL alloc] initWithString:emailStr];
 	[[UIApplication sharedApplication] openURL:emailURL];

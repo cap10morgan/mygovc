@@ -397,8 +397,8 @@ enum
 		m_selectedChamber = eCongressSearchResults;
 		[m_initialSearchString release]; m_initialSearchString = nil;
 		[m_searchResultsTitle release]; m_searchResultsTitle = nil;
-		if ( ++parmIdx < [pArray count] ) m_initialSearchString = [[NSString alloc] initWithString:[pArray objectAtIndex:parmIdx]];
-		if ( ++parmIdx < [pArray count] ) m_searchResultsTitle = [[NSString alloc] initWithString:[pArray objectAtIndex:parmIdx]];
+		if ( ++parmIdx < [pArray count] ) m_initialSearchString = [[NSString alloc] initWithString:[[pArray objectAtIndex:parmIdx] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]];
+		if ( ++parmIdx < [pArray count] ) m_searchResultsTitle = [[NSString alloc] initWithString:[[pArray objectAtIndex:parmIdx] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]];
 	}
 	
 	if ( ++parmIdx < [pArray count] )
@@ -584,9 +584,9 @@ show_legislator:
 	{
 		UISearchBar *searchBar = (UISearchBar *)(self.tableView.tableHeaderView);
 		[searchBar setText:m_initialSearchString];
-		[m_data setSearchString:m_initialSearchString];
+		// this function does all the table data reloading for us :-)
+		[self searchBar:searchBar textDidChange:m_initialSearchString];
 		isReloading = YES;
-		[self.tableView reloadData];
 	}
 	
 	if ( nil != m_initialIndexPath )
@@ -612,7 +612,7 @@ show_legislator:
 	// we should be running in a thread, so this should give my table
 	// enough time to load itself up before I go and cover it up.
 	// (yeah, it's a bit of a hack...)
-	[NSThread sleepForTimeInterval:0.50f]; 
+	[NSThread sleepForTimeInterval:0.20f]; 
 	
 	[m_initialLegislatorID release]; m_initialLegislatorID = nil;
 	if ( nil != legislator )
@@ -938,7 +938,7 @@ show_legislator:
 		switch ( m_selectedChamber )
 		{
 			case eCongressSearchResults:
-				return [m_searchResultsTitle stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+				return m_searchResultsTitle;
 			default:
 				// get full state name
 				return [[StateAbbreviations nameList] objectAtIndex:section];

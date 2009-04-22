@@ -189,7 +189,7 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 		
 		m_sponsors = [[NSMutableArray alloc] initWithCapacity:2];
 		m_cosponsors = [[NSMutableArray alloc] initWithCapacity:4];
-		m_history = [[NSMutableArray alloc] initWithCapacity:2];
+		m_history = [[NSMutableArray alloc] initWithCapacity:6];
 	}
 	return self;
 }
@@ -218,12 +218,12 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 	NSMutableDictionary *billDict = [[[NSMutableDictionary alloc] init] autorelease];
 	
 	[billDict setValue:[NSNumber numberWithInt:m_id] forKey:kCache_IDKey];
-	[billDict setValue:[NSNumber numberWithInt:[m_bornOn timeIntervalSince1970]] forKey:kCache_BornOnKey];
+	[billDict setValue:[NSNumber numberWithInt:[m_bornOn timeIntervalSinceReferenceDate]] forKey:kCache_BornOnKey];
 	[billDict setValue:m_title forKey:kCache_TitleKey];
 	[billDict setValue:[NSNumber numberWithInt:(int)m_type] forKey:kCache_TypeKey];
 	[billDict setValue:[NSNumber numberWithInt:m_number] forKey:kCache_NumberKey];
-	[billDict setValue:[m_status stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey:kCache_StatusKey];
-	[billDict setValue:[m_summary stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey:kCache_SummaryKey];
+	[billDict setValue:[m_status stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding] forKey:kCache_StatusKey];
+	[billDict setValue:[m_summary stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding] forKey:kCache_SummaryKey];
 	[billDict setValue:[[m_sponsors objectAtIndex:0] bioguide_id] forKey:kCache_SponsorKey];
 	
 	// co-sponsors
@@ -250,8 +250,8 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 		NSMutableDictionary *actionDict = [[NSMutableDictionary alloc] init];
 		[actionDict setValue:[NSNumber numberWithInt:[ba m_id]] forKey:kCache_Action_IDKey];
 		[actionDict setValue:[ba m_type] forKey:kCache_Action_TypeKey];
-		[actionDict setValue:[NSNumber numberWithInt:[[ba m_date] timeIntervalSince1970]] forKey:kCache_Action_DateKey];
-		[actionDict setValue:[[ba m_descrip] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey:kCache_Action_DescripKey];
+		[actionDict setValue:[NSNumber numberWithInt:[[ba m_date] timeIntervalSinceReferenceDate]] forKey:kCache_Action_DateKey];
+		[actionDict setValue:[[ba m_descrip] stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding] forKey:kCache_Action_DescripKey];
 		[actionDict setValue:[NSNumber numberWithInt:(int)[ba m_voteResult]] forKey:kCache_Action_VoteResultKey];
 		[actionDict setValue:[ba m_how] forKey:kCache_Action_HowKey];
 		
@@ -274,12 +274,16 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 	if ( self = [super init] )
 	{
 		m_id = [[billData objectForKey:kCache_IDKey] integerValue];
-		m_bornOn = [NSDate dateWithTimeIntervalSince1970:[[billData objectForKey:kCache_BornOnKey] integerValue]];
-		m_title = [billData objectForKey:kCache_TitleKey];
+		m_bornOn = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:[[billData objectForKey:kCache_BornOnKey] integerValue]];
+		m_title = [[NSString alloc] initWithString:[billData objectForKey:kCache_TitleKey]];
 		m_type = (BillType)[[billData objectForKey:kCache_TypeKey] integerValue];
 		m_number = [[billData objectForKey:kCache_NumberKey] integerValue];
-		m_status = [[billData objectForKey:kCache_StatusKey] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-		m_summary = [[billData objectForKey:kCache_SummaryKey] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]; 
+		m_status = [[NSString alloc] initWithString:[[billData objectForKey:kCache_StatusKey] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]];
+		m_summary = [[NSString alloc] initWithString:[[billData objectForKey:kCache_SummaryKey] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]]; 
+		
+		m_sponsors = [[NSMutableArray alloc] initWithCapacity:2];
+		m_cosponsors = [[NSMutableArray alloc] initWithCapacity:4];
+		m_history = [[NSMutableArray alloc] initWithCapacity:6];
 		
 		NSString *bioguideID = [billData objectForKey:kCache_SponsorKey];
 		[self addSponsor:bioguideID];
@@ -297,7 +301,20 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 		id bAction;
 		while ( bAction = [e nextObject] )
 		{
-			// XXX - initialize the BillAction!
+			// initialize the BillAction!
+			BillAction *ba = [[BillAction alloc] init];
+			NSDictionary *actionDict = (NSDictionary *)bAction;
+			
+			ba.m_id = [[actionDict objectForKey:kCache_Action_IDKey] integerValue];
+			ba.m_type = [actionDict objectForKey:kCache_Action_TypeKey];
+			NSDate *actDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:[[actionDict objectForKey:kCache_Action_DateKey] integerValue]];
+			ba.m_date = actDate; [actDate release];
+			ba.m_descrip = [[actionDict objectForKey:kCache_Action_DescripKey] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
+			ba.m_voteResult = (VoteResult)[[actionDict objectForKey:kCache_Action_VoteResultKey] integerValue];
+			ba.m_how = [actionDict objectForKey:kCache_Action_HowKey];
+			
+			[self addBillAction:ba];
+			[ba release];
 		}
 	}
 	return self;
@@ -343,11 +360,17 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 }
 
 
-- (NSString *)titleNoBillNum
+- (NSString *)summaryText
 {
+	NSRange htmlBR = [m_summary rangeOfString:@"<br/>"];
+	NSInteger brIdx = (htmlBR.length > 0 ? htmlBR.location + htmlBR.length : 0);
+	
+	NSString *summary = [[m_summary substringFromIndex:brIdx] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	if ( [summary length] > 0 ) return summary;
+	
+	// if the summary is blank - use the title
 	NSRange space = [m_title rangeOfString:@" "];
 	NSInteger spaceIdx = (space.length > 0 ? space.location + 1 : 0);
-	
 	return [m_title substringFromIndex:spaceIdx];
 }
 
@@ -426,17 +449,6 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 
 - (NSURL *)getFullTextURL
 {
-	/*
-	CongressDataManager *cdm = [myGovAppDelegate sharedCongressData];
-	
-	NSString *urlStr = [[NSString alloc] initWithFormat:kGovtrackBillTextURL_fmt,
-											[cdm currentCongressSession],
-											[BillContainer stringFromBillType:m_type],
-											[BillContainer stringFromBillType:m_type],
-											m_number,
-											@"" // XXX - "ih", "eh" "ih.gen", "rfs", etc.
-						];
-	 */
 	NSString *urlStr = [DataProviders Govtrack_FullBillTextURL:m_number withBillType:m_type];
 	NSURL *url = [[[NSURL alloc] initWithString:urlStr] autorelease];
 	return url;

@@ -391,7 +391,7 @@ static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 	[urlStr appendFormat:@"%@%@=%0d%@=%@%@%@%@",
 				(xmldata ? kUSASpending_DataTypeXML : kUSASpending_DataTypeHTML),
 				kUSASpending_FiscalYearKey,year,
-				kUSASpending_ContractorKey,[companyName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+				kUSASpending_ContractorKey,[companyName stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding],
 				detailStr,
 				kUSASpending_SearchAppendKey,
 				sortStr

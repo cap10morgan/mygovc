@@ -31,7 +31,10 @@
 + (NSString *)sharedAppCacheDir;
 
 + (BillsDataManager *)sharedBillsData;
++ (void)replaceSharedBillsData:(BillsDataManager *)newData;
 + (CongressDataManager *)sharedCongressData;
 + (SpendingDataManager *)sharedSpendingData;
+
+- (UIView *)topView;
 
 @end

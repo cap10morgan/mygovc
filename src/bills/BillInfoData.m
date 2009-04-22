@@ -41,7 +41,7 @@ enum
                     @"04_introduced",@"05_last action",nil
 
 #define INFO_ROWSEL @selector(getShortTitle), \
-                    @selector(titleNoBillNum), \
+                    @selector(summaryText), \
                     @selector(m_status), \
                     @selector(bornOnString),\
                     @selector(lastActionString)

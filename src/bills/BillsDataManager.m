@@ -17,9 +17,11 @@
 
 
 @interface BillsDataManager (private)
+	- (void)beginBillSummaryDownload;
+	- (void)writeBillDataDataToCache:(id)sender;
+	- (void)readBillDataFromCache:(id)sender;
 	- (void)setStatus:(NSString *)status;
 	- (void)addNewBill:(BillContainer *)bill;
-	- (void)writeBillDataDataToCache:(id)sender;
 	- (void)clearData;
 @end
 
@@ -34,6 +36,14 @@
 {
 	NSString *congressDataPath = [[myGovAppDelegate sharedAppCacheDir] stringByAppendingPathComponent:@"bills"];
 	return congressDataPath;
+}
+
+
++ (NSString *)billDataCacheFile
+{
+	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
+	NSString *billDataPath = [dataPath stringByAppendingPathComponent:@"bills.cache"];
+	return billDataPath;
 }
 
 
@@ -95,48 +105,54 @@
 }
 
 
-- (void)beginBillSummaryDownload
+- (void)loadData
 {
-	isDataAvailable = NO;
-	isBusy = YES;
+	NSString *cachePath = [BillsDataManager billDataCacheFile];
+	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
 	
-	// make sure we have congress data before downloading bill data - 
-	// this ensures that we grab the right congressional session!
-	if ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
+	BOOL shouldReDownload = NO;
+	
+	// check to see if we should re-load the data!
+	NSString *shouldReload = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_autoreload_bills"];
+	if ( [shouldReload isEqualToString:@"YES"] )
 	{
-		[self setStatus:@"Waiting for congress data..."];
+		// the user wants us to auto-update:
+		// do so once every day
 		
-		// start a timer that will periodically check to see if
-		// congressional data is ready... no this is not the most
-		// efficient way of doing this...
-		if ( nil == m_timer )
+		NSString *lastUpdatePath = [dataPath stringByAppendingPathComponent:@"lastUpdate"];
+		NSString *lastUpdate = [NSString stringWithContentsOfFile:lastUpdatePath];
+		CGFloat updateTimeInterval = [lastUpdate floatValue];
+		CGFloat now = (CGFloat)[[NSDate date] timeIntervalSinceReferenceDate];
+		if ( (now - updateTimeInterval) > 86400 ) // this will still be true if the file wasn't found :-)
 		{
-			m_timer = [NSTimer timerWithTimeInterval:0.75 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
-			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+			shouldReDownload = YES;
 		}
-		return;
 	}
 	
-	[self setStatus:@"Preparing Bill Download..."];
-	
-	NSString *xmlURL = [DataProviders OpenCongress_BillsURL];
-	
-	if ( nil != m_xmlParser )
+	if ( shouldReDownload || ![[NSFileManager defaultManager] fileExistsAtPath:cachePath] )
 	{
-		// abort any previous attempt at parsing/downloading
-		[m_xmlParser abort];
+		// we need to start a data download!
+		[self beginBillSummaryDownload];
 	}
 	else
 	{
-		m_xmlParser = [[XMLParserOperation alloc] initWithOpDelegate:self];
+		// data is available - read disk data into memory (via a worker thread)
+		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																			selector:@selector(readBillDataFromCache:) 
+																			  object:self];
+		
+		// Add the operation to the internal operation queue managed by the application delegate.
+		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+		
+		[theOp release];
 	}
-	m_xmlParser.m_opDelegate = self;
-	
-	BillSummaryXMLParser *bsxp = [[BillSummaryXMLParser alloc] initWithBillsData:self];
-	[bsxp setNotifyTarget:m_notifyTarget andSelector:m_notifySelector];
-	
-	[m_xmlParser parseXML:[NSURL URLWithString:xmlURL] withParserDelegate:bsxp];
-	[bsxp release];
+}
+
+
+- (void)loadDataByDownload
+{
+	[self clearData];
+	[self beginBillSummaryDownload];
 }
 
 
@@ -145,16 +161,6 @@
 	return ([self houseBills] + [self senateBills]);
 }
 
-/*
-- (BillContainer *)billAtIndex:(NSInteger)index;
-{
-	if ( index < [m_billData count] )
-	{
-		return (BillContainer *)[m_billData objectAtIndex:index];
-	}
-	return nil;
-}
-*/
 
 - (NSInteger)houseBills
 {
@@ -281,6 +287,158 @@
 #pragma BillsDataManager Private 
 
 
+- (void)beginBillSummaryDownload
+{
+	isDataAvailable = NO;
+	isBusy = YES;
+	
+	// make sure we have congress data before downloading bill data - 
+	// this ensures that we grab the right congressional session!
+	if ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
+	{
+		[self setStatus:@"Waiting for congress data..."];
+		
+		// start a timer that will periodically check to see if
+		// congressional data is ready... no this is not the most
+		// efficient way of doing this...
+		if ( nil == m_timer )
+		{
+			m_timer = [NSTimer timerWithTimeInterval:0.75 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
+			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+		}
+		return;
+	}
+	
+	[self setStatus:@"Preparing Bill Download..."];
+	
+	NSString *xmlURL = [DataProviders OpenCongress_BillsURL];
+	
+	if ( nil != m_xmlParser )
+	{
+		// abort any previous attempt at parsing/downloading
+		[m_xmlParser abort];
+	}
+	else
+	{
+		m_xmlParser = [[XMLParserOperation alloc] initWithOpDelegate:self];
+	}
+	m_xmlParser.m_opDelegate = self;
+	
+	BillSummaryXMLParser *bsxp = [[BillSummaryXMLParser alloc] initWithBillsData:self];
+	[bsxp setNotifyTarget:m_notifyTarget andSelector:m_notifySelector];
+	
+	[m_xmlParser parseXML:[NSURL URLWithString:xmlURL] withParserDelegate:bsxp];
+	[bsxp release];
+}
+
+
+- (void)writeBillDataDataToCache:(id)sender
+{	
+	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
+	
+	// make sure the directoy exists!
+	[[NSFileManager defaultManager] createDirectoryAtPath:dataPath withIntermediateDirectories:YES attributes:nil error:NULL];
+	
+	NSString *billDataPath = [BillsDataManager billDataCacheFile]; 
+	NSLog( @"BillsDataManager: writing bill cache to: %@",billDataPath );
+	
+	NSMutableArray *billData = [[NSMutableArray alloc] initWithCapacity:([m_houseBills count] + [m_senateBills count])];
+	
+	// gather house bill data
+	NSEnumerator *e = [m_houseBills objectEnumerator];
+	id monthArray;
+	while ( monthArray = [e nextObject] )
+	{
+		NSEnumerator *me = [monthArray objectEnumerator];
+		id bc;
+		while ( bc = [me nextObject] )
+		{
+			NSDictionary *billDict = [bc getBillDictionaryForCache];
+			[billData addObject:billDict];
+		}
+	}
+	
+	// Gather senate bill data
+	e = [m_senateBills objectEnumerator];
+	while ( monthArray = [e nextObject] )
+	{
+		NSEnumerator *me = [monthArray objectEnumerator];
+		id bc;
+		while ( bc = [me nextObject] )
+		{
+			NSDictionary *billDict = [bc getBillDictionaryForCache];
+			[billData addObject:billDict];
+		}
+	}
+	
+	BOOL success = [billData writeToFile:billDataPath atomically:YES];
+	if ( !success )
+	{
+		NSLog( @"BillsDataManager: error writing bill data to cache!" );
+	}
+	else
+	{
+		// write out the current date to a file to indicate the last time
+		// we updated this database
+		NSString *lastUpdatePath = [dataPath stringByAppendingPathComponent:@"lastUpdate"];
+		NSString *lastUpdate = [NSString stringWithFormat:@"%0f",[[NSDate date] timeIntervalSinceReferenceDate]];
+		success = [lastUpdate writeToFile:lastUpdatePath atomically:YES encoding:NSMacOSRomanStringEncoding error:NULL];
+	}
+	
+	// not busy any more!
+	isBusy = NO;
+}
+
+
+- (void)readBillDataFromCache:(id)sender
+{
+	if ( isBusy ) return;
+	
+	// we're in a worker thread, so we can block like this:
+	// wait until the congressional data loads!
+	while ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
+	{
+		[NSThread sleepForTimeInterval:0.5f];
+	}
+	
+	isBusy = YES;
+	[self setStatus:@"Reading Cached Bills..."];
+	
+	NSString *billDataPath = [BillsDataManager billDataCacheFile];
+	NSLog( @"BillsDataManager: reading bill cache from: %@", billDataPath );
+	
+	NSArray *billData = [NSArray arrayWithContentsOfFile:billDataPath];
+	if ( nil == billData )
+	{
+		NSLog( @"BillsDataManager: error reading cached data from file: starting re-download of data!" );
+		isBusy = NO;
+		isDataAvailable = NO;
+		[self beginBillSummaryDownload];
+		return;
+	}
+	
+	// remove any current data 
+	[self clearData];
+	
+	NSEnumerator *e = [billData objectEnumerator];
+	id billDict;
+	while ( billDict = [e nextObject] )
+	{
+		BillContainer *bc = [[BillContainer alloc] initWithDictionary:billDict];
+		if ( nil != bc )
+		{
+			[self addNewBill:bc];
+			[bc release];
+		}
+	}
+	
+	isBusy = NO;
+	isDataAvailable = YES;
+	
+	[self setStatus:@"Finished."];
+}
+
+
 - (void)setStatus:(NSString *)status
 {
 	[m_currentStatusMessage setString:status];
@@ -337,84 +495,6 @@
 	[monthArray sortUsingSelector:@selector(lastActionDateCompare:)];
 	
 	[monthArray release];
-}
-
-
-- (void)writeBillDataDataToCache:(id)sender
-{
-	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
-	
-	// make sure the directoy exists!
-	[[NSFileManager defaultManager] createDirectoryAtPath:dataPath withIntermediateDirectories:YES attributes:nil error:NULL];
-	
-	NSString *billDataPath = [dataPath stringByAppendingPathComponent:@"bills.cache"];
-	NSLog( @"BillsDataManager: writing bill cache to: %@",billDataPath );
-	
-	NSMutableArray *billData = [[NSMutableArray alloc] initWithCapacity:([m_houseBills count] + [m_senateBills count])];
-	
-	// gather house bill data
-	NSEnumerator *e = [m_houseBills objectEnumerator];
-	id monthArray;
-	while ( monthArray = [e nextObject] )
-	{
-		NSEnumerator *me = [monthArray objectEnumerator];
-		id bc;
-		while ( bc = [me nextObject] )
-		{
-			NSDictionary *billDict = [bc getBillDictionaryForCache];
-			[billData addObject:billDict];
-		}
-	}
-	
-	// Gather senate bill data
-	e = [m_senateBills objectEnumerator];
-	while ( monthArray = [e nextObject] )
-	{
-		NSEnumerator *me = [monthArray objectEnumerator];
-		id bc;
-		while ( bc = [me nextObject] )
-		{
-			NSDictionary *billDict = [bc getBillDictionaryForCache];
-			[billData addObject:billDict];
-		}
-	}
-	
-	BOOL success = [billData writeToFile:billDataPath atomically:YES];
-	if ( !success )
-	{
-		NSLog( @"BillsDataManager: error writing bill data to cache!" );
-	}
-}
-
-
-- (void)readBillDataFromCache
-{
-	[self setStatus:@"Reading Cached Bills..."];
-	
-	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
-	NSString *billDataPath = [dataPath stringByAppendingPathComponent:@"bills.cache"];
-	NSLog( @"BillsDataManager: reading bill cache from: %@", billDataPath );
-	
-	NSArray *billData = [NSArray arrayWithContentsOfFile:billDataPath];
-	if ( nil == billData )
-	{
-		NSLog( @"BillsDataManager: error reading cached data from file" );
-		return;
-	}
-	
-	// remove any current data 
-	[self clearData];
-	
-	NSEnumerator *e = [billData objectEnumerator];
-	id billDict;
-	while ( billDict = [e nextObject] )
-	{
-		BillContainer *bc = [[BillContainer alloc] initWithDictionary:billDict];
-		if ( nil != bc )
-		{
-			[self addNewBill:bc];
-		}
-	}
 }
 
 

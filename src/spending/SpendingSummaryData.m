@@ -249,10 +249,10 @@ enum
 				
 				rd.line1 = contractor;
 				rd.line1Color = [UIColor blackColor];
-				rd.line1Font = [UIFont boldSystemFontOfSize:16.0f];
+				rd.line1Font = [UIFont boldSystemFontOfSize:14.0f];
 				rd.line2 = [NSString stringWithFormat:@"   $%0.3f M",(dollars/1000000)];
 				rd.line2Color = [UIColor darkGrayColor];
-				rd.line2Font = [UIFont systemFontOfSize:16.0f];
+				rd.line2Font = [UIFont systemFontOfSize:14.0f];
 				
 				NSString *urlStr = [DataProviders USASpending_contractorSearchURL:contractor forYear:m_placeData.m_year withDetail:eSpendingDetailMed sortedBy:eSpendingSortDollars xmlURL:NO];
 				rd.url = [NSURL URLWithString:urlStr];
@@ -277,10 +277,10 @@ enum
 				
 				rd.line1 = contractor;
 				rd.line1Color = [UIColor blackColor];
-				rd.line1Font = [UIFont boldSystemFontOfSize:16.0f];
+				rd.line1Font = [UIFont boldSystemFontOfSize:14.0f];
 				rd.line2 = [NSString stringWithFormat:@"   $%0.3f M",(dollars/1000000)];
 				rd.line2Color = [UIColor darkGrayColor];
-				rd.line2Font = [UIFont systemFontOfSize:16.0f];
+				rd.line2Font = [UIFont systemFontOfSize:14.0f];
 				
 				rd.url = nil;
 				rd.action = @selector(rowActionNone:);
@@ -304,10 +304,10 @@ enum
 				
 				rd.line1 = contractor;
 				rd.line1Color = [UIColor blackColor];
-				rd.line1Font = [UIFont boldSystemFontOfSize:16.0f];
+				rd.line1Font = [UIFont boldSystemFontOfSize:14.0f];
 				rd.line2 = [NSString stringWithFormat:@"   $%0.3f M",(dollars/1000000)];
 				rd.line2Color = [UIColor darkGrayColor];
-				rd.line2Font = [UIFont systemFontOfSize:16.0f];
+				rd.line2Font = [UIFont systemFontOfSize:14.0f];
 				
 				rd.url = nil;
 				rd.action = @selector(rowActionNone:);
@@ -331,10 +331,10 @@ enum
 				
 				rd.line1 = contractor;
 				rd.line1Color = [UIColor blackColor];
-				rd.line1Font = [UIFont boldSystemFontOfSize:16.0f];
+				rd.line1Font = [UIFont boldSystemFontOfSize:14.0f];
 				rd.line2 = [NSString stringWithFormat:@"   $%0.3f M",(dollars/1000000)];
 				rd.line2Color = [UIColor darkGrayColor];
-				rd.line2Font = [UIFont systemFontOfSize:16.0f];
+				rd.line2Font = [UIFont systemFontOfSize:14.0f];
 				
 				rd.url = nil;
 				rd.action = @selector(rowActionNone:);
@@ -363,7 +363,7 @@ enum
 			TableRowData *rd = [[TableRowData alloc] init];
 			rd.line1 = m_contractorData.m_parentCompany;
 			rd.line1Color = [UIColor darkGrayColor];
-			rd.line1Font = [UIFont systemFontOfSize:16.0f];
+			rd.line1Font = [UIFont systemFontOfSize:14.0f];
 			NSString *urlStr = [DataProviders USASpending_contractorSearchURL:m_contractorData.m_parentCompany forYear:m_contractorData.m_fiscalYear withDetail:eSpendingDetailMed sortedBy:eSpendingSortDollars xmlURL:NO];
 			rd.url = [NSURL URLWithString:urlStr];
 			rd.action = @selector(rowActionURL:);
@@ -373,10 +373,10 @@ enum
 			rd = [[TableRowData alloc] init];
 			rd.title = @"DUNS";
 			rd.titleColor = [UIColor blackColor];
-			rd.titleFont = [UIFont boldSystemFontOfSize:16.0f];
+			rd.titleFont = [UIFont boldSystemFontOfSize:14.0f];
 			rd.line1 = [NSString stringWithFormat:@"%0d",m_contractorData.m_parentDUNS];
 			rd.line1Color = [UIColor darkGrayColor];
-			rd.line1Font = [UIFont systemFontOfSize:16.0f];
+			rd.line1Font = [UIFont systemFontOfSize:14.0f];
 			rd.url = nil;
 			rd.action = @selector(rowActionNone:);
 			[retVal addObject:rd];
@@ -385,10 +385,10 @@ enum
 			rd = [[TableRowData alloc] init];
 			rd.title = @"Total Obligated Amount";
 			rd.titleColor = [UIColor blackColor];
-			rd.titleFont = [UIFont boldSystemFontOfSize:16.0f];
+			rd.titleFont = [UIFont boldSystemFontOfSize:14.0f];
 			rd.line2 = [NSString stringWithFormat:@"   $%.3f M",(m_contractorData.m_obligatedAmount/1000000)];
 			rd.line2Color = [UIColor darkGrayColor];
-			rd.line2Font = [UIFont systemFontOfSize:16.0f];
+			rd.line2Font = [UIFont systemFontOfSize:14.0f];
 			rd.url = nil;
 			rd.action = @selector(rowActionNone:);
 			[retVal addObject:rd];
@@ -405,7 +405,7 @@ enum
 				TableRowData *rd = [[TableRowData alloc] init];
 				rd.line1 = (NSString *)nm;
 				rd.line1Color = [UIColor darkGrayColor];
-				rd.line1Font = [UIFont boldSystemFontOfSize:16.0f];
+				rd.line1Font = [UIFont systemFontOfSize:12.0f];
 				rd.url = nil;
 				rd.action = @selector(rowActionNone:);
 				[retVal addObject:rd];

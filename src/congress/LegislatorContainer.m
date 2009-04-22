@@ -222,6 +222,12 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 	return office;
 }
 
+
+- (NSString *)congress_office_noStateOrZip
+{
+	return [m_info objectForKey:kField_CongressOffice];
+}
+
 - (NSString *)bioguide_id
 {
 	return [m_info objectForKey:kField_BioguideID];

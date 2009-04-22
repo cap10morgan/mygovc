@@ -88,7 +88,6 @@
 	np.addressBook = ab;
 	np.newPersonViewDelegate = self;
 	
-	
 	ABRecordRef abRecord = ABPersonCreate();
 	CFErrorRef abError;
 	BOOL success = NO;
@@ -105,11 +104,19 @@
 	{
 		azip = @"20515";
 	}
+	NSString *tmp = nil;
 	NSMutableDictionary *addressDictionary = [[NSMutableDictionary alloc] initWithCapacity:6];
-	[addressDictionary setObject:[legislator congress_office] forKey:(NSString *)kABPersonAddressStreetKey];
+	tmp = [[NSString alloc] initWithString:[legislator congress_office_noStateOrZip]];
+	[addressDictionary setObject:tmp forKey:(NSString *)kABPersonAddressStreetKey];
+	[tmp release]; tmp = nil;
+	
 	[addressDictionary setObject:@"Washington" forKey:(NSString *)kABPersonAddressCityKey];
 	[addressDictionary setObject:@"DC" forKey:(NSString *)kABPersonAddressStateKey];
-	[addressDictionary setObject:azip forKey:(NSString *)kABPersonAddressZIPKey];
+	
+	tmp = [[NSString alloc] initWithString:azip];
+	[addressDictionary setObject:tmp forKey:(NSString *)kABPersonAddressZIPKey];
+	[tmp release]; tmp = nil;
+	
 	[addressDictionary setObject:@"United States" forKey:(NSString *)kABPersonAddressCountryKey];
 	[addressDictionary setObject:@"us" forKey:(NSString *)kABPersonAddressCountryCodeKey];
 	
@@ -124,15 +131,26 @@
 	// 
 	// Personal Info
 	// 
-	ABRecordSetValue( abRecord, kABPersonPrefixProperty, [legislator title], &abError );
-	ABRecordSetValue( abRecord, kABPersonFirstNameProperty, [legislator firstname], &abError );
-	ABRecordSetValue( abRecord, kABPersonMiddleNameProperty, [legislator middlename], &abError );
-	ABRecordSetValue( abRecord, kABPersonLastNameProperty, [legislator lastname], &abError );
-	ABRecordSetValue( abRecord, kABPersonSuffixProperty, [NSString stringWithFormat:@"%@(%@)",
-																	([legislator name_suffix] ? [NSString stringWithFormat:@"%@ ",[legislator name_suffix]] : @""),
-																	[legislator party]
-														 ], &abError );
-	ABRecordSetValue( abRecord, kABPersonNicknameProperty, [legislator nickname], &abError );
+	tmp = [[NSString alloc] initWithString:[legislator title]];
+	ABRecordSetValue( abRecord, kABPersonPrefixProperty, tmp, &abError ); [tmp release]; tmp = nil;
+	
+	tmp = [[NSString alloc] initWithString:[legislator firstname]];
+	ABRecordSetValue( abRecord, kABPersonFirstNameProperty, tmp, &abError ); [tmp release]; tmp = nil;
+	
+	tmp = [[NSString alloc] initWithString:[legislator middlename]];
+	ABRecordSetValue( abRecord, kABPersonMiddleNameProperty, tmp, &abError ); [tmp release]; tmp = nil;
+	
+	tmp = [[NSString alloc] initWithString:[legislator lastname]];
+	ABRecordSetValue( abRecord, kABPersonLastNameProperty, tmp, &abError ); [tmp release]; tmp = nil;
+	
+	tmp = [[NSString alloc] initWithFormat:@"%@(%@)",
+								([legislator name_suffix] ? [NSString stringWithFormat:@"%@ ",[legislator name_suffix]] : @""),
+								[legislator party]
+		   ];
+	ABRecordSetValue( abRecord, kABPersonSuffixProperty, tmp, &abError ); [tmp release]; tmp = nil;
+	
+	tmp = [[NSString alloc] initWithString:[legislator nickname]];
+	ABRecordSetValue( abRecord, kABPersonNicknameProperty, tmp, &abError ); [tmp release]; tmp = nil;
 	
 	// 
 	// Organization / JobTitle
@@ -165,8 +183,11 @@
 		jobTitle = @"US Delegate";
 		deptStr = [NSString stringWithFormat:@"%@ Delegate",state];
 	}
-	ABRecordSetValue( abRecord, kABPersonJobTitleProperty, jobTitle, &abError );
-	ABRecordSetValue( abRecord, kABPersonDepartmentProperty, deptStr, &abError );
+	tmp = [[NSString alloc] initWithString:jobTitle];
+	ABRecordSetValue( abRecord, kABPersonJobTitleProperty, tmp, &abError ); [tmp release]; tmp = nil;
+	
+	tmp = [[NSString alloc] initWithString:deptStr];
+	ABRecordSetValue( abRecord, kABPersonDepartmentProperty, tmp, &abError ); [tmp release]; tmp = nil;
 	
 	// 
 	// email 
@@ -174,26 +195,36 @@
 	NSString *email = [legislator email];
 	if ( [email length] > 0 )
 	{
-		ABRecordSetValue( abRecord, kABPersonEmailProperty, email, &abError );
+		ABMutableMultiValueRef emailList = ABMultiValueCreateMutable( kABPersonEmailProperty );
+		tmp = [[NSString alloc] initWithString:email];
+		success = ABMultiValueAddValueAndLabel( emailList, tmp, CFSTR("Work"), NULL ); [tmp release]; tmp = nil;
+		
+		ABRecordSetValue( abRecord, kABPersonEmailProperty, emailList, &abError );
 	}
 	
 	// 
 	// Website / misc. URLs
 	// 
 	ABMutableMultiValueRef websites = ABMultiValueCreateMutable( kABPersonURLProperty );
-	success = ABMultiValueAddValueAndLabel( websites, [legislator website], kABPersonHomePageLabel, NULL );
-	success = ABMultiValueAddValueAndLabel( websites, [legislator webform], CFSTR("WebForm"), NULL );
+	tmp = [[NSString alloc] initWithString:[legislator website]];
+	success = ABMultiValueAddValueAndLabel( websites, tmp, kABPersonHomePageLabel, NULL ); [tmp release]; tmp = nil;
+	
+	tmp = [[NSString alloc] initWithString:[legislator webform]];
+	success = ABMultiValueAddValueAndLabel( websites, tmp, CFSTR("WebForm"), NULL ); [tmp release]; tmp = nil;
 	if ( [[legislator youtube_url] length] > 0 )
 	{
-		success = ABMultiValueAddValueAndLabel( websites, [legislator youtube_url], CFSTR("YouTube"), NULL );
+		tmp = [[NSString alloc] initWithString:[legislator youtube_url]];
+		success = ABMultiValueAddValueAndLabel( websites, tmp, CFSTR("YouTube"), NULL ); [tmp release]; tmp = nil;
 	}
 	if ( [[legislator congresspedia_url] length] > 0 )
 	{
-		success = ABMultiValueAddValueAndLabel( websites, [legislator congresspedia_url], CFSTR("OpenCongress"), NULL );
+		tmp = [[NSString alloc] initWithString:[legislator congresspedia_url]];
+		success = ABMultiValueAddValueAndLabel( websites, tmp, CFSTR("OpenCongress"), NULL ); [tmp release]; tmp = nil;
 	}
 	if ( [[legislator eventful_url] length] > 0 )
 	{
-		success = ABMultiValueAddValueAndLabel( websites, [legislator eventful_url], CFSTR("Eventful"), NULL );
+		tmp = [[NSString alloc] initWithString:[legislator eventful_url]];
+		success = ABMultiValueAddValueAndLabel( websites, tmp, CFSTR("Eventful"), NULL ); [tmp release]; tmp = nil;
 	}
 	ABRecordSetValue( abRecord, kABPersonURLProperty, websites, &abError );
 	
@@ -201,11 +232,15 @@
 	// Phone Numbers
 	//
 	ABMutableMultiValueRef phoneNums = ABMultiValueCreateMutable( kABPersonPhoneProperty );
-	success = ABMultiValueAddValueAndLabel( phoneNums, [legislator phone], kABPersonPhoneMainLabel, NULL );
-	success = ABMultiValueAddValueAndLabel( phoneNums, [legislator fax], kABPersonPhoneWorkFAXLabel, NULL );
+	tmp = [[NSString alloc] initWithString:[legislator phone]];
+	success = ABMultiValueAddValueAndLabel( phoneNums, tmp, kABPersonPhoneMainLabel, NULL ); [tmp release]; tmp = nil;
+	
+	tmp = [[NSString alloc] initWithString:[legislator fax]];
+	success = ABMultiValueAddValueAndLabel( phoneNums, tmp, kABPersonPhoneWorkFAXLabel, NULL ); [tmp release]; tmp = nil;
 	ABRecordSetValue( abRecord, kABPersonPhoneProperty, phoneNums, &abError );
-		
+	
 	np.displayedPerson = abRecord;
+	np.hidesBottomBarWhenPushed = YES;
 	
 	[self.navigationController pushViewController:np animated:YES];
 	[np release];

@@ -51,6 +51,7 @@ typedef enum
 - (NSString *)webform;		// URL of web contact form
 - (NSString *)email;		// Legislator's email address (if known)
 - (NSString *)congress_office;	// Legislator's Washington DC Office Address
+- (NSString *)congress_office_noStateOrZip;
 - (NSString *)bioguide_id;	// Legislator ID assigned by Congressional Biographical Directory (also used by Washington Post/NY Times)
 - (NSString *)votesmart_id;	// Legislator ID assigned by Project Vote Smart
 - (NSString *)fec_id;		// Federal Election Commission ID

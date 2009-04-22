@@ -299,7 +299,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 
 - (void)rowActionLegislatorMap:(NSIndexPath *)indexPath
 {
-	static NSString * kGoogleMapsURLFmt = @"http://maps.google.com/maps?q=%@+%@+%@+Washington+DC&ie=UTF&z=17&cd=1";
+	static NSString * kGoogleMapsURLFmt = @"http://maps.google.com/maps?q=%@+%@+%@+Washington+DC&ie=UTF&z=18&cd=1";
 	
 	NSString *title = @"representative";
 	if ( [[[m_legislator title] uppercaseString] isEqualToString:@"Sen"] )

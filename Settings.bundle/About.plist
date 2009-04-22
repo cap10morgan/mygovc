@@ -10,15 +10,39 @@
 	<array>
 		<dict>
 			<key>Title</key>
-			<string>About MyGovernment</string>
+			<string>Data Provided By:</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>Jeremy was here...</string>
+			<string>SunlightLabs.com</string>
 			<key>Key</key>
-			<string>about_foo</string>
+			<string>about_sunlightlabs</string>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<string>Govtrack.us</string>
+			<key>Key</key>
+			<string>about_govtrack</string>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<string>OpenCongress.org</string>
+			<key>Key</key>
+			<string>about_opencongress</string>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<string>USASpending.gov</string>
+			<key>Key</key>
+			<string>about_usaspending</string>
 			<key>Type</key>
 			<string>PSTitleValueSpecifier</string>
 		</dict>

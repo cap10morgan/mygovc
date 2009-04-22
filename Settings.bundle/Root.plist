@@ -58,21 +58,7 @@
 			<key>Key</key>
 			<string>mygov_autoreload_bills</string>
 			<key>DefaultValue</key>
-			<true/>
-			<key>TrueValue</key>
 			<string>YES</string>
-			<key>FalseValue</key>
-			<string>NO</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>AutoReloadSpendingData</string>
-			<key>Key</key>
-			<string>mygov_autoreload_spending</string>
-			<key>DefaultValue</key>
-			<true/>
 			<key>TrueValue</key>
 			<string>YES</string>
 			<key>FalseValue</key>
@@ -90,7 +76,7 @@
 			<key>Key</key>
 			<string>mygov_last_url</string>
 			<key>Title</key>
-			<string>LastAppURL</string>
+			<string>Home</string>
 			<key>Type</key>
 			<string>PSTextFieldSpecifier</string>
 		</dict>

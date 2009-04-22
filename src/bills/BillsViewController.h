@@ -17,6 +17,7 @@
 {
 @private
 	BillsDataManager *m_data;
+	BillsDataManager *m_shadowData;
 	
 	UISegmentedControl *m_segmentCtrl;
 	CongressChamber m_selectedChamber;

@@ -55,6 +55,13 @@ static SpendingDataManager *s_mySpendingData = NULL;
 }
 
 
++ (void)replaceSharedBillsData:(BillsDataManager *)newData
+{
+	[s_myBillsData release];
+	s_myBillsData = [newData retain];
+}
+
+
 + (CongressDataManager *)sharedCongressData
 {
 	if ( !s_myCongressData ) s_myCongressData = [[CongressDataManager alloc] initWithNotifyTarget:nil andSelector:nil];
@@ -66,6 +73,12 @@ static SpendingDataManager *s_mySpendingData = NULL;
 {
 	if ( !s_mySpendingData ) s_mySpendingData = [[SpendingDataManager alloc] init];
 	return s_mySpendingData;
+}
+
+
+- (UIView *)topView
+{
+	return (UIView *)m_tabBarController.view;
 }
 
 
@@ -144,7 +157,7 @@ static SpendingDataManager *s_mySpendingData = NULL;
 		{
 			appURLStr = [NSString stringWithFormat:@"mygov://%@",appURLStr];
 		}
-		appURLStr = [appURLStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+		appURLStr = [appURLStr stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
 		NSURL *appURL = [NSURL URLWithString:appURLStr];
 		[self application:application handleOpenURL:appURL];
 	}
@@ -182,7 +195,7 @@ static SpendingDataManager *s_mySpendingData = NULL;
 	{
 		// save the state!
 		appURL = [NSString stringWithFormat:@"mygov://%@/%@",area,(nil != areaParms ? areaParms : @"")];
-		appURL = [appURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+		appURL = [appURL stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
 		[[NSUserDefaults standardUserDefaults] setObject:appURL forKey:@"mygov_last_url"];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 	}

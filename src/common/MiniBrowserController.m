@@ -5,10 +5,12 @@
 //  Created by Jeremy C. Andrus on 4/6/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
-
+#import "myGovAppDelegate.h"
 #import "MiniBrowserController.h"
 
 @interface MiniBrowserController (private)
+	- (void)animate;
+	- (void)textAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context;
 	- (void)enableBackButton:(BOOL)enable;
 	- (void)enableFwdButton:(BOOL)enable;
 @end
@@ -202,7 +204,8 @@ static MiniBrowserController *s_browser = NULL;
 	m_parentCtrl = parentController;
 	if ( nil != m_webView )
 	{
-		[m_parentCtrl presentModalViewController:self animated:YES];
+		//[m_parentCtrl presentModalViewController:self animated:NO];
+		[self animate];
 	}
 	else
 	{
@@ -215,7 +218,8 @@ static MiniBrowserController *s_browser = NULL;
 - (IBAction)closeButtonPressed:(id)button
 {
 	// dismiss the view
-	[m_parentCtrl dismissModalViewControllerAnimated:YES];
+	//[m_parentCtrl dismissModalViewControllerAnimated:YES];
+	[self animate];
 }
 
 
@@ -279,6 +283,33 @@ static MiniBrowserController *s_browser = NULL;
 
 
 #pragma mark MiniBrowserController Private
+
+- (void)animate
+{
+	UIView *topView = [[myGovAppDelegate sharedAppDelegate] topView];
+	
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration:0.7f];
+	[UIView setAnimationDelegate:self];
+	[UIView setAnimationDidStopSelector:@selector(animationFinished:finished:context:)];
+	
+	if ( [self.view superview] )
+	{
+		[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:topView cache:NO];
+		[self.view removeFromSuperview];
+	}
+	else
+	{
+		[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:topView cache:NO];
+		[topView addSubview:self.view];
+	}
+	
+	[UIView commitAnimations];
+}
+
+- (void)textAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context
+{
+}
 
 
 - (void)enableBackButton:(BOOL)enable

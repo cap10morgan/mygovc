@@ -20,9 +20,13 @@
 
 @interface BillsViewController (private)
 	- (BillContainer *)billAtIndexPath:(NSIndexPath *)indexPath;
+	- (void)reloadBillData;
 	- (void)dataManagerCallback:(id)sender;
+	- (void)shadowDataCallback:(id)sender;
 	- (void)congressSwitch: (id)sender;
 	- (void)deselectRow:(id)sender;
+	- (void)setRefreshButtonInNavBar;
+	- (void)setActivityViewInNavBar;
 @end
 
 
@@ -57,7 +61,14 @@ enum
 	[m_HUD show:NO];
 	if ( ![m_data isDataAvailable] )
 	{
-		[m_HUD setText:@"Waiting for data..." andIndicateProgress:YES];
+		if ( ![m_data isBusy] )
+		{
+			[m_HUD setText:@"Waiting for data..." andIndicateProgress:YES];
+		}
+		else
+		{
+			[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
+		}
 	}
 	
 	// create a search bar which will be used as our table's header view
@@ -94,6 +105,15 @@ enum
 	self.navigationItem.titleView = m_segmentCtrl;
 	[m_segmentCtrl release];
 	
+	// 
+	// Add a "refresh" button which will wipe out the on-device cache and 
+	// re-download congressional bill data 
+	// 
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
+											   initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
+											   target:self 
+											   action:@selector(reloadBillData)];
+	
 	
 	[super viewDidLoad];
 }
@@ -117,7 +137,7 @@ enum
 	{
 		if ( ![m_data isBusy] )
 		{
-			[m_data beginBillSummaryDownload];
+			[m_data loadData];
 		}
 		[m_HUD show:YES];
 		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
@@ -206,6 +226,33 @@ enum
 }
 
 
+- (void)reloadBillData
+{
+	[m_shadowData release];
+	
+	// we want this to happen in the background, 
+	// so here's what we'll do:
+	// 
+	// Make a completely new copy of our bill data object, and tell it 
+	// to download the data. When it's done, we'll release the old data
+	// object, replace it with the new one and reload our table data!
+	// 
+	
+	// set an activity button in the navbar to indicate progress
+	// (and also prevent this from happening again until we're ready)
+	[self setActivityViewInNavBar];
+	
+	// allocate a new data manager
+	m_shadowData = [[BillsDataManager alloc] init];
+	
+	// hook it up to our shadow callback
+	[m_shadowData setNotifyTarget:self withSelector:@selector(shadowDataCallback:)];
+	
+	// start downloading and let the callback handle the data-swap-and-reload
+	[m_shadowData loadDataByDownload];
+}
+
+
 - (void)dataManagerCallback:(id)msg
 {
 	if ( [m_data isDataAvailable] )
@@ -222,6 +269,39 @@ enum
 		self.tableView.userInteractionEnabled = NO;
 		[m_HUD show:YES];
 		[m_HUD setText:msg andIndicateProgress:YES];
+	}
+}
+
+
+- (void)shadowDataCallback:(id)sender
+{
+	if ( nil == m_shadowData ) return; // how did that happen?
+	
+	if ( [m_shadowData isDataAvailable] )
+	{
+		// 
+		// the download is complete, and we're ready for a switch:
+		// we have to be a bit careful about this:
+		// 
+		
+		// no user input messing us up...
+		self.tableView.userInteractionEnabled = NO;
+		
+		// replace the global data instance
+		[myGovAppDelegate replaceSharedBillsData:m_shadowData];
+		[m_shadowData release]; m_shadowData = nil;
+		
+		// replace our copy of the data
+		[m_data release];
+		m_data = [[myGovAppDelegate sharedBillsData] retain];
+		[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+		
+		// set the reload button back to a button
+		[self setRefreshButtonInNavBar];
+		
+		// reload the table data and re-enable user interaction
+		[self.tableView reloadData];
+		self.tableView.userInteractionEnabled = YES;
 	}
 }
 
@@ -256,6 +336,40 @@ enum
 	// de-select the currently selected row
 	// (so the user can go back to the same row)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+}
+
+
+- (void)setRefreshButtonInNavBar
+{
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
+													  initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
+													  target:self 
+													  action:@selector(reloadBillData)];
+}
+
+
+- (void)setActivityViewInNavBar
+{
+	UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 44.0f, 32.0f)];
+	UIActivityIndicatorView *aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+	//aiView.hidesWhenStopped = YES;
+	[aiView setFrame:CGRectMake(12.0f, 6.0f, 20.0f, 20.0f)];
+	[view addSubview:aiView];
+	[aiView startAnimating];
+	
+	UIBarButtonItem *actBarButton = [[UIBarButtonItem alloc] 
+									 initWithBarButtonSystemItem:UIBarButtonSystemItemStop
+									 target:nil action:nil];
+	actBarButton.customView = view;
+	actBarButton.style = UIBarButtonItemStyleBordered;
+	actBarButton.target = nil;
+	self.navigationItem.rightBarButtonItem = actBarButton;
+	
+	[self.navigationController.navigationBar setNeedsDisplay];
+	
+	[view release];
+	[aiView release];
+	[actBarButton release];
 }
 
 

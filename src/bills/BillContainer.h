@@ -101,7 +101,7 @@ typedef enum
 
 - (NSArray *)cosponsors;
 
-- (NSString *)titleNoBillNum;
+- (NSString *)summaryText;
 
 - (NSString *)bornOnString;
 

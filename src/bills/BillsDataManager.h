@@ -43,7 +43,8 @@
 
 - (NSString *)currentStatusMessage;
 
-- (void)beginBillSummaryDownload;
+- (void)loadData;
+- (void)loadDataByDownload;
 
 - (NSInteger)totalBills;
 

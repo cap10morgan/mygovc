@@ -176,7 +176,7 @@ enum
 		line1View.textAlignment = UITextAlignmentLeft;
 		line1View.lineBreakMode = UILineBreakModeMiddleTruncation;
 		line1View.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
-		line1View.numberOfLines = 5;
+		line1View.numberOfLines = 0;
 		[line1View setTag:eTAG_LINE1];
 		[self addSubview:line1View];
 		
@@ -188,7 +188,7 @@ enum
 		line2View.textAlignment = UITextAlignmentLeft;
 		line2View.lineBreakMode = UILineBreakModeMiddleTruncation;
 		line2View.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
-		line2View.numberOfLines = 5;
+		line2View.numberOfLines = 0;
 		[line2View setTag:eTAG_LINE2];
 		[self addSubview:line2View];
 	}
