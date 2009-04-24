@@ -199,7 +199,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 
 - (NSString *)fiscalYearDescrip
 {
-	return [NSString stringWithFormat:@"   %04d (%.2f%%)",m_year,(m_pctOfYear*100.0f)];
+	return [NSString stringWithFormat:@"   %04d: %0.2f%% of total dollars",m_year,m_pctOfYear];
 }
 
 

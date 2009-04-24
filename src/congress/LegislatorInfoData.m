@@ -477,8 +477,9 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 		else if ( [elementName isEqualToString:kName_NewsItem]  )
 		{
 			// put together the final 'value'
-			m_currentRowData.title = m_currentSource;
-			m_currentRowData.titleFont = [UIFont boldSystemFontOfSize:14.0f];
+			m_currentRowData.line1 = ([m_currentTitle length] > 0) ? m_currentTitle : m_currentSource;
+			m_currentRowData.line1Font = [UIFont boldSystemFontOfSize:14.0f];
+			m_currentRowData.line1Color = [UIColor blackColor];
 			m_currentRowData.line2 = m_currentExcerpt;
 			m_currentRowData.line2Font = [UIFont systemFontOfSize:12.0f];
 			m_currentRowData.action = @selector(rowActionURL:);

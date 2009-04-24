@@ -160,7 +160,7 @@ static ComposeMessageViewController *s_composer = NULL;
 	[m_fieldSubject setText:m_message.m_subject];
 	[m_fieldMessage setText:m_message.m_body];
 	
-	//[m_fieldTo setEnabled:NO];
+	[m_fieldTo setEnabled:NO];
 	
 	m_parentCtrl = parentController;
 	[m_parentCtrl presentModalViewController:self animated:YES];

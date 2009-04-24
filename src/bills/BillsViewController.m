@@ -198,6 +198,64 @@ enum
 }
 
 
+- (NSString *)getURLStateParms
+{
+	NSMutableString *state = [[NSMutableString alloc] init];
+	
+	// current selected chamber
+	switch ( m_selectedChamber )
+	{
+		default:
+		case eCongressChamberHouse:
+			[state appendString:@"house"];
+			break;
+		case eCongressChamberSenate:
+			[state appendString:@"senate"];
+			break;
+		case eCongressSearchResults:
+			[state appendString:@"search"];
+			[state appendString:[NSString stringWithFormat:@":%@",[m_data currentSearchString]]];
+			break;
+		case eCongressCommittee:
+			[state appendString:@"committee"];
+			break;
+	}
+	
+	// current selected table row ?!
+	{
+		NSArray *cells = [self.tableView visibleCells];
+		if ( [cells count] > 0 )
+		{
+			id cell = [cells objectAtIndex:0];
+			if ( [cell respondsToSelector:@selector(m_tableRange)] )
+			{
+				NSRange range = (NSRange)[cell m_tableRange];
+				[state appendFormat:@":%d:%d",range.location,range.length];
+			}
+			else
+			{
+				[state appendString:@":0:0"];
+			}
+		}
+		else
+		{
+			[state appendString:@":0:0"];
+		}
+	}
+	
+	// Are we looking at a legislator?
+	id topView = self.navigationController.visibleViewController;
+	if ( [topView respondsToSelector:@selector(m_bill)] )
+	{
+		// grab the legislator currently being viewed
+		BillContainer *bill = [topView performSelector:@selector(m_bill)];
+		[state appendFormat:@":%d",[bill m_number]];
+	}
+	
+	return state;
+}
+
+
 - (void)handleURLParms:(NSString *)parms
 {
 	// XXX - do something to handle URL parameters!
@@ -611,6 +669,9 @@ deselect_and_return:
 	
 	BillContainer *bc = [self billAtIndexPath:indexPath];
 	[cell setContentFromBill:bc];
+	
+	// let the cell know where it currently is...
+	cell.m_tableRange = (NSRange){indexPath.section, indexPath.row};
 	
 	return cell;
 }

@@ -14,9 +14,11 @@
 {
 @private
 	BillContainer *m_bill;
+	NSRange m_tableRange;
 }
 
 @property (readonly) BillContainer *m_bill;
+@property (nonatomic) NSRange m_tableRange;
 
 + (CGFloat)getCellHeightForBill:(BillContainer *)bill;
 

@@ -72,6 +72,7 @@ static const NSInteger s_maxBillPages = 3;
 		
 		m_searching = NO;
 		m_searchResults = nil;
+		m_currentSearchString = nil;
 		
 		m_xmlParser = nil;
 		m_timer = nil;
@@ -95,6 +96,7 @@ static const NSInteger s_maxBillPages = 3;
 	[m_senateBills release];
 	
 	[m_searchResults release];
+	[m_currentSearchString release];
 	
 	[m_currentStatusMessage release];
 	[super dealloc];
@@ -123,17 +125,19 @@ static const NSInteger s_maxBillPages = 3;
 	BOOL shouldReDownload = NO;
 	
 	// check to see if we should re-load the data!
-	NSString *shouldReload = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_autoreload_bills"];
-	if ( [shouldReload isEqualToString:@"YES"] )
+	NSNumber *reloadFreq = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_autoreload_bills"];
+	NSInteger updateInterval = [reloadFreq integerValue];
+	//if ( [shouldReload isEqualToString:@"YES"] )
+	if ( updateInterval > 0 )
 	{
 		// the user wants us to auto-update:
 		// do so once every day
 		
 		NSString *lastUpdatePath = [dataPath stringByAppendingPathComponent:@"lastUpdate"];
-		NSString *lastUpdate = [NSString stringWithContentsOfFile:lastUpdatePath];
-		CGFloat updateTimeInterval = [lastUpdate floatValue];
+		NSString *lastUpdateStr = [NSString stringWithContentsOfFile:lastUpdatePath];
+		CGFloat lastUpdate = [lastUpdateStr floatValue];
 		CGFloat now = (CGFloat)[[NSDate date] timeIntervalSinceReferenceDate];
-		if ( (now - updateTimeInterval) > 86400 ) // this will still be true if the file wasn't found :-)
+		if ( (now - lastUpdate) > updateInterval ) // this will still be true if the file wasn't found :-)
 		{
 			shouldReDownload = YES;
 		}
@@ -301,6 +305,7 @@ static const NSInteger s_maxBillPages = 3;
 	// 
 	// NOTE: This is _completely_ blocking!
 	// 
+	m_currentSearchString = [[searchText retain] autorelease];
 	
 	NSString *searchUrlStr = [DataProviders OpenCongress_BillQueryURL:searchText];
 	NSURL *searchURL = [NSURL URLWithString:searchUrlStr];
@@ -323,6 +328,12 @@ static const NSInteger s_maxBillPages = 3;
 	[xmlParser parse];
 	
 	m_searching = NO;
+}
+
+
+- (NSString *)currentSearchString
+{
+	return m_currentSearchString;
 }
 
 

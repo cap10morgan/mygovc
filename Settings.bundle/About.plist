@@ -10,7 +10,15 @@
 	<array>
 		<dict>
 			<key>Title</key>
-			<string>Data Provided By:</string>
+			<string>Authors</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+			<key>File</key>
+			<string>Authors</string>
+		</dict>
+		<dict>
+			<key>Title</key>
+			<string>Data Provided By</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>

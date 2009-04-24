@@ -30,6 +30,7 @@
 	
 	BOOL            m_searching;
 	NSMutableArray *m_searchResults;
+	NSString *m_currentSearchString;
 	
 	XMLParserOperation *m_xmlParser;
 	NSTimer *m_timer;
@@ -67,6 +68,7 @@
 - (BillContainer *)senateBillAtIndexPath:(NSIndexPath *)indexPath;
 
 - (void)searchForBillsLike:(NSString *)searchText;
+- (NSString *)currentSearchString;
 - (NSInteger)numSearchResults;
 - (BillContainer *)searchResultAtIndexPath:(NSIndexPath *)indexPath;
 

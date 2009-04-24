@@ -9,6 +9,28 @@
 	<key>PreferenceSpecifiers</key>
 	<array>
 		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Info</string>
+		</dict>
+		<dict>
+			<key>Title</key>
+			<string>About</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+			<key>File</key>
+			<string>About</string>
+		</dict>
+		<dict>
+			<key>Title</key>
+			<string>Legal</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+			<key>File</key>
+			<string>Legal</string>
+		</dict>
+		<dict>
 			<key>Title</key>
 			<string>Application Settings</string>
 			<key>Type</key>
@@ -88,17 +110,27 @@
 		</dict>
 		<dict>
 			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>AutoReloadBillData</string>
+			<string>PSMultiValueSpecifier</string>
 			<key>Key</key>
 			<string>mygov_autoreload_bills</string>
+			<key>Title</key>
+			<string>Reload Bill Data</string>
 			<key>DefaultValue</key>
-			<string>YES</string>
-			<key>TrueValue</key>
-			<string>YES</string>
-			<key>FalseValue</key>
-			<string>NO</string>
+			<string>Every Day</string>
+			<key>Titles</key>
+			<array>
+				<string>Never</string>
+				<string>Every Day</string>
+				<string>Every Week</string>
+				<string>Every Month</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<integer>0</integer>
+				<integer>86400</integer>
+				<integer>604800</integer>
+				<integer>2419200</integer>
+			</array>
 		</dict>
 		<dict>
 			<key>AutocorrectionType</key>
@@ -115,28 +147,6 @@
 			<string>Home</string>
 			<key>Type</key>
 			<string>PSTextFieldSpecifier</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string>Info</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-			<key>Title</key>
-			<string>About</string>
-			<key>File</key>
-			<string>About</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-			<key>Title</key>
-			<string>Legal</string>
-			<key>File</key>
-			<string>Legal</string>
 		</dict>
 	</array>
 </dict>

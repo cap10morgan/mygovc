@@ -12,7 +12,7 @@
 
 @implementation BillSummaryTableCell
 
-@synthesize m_bill;
+@synthesize m_bill, m_tableRange;
 
 enum
 {
