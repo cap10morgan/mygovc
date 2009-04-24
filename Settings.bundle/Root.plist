@@ -51,6 +51,42 @@
 			<string>PSTextFieldSpecifier</string>
 		</dict>
 		<dict>
+			<key>AutocorrectionType</key>
+			<string>No</string>
+			<key>Autocapitalization</key>
+			<string>None</string>
+			<key>KeyboardType</key>
+			<string>Alphabet</string>
+			<key>IsSecure</key>
+			<false/>
+			<key>DefaultValue</key>
+			<string></string>
+			<key>Key</key>
+			<string>twitter_username</string>
+			<key>Title</key>
+			<string>Twitter Username</string>
+			<key>Type</key>
+			<string>PSTextFieldSpecifier</string>
+		</dict>
+		<dict>
+			<key>AutocorrectionType</key>
+			<string>No</string>
+			<key>Autocapitalization</key>
+			<string>None</string>
+			<key>KeyboardType</key>
+			<string>Alphabet</string>
+			<key>IsSecure</key>
+			<true/>
+			<key>DefaultValue</key>
+			<string></string>
+			<key>Key</key>
+			<string>twitter_password</string>
+			<key>Title</key>
+			<string>Twitter Password</string>
+			<key>Type</key>
+			<string>PSTextFieldSpecifier</string>
+		</dict>
+		<dict>
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>

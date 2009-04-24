@@ -5,7 +5,8 @@
 //  Created by Jeremy C. Andrus on 4/14/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
-
+#import "myGovAppDelegate.h"
+#import "ComposeMessageViewController.h"
 #import "CongressionalCommittees.h"
 #import "DataProviders.h"
 #import "LegislatorContainer.h"
@@ -16,8 +17,8 @@
 enum
 {
 	eSection_Contact = 0,
-	eSection_Committe = 1,
-	eSection_InfoStream = 2,
+	eSection_InfoStream = 1,
+	eSection_Committe = 2,
 	eSection_Recent = 3,
 };
 
@@ -28,23 +29,25 @@ enum
 
 // The order here _must_ correspond to the order in the enumeration above
 #define DATA_SECTIONS KEY_CONTACT, \
-                      KEY_COMMITTEE, \
                       KEY_INFOSTREAM, \
+                      KEY_COMMITTEE, \
                       KEY_RECENT, \
                       nil
 
 // 
 // Setup the contact section data
 // 
-#define CONTACT_ROWKEY @"01_email",@"02_phone",@"03_fax", \
-                       @"04_webform",@"05_website",@"06_office", \
+#define CONTACT_ROWKEY @"01_email",@"02_phone",@"03_twitter",@"04_fax", \
+                       @"05_webform",@"06_website",@"07_office", \
                        nil
 
-#define CONTACT_ROWSEL @selector(email),@selector(phone),@selector(fax), \
-                       @selector(webform),@selector(website),@selector(congress_office)
+#define CONTACT_ROWSEL @selector(email),@selector(phone),@selector(twitter_id), \
+                       @selector(fax),@selector(webform),@selector(website), \
+                       @selector(congress_office)
 
 #define CONTACT_ROWACTION @selector(rowActionMailto:),\
                           @selector(rowActionPhoneCall:), \
+                          @selector(rowActionTweet:), \
                           @selector(rowActionNone:), \
                           @selector(rowActionURL:), \
                           @selector(rowActionURL:), \
@@ -70,6 +73,7 @@ enum
 @interface LegislatorInfoData (private)
 	- (NSArray *)setupDataSection:(NSInteger)section;
 	- (void)startActivityDownload;
+	- (void)rowActionTweet:(NSIndexPath *)indexPath;
 	- (void)rowActionLegislatorMap:(NSIndexPath *)indexPath;
 @end
 
@@ -294,6 +298,19 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 	
 	NSString *urlStr = [DataProviders OpenCongress_PersonURL:m_legislator];
 	[m_xmlParser parseXML:[NSURL URLWithString:urlStr] withParserDelegate:self];
+}
+
+
+- (void)rowActionTweet:(NSIndexPath *)indexPath
+{
+	// display a message composer to tweet the legislator!
+	MessageData *msg = [[MessageData alloc] init];
+	msg.m_transport = eMT_Twitter;
+	msg.m_to = [NSString stringWithFormat:@"@%@",[m_legislator twitter_id]];
+	msg.m_subject = @"";
+	
+	ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+	[cmvc display:msg fromParent:[[myGovAppDelegate sharedAppDelegate] topViewController]];
 }
 
 

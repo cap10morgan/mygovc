@@ -328,6 +328,7 @@ enum
 			[self hideView];
 		}
 	}
+	[[self superview] setNeedsDisplay];
 }
 
 

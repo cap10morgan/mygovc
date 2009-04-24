@@ -21,7 +21,7 @@
 	- (void)writeBillDataToCache:(id)sender;
 	- (void)readBillDataFromCache:(id)sender;
 	- (void)setStatus:(NSString *)status;
-	- (void)addNewBill:(BillContainer *)bill;
+	- (void)addNewBill:(BillContainer *)bill checkForDuplicates:(BOOL)checkDuplicates;
 	- (void)clearData;
 @end
 
@@ -31,6 +31,8 @@
 
 @synthesize isDataAvailable;
 @synthesize isBusy;
+
+static const NSInteger s_maxBillPages = 3;
 
 + (NSString *)dataCachePath
 {
@@ -64,6 +66,9 @@
 		m_houseBills = [[NSMutableDictionary alloc] initWithCapacity:12];
 		m_senateSections = [[NSMutableArray alloc] initWithCapacity:12];
 		m_senateBills = [[NSMutableDictionary alloc] initWithCapacity:12];
+		
+		m_billsDownloaded = 0;
+		m_billDownloadPage = 1;
 		
 		m_searching = NO;
 		m_searchResults = nil;
@@ -137,6 +142,7 @@
 	if ( shouldReDownload || ![[NSFileManager defaultManager] fileExistsAtPath:cachePath] )
 	{
 		// we need to start a data download!
+		m_billDownloadPage = 1;
 		[self beginBillSummaryDownload];
 	}
 	else
@@ -157,6 +163,7 @@
 - (void)loadDataByDownload
 {
 	[self clearData];
+	m_billDownloadPage = 1;
 	[self beginBillSummaryDownload];
 }
 
@@ -360,22 +367,34 @@
 	
 	[self setStatus:@"Preparing Bill Download..."];
 	
-	// XXX - 
-	// XXX - Use [DataProviders OpenCongress_BillsURLIntroducedSinceDate:];
-	// XXX - (somehow) 
-	// XXX - 
-	/*
-	NSDateComponents *comps = [[NSDateComponents alloc] init];
-	[comps setDay:1];
-	[comps setMonth:1];
-	[comps setYear:2009];
-	NSCalendar *gregorian = [[NSCalendar alloc]
-							 initWithCalendarIdentifier:NSGregorianCalendar];
-	NSDate *date = [gregorian dateFromComponents:comps];
-	[comps release];
-	*/
+	// This yields _so_ much noise it's not worth it:
+	// use the default OpenCongress set of bills...
+#if 0
+	// Use [DataProviders OpenCongress_BillsURLIntroducedSinceDate:];
+	// 
+	// Gather bill data starting from January of the current year
+	// (users can search for other bills)
+	// 
+	NSDate *startDate = nil;
+	{
+		NSInteger currentYear = [[[NSCalendar currentCalendar] components:NSYearCalendarUnit fromDate:[NSDate date]] year];
+		NSDateComponents *comps = [[NSDateComponents alloc] init];
+		[comps setDay:1];
+		[comps setMonth:1];
+		[comps setYear:currentYear];
+		NSCalendar *gregorian = [[NSCalendar alloc]
+								 initWithCalendarIdentifier:NSGregorianCalendar];
+		startDate = [gregorian dateFromComponents:comps];
+		[comps release];
+	}
 	
-	NSString *xmlURL = [DataProviders OpenCongress_BillsURL];
+	NSString *xmlURL = [DataProviders OpenCongress_BillsURLIntroducedSinceDate:startDate onPage:m_billDownloadPage];
+#endif
+	
+	NSString *xmlURL = [DataProviders OpenCongress_BillsURLOnPage:m_billDownloadPage];
+	
+	m_billsDownloaded = 0;
+	m_billDownloadPage++;
 	
 	if ( nil != m_xmlParser )
 	{
@@ -477,6 +496,7 @@
 		NSLog( @"BillsDataManager: error reading cached data from file: starting re-download of data!" );
 		isBusy = NO;
 		isDataAvailable = NO;
+		m_billDownloadPage = 1;
 		[self beginBillSummaryDownload];
 		return;
 	}
@@ -491,7 +511,7 @@
 		BillContainer *bc = [[BillContainer alloc] initWithDictionary:billDict];
 		if ( nil != bc )
 		{
-			[self addNewBill:bc];
+			[self addNewBill:bc checkForDuplicates:NO];
 			[bc release];
 		}
 	}
@@ -513,7 +533,7 @@
 }
 
 
-- (void)addNewBill:(BillContainer *)bill
+- (void)addNewBill:(BillContainer *)bill checkForDuplicates:(BOOL)checkDuplicates
 {
 	NSMutableDictionary *chamberDict;
 	NSMutableArray *chamberSections;
@@ -547,6 +567,8 @@
 	NSInteger yearMonth = NSYearCalendarUnit | NSMonthCalendarUnit;
 	NSDateComponents *keyComp = [[NSCalendar currentCalendar] components:yearMonth fromDate:[bill lastActionDate]];
 	
+	// create an integer key value from the month and year that can 
+	// be used not only as a dictionay key, but also an easy sorting mechanism
 	NSInteger keyVal = ((3000 - [keyComp year]) << 5) | ((12 - [keyComp month]) & 0x1F);
 	NSNumber *key = [NSNumber numberWithInt:keyVal];
 	NSMutableArray *monthArray = [chamberDict objectForKey:key];
@@ -561,6 +583,26 @@
 	else
 	{
 		[monthArray retain];
+	}
+	
+	++m_billsDownloaded;
+	
+	// search through the array for a matching bill
+	// to avoid duplicates!
+	if ( checkDuplicates )
+	{
+		NSEnumerator *e = [monthArray objectEnumerator];
+		id b;
+		while ( b = [e nextObject] )
+		{
+			if ( [b m_id] == bill.m_id )
+			{
+				// duplicate: release the monthArray reference,
+				// and get out of here
+				[monthArray release];
+				return;
+			}
+		}
 	}
 	
 	[monthArray addObject:bill];
@@ -581,6 +623,8 @@
 	m_houseBills = [[NSMutableDictionary alloc] initWithCapacity:12];
 	m_senateSections = [[NSMutableArray alloc] initWithCapacity:12];
 	m_senateBills = [[NSMutableDictionary alloc] initWithCapacity:12];
+	
+	m_billsDownloaded = 0;
 }
 
 
@@ -595,6 +639,7 @@
 		[timer invalidate];
 		m_timer = nil;
 		
+		m_billDownloadPage = 1;
 		[self beginBillSummaryDownload];
 	}
 }
@@ -605,13 +650,31 @@
 
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
-	[self setStatus:@"Downloading Bill Data..."];
-	NSLog( @"BillsDataManager started XML download..." );
+	[self setStatus:[NSString stringWithFormat:@"Downloading Bill Data (%d)...",(m_billDownloadPage-1)]];
+	NSLog( @"BillsDataManager started XML download for page %0d...", m_billDownloadPage-1 );
 }
 
 
 - (void)xmlParseOp:(XMLParserOperation *)parseOp endedWith:(BOOL)success
 {
+	// we received the maximum number of bills - there might be more!
+	// (don't go above a maximum numbe of pages)
+	if ( (m_billDownloadPage < s_maxBillPages) &&
+		 (m_billsDownloaded >= [DataProviders OpenCongress_MaxBillsReturned])  ) 
+	{
+		// start another download from the current date (m_lastBillAction)
+		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																			selector:@selector(beginBillSummaryDownload) 
+																			  object:nil];
+		
+		// Add the operation to the internal operation queue managed by the application delegate.
+		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+		
+		[theOp release];
+		
+		return;
+	}
+	
 	isDataAvailable = success;
 	
 	[self setStatus:@"Finished."];

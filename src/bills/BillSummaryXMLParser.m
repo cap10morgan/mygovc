@@ -12,7 +12,7 @@
 #import "BillContainer.h"
 
 @interface BillsDataManager (private)
-	- (void)addNewBill:(BillContainer *)bill;
+	- (void)addNewBill:(BillContainer *)bill checkForDuplicates:(BOOL)checkDuplicates;
 @end
 
 
@@ -194,7 +194,7 @@ static NSString *kName_Action_How = @"how";
 		else if ( [elementName isEqualToString:kName_Bill] )
 		{
 			// add the bill to our data manager!
-			[m_data addNewBill:m_currentBill];
+			[m_data addNewBill:m_currentBill checkForDuplicates:YES];
 			[m_currentBill release]; m_currentBill = nil;
 			m_parsingBill = NO;
 		}

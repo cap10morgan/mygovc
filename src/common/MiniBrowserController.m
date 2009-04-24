@@ -69,6 +69,7 @@ static MiniBrowserController *s_browser = NULL;
 		m_loadingInterrupted = NO;
 		m_urlToLoad = nil;
 		m_activity = nil;
+		m_loadingLabel = nil;
 		m_parentCtrl = nil;
 		m_shouldDisplayOnViewLoad = NO;
 		m_normalItemList = nil;
@@ -102,15 +103,34 @@ static MiniBrowserController *s_browser = NULL;
 	[super viewDidLoad];
 	
 	CGRect actFrame = CGRectMake( CGRectGetWidth(self.m_webView.frame)/2.0f - 16.0f,
-								 CGRectGetHeight(self.m_webView.frame)/2.0f - 16.0f,
-								 32.0f, 32.0f
+								  CGRectGetHeight(self.m_webView.frame)/2.0f - 16.0f,
+								  32.0f, 32.0f
 								 );
+	CGRect lblFrame = CGRectMake( CGRectGetMaxX(actFrame) + 6.0f,
+								  CGRectGetMinY(actFrame) - 4.0f,
+								  120.0f, 40.0f
+	                            );
 	m_activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
 	[m_activity setFrame:actFrame];
 	m_activity.hidesWhenStopped = YES;
 	[self.m_webView addSubview:m_activity];
 	[m_activity release];
 	[m_activity stopAnimating];
+	
+	m_loadingLabel = [[UILabel alloc] init];
+	[m_loadingLabel setFrame:lblFrame];
+	m_loadingLabel.backgroundColor = [UIColor clearColor];
+	m_loadingLabel.highlightedTextColor = [UIColor darkGrayColor];
+	m_loadingLabel.textColor = [UIColor blackColor];
+	m_loadingLabel.shadowColor = [UIColor darkGrayColor];
+	m_loadingLabel.shadowOffset = CGSizeMake(0.0f,1.0f);
+	m_loadingLabel.font = [UIFont systemFontOfSize:16.0f];
+	m_loadingLabel.textAlignment = UITextAlignmentLeft;
+	m_loadingLabel.adjustsFontSizeToFitWidth = YES;
+	m_loadingLabel.text = @"Loading...";
+	[self.m_webView addSubview:m_loadingLabel];
+	[m_loadingLabel release];
+	[m_loadingLabel setHidden:YES];
 	
 	// get the current list of buttons
 	m_normalItemList = [[NSArray alloc] initWithArray:m_toolBar.items];
@@ -278,6 +298,7 @@ static MiniBrowserController *s_browser = NULL;
 	{
 		[m_webView stopLoading];
 		[m_activity stopAnimating];
+		[m_loadingLabel setHidden:YES];
 	}
 }
 
@@ -339,6 +360,7 @@ static MiniBrowserController *s_browser = NULL;
 	[m_toolBar setItems:m_loadingItemList animated:NO];
 	
 	[m_activity startAnimating];
+	[m_loadingLabel setHidden:NO];
 	
 	// always start loading - we're not real restrictive here...
 	return YES;
@@ -349,6 +371,8 @@ static MiniBrowserController *s_browser = NULL;
 {
 	[m_toolBar setItems:m_normalItemList animated:NO];
 	[m_activity stopAnimating];
+	[m_loadingLabel setHidden:YES];
+	
 	[self enableBackButton:m_webView.canGoBack];
 	[self enableFwdButton:m_webView.canGoForward];
 	
@@ -376,18 +400,9 @@ static MiniBrowserController *s_browser = NULL;
 - (void)webViewDidStartLoad:(UIWebView *)webView
 {
 	[m_activity startAnimating];
+	[m_loadingLabel setHidden:NO];
+	
 	self.title = @"loading...";
-}
-
-
-- (void)webView:(UIWebView *)webView 
-		decidePolicyForNavigationAction:(NSDictionary *)actionInformation 
-		request:(NSURLRequest *)request 
-		frame:(WebFrame *)frame 
-		decisionListener:(id)listener
-{
-	// XXX - ?!?!
-	return;
 }
 
 

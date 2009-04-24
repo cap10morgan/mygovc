@@ -355,7 +355,7 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 	{
 		[m_lastActionDate release];
 		m_lastActionDate = [action.m_date retain];
-		m_lastAction = action;
+		m_lastAction = action; // don't need to retain this...
 	}
 }
 
@@ -366,12 +366,13 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 	NSInteger brIdx = (htmlBR.length > 0 ? htmlBR.location + htmlBR.length : 0);
 	
 	NSString *summary = [[m_summary substringFromIndex:brIdx] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	summary = [summary stringByReplacingOccurrencesOfString:@"<br/>" withString:@""];
 	if ( [summary length] > 0 ) return summary;
 	
 	// if the summary is blank - use the title
 	NSRange space = [m_title rangeOfString:@" "];
 	NSInteger spaceIdx = (space.length > 0 ? space.location + 1 : 0);
-	return [m_title substringFromIndex:spaceIdx];
+	return [[m_title substringFromIndex:spaceIdx] stringByReplacingOccurrencesOfString:@"<br/>" withString:@""];
 }
 
 

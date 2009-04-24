@@ -10,6 +10,7 @@
 #import "BillsDataManager.h"
 #import "CongressDataManager.h"
 #import "SpendingDataManager.h"
+#import "MGTwitterEngine.h"
 
 #import <objc/runtime.h>
 
@@ -19,7 +20,7 @@ static myGovAppDelegate *s_myGovApp = NULL;
 static BillsDataManager *s_myBillsData = NULL;
 static CongressDataManager *s_myCongressData = NULL;
 static SpendingDataManager *s_mySpendingData = NULL;
-
+static MGTwitterEngine *s_myTwitterEngine = NULL;
 
 @synthesize m_window;
 @synthesize m_tabBarController;
@@ -76,9 +77,29 @@ static SpendingDataManager *s_mySpendingData = NULL;
 }
 
 
++ (MGTwitterEngine *)sharedTwitterEngine
+{
+	if ( !s_myTwitterEngine ) s_myTwitterEngine = [[MGTwitterEngine alloc] initWithDelegate:[myGovAppDelegate sharedAppDelegate]];
+	return s_myTwitterEngine;
+}
+
+
 - (UIView *)topView
 {
 	return (UIView *)m_tabBarController.view;
+}
+
+
+- (UIViewController *)topViewController
+{
+	return (UIViewController *)m_tabBarController;
+}
+
+
+- (void)setTwitterNotifyTarget:(id)target
+{
+	[m_twitterNotifyTarget release];
+	m_twitterNotifyTarget = [target retain];
 }
 
 
@@ -123,7 +144,17 @@ static SpendingDataManager *s_mySpendingData = NULL;
 
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application 
-{    
+{
+	// 
+	// Start loading the congress and bill data
+	// 
+	if ( [[myGovAppDelegate sharedCongressData] isDataAvailable] )
+	{
+		NSLog( @"Congress data loaded: wow that was fast!" );
+	}
+	
+	[[myGovAppDelegate sharedBillsData] loadData];
+	
 	// run through all of the view controllers managed by the tab bar
 	// and setup our dictionary of view controllers which can handle URLs
 	NSArray *tabViews = m_tabBarController.viewControllers;
@@ -149,6 +180,9 @@ static SpendingDataManager *s_mySpendingData = NULL;
     // Add the tab bar controller's current view as a subview of the window
     [m_window addSubview:m_tabBarController.view];
 	
+	//
+	// Go back to the last application page viewed
+	// 
 	NSString *appURLStr = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_last_url"];
 	if ( nil != appURLStr )
 	{
@@ -268,6 +302,74 @@ static SpendingDataManager *s_mySpendingData = NULL;
 {
 }
 */
+
+
+#pragma mark MGTwitterEngineDelegate methods
+
+
+- (void)requestSucceeded:(NSString *)connectionIdentifier
+{
+    //NSLog(@"myGov:MGTwitter: Request succeeded for connectionIdentifier = %@", connectionIdentifier);
+	if ( nil != m_twitterNotifyTarget && [m_twitterNotifyTarget respondsToSelector:@selector(twitterOpFinished:)] )
+	{
+		NSString *yes = @"YES";
+		[m_twitterNotifyTarget performSelector:@selector(twitterOpFinished:) withObject:yes];
+	}
+}
+
+
+- (void)requestFailed:(NSString *)connectionIdentifier withError:(NSError *)error
+{
+    NSLog(@"myGov:MGTwitter: Request failed for connectionIdentifier = %@, error = %@ (%@)", 
+          connectionIdentifier, 
+          [error localizedDescription], 
+          [error userInfo]);
+	if ( nil != m_twitterNotifyTarget && [m_twitterNotifyTarget respondsToSelector:@selector(twitterOpFinished:)] )
+	{
+		NSString *no = [NSString stringWithFormat:@"NO %@",[error localizedDescription]];
+		[m_twitterNotifyTarget performSelector:@selector(twitterOpFinished:) withObject:no];
+	}
+}
+
+
+- (void)statusesReceived:(NSArray *)statuses forRequest:(NSString *)connectionIdentifier
+{
+	//NSLog(@"myGov:MGTwitter: Got statuses for %@:\r%@", connectionIdentifier, statuses);
+}
+
+
+- (void)directMessagesReceived:(NSArray *)messages forRequest:(NSString *)connectionIdentifier
+{
+	//NSLog(@"myGov:MGTwitter: Got direct messages for %@:\r%@", connectionIdentifier, messages);
+}
+
+
+- (void)userInfoReceived:(NSArray *)userInfo forRequest:(NSString *)connectionIdentifier
+{
+	//NSLog(@"myGov:MGTwitter: Got user info for %@:\r%@", connectionIdentifier, userInfo);
+}
+
+
+- (void)miscInfoReceived:(NSArray *)miscInfo forRequest:(NSString *)connectionIdentifier
+{
+	//NSLog(@"myGov:MGTwitter: Got misc info for %@:\r%@", connectionIdentifier, miscInfo);
+}
+
+- (void)searchResultsReceived:(NSArray *)searchResults forRequest:(NSString *)connectionIdentifier
+{
+	//NSLog(@"myGov:MGTwitter: Got search results for %@:\r%@", connectionIdentifier, searchResults);
+}
+
+
+- (void)imageReceived:(UIImage *)image forRequest:(NSString *)connectionIdentifier
+{
+	//NSLog(@"myGov:MGTwitter: Got an image for %@: %@", connectionIdentifier, image);
+}
+
+- (void)connectionFinished
+{
+	//NSLog(@"myGov:MGTwitter: Connection finished.");
+}
 
 
 @end

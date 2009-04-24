@@ -25,10 +25,11 @@ static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
 // 
 // OpenCongress.org 
 // 
-static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/bills?key=%@&congress=%d";
-static NSString *kOpenCongress_BillsSinceFmt = @"http://www.opencongress.org/api/bills_introduced_since?key=%@&date=%@";
+static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/bills?key=%@&congress=%d&per_page=30&page=%d";
+static NSString *kOpenCongress_BillsSinceFmt = @"http://www.opencongress.org/api/bills_introduced_since?key=%@&per_page=30&page=%d&date=%@";
 static NSString *kOpenCongress_PersonXMLFmt = @"http://www.opencongress.org/api/people?key=%@&state=%@&first_name=%@&last_name=%@";
 static NSString *kOpenCongress_BillQueryFmt = @"http://www.opencongress.org/api/bills_by_query?key=%@&congress=%d&q=%@"; 
+static NSInteger kOpenCongress_MaxBillsReturnedPerQuery = 30;
 
 // 
 // SunlightLabs 
@@ -79,17 +80,18 @@ static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 }
 
 
-+ (NSString *)OpenCongress_BillsURL
++ (NSString *)OpenCongress_BillsURLOnPage:(NSInteger)page
 {
 	NSString *urlStr = [[[NSString alloc] initWithFormat:kOpenCongress_BillsXMLFmt,
 											kOpenCongress_APIKey,
-											[[myGovAppDelegate sharedCongressData] currentCongressSession]
+											[[myGovAppDelegate sharedCongressData] currentCongressSession],
+											page
 						] autorelease];
 	return urlStr;
 }
 
 
-+ (NSString *)OpenCongress_BillsURLIntroducedSinceDate:(NSDate *)date
++ (NSString *)OpenCongress_BillsURLIntroducedSinceDate:(NSDate *)date onPage:(NSInteger)page
 {
 	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
@@ -99,6 +101,7 @@ static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 	
 	NSString *urlStr = [[[NSString alloc] initWithFormat:kOpenCongress_BillsSinceFmt,
 											kOpenCongress_APIKey,
+											page,
 											formattedDateString
 						] autorelease];
 	return urlStr;
@@ -125,6 +128,12 @@ static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 											[queryStr stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]
 						] autorelease];
 	return urlStr;
+}
+
+
++ (NSInteger)OpenCongress_MaxBillsReturned
+{
+	return kOpenCongress_MaxBillsReturnedPerQuery;
 }
 
 

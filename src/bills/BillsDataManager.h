@@ -25,6 +25,9 @@
 	NSMutableArray *m_senateSections;
 	NSMutableDictionary *m_senateBills;
 	
+	NSInteger  m_billsDownloaded;
+	NSInteger  m_billDownloadPage;
+	
 	BOOL            m_searching;
 	NSMutableArray *m_searchResults;
 	

@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ProgressOverlayViewController.h"
+#import "TwitterLoginViewController.h"
 
 typedef enum
 {
@@ -34,24 +36,26 @@ typedef enum
 @end
 
 
-@interface ComposeMessageViewController : UIViewController <UITextViewDelegate>
+@interface ComposeMessageViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIAlertViewDelegate>
 {
 	IBOutlet UIBarButtonItem *m_titleButton;
-	IBOutlet UITextField *m_fieldTo;
-	IBOutlet UILabel *m_labelSubject;
-	IBOutlet UITextField *m_fieldSubject;
-	IBOutlet UITextView  *m_fieldMessage;
+	IBOutlet UITextField     *m_fieldTo;
+	IBOutlet UILabel         *m_labelSubject;
+	IBOutlet UITextField     *m_fieldSubject;
+	IBOutlet UITextView      *m_fieldMessage;
 @private
 	MessageData *m_message;
+	TwitterLoginViewController *m_twitterLoginView;
+	ProgressOverlayViewController *m_hud;
 	
 	id m_parentCtrl;
 }
 
 @property (nonatomic,retain) IBOutlet UIBarButtonItem *m_titleButton;
-@property (nonatomic,retain) IBOutlet UITextField *m_fieldTo;
-@property (nonatomic,retain) IBOutlet UILabel *m_labelSubject;
-@property (nonatomic,retain) IBOutlet UITextField *m_fieldSubject;
-@property (nonatomic,retain) IBOutlet UITextView  *m_fieldMessage;
+@property (nonatomic,retain) IBOutlet UITextField     *m_fieldTo;
+@property (nonatomic,retain) IBOutlet UILabel         *m_labelSubject;
+@property (nonatomic,retain) IBOutlet UITextField     *m_fieldSubject;
+@property (nonatomic,retain) IBOutlet UITextView      *m_fieldMessage;
 
 + (ComposeMessageViewController *)sharedComposer;
 

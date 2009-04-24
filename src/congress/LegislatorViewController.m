@@ -258,11 +258,11 @@
 	{
 		m_data = [[LegislatorInfoData alloc] init];
 	}
-	[m_data setLegislator:m_legislator];
+	[m_headerViewCtrl setLegislator:legislator];
 	
 	[m_data setNotifyTarget:self andSelector:@selector(dataCallback:)];
+	[m_data setLegislator:m_legislator];
 	
-	[m_headerViewCtrl setLegislator:legislator];
 	[self.tableView reloadData];
 }
 

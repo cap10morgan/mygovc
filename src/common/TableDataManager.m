@@ -172,9 +172,10 @@
 	TableRowData *rd = [self dataAtIndexPath:indexPath];
 	if ( nil == rd ) return;
 	
+	NSString *subject = [NSString stringWithString:@"Message from a concerned citizen"];
 	NSString *emailStr = [[NSString alloc] initWithFormat:@"mailto:%@?subject=%@",
-						  [rd.line1 stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding], 
-						  @"Message from a concerned citizen"
+							  [rd.line1 stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding], 
+							  [subject stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]
 						  ];
 	NSURL *emailURL = [[NSURL alloc] initWithString:emailStr];
 	[[UIApplication sharedApplication] openURL:emailURL];

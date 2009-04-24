@@ -385,6 +385,7 @@ enum
 		[m_data searchForBillsLike:srchTxt];
 		
 		[m_HUD show:NO];
+		[self.tableView setUserInteractionEnabled:YES];
 		
 		if ( [m_data numSearchResults] > 0 )
 		{
@@ -423,6 +424,7 @@ enum
 	{
 		[m_HUD setText:@"Searching Bills..." andIndicateProgress:YES];
 		[m_HUD show:YES];
+		[self.tableView setUserInteractionEnabled:NO];
 		
 		// kick off the search in a thread
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
@@ -432,6 +434,8 @@ enum
 		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
 		
 		[theOp release];
+		
+		[self.tableView setNeedsDisplay];
 	}
 }
 

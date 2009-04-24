@@ -6,8 +6,12 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
+#import "myGovAppDelegate.h"
 #import "ComposeMessageViewController.h"
+#import "MGTwitterEngine.h"
 #import "ProgressOverlayViewController.h"
+#import "TwitterLoginViewController.h"
+
 
 @implementation MessageData
 
@@ -17,10 +21,10 @@
 
 
 @interface ComposeMessageViewController (private)
-	- (void)opMakePhoneCall;
-	- (void)opSendEmail;
-	- (void)opSendTweet;
-	- (void)opSendMyGovComment;
+	- (id)opMakePhoneCall;
+	- (id)opSendEmail;
+	- (id)opSendTweet;
+	- (id)opSendMyGovComment;
 @end
 
 
@@ -51,6 +55,8 @@ static ComposeMessageViewController *s_composer = NULL;
 	{
 		// Custom initialization
 		m_message = nil;
+		m_twitterLoginView = nil;
+		m_hud = nil;
 	}
 	return self;
 }
@@ -74,8 +80,30 @@ static ComposeMessageViewController *s_composer = NULL;
 - (void)viewDidLoad 
 {
 	[super viewDidLoad];
+	
+	m_hud = [[ProgressOverlayViewController alloc] initWithWindow:self.view];
 }
 
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    // Dismiss the keyboard when the view outside the text field is touched.
+	[m_fieldMessage resignFirstResponder];
+	[m_fieldTo resignFirstResponder];
+	[m_fieldSubject resignFirstResponder];
+    [super touchesBegan:touches withEvent:event];
+}
+
+
+#pragma mark UITextFieldDelegate
+
+
+- (BOOL)textFieldShouldReturn:(UITextField *)theTextField 
+{
+	// When the user presses return, take focus away from the text field so that the keyboard is dismissed.
+	[theTextField resignFirstResponder];
+	return YES;
+}
 
 
 // Override to allow orientations other than the default portrait orientation.
@@ -132,7 +160,7 @@ static ComposeMessageViewController *s_composer = NULL;
 	[m_fieldSubject setText:m_message.m_subject];
 	[m_fieldMessage setText:m_message.m_body];
 	
-	[m_fieldTo setEnabled:NO];
+	//[m_fieldTo setEnabled:NO];
 	
 	m_parentCtrl = parentController;
 	[m_parentCtrl presentModalViewController:self animated:YES];
@@ -147,9 +175,10 @@ static ComposeMessageViewController *s_composer = NULL;
 
 - (IBAction)sendButtonPressed:(id)sender
 {
-	ProgressOverlayViewController *hud;
-	hud = [[ProgressOverlayViewController alloc] initWithWindow:self.view];
-	
+	[m_fieldMessage resignFirstResponder];
+    [m_fieldTo resignFirstResponder];
+	[m_fieldSubject resignFirstResponder];
+		
 	SEL sendOp = nil;
 	NSString *transportDescrip;
 	switch ( m_message.m_transport )
@@ -176,23 +205,13 @@ static ComposeMessageViewController *s_composer = NULL;
 			break;
 	}
 	
+	id success = nil;
 	if ( nil != sendOp )
 	{
-		NSString *msg = [[[NSString alloc] initWithFormat:@"Sending %@...",transportDescrip] autorelease];
-		[hud setText:msg andIndicateProgress:YES];
-		[hud show:YES];
-		
-		[self performSelector:sendOp];
-		
-		[msg release];
+		success = [self performSelector:sendOp];
 	}
 	
-	[hud show:NO];
-	[hud release];
-	
-	// XXX - warn about errors here!
-	
-	[m_parentCtrl dismissModalViewControllerAnimated:YES];
+	if ( nil != success ) [m_parentCtrl dismissModalViewControllerAnimated:YES];
 }
 
 
@@ -206,7 +225,7 @@ static ComposeMessageViewController *s_composer = NULL;
 
 #pragma mark ComposeMessageViewController Private 
 
-- (void)opMakePhoneCall
+- (id)opMakePhoneCall
 {
 	// make a phone call!
 	NSString *telStr = [[[NSString alloc] initWithFormat:@"tel:%@",m_message.m_to] stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
@@ -214,10 +233,12 @@ static ComposeMessageViewController *s_composer = NULL;
 	[[UIApplication sharedApplication] openURL:telURL];
 	[telStr release];
 	[telURL release];
+	
+	return self;
 }
 
 
-- (void)opSendEmail
+- (id)opSendEmail
 {
 	NSString *emailStr = [[NSString alloc] initWithFormat:@"mailto:%@?subject=%@&body=%@",
 												[m_message.m_to stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding], 
@@ -228,19 +249,112 @@ static ComposeMessageViewController *s_composer = NULL;
 	[[UIApplication sharedApplication] openURL:emailURL];
 	[emailStr release];
 	[emailURL release];
+	
+	return self;
 }
 
 
-- (void)opSendTweet
+- (id)opSendTweet
 {
-	// XXX - use twitter engine!
+	MGTwitterEngine *twitterEngine = [myGovAppDelegate sharedTwitterEngine];
+	[twitterEngine retain];
+	
+	if ( nil == m_twitterLoginView || ![m_twitterLoginView isLoggedIn] )
+	{
+		NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"twitter_username"];
+		NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"twitter_password"];
+	
+		if ( ([username length] < 1) || ([password length] < 1) )
+		{
+			// no login info - show login view controller
+			if ( nil == m_twitterLoginView )
+			{
+				m_twitterLoginView = [[TwitterLoginViewController alloc] initWithNibName:@"TwitterLoginView" bundle:nil];
+			}
+			
+			[m_twitterLoginView setNotifyTarget:self withSelector:@selector(opSendTweet)];
+			[m_twitterLoginView displayIn:self];
+			
+			return nil;
+		}
+		else
+		{
+			[twitterEngine setUsername:username password:password];
+		}
+	}
+	
+	NSString *twitterID = [m_fieldTo.text stringByReplacingOccurrencesOfString:@"@" withString:@""];
+	NSString *tweet = m_fieldMessage.text;
+	if ( [tweet length] > 140 )
+	{
+		tweet = [tweet substringToIndex:140];
+	}
+	
+	[m_hud setText:@"Sending Tweet!" andIndicateProgress:YES];
+	[m_hud show:YES];
+	
+	[self.view setUserInteractionEnabled:NO];
+	[self.view setNeedsDisplay];
+	
+	[[myGovAppDelegate sharedAppDelegate] setTwitterNotifyTarget:self];
+	[twitterEngine sendDirectMessage:tweet to:twitterID];
+	
+	[twitterEngine release];
+	return nil;
 }
 
 
-- (void)opSendMyGovComment
+- (id)opSendMyGovComment
 {
 	// XXX - fill me in!!
 	[NSThread sleepForTimeInterval:5.0f];
+	return self;
 }
+
+
+- (void)twitterOpFinished:(NSString *)success
+{
+	[self.view setUserInteractionEnabled:YES];
+	[m_hud show:NO];
+	
+	if ( [[success substringToIndex:2] isEqualToString:@"NO"] )
+	{
+		NSString *err = [success substringFromIndex:2];
+		
+		// pop up an alert saying it failed!
+		UIAlertView *alert = [[UIAlertView alloc] 
+							  initWithTitle:@"Tweet Error"
+							  message:[NSString stringWithFormat:@"Error: %@",err]
+							  delegate:self
+							  cancelButtonTitle:nil
+							  otherButtonTitles:@"OK",@"Reset",nil];
+		[alert show];
+		return;
+	}
+	
+	[self dismissModalViewControllerAnimated:YES];
+}
+
+
+#pragma mark UIAlertViewDelegate Methods
+
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+	switch ( buttonIndex )
+	{
+		case 0:
+			// retry
+			break;
+			
+		case 1:
+			// reset credentials!
+			[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"twitter_username"];
+			[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"twitter_password"];
+			[[NSUserDefaults standardUserDefaults] synchronize];
+			break;
+	}
+}
+
 
 @end

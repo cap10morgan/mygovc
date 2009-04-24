@@ -21,7 +21,9 @@
 @private
 	BOOL m_loadingInterrupted;
 	NSURL *m_urlToLoad;
+	
 	UIActivityIndicatorView *m_activity;
+	UILabel                 *m_loadingLabel;
 	
 	NSArray *m_normalItemList;
 	NSArray *m_loadingItemList;

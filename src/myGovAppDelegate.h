@@ -7,12 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MGTwitterEngine.h"
 
 @class BillsDataManager;
 @class CongressDataManager;
 @class SpendingDataManager;
 
-@interface myGovAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate> 
+@interface myGovAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, MGTwitterEngineDelegate> 
 {
     UIWindow *m_window;
     UITabBarController *m_tabBarController;
@@ -20,6 +21,8 @@
 @private
 	NSOperationQueue *m_operationQueue;
 	NSMutableDictionary *m_urlHandler;
+	
+	id m_twitterNotifyTarget; // sends a "twitterOpFinished:(BOOL)successfully" messsage 
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *m_window;
@@ -35,6 +38,11 @@
 + (CongressDataManager *)sharedCongressData;
 + (SpendingDataManager *)sharedSpendingData;
 
++ (MGTwitterEngine *)sharedTwitterEngine;
+
 - (UIView *)topView;
+- (UIViewController *)topViewController;
+
+- (void)setTwitterNotifyTarget:(id)target;
 
 @end
