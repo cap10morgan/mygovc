@@ -7,6 +7,7 @@
 //
 
 #import "myGovAppDelegate.h"
+#import "CommunityDataManager.h"
 #import "BillsDataManager.h"
 #import "CongressDataManager.h"
 #import "SpendingDataManager.h"
@@ -17,6 +18,8 @@
 @implementation myGovAppDelegate
 
 static myGovAppDelegate *s_myGovApp = NULL;
+
+static CommunityDataManager *s_myCommunityData = NULL;
 static BillsDataManager *s_myBillsData = NULL;
 static CongressDataManager *s_myCongressData = NULL;
 static SpendingDataManager *s_mySpendingData = NULL;
@@ -46,6 +49,13 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 	{
 		return path;
 	}
+}
+
+
++ (CommunityDataManager *)sharedCommunityData
+{
+	if ( !s_myCommunityData ) s_myCommunityData = [[CommunityDataManager alloc] init];
+	return s_myCommunityData;
 }
 
 

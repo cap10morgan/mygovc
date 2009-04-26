@@ -150,9 +150,6 @@ enum
 	
 	[self.tableView setNeedsDisplay];
 	
-	// de-select the currently selected row
-	// (so the user can go back to the same district/state/contractor)
-	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
 
 /*

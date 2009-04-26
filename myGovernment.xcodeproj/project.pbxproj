@@ -7,210 +7,210 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0102D2D10F58D7C7005AE0EA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D2CC0F58D7C7005AE0EA /* main.m */; };
-		0102D2D20F58D7C7005AE0EA /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2CD0F58D7C7005AE0EA /* MainWindow.xib */; };
-		0102D2D30F58D7C7005AE0EA /* myGovAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D2D00F58D7C7005AE0EA /* myGovAppDelegate.m */; };
 		0102D2EE0F58DECD005AE0EA /* eagleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2ED0F58DECD005AE0EA /* eagleIcon.png */; };
-		0102D2F20F58E007005AE0EA /* RecoveryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2F10F58E007005AE0EA /* RecoveryView.xib */; };
-		0102D2F50F58E028005AE0EA /* RecoveryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D2F40F58E028005AE0EA /* RecoveryViewController.m */; };
-		0102D3020F58E31C005AE0EA /* SpendingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D3010F58E31C005AE0EA /* SpendingViewController.m */; };
-		0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0102D40A0F58F2D2005AE0EA /* CongressViewController.m */; };
 		011592C40F6A36D2008BECCD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 011592C30F6A36D2008BECCD /* Default.png */; };
-		011EF3CA0F91A47400932BBE /* ComposeMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 011EF3C90F91A47400932BBE /* ComposeMessageView.xib */; };
-		011EF3CD0F91A48E00932BBE /* ComposeMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 011EF3CC0F91A48E00932BBE /* ComposeMessageViewController.m */; };
 		0126775E0F7F25CA00CF9C46 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */; };
-		0126785E0F7F3BB900CF9C46 /* CongressDatabaseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 0126785D0F7F3BB900CF9C46 /* CongressDatabaseParser.m */; };
-		012678610F7F3BD500CF9C46 /* CongressLocationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 012678600F7F3BD500CF9C46 /* CongressLocationParser.m */; };
-		0132E7500F68D22A00DF33DC /* CongressionalCommittees.m in Sources */ = {isa = PBXBuildFile; fileRef = 0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */; };
-		014955380F9BB80B00032423 /* SpendingSummaryData.m in Sources */ = {isa = PBXBuildFile; fileRef = 014955370F9BB80B00032423 /* SpendingSummaryData.m */; };
-		0149553B0F9BB83A00032423 /* SpendingSummaryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0149553A0F9BB83A00032423 /* SpendingSummaryViewController.m */; };
-		0168727D0F7B15EE00D23E78 /* ContractorSpendingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */; };
-		0168730A0F7B34E100D23E78 /* ContractorSpendingTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 016873090F7B34E100D23E78 /* ContractorSpendingTableCell.m */; };
 		0178E3AF0F944AFF00B96BD1 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0178E3AE0F944AFF00B96BD1 /* Settings.bundle */; };
 		017C22500F721824008CA4ED /* billsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224D0F721824008CA4ED /* billsIcon.png */; };
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
 		017C22520F721824008CA4ED /* spendingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224F0F721824008CA4ED /* spendingIcon.png */; };
 		017C22550F721E60008CA4ED /* communityIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C22540F721E60008CA4ED /* communityIcon.png */; };
-		01846B900F96BFE200444529 /* BillInfoData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01846B8F0F96BFE200444529 /* BillInfoData.m */; };
-		01846B930F96C02C00444529 /* BillInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01846B920F96C02C00444529 /* BillInfoViewController.m */; };
-		0190167C0F8551BB00627610 /* BillSummaryXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */; };
-		019017670F85760A00627610 /* BillSummaryTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 019017660F85760A00627610 /* BillSummaryTableCell.m */; };
-		01AD659F0F957259003AECE0 /* LegislatorInfoData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AD659E0F957259003AECE0 /* LegislatorInfoData.m */; };
-		01B118360F709EC70076AFE0 /* StateAbbreviations.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B118350F709EC70076AFE0 /* StateAbbreviations.m */; };
-		01B119070F70B71E0076AFE0 /* SpendingDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B119060F70B71E0076AFE0 /* SpendingDataManager.m */; };
 		01B119440F70BD560076AFE0 /* location_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B119420F70BD560076AFE0 /* location_overlay.png */; };
 		01B119450F70BD560076AFE0 /* USStates.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01B119430F70BD560076AFE0 /* USStates.plist */; };
-		01B4E05F0F6449BB00219672 /* ProgressOverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */; };
-		01B4E2200F64D6EC00219672 /* LegislatorHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */; };
-		01B4E2230F64D88000219672 /* LegislatorHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */; };
-		01B78F180F97E72E00E1364F /* TableDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B78F170F97E72E00E1364F /* TableDataManager.m */; };
-		01B78F630F9828C100E1364F /* CustomTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B78F620F9828C100E1364F /* CustomTableCell.m */; };
 		01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6ED0F8AEACD00619441 /* backButton.png */; };
 		01B7B6F00F8AEACE00619441 /* fwdButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6EE0F8AEACD00619441 /* fwdButton.png */; };
-		01B7B6F60F8AEC5500619441 /* MiniBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B7B6F50F8AEC5500619441 /* MiniBrowserController.m */; };
-		01B7B6F80F8AECB100619441 /* MiniBrowserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6F70F8AECB100619441 /* MiniBrowserView.xib */; };
-		01BB71A10F7712C900E7065F /* PlaceSpendingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BB71A00F7712C900E7065F /* PlaceSpendingData.m */; };
-		01BB72460F773FD700E7065F /* PlaceSpendingTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BB72450F773FD700E7065F /* PlaceSpendingTableCell.m */; };
-		01BC2FAA0F5B84AD00E7ABD0 /* XMLParserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */; };
-		01BC2FE10F5B973B00E7ABD0 /* CongressDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */; };
-		01BC2FEC0F5BA34000E7ABD0 /* LegislatorContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */; };
 		01C075BC0F8EE96E00F5B2A1 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */; };
 		01C075C10F8EE98700F5B2A1 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */; };
-		01C43CE10F662D0B00F8A025 /* BillsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C43CE00F662D0B00F8A025 /* BillsViewController.m */; };
-		01C43D020F662E3300F8A025 /* LegislatorNameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C43D010F662E3300F8A025 /* LegislatorNameCell.m */; };
 		01C729D80F9EEBBF00EA3FF9 /* recoveryIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */; };
-		01D998FF0F96995200961A76 /* DataProviders.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D998FE0F96995200961A76 /* DataProviders.m */; };
-		01E1D9E70F80817E008B3711 /* BillsDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E1D9E60F80817E008B3711 /* BillsDataManager.m */; };
-		01E1DA090F8085D3008B3711 /* BillContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E1DA080F8085D3008B3711 /* BillContainer.m */; };
-		01E4C52B0FA01E5F00E69CC8 /* MGTwitterEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E4C5240FA01E5F00E69CC8 /* MGTwitterEngine.m */; };
-		01E4C52C0FA01E5F00E69CC8 /* MGTwitterHTTPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E4C5280FA01E5F00E69CC8 /* MGTwitterHTTPURLConnection.m */; };
-		01E4C5320FA01E9C00E69CC8 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E4C52F0FA01E9C00E69CC8 /* NSData+Base64.m */; };
-		01E4C5330FA01E9C00E69CC8 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E4C5310FA01E9C00E69CC8 /* NSString+UUID.m */; };
-		01E4C53E0FA01EF300E69CC8 /* MGTwitterMessagesParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E4C5350FA01EF300E69CC8 /* MGTwitterMessagesParser.m */; };
-		01E4C53F0FA01EF300E69CC8 /* MGTwitterMiscParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E4C5370FA01EF300E69CC8 /* MGTwitterMiscParser.m */; };
-		01E4C5400FA01EF300E69CC8 /* MGTwitterStatusesParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E4C5390FA01EF300E69CC8 /* MGTwitterStatusesParser.m */; };
-		01E4C5410FA01EF300E69CC8 /* MGTwitterUsersParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E4C53B0FA01EF300E69CC8 /* MGTwitterUsersParser.m */; };
-		01E4C5420FA01EF300E69CC8 /* MGTwitterXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E4C53D0FA01EF300E69CC8 /* MGTwitterXMLParser.m */; };
-		01E4C57B0FA0257200E69CC8 /* TwitterLoginView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01E4C57A0FA0257200E69CC8 /* TwitterLoginView.xib */; };
-		01E4C57F0FA025A800E69CC8 /* TwitterLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E4C57E0FA025A800E69CC8 /* TwitterLoginViewController.m */; };
+		01D7FE470FA4F62100F78B92 /* CommunityDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE460FA4F62100F78B92 /* CommunityDataManager.m */; };
+		01D7FE520FA500DA00F78B92 /* ComposeMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01D7FE4B0FA500DA00F78B92 /* ComposeMessageView.xib */; };
+		01D7FE530FA500DA00F78B92 /* ComposeMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE4D0FA500DA00F78B92 /* ComposeMessageViewController.m */; };
+		01D7FE540FA500DA00F78B92 /* CustomTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE4F0FA500DA00F78B92 /* CustomTableCell.m */; };
+		01D7FE550FA500DA00F78B92 /* DataProviders.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE510FA500DA00F78B92 /* DataProviders.m */; };
+		01D7FE640FA500E900F78B92 /* MiniBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE570FA500E900F78B92 /* MiniBrowserController.m */; };
+		01D7FE650FA500E900F78B92 /* MiniBrowserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01D7FE580FA500E900F78B92 /* MiniBrowserView.xib */; };
+		01D7FE660FA500E900F78B92 /* ProgressOverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE5A0FA500E900F78B92 /* ProgressOverlayViewController.m */; };
+		01D7FE670FA500E900F78B92 /* StateAbbreviations.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE5C0FA500E900F78B92 /* StateAbbreviations.m */; };
+		01D7FE680FA500E900F78B92 /* TableDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE5E0FA500E900F78B92 /* TableDataManager.m */; };
+		01D7FE690FA500E900F78B92 /* TwitterLoginView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01D7FE5F0FA500E900F78B92 /* TwitterLoginView.xib */; };
+		01D7FE6A0FA500E900F78B92 /* TwitterLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE610FA500E900F78B92 /* TwitterLoginViewController.m */; };
+		01D7FE6B0FA500E900F78B92 /* XMLParserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE630FA500E900F78B92 /* XMLParserOperation.m */; };
+		01D7FE700FA5010400F78B92 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE6C0FA5010400F78B92 /* main.m */; };
+		01D7FE710FA5010400F78B92 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01D7FE6D0FA5010400F78B92 /* MainWindow.xib */; };
+		01D7FE720FA5010400F78B92 /* myGovAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE6F0FA5010400F78B92 /* myGovAppDelegate.m */; };
+		01D7FE810FA5013200F78B92 /* BillContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE740FA5013200F78B92 /* BillContainer.m */; };
+		01D7FE820FA5013200F78B92 /* BillInfoData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE760FA5013200F78B92 /* BillInfoData.m */; };
+		01D7FE830FA5013200F78B92 /* BillInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE780FA5013200F78B92 /* BillInfoViewController.m */; };
+		01D7FE840FA5013200F78B92 /* BillsDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE7A0FA5013200F78B92 /* BillsDataManager.m */; };
+		01D7FE850FA5013200F78B92 /* BillSummaryTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE7C0FA5013200F78B92 /* BillSummaryTableCell.m */; };
+		01D7FE860FA5013200F78B92 /* BillSummaryXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE7E0FA5013200F78B92 /* BillSummaryXMLParser.m */; };
+		01D7FE870FA5013200F78B92 /* BillsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE800FA5013200F78B92 /* BillsViewController.m */; };
+		01D7FE8B0FA5015700F78B92 /* RecoveryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01D7FE880FA5015700F78B92 /* RecoveryView.xib */; };
+		01D7FE8C0FA5015700F78B92 /* RecoveryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE8A0FA5015700F78B92 /* RecoveryViewController.m */; };
+		01D7FE9D0FA5019100F78B92 /* ContractorSpendingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE8E0FA5019100F78B92 /* ContractorSpendingData.m */; };
+		01D7FE9E0FA5019100F78B92 /* ContractorSpendingTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE900FA5019100F78B92 /* ContractorSpendingTableCell.m */; };
+		01D7FE9F0FA5019100F78B92 /* PlaceSpendingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE920FA5019100F78B92 /* PlaceSpendingData.m */; };
+		01D7FEA00FA5019100F78B92 /* PlaceSpendingTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE940FA5019100F78B92 /* PlaceSpendingTableCell.m */; };
+		01D7FEA10FA5019100F78B92 /* SpendingDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE960FA5019100F78B92 /* SpendingDataManager.m */; };
+		01D7FEA20FA5019100F78B92 /* SpendingSummaryData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE980FA5019100F78B92 /* SpendingSummaryData.m */; };
+		01D7FEA30FA5019100F78B92 /* SpendingSummaryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE9A0FA5019100F78B92 /* SpendingSummaryViewController.m */; };
+		01D7FEA40FA5019100F78B92 /* SpendingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE9C0FA5019100F78B92 /* SpendingViewController.m */; };
+		01D7FEBA0FA5023B00F78B92 /* CongressDatabaseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEA60FA5023A00F78B92 /* CongressDatabaseParser.m */; };
+		01D7FEBB0FA5023B00F78B92 /* CongressDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEA80FA5023A00F78B92 /* CongressDataManager.m */; };
+		01D7FEBC0FA5023B00F78B92 /* CongressionalCommittees.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEAA0FA5023A00F78B92 /* CongressionalCommittees.m */; };
+		01D7FEBD0FA5023B00F78B92 /* CongressLocationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEAC0FA5023A00F78B92 /* CongressLocationParser.m */; };
+		01D7FEBE0FA5023B00F78B92 /* CongressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEAE0FA5023A00F78B92 /* CongressViewController.m */; };
+		01D7FEBF0FA5023B00F78B92 /* LegislatorContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEB00FA5023A00F78B92 /* LegislatorContainer.m */; };
+		01D7FEC00FA5023B00F78B92 /* LegislatorHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01D7FEB10FA5023A00F78B92 /* LegislatorHeaderView.xib */; };
+		01D7FEC10FA5023B00F78B92 /* LegislatorHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEB30FA5023A00F78B92 /* LegislatorHeaderViewController.m */; };
+		01D7FEC20FA5023B00F78B92 /* LegislatorInfoData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEB50FA5023A00F78B92 /* LegislatorInfoData.m */; };
+		01D7FEC30FA5023B00F78B92 /* LegislatorNameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEB70FA5023A00F78B92 /* LegislatorNameCell.m */; };
+		01D7FEC40FA5023B00F78B92 /* LegislatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEB90FA5023A00F78B92 /* LegislatorViewController.m */; };
+		01D7FEC70FA5027F00F78B92 /* MGTwitterEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEC60FA5027F00F78B92 /* MGTwitterEngine.m */; };
+		01D7FECC0FA502A600F78B92 /* MGTwitterHTTPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FECB0FA502A600F78B92 /* MGTwitterHTTPURLConnection.m */; };
+		01D7FED50FA502F400F78B92 /* MGTwitterMessagesParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FED00FA502F400F78B92 /* MGTwitterMessagesParser.m */; };
+		01D7FED60FA502F400F78B92 /* MGTwitterMiscParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FED20FA502F400F78B92 /* MGTwitterMiscParser.m */; };
+		01D7FED70FA502F400F78B92 /* MGTwitterStatusesParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FED40FA502F400F78B92 /* MGTwitterStatusesParser.m */; };
+		01D7FEDC0FA5030D00F78B92 /* MGTwitterUsersParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FED90FA5030D00F78B92 /* MGTwitterUsersParser.m */; };
+		01D7FEDD0FA5030D00F78B92 /* MGTwitterXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEDB0FA5030D00F78B92 /* MGTwitterXMLParser.m */; };
+		01D7FEE20FA5032D00F78B92 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEDF0FA5032D00F78B92 /* NSData+Base64.m */; };
+		01D7FEE30FA5032D00F78B92 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEE10FA5032D00F78B92 /* NSString+UUID.m */; };
+		01D7FF160FA5080D00F78B92 /* CommunityItemTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FF150FA5080D00F78B92 /* CommunityItemTableCell.m */; };
 		01E4C5830FA0278700E69CC8 /* twitter_logo_header.png in Resources */ = {isa = PBXBuildFile; fileRef = 01E4C5820FA0278700E69CC8 /* twitter_logo_header.png */; };
-		01EDDF9F0F6363D00098A7B6 /* LegislatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */; };
 		0461A05A0F5A471400BE17FF /* CommunityItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 0461A0590F5A471400BE17FF /* CommunityItem.m */; };
 		04B603120F59BE3000815A86 /* CommunityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B603110F59BE3000815A86 /* CommunityViewController.m */; };
-		04B603940F5A1A2700815A86 /* CommunityTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B603930F5A1A2700815A86 /* CommunityTableViewCell.m */; };
-		04B603970F5A1A6C00815A86 /* CommunityItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B603960F5A1A6C00815A86 /* CommunityItemView.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0102D2CC0F58D7C7005AE0EA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = src/main.m; sourceTree = "<group>"; };
-		0102D2CD0F58D7C7005AE0EA /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainWindow.xib; path = src/MainWindow.xib; sourceTree = "<group>"; };
 		0102D2CE0F58D7C7005AE0EA /* myGov_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = myGov_Prefix.pch; path = src/myGov_Prefix.pch; sourceTree = "<group>"; };
-		0102D2CF0F58D7C7005AE0EA /* myGovAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = myGovAppDelegate.h; path = src/myGovAppDelegate.h; sourceTree = "<group>"; };
-		0102D2D00F58D7C7005AE0EA /* myGovAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = myGovAppDelegate.m; path = src/myGovAppDelegate.m; sourceTree = "<group>"; };
 		0102D2ED0F58DECD005AE0EA /* eagleIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = eagleIcon.png; path = res/eagleIcon.png; sourceTree = "<group>"; };
-		0102D2F10F58E007005AE0EA /* RecoveryView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = RecoveryView.xib; path = src/recovery/RecoveryView.xib; sourceTree = "<group>"; };
-		0102D2F30F58E028005AE0EA /* RecoveryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecoveryViewController.h; path = src/recovery/RecoveryViewController.h; sourceTree = "<group>"; };
-		0102D2F40F58E028005AE0EA /* RecoveryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecoveryViewController.m; path = src/recovery/RecoveryViewController.m; sourceTree = "<group>"; };
-		0102D3000F58E31C005AE0EA /* SpendingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingViewController.h; path = src/spending/SpendingViewController.h; sourceTree = "<group>"; };
-		0102D3010F58E31C005AE0EA /* SpendingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpendingViewController.m; path = src/spending/SpendingViewController.m; sourceTree = "<group>"; };
-		0102D4090F58F2D2005AE0EA /* CongressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressViewController.h; path = src/congress/CongressViewController.h; sourceTree = "<group>"; };
-		0102D40A0F58F2D2005AE0EA /* CongressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressViewController.m; path = src/congress/CongressViewController.m; sourceTree = "<group>"; };
 		011592C30F6A36D2008BECCD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		011EF3C90F91A47400932BBE /* ComposeMessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ComposeMessageView.xib; path = src/common/ComposeMessageView.xib; sourceTree = "<group>"; };
-		011EF3CB0F91A48E00932BBE /* ComposeMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ComposeMessageViewController.h; path = src/common/ComposeMessageViewController.h; sourceTree = "<group>"; };
-		011EF3CC0F91A48E00932BBE /* ComposeMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ComposeMessageViewController.m; path = src/common/ComposeMessageViewController.m; sourceTree = "<group>"; };
 		0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		0126785C0F7F3BB900CF9C46 /* CongressDatabaseParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressDatabaseParser.h; path = src/congress/CongressDatabaseParser.h; sourceTree = "<group>"; };
-		0126785D0F7F3BB900CF9C46 /* CongressDatabaseParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressDatabaseParser.m; path = src/congress/CongressDatabaseParser.m; sourceTree = "<group>"; };
-		0126785F0F7F3BD500CF9C46 /* CongressLocationParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressLocationParser.h; path = src/congress/CongressLocationParser.h; sourceTree = "<group>"; };
-		012678600F7F3BD500CF9C46 /* CongressLocationParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressLocationParser.m; path = src/congress/CongressLocationParser.m; sourceTree = "<group>"; };
-		0132E74E0F68D22A00DF33DC /* CongressionalCommittees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressionalCommittees.h; path = src/congress/CongressionalCommittees.h; sourceTree = "<group>"; };
-		0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressionalCommittees.m; path = src/congress/CongressionalCommittees.m; sourceTree = "<group>"; };
-		014955360F9BB80B00032423 /* SpendingSummaryData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingSummaryData.h; path = src/spending/SpendingSummaryData.h; sourceTree = "<group>"; };
-		014955370F9BB80B00032423 /* SpendingSummaryData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpendingSummaryData.m; path = src/spending/SpendingSummaryData.m; sourceTree = "<group>"; };
-		014955390F9BB83A00032423 /* SpendingSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingSummaryViewController.h; path = src/spending/SpendingSummaryViewController.h; sourceTree = "<group>"; };
-		0149553A0F9BB83A00032423 /* SpendingSummaryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpendingSummaryViewController.m; path = src/spending/SpendingSummaryViewController.m; sourceTree = "<group>"; };
-		0168727B0F7B15EE00D23E78 /* ContractorSpendingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContractorSpendingData.h; path = src/spending/ContractorSpendingData.h; sourceTree = "<group>"; };
-		0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContractorSpendingData.m; path = src/spending/ContractorSpendingData.m; sourceTree = "<group>"; };
-		016873080F7B34E100D23E78 /* ContractorSpendingTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContractorSpendingTableCell.h; path = src/spending/ContractorSpendingTableCell.h; sourceTree = "<group>"; };
-		016873090F7B34E100D23E78 /* ContractorSpendingTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContractorSpendingTableCell.m; path = src/spending/ContractorSpendingTableCell.m; sourceTree = "<group>"; };
 		0178E3AE0F944AFF00B96BD1 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		017C224D0F721824008CA4ED /* billsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = billsIcon.png; path = res/billsIcon.png; sourceTree = "<group>"; };
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
 		017C224F0F721824008CA4ED /* spendingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spendingIcon.png; path = res/spendingIcon.png; sourceTree = "<group>"; };
 		017C22540F721E60008CA4ED /* communityIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityIcon.png; path = res/communityIcon.png; sourceTree = "<group>"; };
-		01846B8E0F96BFE200444529 /* BillInfoData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillInfoData.h; path = src/bills/BillInfoData.h; sourceTree = "<group>"; };
-		01846B8F0F96BFE200444529 /* BillInfoData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillInfoData.m; path = src/bills/BillInfoData.m; sourceTree = "<group>"; };
-		01846B910F96C02C00444529 /* BillInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillInfoViewController.h; path = src/bills/BillInfoViewController.h; sourceTree = "<group>"; };
-		01846B920F96C02C00444529 /* BillInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillInfoViewController.m; path = src/bills/BillInfoViewController.m; sourceTree = "<group>"; };
-		0190167A0F8551BB00627610 /* BillSummaryXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillSummaryXMLParser.h; path = src/bills/BillSummaryXMLParser.h; sourceTree = "<group>"; };
-		0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillSummaryXMLParser.m; path = src/bills/BillSummaryXMLParser.m; sourceTree = "<group>"; };
-		019017650F85760A00627610 /* BillSummaryTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillSummaryTableCell.h; path = src/bills/BillSummaryTableCell.h; sourceTree = "<group>"; };
-		019017660F85760A00627610 /* BillSummaryTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillSummaryTableCell.m; path = src/bills/BillSummaryTableCell.m; sourceTree = "<group>"; };
-		01AD659D0F957259003AECE0 /* LegislatorInfoData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorInfoData.h; path = src/congress/LegislatorInfoData.h; sourceTree = "<group>"; };
-		01AD659E0F957259003AECE0 /* LegislatorInfoData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorInfoData.m; path = src/congress/LegislatorInfoData.m; sourceTree = "<group>"; };
-		01B118340F709EC70076AFE0 /* StateAbbreviations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StateAbbreviations.h; path = src/common/StateAbbreviations.h; sourceTree = "<group>"; };
-		01B118350F709EC70076AFE0 /* StateAbbreviations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StateAbbreviations.m; path = src/common/StateAbbreviations.m; sourceTree = "<group>"; };
-		01B119050F70B71E0076AFE0 /* SpendingDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpendingDataManager.h; path = src/spending/SpendingDataManager.h; sourceTree = "<group>"; };
-		01B119060F70B71E0076AFE0 /* SpendingDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpendingDataManager.m; path = src/spending/SpendingDataManager.m; sourceTree = "<group>"; };
 		01B119420F70BD560076AFE0 /* location_overlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = location_overlay.png; path = res/location_overlay.png; sourceTree = "<group>"; };
 		01B119430F70BD560076AFE0 /* USStates.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = USStates.plist; path = res/USStates.plist; sourceTree = "<group>"; };
-		01B4E05D0F6449BB00219672 /* ProgressOverlayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProgressOverlayViewController.h; path = src/common/ProgressOverlayViewController.h; sourceTree = "<group>"; };
-		01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProgressOverlayViewController.m; path = src/common/ProgressOverlayViewController.m; sourceTree = "<group>"; };
-		01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LegislatorHeaderView.xib; path = src/congress/LegislatorHeaderView.xib; sourceTree = "<group>"; };
-		01B4E2210F64D88000219672 /* LegislatorHeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorHeaderViewController.h; path = src/congress/LegislatorHeaderViewController.h; sourceTree = "<group>"; };
-		01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorHeaderViewController.m; path = src/congress/LegislatorHeaderViewController.m; sourceTree = "<group>"; };
-		01B78F160F97E72E00E1364F /* TableDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableDataManager.h; path = src/common/TableDataManager.h; sourceTree = "<group>"; };
-		01B78F170F97E72E00E1364F /* TableDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableDataManager.m; path = src/common/TableDataManager.m; sourceTree = "<group>"; };
-		01B78F610F9828C100E1364F /* CustomTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomTableCell.h; path = src/common/CustomTableCell.h; sourceTree = "<group>"; };
-		01B78F620F9828C100E1364F /* CustomTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CustomTableCell.m; path = src/common/CustomTableCell.m; sourceTree = "<group>"; };
 		01B7B6ED0F8AEACD00619441 /* backButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = backButton.png; path = res/backButton.png; sourceTree = "<group>"; };
 		01B7B6EE0F8AEACD00619441 /* fwdButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fwdButton.png; path = res/fwdButton.png; sourceTree = "<group>"; };
-		01B7B6F40F8AEC5500619441 /* MiniBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniBrowserController.h; path = src/common/MiniBrowserController.h; sourceTree = "<group>"; };
-		01B7B6F50F8AEC5500619441 /* MiniBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniBrowserController.m; path = src/common/MiniBrowserController.m; sourceTree = "<group>"; };
-		01B7B6F70F8AECB100619441 /* MiniBrowserView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MiniBrowserView.xib; path = src/common/MiniBrowserView.xib; sourceTree = "<group>"; };
-		01BB719F0F7712C900E7065F /* PlaceSpendingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaceSpendingData.h; path = src/spending/PlaceSpendingData.h; sourceTree = "<group>"; };
-		01BB71A00F7712C900E7065F /* PlaceSpendingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlaceSpendingData.m; path = src/spending/PlaceSpendingData.m; sourceTree = "<group>"; };
-		01BB72440F773FD700E7065F /* PlaceSpendingTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaceSpendingTableCell.h; path = src/spending/PlaceSpendingTableCell.h; sourceTree = "<group>"; };
-		01BB72450F773FD700E7065F /* PlaceSpendingTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlaceSpendingTableCell.m; path = src/spending/PlaceSpendingTableCell.m; sourceTree = "<group>"; };
-		01BC2FA80F5B84AD00E7ABD0 /* XMLParserOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLParserOperation.h; path = src/common/XMLParserOperation.h; sourceTree = "<group>"; };
-		01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XMLParserOperation.m; path = src/common/XMLParserOperation.m; sourceTree = "<group>"; };
-		01BC2FDF0F5B973B00E7ABD0 /* CongressDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CongressDataManager.h; path = src/congress/CongressDataManager.h; sourceTree = "<group>"; };
-		01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CongressDataManager.m; path = src/congress/CongressDataManager.m; sourceTree = "<group>"; };
-		01BC2FEA0F5BA34000E7ABD0 /* LegislatorContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorContainer.h; path = src/congress/LegislatorContainer.h; sourceTree = "<group>"; };
-		01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorContainer.m; path = src/congress/LegislatorContainer.m; sourceTree = "<group>"; };
 		01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
-		01C43CDF0F662D0B00F8A025 /* BillsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillsViewController.h; path = src/bills/BillsViewController.h; sourceTree = "<group>"; };
-		01C43CE00F662D0B00F8A025 /* BillsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillsViewController.m; path = src/bills/BillsViewController.m; sourceTree = "<group>"; };
-		01C43D000F662E3300F8A025 /* LegislatorNameCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorNameCell.h; path = src/congress/LegislatorNameCell.h; sourceTree = "<group>"; };
-		01C43D010F662E3300F8A025 /* LegislatorNameCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorNameCell.m; path = src/congress/LegislatorNameCell.m; sourceTree = "<group>"; };
 		01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = recoveryIcon.png; path = res/recoveryIcon.png; sourceTree = "<group>"; };
-		01D998FD0F96995200961A76 /* DataProviders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataProviders.h; path = src/common/DataProviders.h; sourceTree = "<group>"; };
-		01D998FE0F96995200961A76 /* DataProviders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataProviders.m; path = src/common/DataProviders.m; sourceTree = "<group>"; };
-		01E1D9E50F80817E008B3711 /* BillsDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillsDataManager.h; path = src/bills/BillsDataManager.h; sourceTree = "<group>"; };
-		01E1D9E60F80817E008B3711 /* BillsDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillsDataManager.m; path = src/bills/BillsDataManager.m; sourceTree = "<group>"; };
-		01E1DA070F8085D3008B3711 /* BillContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillContainer.h; path = src/bills/BillContainer.h; sourceTree = "<group>"; };
-		01E1DA080F8085D3008B3711 /* BillContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BillContainer.m; path = src/bills/BillContainer.m; sourceTree = "<group>"; };
-		01E4C5230FA01E5F00E69CC8 /* MGTwitterEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterEngine.h; path = src/common/mgtwitterengine/MGTwitterEngine.h; sourceTree = "<group>"; };
-		01E4C5240FA01E5F00E69CC8 /* MGTwitterEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MGTwitterEngine.m; path = src/common/mgtwitterengine/MGTwitterEngine.m; sourceTree = "<group>"; };
-		01E4C5250FA01E5F00E69CC8 /* MGTwitterEngineDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterEngineDelegate.h; path = src/common/mgtwitterengine/MGTwitterEngineDelegate.h; sourceTree = "<group>"; };
-		01E4C5260FA01E5F00E69CC8 /* MGTwitterEngineGlobalHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterEngineGlobalHeader.h; path = src/common/mgtwitterengine/MGTwitterEngineGlobalHeader.h; sourceTree = "<group>"; };
-		01E4C5270FA01E5F00E69CC8 /* MGTwitterHTTPURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterHTTPURLConnection.h; path = src/common/mgtwitterengine/MGTwitterHTTPURLConnection.h; sourceTree = "<group>"; };
-		01E4C5280FA01E5F00E69CC8 /* MGTwitterHTTPURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MGTwitterHTTPURLConnection.m; path = src/common/mgtwitterengine/MGTwitterHTTPURLConnection.m; sourceTree = "<group>"; };
-		01E4C5290FA01E5F00E69CC8 /* MGTwitterParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterParserDelegate.h; path = src/common/mgtwitterengine/MGTwitterParserDelegate.h; sourceTree = "<group>"; };
-		01E4C52A0FA01E5F00E69CC8 /* MGTwitterRequestTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterRequestTypes.h; path = src/common/mgtwitterengine/MGTwitterRequestTypes.h; sourceTree = "<group>"; };
-		01E4C52E0FA01E9C00E69CC8 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Base64.h"; path = "src/common/mgtwitterengine/NSData+Base64.h"; sourceTree = "<group>"; };
-		01E4C52F0FA01E9C00E69CC8 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Base64.m"; path = "src/common/mgtwitterengine/NSData+Base64.m"; sourceTree = "<group>"; };
-		01E4C5300FA01E9C00E69CC8 /* NSString+UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+UUID.h"; path = "src/common/mgtwitterengine/NSString+UUID.h"; sourceTree = "<group>"; };
-		01E4C5310FA01E9C00E69CC8 /* NSString+UUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+UUID.m"; path = "src/common/mgtwitterengine/NSString+UUID.m"; sourceTree = "<group>"; };
-		01E4C5340FA01EF300E69CC8 /* MGTwitterMessagesParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterMessagesParser.h; path = src/common/mgtwitterengine/MGTwitterMessagesParser.h; sourceTree = "<group>"; };
-		01E4C5350FA01EF300E69CC8 /* MGTwitterMessagesParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MGTwitterMessagesParser.m; path = src/common/mgtwitterengine/MGTwitterMessagesParser.m; sourceTree = "<group>"; };
-		01E4C5360FA01EF300E69CC8 /* MGTwitterMiscParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterMiscParser.h; path = src/common/mgtwitterengine/MGTwitterMiscParser.h; sourceTree = "<group>"; };
-		01E4C5370FA01EF300E69CC8 /* MGTwitterMiscParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MGTwitterMiscParser.m; path = src/common/mgtwitterengine/MGTwitterMiscParser.m; sourceTree = "<group>"; };
-		01E4C5380FA01EF300E69CC8 /* MGTwitterStatusesParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterStatusesParser.h; path = src/common/mgtwitterengine/MGTwitterStatusesParser.h; sourceTree = "<group>"; };
-		01E4C5390FA01EF300E69CC8 /* MGTwitterStatusesParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MGTwitterStatusesParser.m; path = src/common/mgtwitterengine/MGTwitterStatusesParser.m; sourceTree = "<group>"; };
-		01E4C53A0FA01EF300E69CC8 /* MGTwitterUsersParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterUsersParser.h; path = src/common/mgtwitterengine/MGTwitterUsersParser.h; sourceTree = "<group>"; };
-		01E4C53B0FA01EF300E69CC8 /* MGTwitterUsersParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MGTwitterUsersParser.m; path = src/common/mgtwitterengine/MGTwitterUsersParser.m; sourceTree = "<group>"; };
-		01E4C53C0FA01EF300E69CC8 /* MGTwitterXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGTwitterXMLParser.h; path = src/common/mgtwitterengine/MGTwitterXMLParser.h; sourceTree = "<group>"; };
-		01E4C53D0FA01EF300E69CC8 /* MGTwitterXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MGTwitterXMLParser.m; path = src/common/mgtwitterengine/MGTwitterXMLParser.m; sourceTree = "<group>"; };
-		01E4C57A0FA0257200E69CC8 /* TwitterLoginView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = TwitterLoginView.xib; path = src/common/TwitterLoginView.xib; sourceTree = "<group>"; };
-		01E4C57D0FA025A800E69CC8 /* TwitterLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TwitterLoginViewController.h; path = src/common/TwitterLoginViewController.h; sourceTree = "<group>"; };
-		01E4C57E0FA025A800E69CC8 /* TwitterLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TwitterLoginViewController.m; path = src/common/TwitterLoginViewController.m; sourceTree = "<group>"; };
+		01D7FE450FA4F62100F78B92 /* CommunityDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDataManager.h; sourceTree = "<group>"; };
+		01D7FE460FA4F62100F78B92 /* CommunityDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityDataManager.m; sourceTree = "<group>"; };
+		01D7FE4B0FA500DA00F78B92 /* ComposeMessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ComposeMessageView.xib; sourceTree = "<group>"; };
+		01D7FE4C0FA500DA00F78B92 /* ComposeMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComposeMessageViewController.h; sourceTree = "<group>"; };
+		01D7FE4D0FA500DA00F78B92 /* ComposeMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComposeMessageViewController.m; sourceTree = "<group>"; };
+		01D7FE4E0FA500DA00F78B92 /* CustomTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTableCell.h; sourceTree = "<group>"; };
+		01D7FE4F0FA500DA00F78B92 /* CustomTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTableCell.m; sourceTree = "<group>"; };
+		01D7FE500FA500DA00F78B92 /* DataProviders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataProviders.h; sourceTree = "<group>"; };
+		01D7FE510FA500DA00F78B92 /* DataProviders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataProviders.m; sourceTree = "<group>"; };
+		01D7FE560FA500E900F78B92 /* MiniBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MiniBrowserController.h; sourceTree = "<group>"; };
+		01D7FE570FA500E900F78B92 /* MiniBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MiniBrowserController.m; sourceTree = "<group>"; };
+		01D7FE580FA500E900F78B92 /* MiniBrowserView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MiniBrowserView.xib; sourceTree = "<group>"; };
+		01D7FE590FA500E900F78B92 /* ProgressOverlayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressOverlayViewController.h; sourceTree = "<group>"; };
+		01D7FE5A0FA500E900F78B92 /* ProgressOverlayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressOverlayViewController.m; sourceTree = "<group>"; };
+		01D7FE5B0FA500E900F78B92 /* StateAbbreviations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAbbreviations.h; sourceTree = "<group>"; };
+		01D7FE5C0FA500E900F78B92 /* StateAbbreviations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StateAbbreviations.m; sourceTree = "<group>"; };
+		01D7FE5D0FA500E900F78B92 /* TableDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableDataManager.h; sourceTree = "<group>"; };
+		01D7FE5E0FA500E900F78B92 /* TableDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableDataManager.m; sourceTree = "<group>"; };
+		01D7FE5F0FA500E900F78B92 /* TwitterLoginView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TwitterLoginView.xib; sourceTree = "<group>"; };
+		01D7FE600FA500E900F78B92 /* TwitterLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterLoginViewController.h; sourceTree = "<group>"; };
+		01D7FE610FA500E900F78B92 /* TwitterLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterLoginViewController.m; sourceTree = "<group>"; };
+		01D7FE620FA500E900F78B92 /* XMLParserOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLParserOperation.h; sourceTree = "<group>"; };
+		01D7FE630FA500E900F78B92 /* XMLParserOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLParserOperation.m; sourceTree = "<group>"; };
+		01D7FE6C0FA5010400F78B92 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = src/main.m; sourceTree = SOURCE_ROOT; };
+		01D7FE6D0FA5010400F78B92 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainWindow.xib; path = src/MainWindow.xib; sourceTree = SOURCE_ROOT; };
+		01D7FE6E0FA5010400F78B92 /* myGovAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = myGovAppDelegate.h; path = src/myGovAppDelegate.h; sourceTree = SOURCE_ROOT; };
+		01D7FE6F0FA5010400F78B92 /* myGovAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = myGovAppDelegate.m; path = src/myGovAppDelegate.m; sourceTree = SOURCE_ROOT; };
+		01D7FE730FA5013200F78B92 /* BillContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillContainer.h; sourceTree = "<group>"; };
+		01D7FE740FA5013200F78B92 /* BillContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillContainer.m; sourceTree = "<group>"; };
+		01D7FE750FA5013200F78B92 /* BillInfoData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillInfoData.h; sourceTree = "<group>"; };
+		01D7FE760FA5013200F78B92 /* BillInfoData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillInfoData.m; sourceTree = "<group>"; };
+		01D7FE770FA5013200F78B92 /* BillInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillInfoViewController.h; sourceTree = "<group>"; };
+		01D7FE780FA5013200F78B92 /* BillInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillInfoViewController.m; sourceTree = "<group>"; };
+		01D7FE790FA5013200F78B92 /* BillsDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillsDataManager.h; sourceTree = "<group>"; };
+		01D7FE7A0FA5013200F78B92 /* BillsDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillsDataManager.m; sourceTree = "<group>"; };
+		01D7FE7B0FA5013200F78B92 /* BillSummaryTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillSummaryTableCell.h; sourceTree = "<group>"; };
+		01D7FE7C0FA5013200F78B92 /* BillSummaryTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillSummaryTableCell.m; sourceTree = "<group>"; };
+		01D7FE7D0FA5013200F78B92 /* BillSummaryXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillSummaryXMLParser.h; sourceTree = "<group>"; };
+		01D7FE7E0FA5013200F78B92 /* BillSummaryXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillSummaryXMLParser.m; sourceTree = "<group>"; };
+		01D7FE7F0FA5013200F78B92 /* BillsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillsViewController.h; sourceTree = "<group>"; };
+		01D7FE800FA5013200F78B92 /* BillsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillsViewController.m; sourceTree = "<group>"; };
+		01D7FE880FA5015700F78B92 /* RecoveryView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecoveryView.xib; sourceTree = "<group>"; };
+		01D7FE890FA5015700F78B92 /* RecoveryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecoveryViewController.h; sourceTree = "<group>"; };
+		01D7FE8A0FA5015700F78B92 /* RecoveryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecoveryViewController.m; sourceTree = "<group>"; };
+		01D7FE8D0FA5019100F78B92 /* ContractorSpendingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContractorSpendingData.h; sourceTree = "<group>"; };
+		01D7FE8E0FA5019100F78B92 /* ContractorSpendingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContractorSpendingData.m; sourceTree = "<group>"; };
+		01D7FE8F0FA5019100F78B92 /* ContractorSpendingTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContractorSpendingTableCell.h; sourceTree = "<group>"; };
+		01D7FE900FA5019100F78B92 /* ContractorSpendingTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContractorSpendingTableCell.m; sourceTree = "<group>"; };
+		01D7FE910FA5019100F78B92 /* PlaceSpendingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceSpendingData.h; sourceTree = "<group>"; };
+		01D7FE920FA5019100F78B92 /* PlaceSpendingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceSpendingData.m; sourceTree = "<group>"; };
+		01D7FE930FA5019100F78B92 /* PlaceSpendingTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceSpendingTableCell.h; sourceTree = "<group>"; };
+		01D7FE940FA5019100F78B92 /* PlaceSpendingTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceSpendingTableCell.m; sourceTree = "<group>"; };
+		01D7FE950FA5019100F78B92 /* SpendingDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpendingDataManager.h; sourceTree = "<group>"; };
+		01D7FE960FA5019100F78B92 /* SpendingDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpendingDataManager.m; sourceTree = "<group>"; };
+		01D7FE970FA5019100F78B92 /* SpendingSummaryData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpendingSummaryData.h; sourceTree = "<group>"; };
+		01D7FE980FA5019100F78B92 /* SpendingSummaryData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpendingSummaryData.m; sourceTree = "<group>"; };
+		01D7FE990FA5019100F78B92 /* SpendingSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpendingSummaryViewController.h; sourceTree = "<group>"; };
+		01D7FE9A0FA5019100F78B92 /* SpendingSummaryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpendingSummaryViewController.m; sourceTree = "<group>"; };
+		01D7FE9B0FA5019100F78B92 /* SpendingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpendingViewController.h; sourceTree = "<group>"; };
+		01D7FE9C0FA5019100F78B92 /* SpendingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpendingViewController.m; sourceTree = "<group>"; };
+		01D7FEA50FA5023A00F78B92 /* CongressDatabaseParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CongressDatabaseParser.h; sourceTree = "<group>"; };
+		01D7FEA60FA5023A00F78B92 /* CongressDatabaseParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CongressDatabaseParser.m; sourceTree = "<group>"; };
+		01D7FEA70FA5023A00F78B92 /* CongressDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CongressDataManager.h; sourceTree = "<group>"; };
+		01D7FEA80FA5023A00F78B92 /* CongressDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CongressDataManager.m; sourceTree = "<group>"; };
+		01D7FEA90FA5023A00F78B92 /* CongressionalCommittees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CongressionalCommittees.h; sourceTree = "<group>"; };
+		01D7FEAA0FA5023A00F78B92 /* CongressionalCommittees.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CongressionalCommittees.m; sourceTree = "<group>"; };
+		01D7FEAB0FA5023A00F78B92 /* CongressLocationParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CongressLocationParser.h; sourceTree = "<group>"; };
+		01D7FEAC0FA5023A00F78B92 /* CongressLocationParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CongressLocationParser.m; sourceTree = "<group>"; };
+		01D7FEAD0FA5023A00F78B92 /* CongressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CongressViewController.h; sourceTree = "<group>"; };
+		01D7FEAE0FA5023A00F78B92 /* CongressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CongressViewController.m; sourceTree = "<group>"; };
+		01D7FEAF0FA5023A00F78B92 /* LegislatorContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegislatorContainer.h; sourceTree = "<group>"; };
+		01D7FEB00FA5023A00F78B92 /* LegislatorContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegislatorContainer.m; sourceTree = "<group>"; };
+		01D7FEB10FA5023A00F78B92 /* LegislatorHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LegislatorHeaderView.xib; sourceTree = "<group>"; };
+		01D7FEB20FA5023A00F78B92 /* LegislatorHeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegislatorHeaderViewController.h; sourceTree = "<group>"; };
+		01D7FEB30FA5023A00F78B92 /* LegislatorHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegislatorHeaderViewController.m; sourceTree = "<group>"; };
+		01D7FEB40FA5023A00F78B92 /* LegislatorInfoData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegislatorInfoData.h; sourceTree = "<group>"; };
+		01D7FEB50FA5023A00F78B92 /* LegislatorInfoData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegislatorInfoData.m; sourceTree = "<group>"; };
+		01D7FEB60FA5023A00F78B92 /* LegislatorNameCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegislatorNameCell.h; sourceTree = "<group>"; };
+		01D7FEB70FA5023A00F78B92 /* LegislatorNameCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegislatorNameCell.m; sourceTree = "<group>"; };
+		01D7FEB80FA5023A00F78B92 /* LegislatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegislatorViewController.h; sourceTree = "<group>"; };
+		01D7FEB90FA5023A00F78B92 /* LegislatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegislatorViewController.m; sourceTree = "<group>"; };
+		01D7FEC50FA5027F00F78B92 /* MGTwitterEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterEngine.h; sourceTree = "<group>"; };
+		01D7FEC60FA5027F00F78B92 /* MGTwitterEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTwitterEngine.m; sourceTree = "<group>"; };
+		01D7FEC80FA502A600F78B92 /* MGTwitterEngineDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterEngineDelegate.h; sourceTree = "<group>"; };
+		01D7FEC90FA502A600F78B92 /* MGTwitterEngineGlobalHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterEngineGlobalHeader.h; sourceTree = "<group>"; };
+		01D7FECA0FA502A600F78B92 /* MGTwitterHTTPURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterHTTPURLConnection.h; sourceTree = "<group>"; };
+		01D7FECB0FA502A600F78B92 /* MGTwitterHTTPURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTwitterHTTPURLConnection.m; sourceTree = "<group>"; };
+		01D7FECD0FA502C100F78B92 /* MGTwitterParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterParserDelegate.h; sourceTree = "<group>"; };
+		01D7FECE0FA502C100F78B92 /* MGTwitterRequestTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterRequestTypes.h; sourceTree = "<group>"; };
+		01D7FECF0FA502F400F78B92 /* MGTwitterMessagesParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterMessagesParser.h; sourceTree = "<group>"; };
+		01D7FED00FA502F400F78B92 /* MGTwitterMessagesParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTwitterMessagesParser.m; sourceTree = "<group>"; };
+		01D7FED10FA502F400F78B92 /* MGTwitterMiscParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterMiscParser.h; sourceTree = "<group>"; };
+		01D7FED20FA502F400F78B92 /* MGTwitterMiscParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTwitterMiscParser.m; sourceTree = "<group>"; };
+		01D7FED30FA502F400F78B92 /* MGTwitterStatusesParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterStatusesParser.h; sourceTree = "<group>"; };
+		01D7FED40FA502F400F78B92 /* MGTwitterStatusesParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTwitterStatusesParser.m; sourceTree = "<group>"; };
+		01D7FED80FA5030D00F78B92 /* MGTwitterUsersParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterUsersParser.h; sourceTree = "<group>"; };
+		01D7FED90FA5030D00F78B92 /* MGTwitterUsersParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTwitterUsersParser.m; sourceTree = "<group>"; };
+		01D7FEDA0FA5030D00F78B92 /* MGTwitterXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterXMLParser.h; sourceTree = "<group>"; };
+		01D7FEDB0FA5030D00F78B92 /* MGTwitterXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTwitterXMLParser.m; sourceTree = "<group>"; };
+		01D7FEDE0FA5032D00F78B92 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
+		01D7FEDF0FA5032D00F78B92 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		01D7FEE00FA5032D00F78B92 /* NSString+UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UUID.h"; sourceTree = "<group>"; };
+		01D7FEE10FA5032D00F78B92 /* NSString+UUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UUID.m"; sourceTree = "<group>"; };
+		01D7FF140FA5080D00F78B92 /* CommunityItemTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityItemTableCell.h; sourceTree = "<group>"; };
+		01D7FF150FA5080D00F78B92 /* CommunityItemTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityItemTableCell.m; sourceTree = "<group>"; };
 		01E4C5820FA0278700E69CC8 /* twitter_logo_header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = twitter_logo_header.png; path = res/twitter_logo_header.png; sourceTree = "<group>"; };
-		01EDDF9D0F6363D00098A7B6 /* LegislatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorViewController.h; path = src/congress/LegislatorViewController.h; sourceTree = "<group>"; };
-		01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorViewController.m; path = src/congress/LegislatorViewController.m; sourceTree = "<group>"; };
 		0461A0580F5A471400BE17FF /* CommunityItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityItem.h; sourceTree = "<group>"; };
 		0461A0590F5A471400BE17FF /* CommunityItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityItem.m; sourceTree = "<group>"; };
 		04B603100F59BE3000815A86 /* CommunityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityViewController.h; sourceTree = "<group>"; };
 		04B603110F59BE3000815A86 /* CommunityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityViewController.m; sourceTree = "<group>"; };
-		04B603920F5A1A2700815A86 /* CommunityTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityTableViewCell.h; sourceTree = "<group>"; };
-		04B603930F5A1A2700815A86 /* CommunityTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityTableViewCell.m; sourceTree = "<group>"; };
-		04B603950F5A1A6C00815A86 /* CommunityItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityItemView.h; sourceTree = "<group>"; };
-		04B603960F5A1A6C00815A86 /* CommunityItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityItemView.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* myGovernment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myGovernment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -238,7 +238,7 @@
 		0102D2D90F58DB5D005AE0EA /* src */ = {
 			isa = PBXGroup;
 			children = (
-				01E4C5210FA01DE500E69CC8 /* MGTwitter */,
+				01E4C5210FA01DE500E69CC8 /* mgtwitterengine */,
 				01BC2FA00F5B840F00E7ABD0 /* common */,
 				0102D2DE0F58DB87005AE0EA /* bills */,
 				0102D2DD0F58DB80005AE0EA /* recovery */,
@@ -246,35 +246,35 @@
 				0102D2DB0F58DB72005AE0EA /* community */,
 				0102D2DA0F58DB6B005AE0EA /* congress */,
 			);
-			name = src;
+			path = src;
 			sourceTree = "<group>";
 		};
 		0102D2DA0F58DB6B005AE0EA /* congress */ = {
 			isa = PBXGroup;
 			children = (
-				0102D4090F58F2D2005AE0EA /* CongressViewController.h */,
-				0102D40A0F58F2D2005AE0EA /* CongressViewController.m */,
-				01BC2FDF0F5B973B00E7ABD0 /* CongressDataManager.h */,
-				01BC2FE00F5B973B00E7ABD0 /* CongressDataManager.m */,
-				01BC2FEA0F5BA34000E7ABD0 /* LegislatorContainer.h */,
-				01BC2FEB0F5BA34000E7ABD0 /* LegislatorContainer.m */,
-				01EDDF9D0F6363D00098A7B6 /* LegislatorViewController.h */,
-				01EDDF9E0F6363D00098A7B6 /* LegislatorViewController.m */,
-				01AD659D0F957259003AECE0 /* LegislatorInfoData.h */,
-				01AD659E0F957259003AECE0 /* LegislatorInfoData.m */,
-				01B4E21F0F64D6EC00219672 /* LegislatorHeaderView.xib */,
-				01B4E2210F64D88000219672 /* LegislatorHeaderViewController.h */,
-				01B4E2220F64D88000219672 /* LegislatorHeaderViewController.m */,
-				01C43D000F662E3300F8A025 /* LegislatorNameCell.h */,
-				01C43D010F662E3300F8A025 /* LegislatorNameCell.m */,
-				0132E74E0F68D22A00DF33DC /* CongressionalCommittees.h */,
-				0132E74F0F68D22A00DF33DC /* CongressionalCommittees.m */,
-				0126785C0F7F3BB900CF9C46 /* CongressDatabaseParser.h */,
-				0126785D0F7F3BB900CF9C46 /* CongressDatabaseParser.m */,
-				0126785F0F7F3BD500CF9C46 /* CongressLocationParser.h */,
-				012678600F7F3BD500CF9C46 /* CongressLocationParser.m */,
+				01D7FEA50FA5023A00F78B92 /* CongressDatabaseParser.h */,
+				01D7FEA60FA5023A00F78B92 /* CongressDatabaseParser.m */,
+				01D7FEA70FA5023A00F78B92 /* CongressDataManager.h */,
+				01D7FEA80FA5023A00F78B92 /* CongressDataManager.m */,
+				01D7FEA90FA5023A00F78B92 /* CongressionalCommittees.h */,
+				01D7FEAA0FA5023A00F78B92 /* CongressionalCommittees.m */,
+				01D7FEAB0FA5023A00F78B92 /* CongressLocationParser.h */,
+				01D7FEAC0FA5023A00F78B92 /* CongressLocationParser.m */,
+				01D7FEAD0FA5023A00F78B92 /* CongressViewController.h */,
+				01D7FEAE0FA5023A00F78B92 /* CongressViewController.m */,
+				01D7FEAF0FA5023A00F78B92 /* LegislatorContainer.h */,
+				01D7FEB00FA5023A00F78B92 /* LegislatorContainer.m */,
+				01D7FEB10FA5023A00F78B92 /* LegislatorHeaderView.xib */,
+				01D7FEB20FA5023A00F78B92 /* LegislatorHeaderViewController.h */,
+				01D7FEB30FA5023A00F78B92 /* LegislatorHeaderViewController.m */,
+				01D7FEB40FA5023A00F78B92 /* LegislatorInfoData.h */,
+				01D7FEB50FA5023A00F78B92 /* LegislatorInfoData.m */,
+				01D7FEB60FA5023A00F78B92 /* LegislatorNameCell.h */,
+				01D7FEB70FA5023A00F78B92 /* LegislatorNameCell.m */,
+				01D7FEB80FA5023A00F78B92 /* LegislatorViewController.h */,
+				01D7FEB90FA5023A00F78B92 /* LegislatorViewController.m */,
 			);
-			name = congress;
+			path = congress;
 			sourceTree = "<group>";
 		};
 		0102D2DB0F58DB72005AE0EA /* community */ = {
@@ -282,146 +282,146 @@
 			children = (
 				04B603100F59BE3000815A86 /* CommunityViewController.h */,
 				04B603110F59BE3000815A86 /* CommunityViewController.m */,
-				04B603920F5A1A2700815A86 /* CommunityTableViewCell.h */,
-				04B603930F5A1A2700815A86 /* CommunityTableViewCell.m */,
-				04B603950F5A1A6C00815A86 /* CommunityItemView.h */,
-				04B603960F5A1A6C00815A86 /* CommunityItemView.m */,
+				01D7FE450FA4F62100F78B92 /* CommunityDataManager.h */,
+				01D7FE460FA4F62100F78B92 /* CommunityDataManager.m */,
 				0461A0580F5A471400BE17FF /* CommunityItem.h */,
 				0461A0590F5A471400BE17FF /* CommunityItem.m */,
+				01D7FF140FA5080D00F78B92 /* CommunityItemTableCell.h */,
+				01D7FF150FA5080D00F78B92 /* CommunityItemTableCell.m */,
 			);
-			name = community;
-			path = src/community;
+			path = community;
 			sourceTree = "<group>";
 		};
 		0102D2DC0F58DB79005AE0EA /* spending */ = {
 			isa = PBXGroup;
 			children = (
-				01BB719F0F7712C900E7065F /* PlaceSpendingData.h */,
-				01BB71A00F7712C900E7065F /* PlaceSpendingData.m */,
-				0102D3000F58E31C005AE0EA /* SpendingViewController.h */,
-				0102D3010F58E31C005AE0EA /* SpendingViewController.m */,
-				01B119050F70B71E0076AFE0 /* SpendingDataManager.h */,
-				01B119060F70B71E0076AFE0 /* SpendingDataManager.m */,
-				01BB72440F773FD700E7065F /* PlaceSpendingTableCell.h */,
-				01BB72450F773FD700E7065F /* PlaceSpendingTableCell.m */,
-				0168727B0F7B15EE00D23E78 /* ContractorSpendingData.h */,
-				0168727C0F7B15EE00D23E78 /* ContractorSpendingData.m */,
-				016873080F7B34E100D23E78 /* ContractorSpendingTableCell.h */,
-				016873090F7B34E100D23E78 /* ContractorSpendingTableCell.m */,
-				014955360F9BB80B00032423 /* SpendingSummaryData.h */,
-				014955370F9BB80B00032423 /* SpendingSummaryData.m */,
-				014955390F9BB83A00032423 /* SpendingSummaryViewController.h */,
-				0149553A0F9BB83A00032423 /* SpendingSummaryViewController.m */,
+				01D7FE9B0FA5019100F78B92 /* SpendingViewController.h */,
+				01D7FE9C0FA5019100F78B92 /* SpendingViewController.m */,
+				01D7FE950FA5019100F78B92 /* SpendingDataManager.h */,
+				01D7FE960FA5019100F78B92 /* SpendingDataManager.m */,
+				01D7FE8D0FA5019100F78B92 /* ContractorSpendingData.h */,
+				01D7FE8E0FA5019100F78B92 /* ContractorSpendingData.m */,
+				01D7FE8F0FA5019100F78B92 /* ContractorSpendingTableCell.h */,
+				01D7FE900FA5019100F78B92 /* ContractorSpendingTableCell.m */,
+				01D7FE910FA5019100F78B92 /* PlaceSpendingData.h */,
+				01D7FE920FA5019100F78B92 /* PlaceSpendingData.m */,
+				01D7FE930FA5019100F78B92 /* PlaceSpendingTableCell.h */,
+				01D7FE940FA5019100F78B92 /* PlaceSpendingTableCell.m */,
+				01D7FE990FA5019100F78B92 /* SpendingSummaryViewController.h */,
+				01D7FE9A0FA5019100F78B92 /* SpendingSummaryViewController.m */,
+				01D7FE970FA5019100F78B92 /* SpendingSummaryData.h */,
+				01D7FE980FA5019100F78B92 /* SpendingSummaryData.m */,
 			);
-			name = spending;
+			path = spending;
 			sourceTree = "<group>";
 		};
 		0102D2DD0F58DB80005AE0EA /* recovery */ = {
 			isa = PBXGroup;
 			children = (
-				0102D2F10F58E007005AE0EA /* RecoveryView.xib */,
-				0102D2F30F58E028005AE0EA /* RecoveryViewController.h */,
-				0102D2F40F58E028005AE0EA /* RecoveryViewController.m */,
+				01D7FE880FA5015700F78B92 /* RecoveryView.xib */,
+				01D7FE890FA5015700F78B92 /* RecoveryViewController.h */,
+				01D7FE8A0FA5015700F78B92 /* RecoveryViewController.m */,
 			);
-			name = recovery;
+			path = recovery;
 			sourceTree = "<group>";
 		};
 		0102D2DE0F58DB87005AE0EA /* bills */ = {
 			isa = PBXGroup;
 			children = (
-				01C43CDF0F662D0B00F8A025 /* BillsViewController.h */,
-				01C43CE00F662D0B00F8A025 /* BillsViewController.m */,
-				01E1D9E50F80817E008B3711 /* BillsDataManager.h */,
-				01E1D9E60F80817E008B3711 /* BillsDataManager.m */,
-				01E1DA070F8085D3008B3711 /* BillContainer.h */,
-				01E1DA080F8085D3008B3711 /* BillContainer.m */,
-				0190167A0F8551BB00627610 /* BillSummaryXMLParser.h */,
-				0190167B0F8551BB00627610 /* BillSummaryXMLParser.m */,
-				019017650F85760A00627610 /* BillSummaryTableCell.h */,
-				019017660F85760A00627610 /* BillSummaryTableCell.m */,
-				01846B8E0F96BFE200444529 /* BillInfoData.h */,
-				01846B8F0F96BFE200444529 /* BillInfoData.m */,
-				01846B910F96C02C00444529 /* BillInfoViewController.h */,
-				01846B920F96C02C00444529 /* BillInfoViewController.m */,
+				01D7FE7F0FA5013200F78B92 /* BillsViewController.h */,
+				01D7FE800FA5013200F78B92 /* BillsViewController.m */,
+				01D7FE790FA5013200F78B92 /* BillsDataManager.h */,
+				01D7FE7A0FA5013200F78B92 /* BillsDataManager.m */,
+				01D7FE730FA5013200F78B92 /* BillContainer.h */,
+				01D7FE740FA5013200F78B92 /* BillContainer.m */,
+				01D7FE7B0FA5013200F78B92 /* BillSummaryTableCell.h */,
+				01D7FE7C0FA5013200F78B92 /* BillSummaryTableCell.m */,
+				01D7FE7D0FA5013200F78B92 /* BillSummaryXMLParser.h */,
+				01D7FE7E0FA5013200F78B92 /* BillSummaryXMLParser.m */,
+				01D7FE770FA5013200F78B92 /* BillInfoViewController.h */,
+				01D7FE780FA5013200F78B92 /* BillInfoViewController.m */,
+				01D7FE750FA5013200F78B92 /* BillInfoData.h */,
+				01D7FE760FA5013200F78B92 /* BillInfoData.m */,
 			);
-			name = bills;
+			path = bills;
 			sourceTree = "<group>";
 		};
 		01BC2FA00F5B840F00E7ABD0 /* common */ = {
 			isa = PBXGroup;
 			children = (
-				0102D2CC0F58D7C7005AE0EA /* main.m */,
-				0102D2CD0F58D7C7005AE0EA /* MainWindow.xib */,
-				0102D2CF0F58D7C7005AE0EA /* myGovAppDelegate.h */,
-				0102D2D00F58D7C7005AE0EA /* myGovAppDelegate.m */,
-				01B7B6F70F8AECB100619441 /* MiniBrowserView.xib */,
-				01B7B6F40F8AEC5500619441 /* MiniBrowserController.h */,
-				01B7B6F50F8AEC5500619441 /* MiniBrowserController.m */,
-				01BC2FA80F5B84AD00E7ABD0 /* XMLParserOperation.h */,
-				01BC2FA90F5B84AD00E7ABD0 /* XMLParserOperation.m */,
-				01B4E05D0F6449BB00219672 /* ProgressOverlayViewController.h */,
-				01B4E05E0F6449BB00219672 /* ProgressOverlayViewController.m */,
-				01B118340F709EC70076AFE0 /* StateAbbreviations.h */,
-				01B118350F709EC70076AFE0 /* StateAbbreviations.m */,
-				011EF3C90F91A47400932BBE /* ComposeMessageView.xib */,
-				011EF3CB0F91A48E00932BBE /* ComposeMessageViewController.h */,
-				011EF3CC0F91A48E00932BBE /* ComposeMessageViewController.m */,
-				01D998FD0F96995200961A76 /* DataProviders.h */,
-				01D998FE0F96995200961A76 /* DataProviders.m */,
-				01B78F160F97E72E00E1364F /* TableDataManager.h */,
-				01B78F170F97E72E00E1364F /* TableDataManager.m */,
-				01B78F610F9828C100E1364F /* CustomTableCell.h */,
-				01B78F620F9828C100E1364F /* CustomTableCell.m */,
-				01E4C57A0FA0257200E69CC8 /* TwitterLoginView.xib */,
-				01E4C57D0FA025A800E69CC8 /* TwitterLoginViewController.h */,
-				01E4C57E0FA025A800E69CC8 /* TwitterLoginViewController.m */,
+				01D7FE6C0FA5010400F78B92 /* main.m */,
+				01D7FE6D0FA5010400F78B92 /* MainWindow.xib */,
+				01D7FE6E0FA5010400F78B92 /* myGovAppDelegate.h */,
+				01D7FE6F0FA5010400F78B92 /* myGovAppDelegate.m */,
+				01D7FE560FA500E900F78B92 /* MiniBrowserController.h */,
+				01D7FE570FA500E900F78B92 /* MiniBrowserController.m */,
+				01D7FE580FA500E900F78B92 /* MiniBrowserView.xib */,
+				01D7FE590FA500E900F78B92 /* ProgressOverlayViewController.h */,
+				01D7FE5A0FA500E900F78B92 /* ProgressOverlayViewController.m */,
+				01D7FE5B0FA500E900F78B92 /* StateAbbreviations.h */,
+				01D7FE5C0FA500E900F78B92 /* StateAbbreviations.m */,
+				01D7FE5D0FA500E900F78B92 /* TableDataManager.h */,
+				01D7FE5E0FA500E900F78B92 /* TableDataManager.m */,
+				01D7FE5F0FA500E900F78B92 /* TwitterLoginView.xib */,
+				01D7FE600FA500E900F78B92 /* TwitterLoginViewController.h */,
+				01D7FE610FA500E900F78B92 /* TwitterLoginViewController.m */,
+				01D7FE620FA500E900F78B92 /* XMLParserOperation.h */,
+				01D7FE630FA500E900F78B92 /* XMLParserOperation.m */,
+				01D7FE4B0FA500DA00F78B92 /* ComposeMessageView.xib */,
+				01D7FE4C0FA500DA00F78B92 /* ComposeMessageViewController.h */,
+				01D7FE4D0FA500DA00F78B92 /* ComposeMessageViewController.m */,
+				01D7FE4E0FA500DA00F78B92 /* CustomTableCell.h */,
+				01D7FE4F0FA500DA00F78B92 /* CustomTableCell.m */,
+				01D7FE500FA500DA00F78B92 /* DataProviders.h */,
+				01D7FE510FA500DA00F78B92 /* DataProviders.m */,
 			);
-			name = common;
+			path = common;
 			sourceTree = "<group>";
 		};
-		01E4C5210FA01DE500E69CC8 /* MGTwitter */ = {
+		01E4C5210FA01DE500E69CC8 /* mgtwitterengine */ = {
 			isa = PBXGroup;
 			children = (
-				01E4C5260FA01E5F00E69CC8 /* MGTwitterEngineGlobalHeader.h */,
-				01E4C5230FA01E5F00E69CC8 /* MGTwitterEngine.h */,
-				01E4C5240FA01E5F00E69CC8 /* MGTwitterEngine.m */,
-				01E4C5250FA01E5F00E69CC8 /* MGTwitterEngineDelegate.h */,
-				01E4C5270FA01E5F00E69CC8 /* MGTwitterHTTPURLConnection.h */,
-				01E4C5280FA01E5F00E69CC8 /* MGTwitterHTTPURLConnection.m */,
-				01E4C52A0FA01E5F00E69CC8 /* MGTwitterRequestTypes.h */,
-				01E4C5290FA01E5F00E69CC8 /* MGTwitterParserDelegate.h */,
+				01D7FEC90FA502A600F78B92 /* MGTwitterEngineGlobalHeader.h */,
+				01D7FEC80FA502A600F78B92 /* MGTwitterEngineDelegate.h */,
+				01D7FEC50FA5027F00F78B92 /* MGTwitterEngine.h */,
+				01D7FEC60FA5027F00F78B92 /* MGTwitterEngine.m */,
+				01D7FECA0FA502A600F78B92 /* MGTwitterHTTPURLConnection.h */,
+				01D7FECB0FA502A600F78B92 /* MGTwitterHTTPURLConnection.m */,
+				01D7FECD0FA502C100F78B92 /* MGTwitterParserDelegate.h */,
+				01D7FECE0FA502C100F78B92 /* MGTwitterRequestTypes.h */,
 				01E4C5220FA01E0A00E69CC8 /* Twitter NSXML Parsers */,
-				01E4C52D0FA01E7700E69CC8 /* Categories */,
+				01E4C52D0FA01E7700E69CC8 /* Data Format Support */,
 			);
-			name = MGTwitter;
+			name = mgtwitterengine;
+			path = common/mgtwitterengine;
 			sourceTree = "<group>";
 		};
 		01E4C5220FA01E0A00E69CC8 /* Twitter NSXML Parsers */ = {
 			isa = PBXGroup;
 			children = (
-				01E4C5340FA01EF300E69CC8 /* MGTwitterMessagesParser.h */,
-				01E4C5350FA01EF300E69CC8 /* MGTwitterMessagesParser.m */,
-				01E4C5360FA01EF300E69CC8 /* MGTwitterMiscParser.h */,
-				01E4C5370FA01EF300E69CC8 /* MGTwitterMiscParser.m */,
-				01E4C5380FA01EF300E69CC8 /* MGTwitterStatusesParser.h */,
-				01E4C5390FA01EF300E69CC8 /* MGTwitterStatusesParser.m */,
-				01E4C53A0FA01EF300E69CC8 /* MGTwitterUsersParser.h */,
-				01E4C53B0FA01EF300E69CC8 /* MGTwitterUsersParser.m */,
-				01E4C53C0FA01EF300E69CC8 /* MGTwitterXMLParser.h */,
-				01E4C53D0FA01EF300E69CC8 /* MGTwitterXMLParser.m */,
+				01D7FED80FA5030D00F78B92 /* MGTwitterUsersParser.h */,
+				01D7FED90FA5030D00F78B92 /* MGTwitterUsersParser.m */,
+				01D7FEDA0FA5030D00F78B92 /* MGTwitterXMLParser.h */,
+				01D7FEDB0FA5030D00F78B92 /* MGTwitterXMLParser.m */,
+				01D7FECF0FA502F400F78B92 /* MGTwitterMessagesParser.h */,
+				01D7FED00FA502F400F78B92 /* MGTwitterMessagesParser.m */,
+				01D7FED10FA502F400F78B92 /* MGTwitterMiscParser.h */,
+				01D7FED20FA502F400F78B92 /* MGTwitterMiscParser.m */,
+				01D7FED30FA502F400F78B92 /* MGTwitterStatusesParser.h */,
+				01D7FED40FA502F400F78B92 /* MGTwitterStatusesParser.m */,
 			);
 			name = "Twitter NSXML Parsers";
 			sourceTree = "<group>";
 		};
-		01E4C52D0FA01E7700E69CC8 /* Categories */ = {
+		01E4C52D0FA01E7700E69CC8 /* Data Format Support */ = {
 			isa = PBXGroup;
 			children = (
-				01E4C5300FA01E9C00E69CC8 /* NSString+UUID.h */,
-				01E4C5310FA01E9C00E69CC8 /* NSString+UUID.m */,
-				01E4C52E0FA01E9C00E69CC8 /* NSData+Base64.h */,
-				01E4C52F0FA01E9C00E69CC8 /* NSData+Base64.m */,
+				01D7FEDE0FA5032D00F78B92 /* NSData+Base64.h */,
+				01D7FEDF0FA5032D00F78B92 /* NSData+Base64.m */,
+				01D7FEE00FA5032D00F78B92 /* NSString+UUID.h */,
+				01D7FEE10FA5032D00F78B92 /* NSString+UUID.m */,
 			);
-			name = Categories;
+			name = "Data Format Support";
 			sourceTree = "<group>";
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
@@ -520,10 +520,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0102D2D20F58D7C7005AE0EA /* MainWindow.xib in Resources */,
 				0102D2EE0F58DECD005AE0EA /* eagleIcon.png in Resources */,
-				0102D2F20F58E007005AE0EA /* RecoveryView.xib in Resources */,
-				01B4E2200F64D6EC00219672 /* LegislatorHeaderView.xib in Resources */,
 				011592C40F6A36D2008BECCD /* Default.png in Resources */,
 				01B119440F70BD560076AFE0 /* location_overlay.png in Resources */,
 				01B119450F70BD560076AFE0 /* USStates.plist in Resources */,
@@ -533,12 +530,15 @@
 				017C22550F721E60008CA4ED /* communityIcon.png in Resources */,
 				01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */,
 				01B7B6F00F8AEACE00619441 /* fwdButton.png in Resources */,
-				01B7B6F80F8AECB100619441 /* MiniBrowserView.xib in Resources */,
-				011EF3CA0F91A47400932BBE /* ComposeMessageView.xib in Resources */,
 				0178E3AF0F944AFF00B96BD1 /* Settings.bundle in Resources */,
 				01C729D80F9EEBBF00EA3FF9 /* recoveryIcon.png in Resources */,
-				01E4C57B0FA0257200E69CC8 /* TwitterLoginView.xib in Resources */,
 				01E4C5830FA0278700E69CC8 /* twitter_logo_header.png in Resources */,
+				01D7FE520FA500DA00F78B92 /* ComposeMessageView.xib in Resources */,
+				01D7FE650FA500E900F78B92 /* MiniBrowserView.xib in Resources */,
+				01D7FE690FA500E900F78B92 /* TwitterLoginView.xib in Resources */,
+				01D7FE710FA5010400F78B92 /* MainWindow.xib in Resources */,
+				01D7FE8B0FA5015700F78B92 /* RecoveryView.xib in Resources */,
+				01D7FEC00FA5023B00F78B92 /* LegislatorHeaderView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -549,56 +549,56 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0102D2D10F58D7C7005AE0EA /* main.m in Sources */,
-				0102D2D30F58D7C7005AE0EA /* myGovAppDelegate.m in Sources */,
-				0102D2F50F58E028005AE0EA /* RecoveryViewController.m in Sources */,
-				0102D3020F58E31C005AE0EA /* SpendingViewController.m in Sources */,
-				0102D40B0F58F2D2005AE0EA /* CongressViewController.m in Sources */,
 				04B603120F59BE3000815A86 /* CommunityViewController.m in Sources */,
-				04B603940F5A1A2700815A86 /* CommunityTableViewCell.m in Sources */,
-				04B603970F5A1A6C00815A86 /* CommunityItemView.m in Sources */,
 				0461A05A0F5A471400BE17FF /* CommunityItem.m in Sources */,
-				01BC2FAA0F5B84AD00E7ABD0 /* XMLParserOperation.m in Sources */,
-				01BC2FE10F5B973B00E7ABD0 /* CongressDataManager.m in Sources */,
-				01BC2FEC0F5BA34000E7ABD0 /* LegislatorContainer.m in Sources */,
-				01EDDF9F0F6363D00098A7B6 /* LegislatorViewController.m in Sources */,
-				01B4E05F0F6449BB00219672 /* ProgressOverlayViewController.m in Sources */,
-				01B4E2230F64D88000219672 /* LegislatorHeaderViewController.m in Sources */,
-				01C43CE10F662D0B00F8A025 /* BillsViewController.m in Sources */,
-				01C43D020F662E3300F8A025 /* LegislatorNameCell.m in Sources */,
-				0132E7500F68D22A00DF33DC /* CongressionalCommittees.m in Sources */,
-				01B118360F709EC70076AFE0 /* StateAbbreviations.m in Sources */,
-				01B119070F70B71E0076AFE0 /* SpendingDataManager.m in Sources */,
-				01BB71A10F7712C900E7065F /* PlaceSpendingData.m in Sources */,
-				01BB72460F773FD700E7065F /* PlaceSpendingTableCell.m in Sources */,
-				0168727D0F7B15EE00D23E78 /* ContractorSpendingData.m in Sources */,
-				0168730A0F7B34E100D23E78 /* ContractorSpendingTableCell.m in Sources */,
-				0126785E0F7F3BB900CF9C46 /* CongressDatabaseParser.m in Sources */,
-				012678610F7F3BD500CF9C46 /* CongressLocationParser.m in Sources */,
-				01E1D9E70F80817E008B3711 /* BillsDataManager.m in Sources */,
-				01E1DA090F8085D3008B3711 /* BillContainer.m in Sources */,
-				0190167C0F8551BB00627610 /* BillSummaryXMLParser.m in Sources */,
-				019017670F85760A00627610 /* BillSummaryTableCell.m in Sources */,
-				01B7B6F60F8AEC5500619441 /* MiniBrowserController.m in Sources */,
-				011EF3CD0F91A48E00932BBE /* ComposeMessageViewController.m in Sources */,
-				01AD659F0F957259003AECE0 /* LegislatorInfoData.m in Sources */,
-				01D998FF0F96995200961A76 /* DataProviders.m in Sources */,
-				01846B900F96BFE200444529 /* BillInfoData.m in Sources */,
-				01846B930F96C02C00444529 /* BillInfoViewController.m in Sources */,
-				01B78F180F97E72E00E1364F /* TableDataManager.m in Sources */,
-				01B78F630F9828C100E1364F /* CustomTableCell.m in Sources */,
-				014955380F9BB80B00032423 /* SpendingSummaryData.m in Sources */,
-				0149553B0F9BB83A00032423 /* SpendingSummaryViewController.m in Sources */,
-				01E4C52B0FA01E5F00E69CC8 /* MGTwitterEngine.m in Sources */,
-				01E4C52C0FA01E5F00E69CC8 /* MGTwitterHTTPURLConnection.m in Sources */,
-				01E4C5320FA01E9C00E69CC8 /* NSData+Base64.m in Sources */,
-				01E4C5330FA01E9C00E69CC8 /* NSString+UUID.m in Sources */,
-				01E4C53E0FA01EF300E69CC8 /* MGTwitterMessagesParser.m in Sources */,
-				01E4C53F0FA01EF300E69CC8 /* MGTwitterMiscParser.m in Sources */,
-				01E4C5400FA01EF300E69CC8 /* MGTwitterStatusesParser.m in Sources */,
-				01E4C5410FA01EF300E69CC8 /* MGTwitterUsersParser.m in Sources */,
-				01E4C5420FA01EF300E69CC8 /* MGTwitterXMLParser.m in Sources */,
-				01E4C57F0FA025A800E69CC8 /* TwitterLoginViewController.m in Sources */,
+				01D7FE470FA4F62100F78B92 /* CommunityDataManager.m in Sources */,
+				01D7FE530FA500DA00F78B92 /* ComposeMessageViewController.m in Sources */,
+				01D7FE540FA500DA00F78B92 /* CustomTableCell.m in Sources */,
+				01D7FE550FA500DA00F78B92 /* DataProviders.m in Sources */,
+				01D7FE640FA500E900F78B92 /* MiniBrowserController.m in Sources */,
+				01D7FE660FA500E900F78B92 /* ProgressOverlayViewController.m in Sources */,
+				01D7FE670FA500E900F78B92 /* StateAbbreviations.m in Sources */,
+				01D7FE680FA500E900F78B92 /* TableDataManager.m in Sources */,
+				01D7FE6A0FA500E900F78B92 /* TwitterLoginViewController.m in Sources */,
+				01D7FE6B0FA500E900F78B92 /* XMLParserOperation.m in Sources */,
+				01D7FE700FA5010400F78B92 /* main.m in Sources */,
+				01D7FE720FA5010400F78B92 /* myGovAppDelegate.m in Sources */,
+				01D7FE810FA5013200F78B92 /* BillContainer.m in Sources */,
+				01D7FE820FA5013200F78B92 /* BillInfoData.m in Sources */,
+				01D7FE830FA5013200F78B92 /* BillInfoViewController.m in Sources */,
+				01D7FE840FA5013200F78B92 /* BillsDataManager.m in Sources */,
+				01D7FE850FA5013200F78B92 /* BillSummaryTableCell.m in Sources */,
+				01D7FE860FA5013200F78B92 /* BillSummaryXMLParser.m in Sources */,
+				01D7FE870FA5013200F78B92 /* BillsViewController.m in Sources */,
+				01D7FE8C0FA5015700F78B92 /* RecoveryViewController.m in Sources */,
+				01D7FE9D0FA5019100F78B92 /* ContractorSpendingData.m in Sources */,
+				01D7FE9E0FA5019100F78B92 /* ContractorSpendingTableCell.m in Sources */,
+				01D7FE9F0FA5019100F78B92 /* PlaceSpendingData.m in Sources */,
+				01D7FEA00FA5019100F78B92 /* PlaceSpendingTableCell.m in Sources */,
+				01D7FEA10FA5019100F78B92 /* SpendingDataManager.m in Sources */,
+				01D7FEA20FA5019100F78B92 /* SpendingSummaryData.m in Sources */,
+				01D7FEA30FA5019100F78B92 /* SpendingSummaryViewController.m in Sources */,
+				01D7FEA40FA5019100F78B92 /* SpendingViewController.m in Sources */,
+				01D7FEBA0FA5023B00F78B92 /* CongressDatabaseParser.m in Sources */,
+				01D7FEBB0FA5023B00F78B92 /* CongressDataManager.m in Sources */,
+				01D7FEBC0FA5023B00F78B92 /* CongressionalCommittees.m in Sources */,
+				01D7FEBD0FA5023B00F78B92 /* CongressLocationParser.m in Sources */,
+				01D7FEBE0FA5023B00F78B92 /* CongressViewController.m in Sources */,
+				01D7FEBF0FA5023B00F78B92 /* LegislatorContainer.m in Sources */,
+				01D7FEC10FA5023B00F78B92 /* LegislatorHeaderViewController.m in Sources */,
+				01D7FEC20FA5023B00F78B92 /* LegislatorInfoData.m in Sources */,
+				01D7FEC30FA5023B00F78B92 /* LegislatorNameCell.m in Sources */,
+				01D7FEC40FA5023B00F78B92 /* LegislatorViewController.m in Sources */,
+				01D7FEC70FA5027F00F78B92 /* MGTwitterEngine.m in Sources */,
+				01D7FECC0FA502A600F78B92 /* MGTwitterHTTPURLConnection.m in Sources */,
+				01D7FED50FA502F400F78B92 /* MGTwitterMessagesParser.m in Sources */,
+				01D7FED60FA502F400F78B92 /* MGTwitterMiscParser.m in Sources */,
+				01D7FED70FA502F400F78B92 /* MGTwitterStatusesParser.m in Sources */,
+				01D7FEDC0FA5030D00F78B92 /* MGTwitterUsersParser.m in Sources */,
+				01D7FEDD0FA5030D00F78B92 /* MGTwitterXMLParser.m in Sources */,
+				01D7FEE20FA5032D00F78B92 /* NSData+Base64.m in Sources */,
+				01D7FEE30FA5032D00F78B92 /* NSString+UUID.m in Sources */,
+				01D7FF160FA5080D00F78B92 /* CommunityItemTableCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
