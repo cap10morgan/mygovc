@@ -24,6 +24,7 @@
 	NSDate *m_inMemoryEndData;
 	NSMutableArray *m_feedbackData; // array of CommunityItems of type eCommunity_Feedback
 	NSMutableArray *m_eventData; // array of CommunityItems of type eCommunity_Event
+	NSMutableArray *m_searchData; // array of CommunityItems that resulted from the last search operation
 	
 	NSMutableString *m_currentStatusMessage;
 	id m_notifyTarget;

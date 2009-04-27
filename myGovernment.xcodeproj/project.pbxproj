@@ -21,6 +21,7 @@
 		01B6C7B90FA57319000CEF90 /* MyGovUserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B6C7B80FA57319000CEF90 /* MyGovUserData.m */; };
 		01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6ED0F8AEACD00619441 /* backButton.png */; };
 		01B7B6F00F8AEACE00619441 /* fwdButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6EE0F8AEACD00619441 /* fwdButton.png */; };
+		01B7D87A0FA5E5DF00CFF880 /* GoogleAppsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B7D8790FA5E5DF00CFF880 /* GoogleAppsDataSource.m */; };
 		01C075BC0F8EE96E00F5B2A1 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */; };
 		01C075C10F8EE98700F5B2A1 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */; };
 		01C729D80F9EEBBF00EA3FF9 /* recoveryIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */; };
@@ -105,6 +106,8 @@
 		01B6C7B80FA57319000CEF90 /* MyGovUserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyGovUserData.m; sourceTree = "<group>"; };
 		01B7B6ED0F8AEACD00619441 /* backButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = backButton.png; path = res/backButton.png; sourceTree = "<group>"; };
 		01B7B6EE0F8AEACD00619441 /* fwdButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fwdButton.png; path = res/fwdButton.png; sourceTree = "<group>"; };
+		01B7D8780FA5E5DF00CFF880 /* GoogleAppsDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAppsDataSource.h; sourceTree = "<group>"; };
+		01B7D8790FA5E5DF00CFF880 /* GoogleAppsDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleAppsDataSource.m; sourceTree = "<group>"; };
 		01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = recoveryIcon.png; path = res/recoveryIcon.png; sourceTree = "<group>"; };
@@ -298,6 +301,8 @@
 				01B6C7820FA548A5000CEF90 /* CommunityDataSource.h */,
 				01B6C79B0FA56FE5000CEF90 /* JeremyaStaticDataSource.h */,
 				01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */,
+				01B7D8780FA5E5DF00CFF880 /* GoogleAppsDataSource.h */,
+				01B7D8790FA5E5DF00CFF880 /* GoogleAppsDataSource.m */,
 			);
 			path = community;
 			sourceTree = "<group>";
@@ -613,6 +618,7 @@
 				01D7FF160FA5080D00F78B92 /* CommunityItemTableCell.m in Sources */,
 				01B6C79D0FA56FE5000CEF90 /* JeremyaStaticDataSource.m in Sources */,
 				01B6C7B90FA57319000CEF90 /* MyGovUserData.m in Sources */,
+				01B7D87A0FA5E5DF00CFF880 /* GoogleAppsDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

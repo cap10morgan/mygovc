@@ -21,12 +21,14 @@ typedef enum
 {
 	NSInteger  m_id;
 	NSInteger  m_owner;
+	NSInteger  m_communityItemID;
 	NSString  *m_title;
 	NSString  *m_text;
 }
 
-@property (nonatomic)        NSInteger m_id;
+@property (nonatomic)        NSInteger  m_id;
 @property (nonatomic)        NSInteger  m_owner;
+@property (nonatomic)        NSInteger  m_communityItemID;
 @property (nonatomic,retain) NSString  *m_title;
 @property (nonatomic,retain) NSString  *m_text;
 
@@ -76,6 +78,8 @@ typedef enum
 @property (nonatomic,retain) CLLocation *m_eventLocation;
 @property (nonatomic,retain) NSDate     *m_eventDate;
 
+- (id)initFromFile:(NSString *)fullPath;
+- (void)writeItemToFile:(NSString *)fullPath;
 
 - (void)addComment:(NSString *)comment fromUser:(NSInteger)mygovUser withTitle:(NSString *)title;
 - (void)addComment:(CommunityComment *)comment;

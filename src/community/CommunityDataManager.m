@@ -10,6 +10,7 @@
 #import "CommunityDataManager.h"
 #import "CommunityItem.h"
 #import "CommunityItemTableCell.h"
+#import "MyGovUserData.h"
 
 #define COMMUNITY_USE_JEREMYA_STATIC_DATA 1
 #define COMMUNITY_USE_GOOGLEAPPS_DATA     0
@@ -57,6 +58,7 @@
 		m_inMemoryEndData = nil;
 		m_feedbackData = nil;
 		m_eventData = nil;
+		m_searchData = nil;
 	}
 	return self;
 }
@@ -68,6 +70,13 @@
 	[m_userData release];
 	[(id)m_dataSource release];
 	[m_currentStatusMessage release];
+	
+	[m_inMemoryStartDate release];
+	[m_inMemoryEndData release];
+	
+	[m_feedbackData release];
+	[m_eventData release];
+	[m_searchData release];
 	
 	[super dealloc];
 }
@@ -216,21 +225,23 @@
 - (void)communityDataSource:(id)dataSource 
 			userDataArrived:(MyGovUser *)user
 {
-	// XXX - do something with user data input...
+	MyGovUserData *userData = [myGovAppDelegate sharedUserData];
+	[userData setUserInCache:user];
 }
 
 
 - (void)communityDataSource:(id)dataSource 
 		searchResultArrived:(CommunityItem *)item
 {
-	// XXX - handle search results!
+	if ( nil == m_searchData ) m_searchData = [[NSMutableArray alloc] initWithCapacity:2];
+	[m_searchData addObject:item];
+	[m_searchData sortUsingSelector:@selector(compareItemByDate:)];
 }
 
 
 - (void)communityDataSource:(id)dataSource 
 			 operationError:(NSError *)error
 {
-	// XXX - handle operation error!
 	[self setStatus:[NSString stringWithFormat:@"ERR: ",[error localizedDescription]]];
 }
 

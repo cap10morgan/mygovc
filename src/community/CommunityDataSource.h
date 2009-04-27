@@ -106,7 +106,7 @@
 	@brief Blocking data download call 
 	
 	@par
-	This function downloads all community items with the given type which
+	This method downloads all community items with the given type which
 	were submitted to the data source between @c startDate and @c NOW. The
 	@c delegate parameter is optional and may be nil. The caller is 
 	responsible for creating / maintaining the thread in which this call
@@ -130,7 +130,7 @@
 	@param[in] startDate data source items created before this date are @b not downloaded
 	@param[in] delegateOrNil object implementing the CommunityDataSourceDelegate protocol (or nil for no callbacks)
 	
-	@returns @b TRUE on success, @b FALSE otherwise (mostly useful for non-delegate calls)
+	@returns @b TRUE on success, @b FALSE otherwise 
 	
  */
 - (BOOL)downloadItemsOfType:(CommunityItemType)type 
@@ -142,7 +142,7 @@
 	@brief Community data upload
 	
 	@par
-	This function submits a community item (feedback or event) for upload
+	This method submits a community item (feedback or event) for upload
 	to the data source. Just as in the downloadItemsOfType:... method, the
 	protocol implementer may assume that appropriate threading has been 
 	managed by the caller and this method can (and should be) completely 
@@ -157,7 +157,7 @@
 	@param[in] item CommunityItem (feedback,event) to submit to the data source
 	@param[in] delegateOrNil object implementing the CommunityDataSourceDelegate protocol (or nil for no callbacks)
 	
-	@returns @b TRUE on success, @b FALSE otherwise (mostly useful for non-delegate calls)
+	@returns @b TRUE on success, @b FALSE otherwise 
 	
  */
 - (BOOL)submitCommunityItem:(CommunityItem *)item 
@@ -165,10 +165,30 @@
 
 
 /*!
+	@brief Comment on a community item (thread comment)
+	
+	@par
+	This method submits a user comment on an existing CommunityItem 
+	(either event or feedback). It should call the operationError: 
+	CommunityDataSourceDelegate method on any error that occurs in the
+	upload process.
+	
+	@note This method is completely blocking
+	
+	@param[in] comment CommunityComment object to submit (contains associated community item ID)
+	@param[in] delegateOrNil object implementing the CommunityDataSourceDelegate protocol (or nil for no callbacks)
+ 
+	@returns @b TRUE on success, @b FALSE otherwise 
+ */
+- (BOOL)submitCommunityComment:(CommunityComment *)comment 
+				  withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil;
+
+
+/*!
 	@brief Query the data source for items loosly matching @c query
 	
 	@par
-	This function searches the data source based on a query string. There are
+	This method searches the data source based on a query string. There are
 	no arbitrary restriction put on the contents of @c query, so the data source
 	should be careful to escape the string as necessary!
 	
@@ -196,7 +216,7 @@
 	@brief Search for items near a particular location
 	
 	@par
-	This function searches the data source for CommunityItems near a particular
+	This method searches the data source for CommunityItems near a particular
 	location specified by the @c location parameter. The definition of "nearby"
 	has been left vague... 
 	

@@ -8,7 +8,7 @@
 #import "CommunityItem.h"
 
 @implementation CommunityComment
-@synthesize m_id, m_owner, m_title, m_text;
+@synthesize m_id, m_owner, m_communityItemID, m_title, m_text;
 @end 
 
 
@@ -52,6 +52,39 @@
 	[m_userComments release];
 	[m_eventAttendees release];
 	[super dealloc];
+}
+
+
+- (id)initFromFile:(NSString *)fullPath
+{
+	if ( self = [super init] )
+	{
+		m_type = eCommunity_Feedback; // default type
+		m_image = nil;
+		m_title = nil;
+		m_date = nil;
+		m_owner = 0;
+		m_summary = nil;
+		m_text = nil;
+		m_mygovURLTitle = nil;
+		m_mygovURL = nil;
+		m_webURLTitle = nil;
+		m_webURL = nil;
+		m_userComments = nil;
+		m_eventLocation = nil;
+		m_eventDate = nil;
+		m_eventAttendees = nil;
+		
+		// XXX - read file data !
+		
+	}
+	return self;
+}
+
+
+- (void)writeItemToFile:(NSString *)fullPath
+{
+	// XXX - write to file!
 }
 
 

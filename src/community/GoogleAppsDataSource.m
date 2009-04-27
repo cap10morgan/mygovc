@@ -1,21 +1,30 @@
 //
-//  JeremyaStaticDataSource.m
+//  GoogleAppsDataSource.m
 //  myGovernment
 //
 //  Created by Jeremy C. Andrus on 4/27/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-#import "JeremyaStaticDataSource.h"
+#import "GoogleAppsDataSource.h"
 
 
-@implementation JeremyaStaticDataSource
+@implementation GoogleAppsDataSource
 
-// XXX - I will fill this in with some static data for testing...
+- (id)init
+{
+	if ( self = [super init] )
+	{
+		// XXX - custom initialization
+	}
+	return self;
+}
+
 
 - (BOOL)validateUsername:(NSString *)username 
 			 andPassword:(NSString *)password
 {
+	// XXX - this needs to be filled in!
 	return FALSE;
 }
 
@@ -23,6 +32,7 @@
 - (BOOL)addNewUser:(MyGovUser *)newUser
 	  withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
+	// XXX - this needs to be filled in!
 	return FALSE;
 }
 
@@ -31,6 +41,7 @@
 			   notOlderThan:(NSDate *)startDate 
 			   withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
+	// XXX - this needs to be filled in!
 	return FALSE;
 }
 
@@ -38,6 +49,7 @@
 - (BOOL)submitCommunityItem:(CommunityItem *)item 
 			   withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
+	// XXX - this needs to be filled in!
 	return FALSE;
 }
 
@@ -45,6 +57,7 @@
 - (BOOL)submitCommunityComment:(CommunityComment *)comment 
 				  withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
+	// XXX - this needs to be filled in!
 	return FALSE;
 }
 
@@ -63,6 +76,5 @@
 {
 	return FALSE;
 }
-
 
 @end
