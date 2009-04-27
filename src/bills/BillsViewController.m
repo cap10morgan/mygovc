@@ -436,6 +436,8 @@ enum
 	NSString *srchTxt = ((UISearchBar *)searchBar).text;
 	if ( [srchTxt length] > 0 )
 	{
+		[self.tableView setUserInteractionEnabled:NO];
+		
 		// the blocking call which does all the searching!
 		[m_data searchForBillsLike:srchTxt];
 		

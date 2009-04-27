@@ -17,7 +17,7 @@
 	BOOL isDataAvailable;
 	BOOL isBusy;
 	
-	NSMutableArray *m_billData; // all bill data (sorted by last action date)
+	//NSMutableArray *m_billData; // all bill data (sorted by last action date)
 	
 	NSMutableArray *m_houseSections; // array of 'm_houseBills' key values for easy sorting
 	NSMutableDictionary *m_houseBills; // key=((year << 5) + month), Value=array of bill containers

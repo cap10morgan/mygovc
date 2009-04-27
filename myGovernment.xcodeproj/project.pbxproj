@@ -17,6 +17,8 @@
 		017C22550F721E60008CA4ED /* communityIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C22540F721E60008CA4ED /* communityIcon.png */; };
 		01B119440F70BD560076AFE0 /* location_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B119420F70BD560076AFE0 /* location_overlay.png */; };
 		01B119450F70BD560076AFE0 /* USStates.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01B119430F70BD560076AFE0 /* USStates.plist */; };
+		01B6C79D0FA56FE5000CEF90 /* JeremyaStaticDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */; };
+		01B6C7B90FA57319000CEF90 /* MyGovUserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B6C7B80FA57319000CEF90 /* MyGovUserData.m */; };
 		01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6ED0F8AEACD00619441 /* backButton.png */; };
 		01B7B6F00F8AEACE00619441 /* fwdButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6EE0F8AEACD00619441 /* fwdButton.png */; };
 		01C075BC0F8EE96E00F5B2A1 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */; };
@@ -96,6 +98,11 @@
 		017C22540F721E60008CA4ED /* communityIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityIcon.png; path = res/communityIcon.png; sourceTree = "<group>"; };
 		01B119420F70BD560076AFE0 /* location_overlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = location_overlay.png; path = res/location_overlay.png; sourceTree = "<group>"; };
 		01B119430F70BD560076AFE0 /* USStates.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = USStates.plist; path = res/USStates.plist; sourceTree = "<group>"; };
+		01B6C7820FA548A5000CEF90 /* CommunityDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDataSource.h; sourceTree = "<group>"; };
+		01B6C79B0FA56FE5000CEF90 /* JeremyaStaticDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JeremyaStaticDataSource.h; sourceTree = "<group>"; };
+		01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JeremyaStaticDataSource.m; sourceTree = "<group>"; };
+		01B6C7B70FA57319000CEF90 /* MyGovUserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyGovUserData.h; sourceTree = "<group>"; };
+		01B6C7B80FA57319000CEF90 /* MyGovUserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyGovUserData.m; sourceTree = "<group>"; };
 		01B7B6ED0F8AEACD00619441 /* backButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = backButton.png; path = res/backButton.png; sourceTree = "<group>"; };
 		01B7B6EE0F8AEACD00619441 /* fwdButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fwdButton.png; path = res/fwdButton.png; sourceTree = "<group>"; };
 		01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
@@ -288,6 +295,9 @@
 				0461A0590F5A471400BE17FF /* CommunityItem.m */,
 				01D7FF140FA5080D00F78B92 /* CommunityItemTableCell.h */,
 				01D7FF150FA5080D00F78B92 /* CommunityItemTableCell.m */,
+				01B6C7820FA548A5000CEF90 /* CommunityDataSource.h */,
+				01B6C79B0FA56FE5000CEF90 /* JeremyaStaticDataSource.h */,
+				01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */,
 			);
 			path = community;
 			sourceTree = "<group>";
@@ -374,6 +384,8 @@
 				01D7FE4F0FA500DA00F78B92 /* CustomTableCell.m */,
 				01D7FE500FA500DA00F78B92 /* DataProviders.h */,
 				01D7FE510FA500DA00F78B92 /* DataProviders.m */,
+				01B6C7B70FA57319000CEF90 /* MyGovUserData.h */,
+				01B6C7B80FA57319000CEF90 /* MyGovUserData.m */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -599,6 +611,8 @@
 				01D7FEE20FA5032D00F78B92 /* NSData+Base64.m in Sources */,
 				01D7FEE30FA5032D00F78B92 /* NSString+UUID.m in Sources */,
 				01D7FF160FA5080D00F78B92 /* CommunityItemTableCell.m in Sources */,
+				01B6C79D0FA56FE5000CEF90 /* JeremyaStaticDataSource.m in Sources */,
+				01B6C7B90FA57319000CEF90 /* MyGovUserData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -610,6 +624,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0.1;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

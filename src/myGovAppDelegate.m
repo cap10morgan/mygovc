@@ -12,13 +12,14 @@
 #import "CongressDataManager.h"
 #import "SpendingDataManager.h"
 #import "MGTwitterEngine.h"
-
+#import "MyGovUserData.h"
 #import <objc/runtime.h>
 
 @implementation myGovAppDelegate
 
 static myGovAppDelegate *s_myGovApp = NULL;
 
+static MyGovUserData *s_myGovUserData = NULL;
 static CommunityDataManager *s_myCommunityData = NULL;
 static BillsDataManager *s_myBillsData = NULL;
 static CongressDataManager *s_myCongressData = NULL;
@@ -49,6 +50,13 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 	{
 		return path;
 	}
+}
+
+
++ (MyGovUserData *)sharedUserData
+{
+	if ( !s_myGovUserData ) s_myGovUserData = [[MyGovUserData alloc] init];
+	return s_myGovUserData;
 }
 
 

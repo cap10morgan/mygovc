@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MGTwitterEngine.h"
 
+@class MyGovUserData;
 @class CommunityDataManager;
 @class BillsDataManager;
 @class CongressDataManager;
@@ -33,6 +34,8 @@
 
 + (myGovAppDelegate *)sharedAppDelegate;
 + (NSString *)sharedAppCacheDir;
+
++ (MyGovUserData *)sharedUserData;
 
 + (CommunityDataManager *)sharedCommunityData;
 + (BillsDataManager *)sharedBillsData;

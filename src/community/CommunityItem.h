@@ -11,34 +11,37 @@
 
 typedef enum
 {
-	eCommunity_Feedback = 0,
-	eCommunity_Event,
+	eCommunity_InvalidItem  = 0,
+	eCommunity_Feedback     = 1,
+	eCommunity_Event        = 2,
 } CommunityItemType;
-
 
 
 @interface CommunityComment : NSObject
 {
-	NSString *m_owner;
-	NSString *m_title;
-	NSString *m_text;
+	NSInteger  m_id;
+	NSInteger  m_owner;
+	NSString  *m_title;
+	NSString  *m_text;
 }
 
-@property (nonatomic,retain) NSString *m_owner;
-@property (nonatomic,retain) NSString *m_title;
-@property (nonatomic,retain) NSString *m_text;
+@property (nonatomic)        NSInteger m_id;
+@property (nonatomic)        NSInteger  m_owner;
+@property (nonatomic,retain) NSString  *m_title;
+@property (nonatomic,retain) NSString  *m_text;
 
 @end
 
 
 @interface CommunityItem : NSObject 
 {
+	NSInteger         m_id;
 	CommunityItemType m_type;
 	
 	UIImage   *m_image;
 	NSString  *m_title;
 	NSDate    *m_date;
-	NSString  *m_owner;
+	NSInteger  m_owner; // ID of MyGovUser object 
 	NSString  *m_summary;
 	NSString  *m_text;
 	
@@ -55,11 +58,12 @@ typedef enum
 	NSMutableArray *m_eventAttendees; // array of mygov users
 }
 
+@property (nonatomic)        NSInteger   m_id;
 @property (nonatomic) CommunityItemType  m_type;
 @property (nonatomic,retain) UIImage    *m_image;
 @property (nonatomic,retain) NSString   *m_title;
 @property (nonatomic,retain) NSDate     *m_date;
-@property (nonatomic,retain) NSString   *m_owner;
+@property (nonatomic)        NSInteger   m_owner;
 @property (nonatomic,retain) NSString   *m_summary;
 @property (nonatomic,retain) NSString   *m_text;
 
@@ -73,10 +77,11 @@ typedef enum
 @property (nonatomic,retain) NSDate     *m_eventDate;
 
 
-- (void)addComment:(NSString *)comment fromUser:(NSString *)mygovUser withTitle:(NSString *)title;
+- (void)addComment:(NSString *)comment fromUser:(NSInteger)mygovUser withTitle:(NSString *)title;
 - (void)addComment:(CommunityComment *)comment;
 - (NSArray *)comments;
 
+- (NSComparisonResult)compareItemByDate:(CommunityItem *)that;
 
 - (void)addEventAttendee:(NSString *)mygovUser;
 - (NSArray *)eventAttendees;

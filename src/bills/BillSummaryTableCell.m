@@ -268,7 +268,7 @@ static const CGFloat S_ROW_HEIGHT = 25.0f;
 	// Was there a vote?
 	// 
 	UILabel *voteView = (UILabel *)[self viewWithTag:eTAG_VOTESTATUS];
-	if ( eVote_novote == [[m_bill lastBillAction] m_voteResult] )
+	if ( nil == [m_bill voteString] )
 	{
 		voteView.text = @"";
 		[voteView setFrame:CGRectZero];
@@ -281,16 +281,14 @@ static const CGFloat S_ROW_HEIGHT = 25.0f;
 									 S_ROW_HEIGHT
 		);
 		[voteView setFrame:voteRect];
-		NSString *voteTxt;
+		NSString *voteTxt = [m_bill voteString];
 		UIColor *voteColor;
-		if ( eVote_passed == [[m_bill lastBillAction] m_voteResult] )
+		if ( [voteTxt isEqualToString:@"Passed"] )
 		{
-			voteTxt = @"Passed";
 			voteColor = [UIColor greenColor];
 		}
 		else
 		{
-			voteTxt = @"Failed";
 			voteColor = [UIColor darkGrayColor];
 		}
 		[voteView setText:voteTxt];

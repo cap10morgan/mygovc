@@ -8,13 +8,13 @@
 #import "CommunityItem.h"
 
 @implementation CommunityComment
-@synthesize m_owner, m_title, m_text;
+@synthesize m_id, m_owner, m_title, m_text;
 @end 
 
 
 @implementation CommunityItem
 
-@synthesize m_type;
+@synthesize m_id, m_type;
 @synthesize m_image, m_title, m_date;
 @synthesize m_owner, m_summary, m_text;
 @synthesize m_mygovURLTitle, m_mygovURL;
@@ -30,7 +30,7 @@
 		m_image = nil;
 		m_title = nil;
 		m_date = nil;
-		m_owner = nil;
+		m_owner = 0;
 		m_summary = nil;
 		m_text = nil;
 		m_mygovURLTitle = nil;
@@ -55,7 +55,7 @@
 }
 
 
-- (void)addComment:(NSString *)comment fromUser:(NSString *)mygovUser withTitle:(NSString *)title
+- (void)addComment:(NSString *)comment fromUser:(NSInteger)mygovUser withTitle:(NSString *)title
 {
 	if ( nil == m_userComments )
 	{
@@ -84,6 +84,12 @@
 - (NSArray *)comments
 {
 	return (NSArray *)m_userComments;
+}
+
+
+- (NSComparisonResult)compareItemByDate:(CommunityItem *)that
+{
+	return [m_date compare:[that m_date]];
 }
 
 

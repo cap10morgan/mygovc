@@ -458,6 +458,26 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 
 - (NSString *)voteString
 {
+	// We can have a bill that was marked as "PASSED" or "FAILED"
+	// and then have subsequent actions (such as moved from house to senate).
+	// Because of this, I run through all the bill actions and find the latest
+	// one with a valid voteResult...
+	NSEnumerator *actEnum = [m_history objectEnumerator];
+	id action;
+	while ( action = [actEnum nextObject] )
+	{
+		if ( eVote_passed == [action m_voteResult] )
+		{
+			return @"Passed";
+		}
+		else if ( eVote_failed == [action m_voteResult] )
+		{
+			return @"Failed";
+		}
+	}
+	return nil;
+	
+	/*
 	VoteResult v = [m_lastAction m_voteResult];
 	if ( eVote_passed == v )
 	{
@@ -471,6 +491,7 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 	{
 		return nil;
 	}
+	*/
 }
 
 

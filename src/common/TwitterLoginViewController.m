@@ -193,12 +193,12 @@
 	
 	if ( [self.view superview] )
 	{
-		[UIView setAnimationTransition:UIViewAnimationTransitionCurlDown forView:topView cache:NO];
+		[UIView setAnimationTransition:UIViewAnimationTransitionCurlUp forView:topView cache:NO];
 		[self.view removeFromSuperview];
 	}
 	else
 	{
-		[UIView setAnimationTransition:UIViewAnimationTransitionCurlUp forView:topView cache:NO];
+		[UIView setAnimationTransition:UIViewAnimationTransitionCurlDown forView:topView cache:NO];
 		[topView addSubview:self.view];
 	}
 	

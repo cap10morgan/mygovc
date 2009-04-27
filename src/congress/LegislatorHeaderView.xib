@@ -39,7 +39,7 @@
 					<object class="IBUIButton" id="116060101">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{258, 66}, {29, 29}}</string>
+						<string key="NSFrame">{{258, 69}, {29, 29}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
@@ -95,7 +95,7 @@
 					<object class="IBUILabel" id="839296209">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{118, 68}, {132, 21}}</string>
+						<string key="NSFrame">{{118, 72}, {132, 21}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -131,7 +131,7 @@
 					<object class="IBUILabel" id="130112261">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{118, 10}, {194, 30}}</string>
+						<string key="NSFrame">{{118, 10}, {194, 28}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -156,12 +156,12 @@
 						</object>
 						<string key="IBUIShadowOffset">{-1, -1}</string>
 						<int key="IBUIBaselineAdjustment">1</int>
-						<float key="IBUIMinimumFontSize">1.000000e+01</float>
+						<float key="IBUIMinimumFontSize">1.100000e+01</float>
 					</object>
 					<object class="IBUILabel" id="867394369">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{118, 38}, {182, 22}}</string>
+						<string key="NSFrame">{{118, 46}, {182, 18}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -262,12 +262,12 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="483584048"/>
-							<reference ref="116060101"/>
-							<reference ref="839296209"/>
 							<reference ref="1024331275"/>
 							<reference ref="41780085"/>
-							<reference ref="867394369"/>
 							<reference ref="130112261"/>
+							<reference ref="867394369"/>
+							<reference ref="839296209"/>
+							<reference ref="116060101"/>
 						</object>
 						<reference key="parent" ref="360949347"/>
 					</object>

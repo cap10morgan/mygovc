@@ -57,6 +57,7 @@ static const NSInteger s_maxBillPages = 3;
 		isBusy = NO;
 		
 		m_currentStatusMessage = [[NSMutableString alloc] init];
+		[m_currentStatusMessage setString:@"Waiting for congress data..."];
 		
 		m_notifyTarget = nil;
 		m_notifySelector = nil;
@@ -650,6 +651,8 @@ static const NSInteger s_maxBillPages = 3;
 		[timer invalidate];
 		m_timer = nil;
 		
+		[self setStatus:@"Loading bill data..."];
+		
 		m_billDownloadPage = 1;
 		[self beginBillSummaryDownload];
 	}
@@ -661,7 +664,7 @@ static const NSInteger s_maxBillPages = 3;
 
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
-	[self setStatus:[NSString stringWithFormat:@"Downloading Bill Data (%d)...",(m_billDownloadPage-1)]];
+	[self setStatus:[NSString stringWithFormat:@"Downloading Bill Data (%d/%d)...",(m_billDownloadPage-1),s_maxBillPages-1]];
 	NSLog( @"BillsDataManager started XML download for page %0d...", m_billDownloadPage-1 );
 }
 
