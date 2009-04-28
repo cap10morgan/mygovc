@@ -112,6 +112,40 @@
 			<key>Type</key>
 			<string>PSMultiValueSpecifier</string>
 			<key>Key</key>
+			<string>mygov_community_data_age</string>
+			<key>Title</key>
+			<string>CommunityData Max Age</string>
+			<key>DefaultValue</key>
+			<string>Two Days</string>
+			<key>Titles</key>
+			<array>
+				<string>One Day</string>
+				<string>Two Days</string>
+				<string>Three Days</string>
+				<string>Four Days</string>
+				<string>Five Days</string>
+				<string>Six Days</string>
+				<string>One Week</string>
+				<string>One Month</string>
+				<string>Forever</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<integer>86400</integer>
+				<integer>172800</integer>
+				<integer>259200</integer>
+				<integer>345600</integer>
+				<integer>432000</integer>
+				<integer>518400</integer>
+				<integer>604800</integer>
+				<integer>2592000</integer>
+				<integer>0</integer>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Key</key>
 			<string>mygov_autoreload_bills</string>
 			<key>Title</key>
 			<string>Reload Bill Data</string>

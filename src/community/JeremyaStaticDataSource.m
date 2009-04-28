@@ -5,7 +5,7 @@
 //  Created by Jeremy C. Andrus on 4/27/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
-
+#import <CoreLocation/CoreLocation.h>
 #import "JeremyaStaticDataSource.h"
 
 
@@ -16,14 +16,16 @@
 - (BOOL)validateUsername:(NSString *)username 
 			 andPassword:(NSString *)password
 {
-	return FALSE;
+	// all users are valid :-)
+	return TRUE;
 }
 
 
 - (BOOL)addNewUser:(MyGovUser *)newUser
 	  withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
-	return FALSE;
+	// oh, that was successful alright!
+	return TRUE;
 }
 
 
@@ -31,7 +33,59 @@
 			   notOlderThan:(NSDate *)startDate 
 			   withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
-	return FALSE;
+	// create two artificial community items: 1 feedback, 1 event
+	
+	[NSThread sleepForTimeInterval:2.0f];
+	
+	// feedback item
+	if ( eCommunity_Feedback == type )
+	{
+		CommunityItem *ci = [[CommunityItem alloc] init];
+		ci.m_id = @"abcdefg";
+		ci.m_date = [NSDate date];
+		ci.m_type = eCommunity_Feedback;
+		ci.m_title = @"He Twittered That?!";
+		ci.m_summary = @"On Tuesday Rep. Pete Hoekstra leaked national security information...";
+		ci.m_text = @"On Tuesday Rep. Pete Hoekstra leaked national security information via Twitter. He let the entire world know where he was and what he was doing in Iraq - when the mission was supposed to be secret!";
+		ci.m_creator = 0; // system user...
+		ci.m_mygovURL = [NSURL URLWithString:@"mygov://congress/H000676"];
+		ci.m_mygovURLTitle = @"Rep. Pete Hoekstra";
+		ci.m_webURL = [NSURL URLWithString:@"http://thinkprogress.org/2009/02/07/hoekstra-twitters-iraq/"];
+		ci.m_webURLTitle = @"Hoekstra Leaks Information...";
+		ci.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"hoekstra.png"]];
+		
+		[delegateOrNil communityDataSource:self newCommunityItemArrived:ci];
+		[ci release];
+		
+		[NSThread sleepForTimeInterval:2.0f];
+	}
+	
+	// event item
+	if ( eCommunity_Event == type )
+	{
+		CommunityItem *ci = [[CommunityItem alloc] init];
+		ci.m_id = @"gfedcba";
+		ci.m_date = [NSDate date];
+		ci.m_type = eCommunity_Event;
+		ci.m_title = @"Jeremy's Healthcare Mixer";
+		ci.m_summary = @"A community info session on healthcare";
+		ci.m_text = @"A community info session on healthcare";
+		ci.m_creator = 0; // system user...
+		ci.m_mygovURL = nil;
+		ci.m_mygovURLTitle = nil;
+		ci.m_webURL = nil;
+		ci.m_webURLTitle =nil;
+		ci.m_eventLocation = [[CLLocation alloc] initWithLatitude:42.827403 longitude:-86.056015];
+		ci.m_eventDate = [NSDate dateWithTimeIntervalSinceNow:(60*60*24*7)];
+		ci.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"healthcare.png"]];
+		
+		[delegateOrNil communityDataSource:self newCommunityItemArrived:ci];
+		[ci release];
+		
+		[NSThread sleepForTimeInterval:2.0f];
+	}
+	
+	return TRUE;
 }
 
 

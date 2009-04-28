@@ -22,6 +22,7 @@
 enum
 {
 	eTAG_DETAIL     = 999,
+	eTAG_TITLE      = 998,
 };
 
 static const CGFloat S_CELL_HOFFSET = 7.0f;
@@ -61,6 +62,16 @@ static const CGFloat S_PLACE_TEXT_WIDTH = 120.0f;
 		UIButton *detail = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
 		[detail setTag:eTAG_DETAIL];
 		[self addSubview:detail];
+		
+		UILabel *titleView = [[UILabel alloc] initWithFrame:CGRectZero];
+		titleView.backgroundColor = [UIColor clearColor];
+		titleView.textColor = [UIColor blackColor];
+		titleView.font = [UIFont boldSystemFontOfSize:18.0f];
+		titleView.textAlignment = UITextAlignmentLeft;
+		titleView.adjustsFontSizeToFitWidth = YES;
+		[titleView setTag:eTAG_TITLE];
+		[self addSubview:titleView];
+		[titleView release];
 		
 	}
 	return self;
@@ -111,6 +122,22 @@ static const CGFloat S_PLACE_TEXT_WIDTH = 120.0f;
 
 - (void)updateLayout
 {
+	// 
+	// Do something dumb for now... 
+	// 
+	
+	UIButton *detailButton = (UIButton *)[self viewWithTag:eTAG_DETAIL];
+	CGRect detailRect = CGRectMake( 320.0f - CGRectGetWidth(detailButton.frame),
+								   0.0f + (40.0f - CGRectGetHeight(detailButton.frame))/2.0f,
+								   CGRectGetWidth(detailButton.frame),
+								   CGRectGetHeight(detailButton.frame) );
+	[detailButton setFrame:detailRect];
+	
+	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
+	[titleView setFrame:CGRectMake(7.0f, 7.0f, 280.0f, 30.0f)];
+	titleView.text = m_item.m_title;
+	
+	//[self setImage:m_item.m_image];
 }
 
 

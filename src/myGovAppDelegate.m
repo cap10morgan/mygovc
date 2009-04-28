@@ -123,23 +123,26 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 
 - (id)init 
 {
-	if ( !s_myGovApp )
+	if ( self = [super init] )
 	{
-		s_myGovApp = [super init];
+		if ( !s_myGovApp )
+		{
+			s_myGovApp = self;
+		}
+		
+		// this needs to be initialized before the congress data!
+		m_operationQueue = [[NSOperationQueue alloc] init];
+		[m_operationQueue setMaxConcurrentOperationCount:10];
+		
+		m_urlHandler = [[NSMutableDictionary alloc] initWithCapacity:8];
+		
+		if ( !s_myCongressData )
+		{
+			NSLog( @"Initializing Congress Data..." );
+			s_myCongressData = [[CongressDataManager alloc] initWithNotifyTarget:nil andSelector:nil];
+		}
 	}
-	
-	// this needs to be initialized before the congress data!
-	m_operationQueue = [[NSOperationQueue alloc] init];
-	
-	m_urlHandler = [[NSMutableDictionary alloc] initWithCapacity:8];
-	
-	if ( !s_myCongressData )
-	{
-		NSLog( @"Initializing Congress Data..." );
-		s_myCongressData = [[CongressDataManager alloc] initWithNotifyTarget:nil andSelector:nil];
-	}
-	
-	return s_myGovApp;
+	return self;
 }
 
 
@@ -172,6 +175,12 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 	}
 	
 	[[myGovAppDelegate sharedBillsData] loadData];
+	
+	// purge old community data
+	[[myGovAppDelegate sharedCommunityData] purgeOldItemsFromCache:YES];
+	
+	// start new community data download!
+	[[myGovAppDelegate sharedCommunityData] loadData];
 	
 	// run through all of the view controllers managed by the tab bar
 	// and setup our dictionary of view controllers which can handle URLs

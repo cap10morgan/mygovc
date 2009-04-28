@@ -38,13 +38,15 @@
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;
 
+- (void)setDataSource:(id<CommunityDataSourceProtocol>)source;
+
 - (NSString *)currentStatusMessage;
 
 // starts a possible data cache load, plus new data download
 - (void)loadData;
 
 // drop items from cache which are too old (defined in a user preference)
-- (void)purgeOldItemsFromCache;
+- (void)purgeOldItemsFromCache:(BOOL)blocking;
 
 // Table data methods
 - (NSInteger)numberOfSectionsForType:(CommunityItemType)type;

@@ -15,6 +15,7 @@
 
 
 @interface CommunityViewController (private)
+	- (void)dataManagerCallback:(NSString *)msg;
 	- (void)communityItemTypeSwitch:(id)sender;
 	- (void)reloadCommunityItems;
 	- (void) deselectRow:(id)sender;
@@ -42,22 +43,12 @@
 - (void)viewDidLoad 
 {
 	m_data = [[myGovAppDelegate sharedCommunityData] retain];
+	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
-	/*
-	if ( ![m_data isDataAvailable] )
-	{
-		if ( ![m_data isBusy] )
-		{
-			[m_HUD setText:@"Waiting for data..." andIndicateProgress:YES];
-		}
-		else
-		{
-			[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
-		}
-	}
-	*/
+	[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
+	
 	
 	// create a search bar which will be used as our table's header view
 	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 50.0f)];
@@ -112,6 +103,12 @@
 	[super viewWillAppear:animated];
 	
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	if ( ![m_data isDataAvailable] && ![m_data isBusy] )
+	{
+		[m_data loadData];
+		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
+		[m_HUD show:YES];
+	}
 	
 	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 }
@@ -123,14 +120,12 @@
 	
 	if ( ![m_data isDataAvailable] )
 	{
-		/*
 		if ( ![m_data isBusy] )
 		{
 			[m_data loadData];
 		}
 		[m_HUD show:YES];
 		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
-		*/
 	}
 	else
 	{
@@ -163,6 +158,7 @@
 
 - (void)showCommunityDetail:(id)sender
 {
+	// XXX - do this!
 }
 
 
@@ -184,6 +180,38 @@
 
 
 #pragma mark CommunityViewController Private
+
+
+- (void)dataManagerCallback:(NSString *)msg
+{
+	NSRange msgTypeRange = {0, 5};
+	if ( NSOrderedSame == [msg compare:@"ERR: " options:NSCaseInsensitiveSearch range:msgTypeRange] )
+	{
+		// pop up an alert dialog to let the user know that an error has occurred!
+		UIAlertView *alert = [[UIAlertView alloc] 
+										initWithTitle:@"Community Data Error"
+											  message:[msg substringFromIndex:msgTypeRange.length-1]
+											 delegate:self
+									cancelButtonTitle:nil
+									otherButtonTitles:@"OK",nil];
+		[alert show];
+	}
+	else if ( [m_data isDataAvailable] )
+	{
+		[m_HUD show:NO];
+		[self.tableView setUserInteractionEnabled:YES];
+		[self.tableView reloadData];
+	}
+	else
+	{
+		// display the status text
+		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
+		[m_HUD show:YES];
+		[self.tableView setUserInteractionEnabled:NO];
+	}
+	
+	[self.tableView setNeedsDisplay];
+}
 
 
 - (void)communityItemTypeSwitch:(id)sender
@@ -208,8 +236,11 @@
 	if ( [m_data isDataAvailable] ) 
 	{
 		[self.tableView reloadData];
-		NSUInteger idx[2] = {0,0};
-		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		if ( [m_data numberOfRowsInSection:0 forType:m_selectedItemType] > 0 ) 
+		{
+			NSUInteger idx[2] = {0,0};
+			[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		}
 		self.tableView.userInteractionEnabled = YES;
 	}
 }
@@ -226,6 +257,15 @@
 	// de-select the currently selected row
 	// (so the user can go back to the same row)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+}
+
+
+#pragma mark UIAlertViewDelegate Methods
+
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+	// Do something here?!
 }
 
 
@@ -255,7 +295,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
-	return 1;
+	return [m_data numberOfSectionsForType:m_selectedItemType];
 }
 
 
@@ -263,7 +303,13 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
 	//NSLog(@"Number of rows in community table view: %d", [displayList count]);
-	return 1;
+	return [m_data numberOfRowsInSection:section forType:m_selectedItemType];
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	return [m_data heightForDataAtIndexPath:indexPath forType:m_selectedItemType];
 }
 
 
@@ -280,9 +326,8 @@
 	}	
 	
 	// Set up the cell...
-	/*
-	[cell setCommunityItem:[m_data itemAtIndex:indexPath.row forType:m_selectedItemType]];
-	*/
+	[cell setCommunityItem:[m_data itemForIndexPath:indexPath andType:m_selectedItemType]];
+	
 	return cell;
 }
 
@@ -303,7 +348,7 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath 
 {
 	// Return NO if you do not want the specified item to be editable.
-	return YES;
+	return NO;
 }
 
 

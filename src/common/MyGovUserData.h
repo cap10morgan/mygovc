@@ -31,6 +31,11 @@
 @property (nonatomic,retain) NSString *m_lastname;
 @property (nonatomic,retain) UIImage  *m_avatar;
 
++ (MyGovUser *)systemUser;
+
+- (id)initWithPlistDict:(NSDictionary *)plistDict;
+- (NSDictionary *)writeToPlistDict;
+
 @end
 
 

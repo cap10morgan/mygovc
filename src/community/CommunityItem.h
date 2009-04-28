@@ -19,31 +19,34 @@ typedef enum
 
 @interface CommunityComment : NSObject
 {
-	NSInteger  m_id;
-	NSInteger  m_owner;
-	NSInteger  m_communityItemID;
+	NSString  *m_id;
+	NSInteger  m_creator;
+	NSString  *m_communityItemID;
 	NSString  *m_title;
 	NSString  *m_text;
 }
 
-@property (nonatomic)        NSInteger  m_id;
-@property (nonatomic)        NSInteger  m_owner;
-@property (nonatomic)        NSInteger  m_communityItemID;
+@property (nonatomic,retain) NSString  *m_id;
+@property (nonatomic)        NSInteger  m_creator;
+@property (nonatomic,retain) NSString  *m_communityItemID;
 @property (nonatomic,retain) NSString  *m_title;
 @property (nonatomic,retain) NSString  *m_text;
+
+- (id)initWithPlistDict:(NSDictionary *)plistDict;
+- (NSDictionary *)writeToPlistDict;
 
 @end
 
 
 @interface CommunityItem : NSObject 
 {
-	NSInteger         m_id;
+	NSString         *m_id;
 	CommunityItemType m_type;
 	
 	UIImage   *m_image;
 	NSString  *m_title;
 	NSDate    *m_date;
-	NSInteger  m_owner; // ID of MyGovUser object 
+	NSInteger  m_creator; // ID of MyGovUser object 
 	NSString  *m_summary;
 	NSString  *m_text;
 	
@@ -60,12 +63,12 @@ typedef enum
 	NSMutableArray *m_eventAttendees; // array of mygov users
 }
 
-@property (nonatomic)        NSInteger   m_id;
+@property (nonatomic,retain) NSString   *m_id;
 @property (nonatomic) CommunityItemType  m_type;
 @property (nonatomic,retain) UIImage    *m_image;
 @property (nonatomic,retain) NSString   *m_title;
 @property (nonatomic,retain) NSDate     *m_date;
-@property (nonatomic)        NSInteger   m_owner;
+@property (nonatomic)        NSInteger   m_creator;
 @property (nonatomic,retain) NSString   *m_summary;
 @property (nonatomic,retain) NSString   *m_text;
 
@@ -79,7 +82,10 @@ typedef enum
 @property (nonatomic,retain) NSDate     *m_eventDate;
 
 - (id)initFromFile:(NSString *)fullPath;
+- (id)initFromURL:(NSURL *)url;
+
 - (void)writeItemToFile:(NSString *)fullPath;
+- (NSDictionary *)writeItemToPlistDictionary;
 
 - (void)addComment:(NSString *)comment fromUser:(NSInteger)mygovUser withTitle:(NSString *)title;
 - (void)addComment:(CommunityComment *)comment;
@@ -87,7 +93,7 @@ typedef enum
 
 - (NSComparisonResult)compareItemByDate:(CommunityItem *)that;
 
-- (void)addEventAttendee:(NSString *)mygovUser;
+- (void)addEventAttendee:(NSInteger)mygovUser;
 - (NSArray *)eventAttendees;
 
 
