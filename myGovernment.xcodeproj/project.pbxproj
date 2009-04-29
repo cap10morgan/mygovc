@@ -12,7 +12,6 @@
 		0126775E0F7F25CA00CF9C46 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */; };
 		012D5AD20FA6C098006DA53F /* system_avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 012D5AD10FA6C098006DA53F /* system_avatar.png */; };
 		012D5AEE0FA6CC5D006DA53F /* hoekstra.png in Resources */ = {isa = PBXBuildFile; fileRef = 012D5AED0FA6CC5D006DA53F /* hoekstra.png */; };
-		012D5AF00FA6CED1006DA53F /* healthcare.png in Resources */ = {isa = PBXBuildFile; fileRef = 012D5AEF0FA6CED1006DA53F /* healthcare.png */; };
 		0178E3AF0F944AFF00B96BD1 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0178E3AE0F944AFF00B96BD1 /* Settings.bundle */; };
 		017C22500F721824008CA4ED /* billsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224D0F721824008CA4ED /* billsIcon.png */; };
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
@@ -97,7 +96,6 @@
 		0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		012D5AD10FA6C098006DA53F /* system_avatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = system_avatar.png; path = res/system_avatar.png; sourceTree = "<group>"; };
 		012D5AED0FA6CC5D006DA53F /* hoekstra.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = hoekstra.png; path = res/hoekstra.png; sourceTree = "<group>"; };
-		012D5AEF0FA6CED1006DA53F /* healthcare.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = healthcare.png; path = res/healthcare.png; sourceTree = "<group>"; };
 		0178E3AE0F944AFF00B96BD1 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		017C224D0F721824008CA4ED /* billsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = billsIcon.png; path = res/billsIcon.png; sourceTree = "<group>"; };
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
@@ -470,7 +468,6 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				012D5AEF0FA6CED1006DA53F /* healthcare.png */,
 				012D5AED0FA6CC5D006DA53F /* hoekstra.png */,
 				012D5AD10FA6C098006DA53F /* system_avatar.png */,
 				01E4C5820FA0278700E69CC8 /* twitter_logo_header.png */,
@@ -567,7 +564,6 @@
 				01D7FEC00FA5023B00F78B92 /* LegislatorHeaderView.xib in Resources */,
 				012D5AD20FA6C098006DA53F /* system_avatar.png in Resources */,
 				012D5AEE0FA6CC5D006DA53F /* hoekstra.png in Resources */,
-				012D5AF00FA6CED1006DA53F /* healthcare.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
