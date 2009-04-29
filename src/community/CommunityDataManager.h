@@ -40,6 +40,8 @@
 
 - (void)setDataSource:(id<CommunityDataSourceProtocol>)source;
 
+- (id<CommunityDataSourceProtocol>)dataSource;
+
 - (NSString *)currentStatusMessage;
 
 // starts a possible data cache load, plus new data download

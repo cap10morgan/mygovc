@@ -12,7 +12,7 @@
 @class ProgressOverlayViewController;
 
 
-@interface CommunityViewController : UITableViewController <UIAlertViewDelegate, UISearchBarDelegate>
+@interface CommunityViewController : UITableViewController <UIAlertViewDelegate, UIActionSheetDelegate, UISearchBarDelegate>
 {
 @private
 	CommunityDataManager *m_data;

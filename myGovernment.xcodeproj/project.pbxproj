@@ -17,6 +17,12 @@
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
 		017C22520F721824008CA4ED /* spendingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224F0F721824008CA4ED /* spendingIcon.png */; };
 		017C22550F721E60008CA4ED /* communityIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C22540F721E60008CA4ED /* communityIcon.png */; };
+		01ACAEF50FA80DA100B6FF59 /* communityEventIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */; };
+		01ACAEF60FA80DA100B6FF59 /* personIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01ACAEF40FA80DA100B6FF59 /* personIcon.png */; };
+		01ACAF370FA8119C00B6FF59 /* CommunityDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACAF360FA8119C00B6FF59 /* CommunityDetailViewController.m */; };
+		01ACAF3A0FA811B800B6FF59 /* CommunityDetailData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACAF390FA811B800B6FF59 /* CommunityDetailData.m */; };
+		01ACB0670FA8434900B6FF59 /* CDetailHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01ACB0640FA8434900B6FF59 /* CDetailHeaderView.xib */; };
+		01ACB0680FA8434900B6FF59 /* CDetailHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACB0660FA8434900B6FF59 /* CDetailHeaderViewController.m */; };
 		01B119440F70BD560076AFE0 /* location_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B119420F70BD560076AFE0 /* location_overlay.png */; };
 		01B119450F70BD560076AFE0 /* USStates.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01B119430F70BD560076AFE0 /* USStates.plist */; };
 		01B6C79D0FA56FE5000CEF90 /* JeremyaStaticDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */; };
@@ -101,6 +107,15 @@
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
 		017C224F0F721824008CA4ED /* spendingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spendingIcon.png; path = res/spendingIcon.png; sourceTree = "<group>"; };
 		017C22540F721E60008CA4ED /* communityIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityIcon.png; path = res/communityIcon.png; sourceTree = "<group>"; };
+		01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityEventIcon.png; path = res/communityEventIcon.png; sourceTree = "<group>"; };
+		01ACAEF40FA80DA100B6FF59 /* personIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = personIcon.png; path = res/personIcon.png; sourceTree = "<group>"; };
+		01ACAF350FA8119C00B6FF59 /* CommunityDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDetailViewController.h; sourceTree = "<group>"; };
+		01ACAF360FA8119C00B6FF59 /* CommunityDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityDetailViewController.m; sourceTree = "<group>"; };
+		01ACAF380FA811B800B6FF59 /* CommunityDetailData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDetailData.h; sourceTree = "<group>"; };
+		01ACAF390FA811B800B6FF59 /* CommunityDetailData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityDetailData.m; sourceTree = "<group>"; };
+		01ACB0640FA8434900B6FF59 /* CDetailHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CDetailHeaderView.xib; sourceTree = "<group>"; };
+		01ACB0650FA8434900B6FF59 /* CDetailHeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDetailHeaderViewController.h; sourceTree = "<group>"; };
+		01ACB0660FA8434900B6FF59 /* CDetailHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDetailHeaderViewController.m; sourceTree = "<group>"; };
 		01B119420F70BD560076AFE0 /* location_overlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = location_overlay.png; path = res/location_overlay.png; sourceTree = "<group>"; };
 		01B119430F70BD560076AFE0 /* USStates.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = USStates.plist; path = res/USStates.plist; sourceTree = "<group>"; };
 		01B6C7820FA548A5000CEF90 /* CommunityDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDataSource.h; sourceTree = "<group>"; };
@@ -294,6 +309,9 @@
 		0102D2DB0F58DB72005AE0EA /* community */ = {
 			isa = PBXGroup;
 			children = (
+				01ACB0640FA8434900B6FF59 /* CDetailHeaderView.xib */,
+				01ACB0650FA8434900B6FF59 /* CDetailHeaderViewController.h */,
+				01ACB0660FA8434900B6FF59 /* CDetailHeaderViewController.m */,
 				04B603100F59BE3000815A86 /* CommunityViewController.h */,
 				04B603110F59BE3000815A86 /* CommunityViewController.m */,
 				01D7FE450FA4F62100F78B92 /* CommunityDataManager.h */,
@@ -302,6 +320,10 @@
 				0461A0590F5A471400BE17FF /* CommunityItem.m */,
 				01D7FF140FA5080D00F78B92 /* CommunityItemTableCell.h */,
 				01D7FF150FA5080D00F78B92 /* CommunityItemTableCell.m */,
+				01ACAF350FA8119C00B6FF59 /* CommunityDetailViewController.h */,
+				01ACAF360FA8119C00B6FF59 /* CommunityDetailViewController.m */,
+				01ACAF380FA811B800B6FF59 /* CommunityDetailData.h */,
+				01ACAF390FA811B800B6FF59 /* CommunityDetailData.m */,
 				01B6C7820FA548A5000CEF90 /* CommunityDataSource.h */,
 				01B6C79B0FA56FE5000CEF90 /* JeremyaStaticDataSource.h */,
 				01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */,
@@ -468,6 +490,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */,
+				01ACAEF40FA80DA100B6FF59 /* personIcon.png */,
 				012D5AED0FA6CC5D006DA53F /* hoekstra.png */,
 				012D5AD10FA6C098006DA53F /* system_avatar.png */,
 				01E4C5820FA0278700E69CC8 /* twitter_logo_header.png */,
@@ -564,6 +588,9 @@
 				01D7FEC00FA5023B00F78B92 /* LegislatorHeaderView.xib in Resources */,
 				012D5AD20FA6C098006DA53F /* system_avatar.png in Resources */,
 				012D5AEE0FA6CC5D006DA53F /* hoekstra.png in Resources */,
+				01ACAEF50FA80DA100B6FF59 /* communityEventIcon.png in Resources */,
+				01ACAEF60FA80DA100B6FF59 /* personIcon.png in Resources */,
+				01ACB0670FA8434900B6FF59 /* CDetailHeaderView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -627,6 +654,9 @@
 				01B6C79D0FA56FE5000CEF90 /* JeremyaStaticDataSource.m in Sources */,
 				01B6C7B90FA57319000CEF90 /* MyGovUserData.m in Sources */,
 				01B7D87A0FA5E5DF00CFF880 /* GoogleAppsDataSource.m in Sources */,
+				01ACAF370FA8119C00B6FF59 /* CommunityDetailViewController.m in Sources */,
+				01ACAF3A0FA811B800B6FF59 /* CommunityDetailData.m in Sources */,
+				01ACB0680FA8434900B6FF59 /* CDetailHeaderViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

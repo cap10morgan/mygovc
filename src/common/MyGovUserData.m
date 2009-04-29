@@ -41,6 +41,7 @@ static NSString *kMGUKey_Avatar = @"avatar";
 		s_systemUser.m_lastUpdated = [NSDate date];
 		s_systemUser.m_firstname = @"My";
 		s_systemUser.m_lastname = @"Government";
+		s_systemUser.m_username = @"theSystem";
 		s_systemUser.m_avatar = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"system_avatar.png"]];
 	}
 	return s_systemUser;

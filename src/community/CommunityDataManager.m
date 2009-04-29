@@ -114,6 +114,12 @@
 }
 
 
+- (id<CommunityDataSourceProtocol>)dataSource
+{
+	return m_dataSource;
+}
+
+
 - (NSString *)currentStatusMessage
 {
 	return (NSString *)m_currentStatusMessage;

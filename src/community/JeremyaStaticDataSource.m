@@ -54,6 +54,17 @@
 		ci.m_webURLTitle = @"Hoekstra Leaks Information...";
 		ci.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"hoekstra.png"]];
 		
+		for ( int ii = 0; ii < 4; ++ii )
+		{
+			CommunityComment *cc = [[CommunityComment alloc] init];
+			cc.m_id = [NSString stringWithFormat:@"cmt%0d",ii];
+			cc.m_creator = 0;
+			cc.m_title = [NSString stringWithFormat:@"Test comment %0d",ii];
+			cc.m_text = @"This is the comment text right here. The place where someone would write some witty, sacastic or biting remark about the item :-)";
+			cc.m_communityItemID = @"abcdefg";
+			[ci addComment:cc];
+		}
+		
 		[delegateOrNil communityDataSource:self newCommunityItemArrived:ci];
 		[ci release];
 		
@@ -77,7 +88,7 @@
 		ci.m_webURLTitle =nil;
 		ci.m_eventLocation = [[CLLocation alloc] initWithLatitude:42.827403 longitude:-86.056015];
 		ci.m_eventDate = [NSDate dateWithTimeIntervalSinceNow:(60*60*24*7)];
-		ci.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"healthcare.png"]];
+		ci.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"communityEventIcon.png"]];
 		
 		[delegateOrNil communityDataSource:self newCommunityItemArrived:ci];
 		[ci release];

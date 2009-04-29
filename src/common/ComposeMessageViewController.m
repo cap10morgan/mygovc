@@ -7,6 +7,9 @@
 //
 
 #import "myGovAppDelegate.h"
+#import "CommunityDataManager.h"
+#import "CommunityDataSource.h"
+#import "CommunityItem.h"
 #import "ComposeMessageViewController.h"
 #import "MGTwitterEngine.h"
 #import "ProgressOverlayViewController.h"
@@ -16,6 +19,27 @@
 @implementation MessageData
 
 @synthesize m_transport, m_to, m_subject, m_body;
+@synthesize m_appURL, m_appURLTitle, m_webURL, m_webURLTitle;
+@synthesize m_communityThreadID;
+@synthesize m_image;
+
+- (id)init
+{
+	if ( self = [super init] )
+	{
+		m_transport = eMT_Invalid;
+		m_to = nil;
+		m_subject = nil;
+		m_body = nil;
+		m_appURL = nil;
+		m_appURLTitle = nil;
+		m_webURL = nil;
+		m_webURLTitle = nil;
+		m_communityThreadID = nil;
+		m_image = nil;
+	}
+	return self;
+}
 
 @end
 
@@ -25,12 +49,14 @@
 	- (id)opSendEmail;
 	- (id)opSendTweet;
 	- (id)opSendMyGovComment;
+	- (void)sendCommunityItemViaDataSource:(CommunityItem *)item;
 @end
 
 
 @implementation ComposeMessageViewController
 
-@synthesize m_titleButton, m_fieldTo, m_labelSubject, m_fieldSubject, m_fieldMessage;
+@synthesize m_titleButton, m_fieldTo, m_labelSubject, m_fieldSubject;
+@synthesize m_fieldMessage, m_infoButton;
 
 
 static ComposeMessageViewController *s_composer = NULL;
@@ -128,12 +154,14 @@ static ComposeMessageViewController *s_composer = NULL;
 			titleTxt = @"Comment";
 			[m_fieldSubject setHidden:NO];
 			[m_labelSubject setHidden:NO];
+			[m_infoButton setHidden:NO];
 			break;
 		
 		case eMT_Twitter:
 			titleTxt = @"Tweet";
 			[m_fieldSubject setHidden:YES];
 			[m_labelSubject setHidden:YES];
+			[m_infoButton setHidden:YES];
 			break;
 			
 		case eMT_Email:
@@ -212,6 +240,13 @@ static ComposeMessageViewController *s_composer = NULL;
 	}
 	
 	if ( nil != success ) [m_parentCtrl dismissModalViewControllerAnimated:YES];
+}
+
+
+- (IBAction)infoButtonPressed:(id)sender
+{
+	// XXX - animate a nice view controller which handles all the other
+	// XXX - message data so that the user can have control over it
 }
 
 
@@ -306,9 +341,52 @@ static ComposeMessageViewController *s_composer = NULL;
 
 - (id)opSendMyGovComment
 {
-	// XXX - fill me in!!
-	[NSThread sleepForTimeInterval:5.0f];
-	return self;
+	NSInteger userID = 0;
+	NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_username"];
+	NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_password"];
+	
+	if ( [username length] < 1 || [password length] < 1 )
+	{
+		// XXX - the user should be logged in - take care of that right here!
+		// XXX - get the userID!
+	}
+	
+	// create a new community item
+	CommunityItem * item = [[[CommunityItem alloc] init] autorelease];
+	
+	[item generateUniqueItemID];
+	
+	item.m_type = eCommunity_Feedback;
+	item.m_creator = userID;
+	item.m_title = m_fieldSubject.text;
+	item.m_text = m_fieldMessage.text;
+	if ( [item.m_text length] > 200 )
+	{
+		item.m_summary = [NSString stringWithFormat:@"%@...",[item.m_text substringToIndex:200]];
+	}
+	else
+	{
+		item.m_summary = item.m_text;
+	}
+	
+	item.m_date = [NSDate date];
+	item.m_mygovURL = m_message.m_appURL;
+	item.m_mygovURLTitle = m_message.m_appURLTitle;
+	item.m_webURL = m_message.m_webURL;
+	item.m_webURLTitle = m_message.m_webURLTitle;
+	
+	// data is available - read disk data into memory (via a worker thread)
+	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																		selector:@selector(sendCommunityItemViaDataSource:) 
+																		  object:item];
+	
+	// Add the operation to the internal operation queue managed by the application delegate.
+	[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+	
+	[theOp release];
+	
+	// don't return from the modal dialog until things settle down a bt
+	return nil;
 }
 
 
@@ -333,6 +411,26 @@ static ComposeMessageViewController *s_composer = NULL;
 	}
 	
 	[self dismissModalViewControllerAnimated:YES];
+}
+
+
+// This runs in an NSOperation worker thread
+- (void)sendCommunityItemViaDataSource:(CommunityItem *)item
+{
+	id<CommunityDataSourceProtocol> dataSource = [[myGovAppDelegate sharedCommunityData] dataSource];
+	
+	// this is the blocking call to the network submission...
+	BOOL success = [dataSource submitCommunityItem:item withDelegate:nil];
+	
+	if ( success )
+	{
+		[self dismissModalViewControllerAnimated:YES];
+	}
+	else
+	{
+		// XXX - ask the use what to do - couldn't send a message!
+		[self dismissModalViewControllerAnimated:YES];
+	}
 }
 
 

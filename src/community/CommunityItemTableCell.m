@@ -31,7 +31,7 @@ enum
 static const CGFloat S_CELL_HOFFSET = 7.0f;
 static const CGFloat S_CELL_VOFFSET = 5.0f;
 static const CGFloat S_TITLE_HEIGHT = 20.0f;
-static const CGFloat S_TITLE_MAX_WIDTH = 140.0f;
+static const CGFloat S_TITLE_MAX_WIDTH = 160.0f;
 static const CGFloat S_MAX_IMG_WIDTH = 64.0f;
 
 static const CGFloat S_MIN_HEIGHT = 64.0f;
@@ -191,6 +191,19 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	
 	// image view: aligned left, middle of the cell
 	UIImageView *imgView = (UIImageView *)[self viewWithTag:eTAG_IMAGE];
+	if ( nil == m_item.m_image || m_item.m_image.size.height <= 1 || m_item.m_image.size.width <= 1 )
+	{
+		// use the system icon
+		if ( eCommunity_Feedback == m_item.m_type )
+		{
+			m_item.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"personIcon.png"]];
+		}
+		else if ( eCommunity_Event == m_item.m_type )
+		{
+			m_item.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"communityEventIcon.png"]];
+		}
+	}
+	
 	imgView.image = m_item.m_image;
 	CGFloat imgHeight = ((m_item.m_image.size.height < cellHeight) ? m_item.m_image.size.height : cellHeight);
 	CGFloat imgWidth = ((m_item.m_image.size.width < S_MAX_IMG_WIDTH) ? m_item.m_image.size.width : S_MAX_IMG_WIDTH);

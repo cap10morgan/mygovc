@@ -230,6 +230,19 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 }
 
 
+- (void)generateUniqueItemID
+{
+	CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
+	CFStringRef uuidStr = CFUUIDCreateString( kCFAllocatorDefault, uuid );
+	
+	// set our new ID!
+	self.m_id = (NSString *)uuidStr;
+	
+	CFRelease(uuidStr);
+	CFRelease(uuid);
+}
+
+
 - (void)addComment:(NSString *)comment fromUser:(NSInteger)mygovUser withTitle:(NSString *)title
 {
 	if ( nil == m_userComments )

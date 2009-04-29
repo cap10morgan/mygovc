@@ -8,9 +8,12 @@
 
 #import "myGovAppDelegate.h"
 #import "CommunityDataManager.h"
+#import "CommunityDetailViewController.h"
 #import "CommunityItem.h"
 #import "CommunityItemTableCell.h"
 #import "CommunityViewController.h"
+#import "ComposeMessageViewController.h"
+#import "MyGovUserData.h"
 #import "ProgressOverlayViewController.h"
 
 
@@ -18,6 +21,7 @@
 	- (void)dataManagerCallback:(NSString *)msg;
 	- (void)communityItemTypeSwitch:(id)sender;
 	- (void)reloadCommunityItems;
+	- (void)composeNewCommunityItem;
 	- (void) deselectRow:(id)sender;
 @end
 
@@ -50,6 +54,8 @@
 	[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
 	
 	
+/* Leave this off for now - maybe in the next release...
+ 
 	// create a search bar which will be used as our table's header view
 	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 50.0f)];
 	searchBar.delegate = self;
@@ -62,6 +68,7 @@
 	
 	self.tableView.tableHeaderView = searchBar;
 	self.tableView.tableHeaderView.userInteractionEnabled = YES;
+*/
 	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
@@ -84,6 +91,17 @@
 	self.navigationItem.titleView = m_segmentCtrl;
 	[m_segmentCtrl release];
 	
+	
+	// 
+	// Add a "new" button which will add either a 
+	// new piece of chatter, or a new event depending on the 
+	// currently selected view!
+	// 
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
+											  initWithBarButtonSystemItem:UIBarButtonSystemItemCompose 
+											  target:self 
+											  action:@selector(composeNewCommunityItem)];
+/*
 	// 
 	// Add a "refresh" button which will wipe out the on-device cache and 
 	// re-download congressional bill data 
@@ -92,7 +110,7 @@
 											  initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
 											  target:self 
 											  action:@selector(reloadCommunityItems)];
-	
+*/	
 	
 	[super viewDidLoad];
 }
@@ -159,6 +177,16 @@
 - (void)showCommunityDetail:(id)sender
 {
 	// XXX - do this!
+	UIButton *button = (UIButton *)sender;
+	if ( nil == button ) return;
+	
+	CommunityItemTableCell *tcell = (CommunityItemTableCell *)[button superview];
+	if ( nil == tcell ) return;
+	
+	CommunityDetailViewController *cdView = [[CommunityDetailViewController alloc] init];
+	[cdView setItem:[tcell m_item]];
+	[self.navigationController pushViewController:cdView animated:YES];
+	[cdView release];
 }
 
 
@@ -252,6 +280,45 @@
 }
 
 
+- (void)composeNewCommunityItem
+{
+	switch ( m_selectedItemType )
+	{
+		default:
+			break;
+		
+		case eCommunity_Feedback:
+		{
+			// create a new feedback item!
+			MessageData *msg = [[MessageData alloc] init];
+			msg.m_transport = eMT_MyGov;
+			msg.m_to = @"MyGovernment Community";
+			msg.m_subject = @" ";
+			msg.m_body = @" ";
+			msg.m_communityThreadID = nil;
+			
+			// display the message composer
+			ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+			[cmvc display:msg fromParent:self];
+		}
+			break;
+			
+		case eCommunity_Event:
+		{
+			NSString *title = @"New Community Event";
+			UIAlertView *alert = [[UIAlertView alloc] 
+								  initWithTitle:title
+								  message:@"This action is temporarily disabled..."
+								  delegate:self
+								  cancelButtonTitle:nil
+								  otherButtonTitles:@"OK",nil];
+			[alert show];
+		}
+			break;
+	}
+}
+
+
 - (void) deselectRow:(id)sender
 {
 	// de-select the currently selected row
@@ -268,6 +335,66 @@
 	// Do something here?!
 }
 
+
+#pragma mark UIActionSheetDelegate methods
+
+
+// action sheet callback: maybe start a re-download on congress data
+- (void)actionSheet:(UIActionSheet *)modalView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+	
+	CommunityItem *item = [m_data itemForIndexPath:[self.tableView indexPathForSelectedRow] 
+										   andType:m_selectedItemType];
+	if ( nil == item )
+	{
+		goto deselect_and_return;
+	}
+	
+	// use currently selected legislator to perfom the following action:
+	switch ( buttonIndex )
+	{
+		// View User Info
+		case 0:
+		{
+			// XXX - not ready for this yet...
+			UIAlertView *alert = [[UIAlertView alloc] 
+								  initWithTitle:[[[myGovAppDelegate sharedUserData] userFromID:item.m_creator] m_username]
+								  message:@"User info view is currently disabled"
+								  delegate:self
+								  cancelButtonTitle:nil
+								  otherButtonTitles:@"OK",nil];
+			[alert show];
+		}
+			break;
+			
+		// Reply/comment on this event or piece of chatter (feedback)
+		case 1:
+		{
+			MessageData *msg = [[MessageData alloc] init];
+			msg.m_transport = eMT_MyGov;
+			msg.m_to = @"MyGovernment Community";
+			msg.m_subject = [NSString stringWithFormat:@"Re: %@",[item m_title]];
+			msg.m_body = @" "; //[item m_title];
+			msg.m_communityThreadID = [item m_id];
+			msg.m_appURL = [item m_mygovURL];
+			msg.m_appURLTitle = [item m_mygovURLTitle];
+			msg.m_webURL = [item m_webURL];
+			msg.m_webURLTitle = [item m_webURLTitle];
+			
+			// display the message composer
+			ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+			[cmvc display:msg fromParent:self];
+		}
+			break;
+			
+		default:
+			break;
+	}
+	
+	// deselect the selected row 
+deselect_and_return:
+	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+}
 
 
 #pragma mark UISearchBarDelegate methods
@@ -323,6 +450,8 @@
 	{
 		cell = [[[CommunityItemTableCell alloc] initWithFrame:CGRectZero
 											  reuseIdentifier:CellIdentifier] autorelease];
+		
+		[cell setDetailTarget:self andSelector:@selector(showCommunityDetail:)];
 	}	
 	
 	// Set up the cell...
@@ -338,8 +467,22 @@
 	// AnotherViewController *anotherViewController = [[AnotherViewController alloc] initWithNibName:@"AnotherView" bundle:nil];
 	// [self.navigationController pushViewController:anotherViewController];
 	// [anotherViewController release];
+	CommunityItem *item = [m_data itemForIndexPath:indexPath andType:m_selectedItemType];
 	
-	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+	// pop up an alert asking the user what action to perform
+	UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:[item m_title]
+													   delegate:self 
+											  cancelButtonTitle:@"Cancel" 
+										 destructiveButtonTitle:nil
+											  otherButtonTitles:@"View User Info",@"Reply!",nil,nil];
+	
+	// use the same style as the nav bar
+	sheet.actionSheetStyle = self.navigationController.navigationBar.barStyle;
+	
+	[sheet showInView:self.view];
+	[sheet release];
+	
+	//[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 }
 
 

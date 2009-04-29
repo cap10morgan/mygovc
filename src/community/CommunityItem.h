@@ -87,6 +87,8 @@ typedef enum
 - (void)writeItemToFile:(NSString *)fullPath;
 - (NSDictionary *)writeItemToPlistDictionary;
 
+- (void)generateUniqueItemID;
+
 - (void)addComment:(NSString *)comment fromUser:(NSInteger)mygovUser withTitle:(NSString *)title;
 - (void)addComment:(CommunityComment *)comment;
 - (NSArray *)comments;
