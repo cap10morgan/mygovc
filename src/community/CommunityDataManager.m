@@ -12,12 +12,16 @@
 #import "CommunityItemTableCell.h"
 #import "MyGovUserData.h"
 
-#define COMMUNITY_USE_JEREMYA_STATIC_DATA 1
+#define COMMUNITY_USE_JEREMYA_STATIC_DATA 0
+#define COMMUNITY_USE_CHOLOR_DATA         1
 #define COMMUNITY_USE_GOOGLEAPPS_DATA     0
 
 #if COMMUNITY_USE_JEREMYA_STATIC_DATA
 #	import "JeremyaStaticDataSource.h"
 #	define DATA_SOURCE_TYPE JeremyaStaticDataSource
+#elif COMMUNITY_USE_CHOLOR_DATA
+#	import "CholorDataSource.h"
+#	define DATA_SOURCE_TYPE CholorDataSource
 #elif COMMUNITY_USE_GOOGLEAPPS_DATA
 #	import "GoogleAppsDataSource.h"
 #	define DATA_SOURCE_TYPE GoogleAppsDataSource

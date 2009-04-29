@@ -75,4 +75,7 @@ typedef enum
 									 sortedBy:(SpendingSortMethod)order 
 									   xmlURL:(BOOL)xmldata;
 
++ (NSString *)Cholor_CommunityItemPOSTURL;
++ (NSString *)Cholor_CommunityItemPOSTSucess;
+
 @end

@@ -174,7 +174,8 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	[plistDict setValue:UIImageJPEGRepresentation(m_image,1.0) 
 				 forKey:kCIKey_Image];
 	
-	[plistDict setValue:m_title forKey:kCIKey_Title];
+	[plistDict setValue:[m_title stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]
+				 forKey:kCIKey_Title];
 	
 	[plistDict setValue:[NSNumber numberWithInt:[m_date timeIntervalSinceReferenceDate]] 
 				 forKey:kCIKey_Date];
@@ -210,7 +211,9 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	[plistDict setValue:tmpArray forKey:kCIKey_Comments];
 	[tmpArray release];
 	
-	[plistDict setValue:[NSString stringWithFormat:@"%.f:%.f:%s",
+	if ( nil == m_eventLocDescrip ) self.m_eventLocDescrip = @" ";
+	
+	[plistDict setValue:[NSString stringWithFormat:@"%.f:%.f:%@",
 									m_eventLocation.coordinate.latitude,
 									m_eventLocation.coordinate.longitude,
 									[m_eventLocDescrip stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]

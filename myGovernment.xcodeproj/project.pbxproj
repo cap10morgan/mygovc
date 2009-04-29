@@ -88,6 +88,7 @@
 		01D7FEE30FA5032D00F78B92 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEE10FA5032D00F78B92 /* NSString+UUID.m */; };
 		01D7FF160FA5080D00F78B92 /* CommunityItemTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FF150FA5080D00F78B92 /* CommunityItemTableCell.m */; };
 		01E4C5830FA0278700E69CC8 /* twitter_logo_header.png in Resources */ = {isa = PBXBuildFile; fileRef = 01E4C5820FA0278700E69CC8 /* twitter_logo_header.png */; };
+		01E6EC0F0FA8C224001BEAD3 /* CholorDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E6EC0E0FA8C224001BEAD3 /* CholorDataSource.m */; };
 		0461A05A0F5A471400BE17FF /* CommunityItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 0461A0590F5A471400BE17FF /* CommunityItem.m */; };
 		04B603120F59BE3000815A86 /* CommunityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B603110F59BE3000815A86 /* CommunityViewController.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -236,6 +237,8 @@
 		01D7FF140FA5080D00F78B92 /* CommunityItemTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityItemTableCell.h; sourceTree = "<group>"; };
 		01D7FF150FA5080D00F78B92 /* CommunityItemTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityItemTableCell.m; sourceTree = "<group>"; };
 		01E4C5820FA0278700E69CC8 /* twitter_logo_header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = twitter_logo_header.png; path = res/twitter_logo_header.png; sourceTree = "<group>"; };
+		01E6EC0D0FA8C224001BEAD3 /* CholorDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CholorDataSource.h; sourceTree = "<group>"; };
+		01E6EC0E0FA8C224001BEAD3 /* CholorDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CholorDataSource.m; sourceTree = "<group>"; };
 		0461A0580F5A471400BE17FF /* CommunityItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityItem.h; sourceTree = "<group>"; };
 		0461A0590F5A471400BE17FF /* CommunityItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityItem.m; sourceTree = "<group>"; };
 		04B603100F59BE3000815A86 /* CommunityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityViewController.h; sourceTree = "<group>"; };
@@ -329,6 +332,8 @@
 				01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */,
 				01B7D8780FA5E5DF00CFF880 /* GoogleAppsDataSource.h */,
 				01B7D8790FA5E5DF00CFF880 /* GoogleAppsDataSource.m */,
+				01E6EC0D0FA8C224001BEAD3 /* CholorDataSource.h */,
+				01E6EC0E0FA8C224001BEAD3 /* CholorDataSource.m */,
 			);
 			path = community;
 			sourceTree = "<group>";
@@ -657,6 +662,7 @@
 				01ACAF370FA8119C00B6FF59 /* CommunityDetailViewController.m in Sources */,
 				01ACAF3A0FA811B800B6FF59 /* CommunityDetailData.m in Sources */,
 				01ACB0680FA8434900B6FF59 /* CDetailHeaderViewController.m in Sources */,
+				01E6EC0F0FA8C224001BEAD3 /* CholorDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

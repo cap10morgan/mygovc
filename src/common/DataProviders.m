@@ -72,6 +72,12 @@ static NSString *kUSASpending_ContractorKey = @"&company_name";
 
 static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 
+// 
+// Cholor - cbell's PHP implementation of mygov server functionality :-)
+// 
+static NSString *kCholor_CommunityItemPostURL = @"http://cholor.com/mygov/community.php";
+static NSString *kCholor_CommunityItemPOSTSuccess = @"Posted";
+
 
 
 + (NSString *)OpenCongress_APIKey
@@ -435,6 +441,18 @@ static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 				sortStr
 	 ];
 	return (NSString *)urlStr;
+}
+
+
++ (NSString *)Cholor_CommunityItemPOSTURL
+{
+	return kCholor_CommunityItemPostURL;
+}
+
+
++ (NSString *)Cholor_CommunityItemPOSTSucess
+{
+	return kCholor_CommunityItemPOSTSuccess;
 }
 
 
