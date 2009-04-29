@@ -207,6 +207,13 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
     // Add the tab bar controller's current view as a subview of the window
     [m_window addSubview:m_tabBarController.view];
 	
+	// 
+	// wait for the congress data to load..
+	while ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
+	{
+		[NSThread sleepForTimeInterval:0.1f];
+	}
+	
 	//
 	// Go back to the last application page viewed
 	// 

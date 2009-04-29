@@ -59,6 +59,7 @@ typedef enum
 	
 	// used for events (m_type == eCommunityEvent)
 	CLLocation     *m_eventLocation;
+	NSString       *m_eventLocDescrip;
 	NSDate         *m_eventDate;
 	NSMutableArray *m_eventAttendees; // array of mygov users
 }
@@ -79,6 +80,7 @@ typedef enum
 @property (nonatomic,retain) NSURL      *m_webURL;
 
 @property (nonatomic,retain) CLLocation *m_eventLocation;
+@property (nonatomic,retain) NSString   *m_eventLocDescrip;
 @property (nonatomic,retain) NSDate     *m_eventDate;
 
 - (id)initFromFile:(NSString *)fullPath;

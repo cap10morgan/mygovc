@@ -76,7 +76,7 @@ static NSString *kCCKey_Text = @"text";
 @synthesize m_creator, m_summary, m_text;
 @synthesize m_mygovURLTitle, m_mygovURL;
 @synthesize m_webURLTitle, m_webURL;
-@synthesize m_eventLocation;
+@synthesize m_eventLocation, m_eventLocDescrip;
 @synthesize m_eventDate;
 
 static NSString *kCIKey_ID = @"id";
@@ -210,7 +210,11 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	[plistDict setValue:tmpArray forKey:kCIKey_Comments];
 	[tmpArray release];
 	
-	[plistDict setValue:[NSString stringWithFormat:@"%.f:%.f",m_eventLocation.coordinate.latitude,m_eventLocation.coordinate.longitude] 
+	[plistDict setValue:[NSString stringWithFormat:@"%.f:%.f:%s",
+									m_eventLocation.coordinate.latitude,
+									m_eventLocation.coordinate.longitude,
+									[m_eventLocDescrip stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]
+						] 
 				 forKey:kCIKey_EventLocation];
 	
 	[plistDict setValue:[NSNumber numberWithInt:[m_eventDate timeIntervalSinceReferenceDate]] 
@@ -377,10 +381,18 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 															longitude:[[tmpArray objectAtIndex:1] doubleValue]];
 			self.m_eventLocation = tmploc;
 			[tmploc release];
+			
+			m_eventLocDescrip = nil;
+			if ( [tmpArray count] > 2 )
+			{
+				// the last element is the description
+				self.m_eventLocDescrip = [[tmpArray objectAtIndex:2] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
+			}
 		}
 		else
 		{
 			m_eventLocation = nil;
+			m_eventLocDescrip = nil;
 		}
 		
 		tmpDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:[[plistDict objectForKey:kCIKey_EventDate] integerValue]];

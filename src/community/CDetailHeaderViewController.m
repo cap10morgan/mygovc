@@ -18,7 +18,7 @@
 @synthesize m_mygovURLTitle;
 @synthesize m_webURLTitle;
 @synthesize m_img;
-
+@synthesize m_myGovURLButton, m_webURLButton;
 
 - (void)didReceiveMemoryWarning 
 {
@@ -84,14 +84,23 @@
 	m_mygovURLTitle.text = m_item.m_mygovURLTitle;
 	m_webURLTitle.text = m_item.m_webURLTitle;
 	
-	if ( nil == m_item.m_mygovURL )
+	if ( nil != m_item.m_image )
 	{
-		// XXX - hide detail disclosure button!
+		m_img.image = m_item.m_image;
 	}
 	
+	[m_myGovURLButton setHidden:NO];
+	if ( nil == m_item.m_mygovURL )
+	{
+		// hide detail disclosure button!
+		[m_myGovURLButton setHidden:YES];
+	}
+	
+	[m_webURLButton setHidden:NO];
 	if ( nil == m_item.m_webURL )
 	{
-		// XXX - hide detail disclosure button!
+		// hide detail disclosure button!
+		[m_webURLButton setHidden:YES];
 	}
 }
 

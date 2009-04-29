@@ -325,15 +325,18 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 	NSString *fn = [self firstname];
 	NSString *ln = [self lastname];
 	NSString *mn = [self middlename];
-	if ( fn && NSOrderedSame == [fn compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
+	if ( fn && ([fn length] >= searchRange.length) && 
+		 NSOrderedSame == [fn compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
 	{
 		return TRUE;
 	}
-	if ( ln && NSOrderedSame == [ln compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
+	if ( ln && ([ln length] >= searchRange.length) && 
+		 NSOrderedSame == [ln compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
 	{
 		return TRUE;
 	}
-	if ( mn && NSOrderedSame == [mn compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
+	if ( mn && ([mn length] >= searchRange.length) && 
+		 NSOrderedSame == [mn compare:searchPattern options:NSCaseInsensitiveSearch range:searchRange] )
 	{
 		return TRUE;
 	}
@@ -430,6 +433,10 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 	
 	// save the data to disk
 	NSString *cache = [[CongressDataManager dataCachePath] stringByAppendingPathComponent:@"photos"];
+	
+	// make sure the directory exists!
+	[[NSFileManager defaultManager] createDirectoryAtPath:cache withIntermediateDirectories:YES attributes:nil error:NULL];
+	
 	NSString *photoPath = [cache stringByAppendingPathComponent:photoName];
 	
 	// don't check the return code - failure here should take care of itself...

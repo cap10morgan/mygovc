@@ -20,6 +20,9 @@
 	IBOutlet UILabel *m_webURLTitle;
 	IBOutlet UIImageView *m_img;
 	
+	IBOutlet UIButton *m_myGovURLButton;
+	IBOutlet UIButton *m_webURLButton;
+	
 @private
 	UIImage *m_largeImg;
 }
@@ -28,6 +31,8 @@
 @property (nonatomic, retain) UILabel *m_mygovURLTitle;
 @property (nonatomic, retain) UILabel *m_webURLTitle;
 @property (nonatomic, retain) UIImageView *m_img;
+@property (nonatomic, retain) UIButton *m_myGovURLButton;
+@property (nonatomic, retain) UIButton *m_webURLButton;
 
 - (IBAction)openMyGovURL:(id)sender;
 - (IBAction)openWebURL:(id)sender;
