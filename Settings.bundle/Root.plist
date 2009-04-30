@@ -114,9 +114,9 @@
 			<key>Key</key>
 			<string>mygov_community_data_age</string>
 			<key>Title</key>
-			<string>CommunityData Max Age</string>
+			<string>Chatter Max Age</string>
 			<key>DefaultValue</key>
-			<string>Two Days</string>
+			<integer>172800</integer>
 			<key>Titles</key>
 			<array>
 				<string>One Day</string>

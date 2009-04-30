@@ -834,6 +834,13 @@ show_legislator:
 				msg.m_transport = eMT_MyGov;
 				msg.m_to = @"MyGovernment Community";
 				msg.m_subject = [NSString stringWithFormat:@"Comment on %@",[legislator shortName]];
+				msg.m_appURL = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://congress/%@",[legislator bioguide_id]]];
+				msg.m_appURLTitle = [legislator shortName];
+				if ( [[legislator website] length] > 0 )
+				{
+					msg.m_webURL = [NSURL URLWithString:[legislator website]];
+					msg.m_webURLTitle = @"Website";
+				}
 				break;
 				
 			default:

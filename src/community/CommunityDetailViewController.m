@@ -219,7 +219,7 @@ enum
 {
 	// create a new feedback item!
 	MessageData *msg = [[MessageData alloc] init];
-	msg.m_transport = eMT_MyGov;
+	msg.m_transport = eMT_MyGovUserComment;
 	msg.m_to = @"MyGovernment Community";
 	msg.m_subject = [NSString stringWithFormat:@"Re: %@",m_item.m_title];
 	msg.m_body = @" ";

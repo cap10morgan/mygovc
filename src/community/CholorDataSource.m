@@ -68,7 +68,7 @@
 		else
 		{
 			// no NSDictionary support!
-			NSLog( @"Ignoring unsupported PList object '%@' of type '%@' in dictionary...", key, [obj className] );
+			NSLog( @"Ignoring unsupported PList object '%@' in dictionary...", key );
 		}
 		
 		if ( nil != valStr )
@@ -131,6 +131,47 @@
 			   notOlderThan:(NSDate *)startDate 
 			   withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
+	NSURL *cholorURL = [NSURL URLWithString:[DataProviders Cholor_DownloadURLFor:type]];
+	
+	NSString *postStr = [NSString stringWithFormat:@"date=%0d",(NSInteger)[startDate timeIntervalSinceReferenceDate]];
+	NSData *postData = [NSData dataWithBytes:[postStr UTF8String] length:[postStr length]];
+	
+	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:cholorURL];
+	[theRequest setHTTPMethod:@"POST"];
+	[theRequest setHTTPBody:postData];
+	[theRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+	[theRequest setTimeoutInterval:10.0f]; // 10 second timeout
+	
+	NSURLResponse *theResponse = nil;
+	NSError *err = nil;
+	NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
+	
+	[theRequest release];
+	
+	if ( nil == retVal ) return FALSE;
+	
+	NSString *errString = nil;
+	NSPropertyListFormat plistFmt;
+	NSArray *plistArray = [NSPropertyListSerialization propertyListFromData:retVal 
+														   mutabilityOption:NSPropertyListImmutable 
+																	 format:&plistFmt 
+														   errorDescription:&errString];
+	
+	if ( [plistArray count] < 1 )
+	{
+		return FALSE;
+	}
+	
+	// run through each array item, create a CommunityItem object
+	// and let our delegate know about it!
+	NSEnumerator *plEnum = [plistArray objectEnumerator];
+	NSDictionary *objDict;
+	while ( objDict = [plEnum nextObject] )
+	{
+		CommunityItem *item = [[[CommunityItem alloc] initFromPlistDictionary:objDict] autorelease];
+		[delegateOrNil communityDataSource:self newCommunityItemArrived:item];
+	}
+	
 	return FALSE;
 }
 
@@ -156,6 +197,8 @@
 	NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
 	NSString *response = [[[NSString alloc] initWithData:retVal encoding:NSMacOSRomanStringEncoding] autorelease];
 	
+	[theRequest release];
+	
 	// check string response to indicate success / failure
 	if ( ![response isEqualToString:[DataProviders Cholor_CommunityItemPOSTSucess]] )
 	{
@@ -169,7 +212,33 @@
 - (BOOL)submitCommunityComment:(CommunityComment *)comment 
 				  withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
-	return FALSE;
+	// create an NSURLRequest object from the community comment
+	// to perform a POST-style HTTP request
+	NSURL *cholorURL = [NSURL URLWithString:[DataProviders Cholor_CommunityCommentPOSTURL]];
+	
+	NSString *itemStr = [CholorDataSource postStringFromDictionary:[comment writeToPlistDict]];
+	NSData *itemAsPostData = [NSData dataWithBytes:[itemStr UTF8String] length:[itemStr length]];
+	
+	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:cholorURL];
+	[theRequest setHTTPMethod:@"POST"];
+	[theRequest setHTTPBody:itemAsPostData];
+	[theRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+	[theRequest setTimeoutInterval:10.0f]; // 10 second timeout
+	
+	NSURLResponse *theResponse = nil;
+	NSError *err = nil;
+	NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
+	NSString *response = [[[NSString alloc] initWithData:retVal encoding:NSMacOSRomanStringEncoding] autorelease];
+	
+	[theRequest release];
+	
+	// check string response to indicate success / failure
+	if ( ![response isEqualToString:[DataProviders Cholor_CommunityItemPOSTSucess]] )
+	{
+		return FALSE;
+	}
+	
+	return TRUE;
 }
 
 

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "BillContainer.h"
+#import "CommunityItem.h"
 
 @class LegislatorContainer;
 
@@ -76,6 +77,9 @@ typedef enum
 									   xmlURL:(BOOL)xmldata;
 
 + (NSString *)Cholor_CommunityItemPOSTURL;
++ (NSString *)Cholor_CommunityCommentPOSTURL;
 + (NSString *)Cholor_CommunityItemPOSTSucess;
++ (NSString *)Cholor_DownloadURLFor:(CommunityItemType)type;
+
 
 @end

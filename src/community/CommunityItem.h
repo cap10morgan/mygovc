@@ -83,6 +83,7 @@ typedef enum
 @property (nonatomic,retain) NSString   *m_eventLocDescrip;
 @property (nonatomic,retain) NSDate     *m_eventDate;
 
+- (id)initFromPlistDictionary:(NSDictionary *)dict;
 - (id)initFromFile:(NSString *)fullPath;
 - (id)initFromURL:(NSURL *)url;
 

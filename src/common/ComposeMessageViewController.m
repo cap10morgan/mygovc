@@ -44,23 +44,55 @@
 @end
 
 
+
+@implementation ComposeMessageView
+
+@synthesize m_parentController;
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	// pass this up to our parent view controller
+	// which has knowledge of all the UI components that need
+	// to resign their first responder status :-)
+    [m_parentController touchesBegan:touches withEvent:event];
+}
+
+@end
+
+
+
 @interface ComposeMessageViewController (private)
+	- (void)keyboardWasShown:(NSNotification*)aNotification;
+	- (void)keyboardWasHidden:(NSNotification*)aNotification;
+	- (void)layoutUIForMessageType:(MessageTransport)type;
 	- (id)opMakePhoneCall;
 	- (id)opSendEmail;
 	- (id)opSendTweet;
 	- (id)opSendMyGovComment;
+	- (id)opSendMyGovReply;
 	- (void)sendCommunityItemViaDataSource:(CommunityItem *)item;
+	- (void)sendCommunityReplyViaDataSource:(CommunityComment *)reply;
 @end
 
 
 @implementation ComposeMessageViewController
 
+@synthesize m_msgView;
 @synthesize m_titleButton, m_fieldTo, m_labelSubject, m_fieldSubject;
-@synthesize m_fieldMessage, m_infoButton;
+@synthesize m_labelMessage, m_fieldMessage, m_buttonMessage, m_infoButton;
+@synthesize m_labelURL, m_fieldURL, m_labelURLTitle, m_fieldURLTitle;
 
+
+enum
+{
+	eAlertType_TwitterError = 1,
+	eAlertType_ChatterError,
+	eAlertType_ReplyError,
+};
 
 static ComposeMessageViewController *s_composer = NULL;
 
+static CGFloat S_CELL_VOFFSET = 10.0f;
 
 + (ComposeMessageViewController *)sharedComposer
 {
@@ -83,6 +115,9 @@ static ComposeMessageViewController *s_composer = NULL;
 		m_message = nil;
 		m_twitterLoginView = nil;
 		m_hud = nil;
+		m_activeTextField = nil;
+		m_keyboardVisible = NO;
+		m_alertType = eAlertType_TwitterError;
 	}
 	return self;
 }
@@ -107,8 +142,31 @@ static ComposeMessageViewController *s_composer = NULL;
 {
 	[super viewDidLoad];
 	
+	// set the content size of the scroll view to be the size of the window
+	[(UIScrollView *)(self.view) setContentSize:CGSizeMake(CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame))];
+	
+	// set ourselves up to receive touch events from the container UIView object...
+	m_msgView.m_parentController = self;
+	
+	// register to receive keyboard notifications
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(keyboardWasShown:)
+												 name:UIKeyboardDidShowNotification object:nil];
+	
+    [[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(keyboardWasHidden:)
+												 name:UIKeyboardDidHideNotification object:nil];
+	
 	m_hud = [[ProgressOverlayViewController alloc] initWithWindow:self.view];
 }
+
+
+- (void)viewWillDisappear:(BOOL)animated 
+{
+	// resign keyboard notifications
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -120,16 +178,6 @@ static ComposeMessageViewController *s_composer = NULL;
     [super touchesBegan:touches withEvent:event];
 }
 
-
-#pragma mark UITextFieldDelegate
-
-
-- (BOOL)textFieldShouldReturn:(UITextField *)theTextField 
-{
-	// When the user presses return, take focus away from the text field so that the keyboard is dismissed.
-	[theTextField resignFirstResponder];
-	return YES;
-}
 
 
 // Override to allow orientations other than the default portrait orientation.
@@ -152,31 +200,23 @@ static ComposeMessageViewController *s_composer = NULL;
 		default:
 		case eMT_MyGov:
 			titleTxt = @"Comment";
-			[m_fieldSubject setHidden:NO];
-			[m_labelSubject setHidden:NO];
-			[m_infoButton setHidden:NO];
 			break;
 		
+		case eMT_MyGovUserComment:
+			titleTxt = @"Reply";
+			break;
+			
 		case eMT_Twitter:
 			titleTxt = @"Tweet";
-			[m_fieldSubject setHidden:YES];
-			[m_labelSubject setHidden:YES];
-			[m_infoButton setHidden:YES];
 			break;
 			
 		case eMT_Email:
-			titleTxt = @"Email";
-			[m_fieldSubject setHidden:NO];
-			[m_labelSubject setHidden:NO];
 			// don't display the UI (for now) - call the application
 			// email send routine
 			[self opSendEmail];
 			return;
 		
 		case eMT_PhoneCall:
-			titleTxt = @"PhoneCall";
-			[m_fieldSubject setHidden:YES];
-			[m_labelSubject setHidden:YES];
 			// don't display the UI - just make the phone call
 			[self opMakePhoneCall];
 			return;
@@ -184,9 +224,15 @@ static ComposeMessageViewController *s_composer = NULL;
 	
 	m_titleButton.title = titleTxt;
 	
+	// setup the GUI based on transport type
+	// (not all transports need to see _all_ the GUI)
+	[self layoutUIForMessageType:m_message.m_transport];
+	
 	[m_fieldTo setText:m_message.m_to];
 	[m_fieldSubject setText:m_message.m_subject];
 	[m_fieldMessage setText:m_message.m_body];
+	[m_fieldURL setText:[m_message.m_webURL absoluteString]];
+	[m_fieldURLTitle setText:m_message.m_webURLTitle];
 	
 	[m_fieldTo setEnabled:NO];
 	
@@ -208,27 +254,26 @@ static ComposeMessageViewController *s_composer = NULL;
 	[m_fieldSubject resignFirstResponder];
 		
 	SEL sendOp = nil;
-	NSString *transportDescrip;
 	switch ( m_message.m_transport )
 	{
 		default:
 		case eMT_MyGov:
-			transportDescrip = @"MyGov Comment";
 			sendOp = @selector(opSendMyGovComment);
 			break;
 			
+		case eMT_MyGovUserComment:
+			sendOp = @selector(opSendMyGovReply);
+			break;
+			
 		case eMT_Twitter:
-			transportDescrip = @"Tweet";
 			sendOp = @selector(opSendTweet);
 			break;
 			
 		case eMT_Email:
-			transportDescrip = @"Email";
 			sendOp = @selector(opSendEmail);
 			break;
 		
 		case eMT_PhoneCall:
-			transportDescrip = @"Phone Call";
 			sendOp = nil;
 			break;
 	}
@@ -250,15 +295,200 @@ static ComposeMessageViewController *s_composer = NULL;
 }
 
 
+#pragma mark UITextFieldDelegate
+
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+	m_activeTextField = textField;
+	return YES;
+}
+
+
+- (BOOL)textFieldShouldReturn:(UITextField *)theTextField 
+{
+	// When the user presses return, take focus away from the text field so that the keyboard is dismissed.
+	[theTextField resignFirstResponder];
+	m_activeTextField = nil;
+	return YES;
+}
+
+
 #pragma mark UITextViewDelegate Methods 
-	
+
+
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView
+{
+	m_activeTextField = textView;
+	return YES;
+}
+
+
 - (BOOL)textViewShouldEndEditing:(UITextView *)textView
 {
+	m_activeTextField = nil;
 	return YES;
 }
 
 
 #pragma mark ComposeMessageViewController Private 
+
+
+- (void)keyboardWasShown:(NSNotification*)aNotification
+{
+	if ( !m_keyboardVisible )
+	{
+		NSDictionary* info = [aNotification userInfo];
+		
+		// Get the size of the keyboard.
+		NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
+		CGSize keyboardSize = [aValue CGRectValue].size;
+		
+		// Resize the scroll view (which is the root view of the window)
+		CGRect viewFrame = [self.view frame];
+		viewFrame.size.height -= keyboardSize.height;
+		self.view.frame = viewFrame;
+	}
+	
+	// Scroll the active text field into view.
+	CGRect textFieldRect = [m_activeTextField frame];
+	[(UIScrollView *)(self.view) scrollRectToVisible:textFieldRect animated:YES];
+	
+	m_keyboardVisible = YES;
+	
+	[(UIScrollView *)(self.view) flashScrollIndicators];
+}
+
+
+- (void)keyboardWasHidden:(NSNotification*)aNotification
+{
+	NSDictionary* info = [aNotification userInfo];
+
+	// Get the size of the keyboard.
+	NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
+	CGSize keyboardSize = [aValue CGRectValue].size;
+
+	// Reset the height of the scroll view to its original value
+	CGRect viewFrame = [self.view frame];
+	viewFrame.size.height += keyboardSize.height;
+	self.view.frame = viewFrame;
+
+	m_keyboardVisible = NO;
+}
+
+
+- (void)layoutUIForMessageType:(MessageTransport)type
+{
+	switch ( type )
+	{
+		default:
+		case eMT_MyGov:
+		{
+			// everything is shown!
+			[m_fieldSubject setHidden:NO];
+			[m_labelSubject setHidden:NO];
+			[m_infoButton setHidden:NO];
+			[m_fieldURL setHidden:NO];
+			[m_labelURL setHidden:NO];
+			[m_fieldURLTitle setHidden:NO];
+			[m_labelURLTitle setHidden:NO];
+		}
+			break;
+		
+		case eMT_MyGovUserComment:
+		{
+			// don't show URL, or URLTitle fields
+			[m_fieldSubject setHidden:NO];
+			[m_fieldSubject setText:@""];
+			[m_labelSubject setHidden:NO];
+			[m_infoButton setHidden:NO];
+			[m_fieldURL setHidden:YES];
+			[m_labelURL setHidden:YES];
+			[m_fieldURLTitle setHidden:YES];
+			[m_labelURLTitle setHidden:YES];
+		}
+			break;
+			
+		case eMT_Twitter:
+		{
+			// only show To: and Message: fields
+			[m_fieldSubject setHidden:YES];
+			[m_labelSubject setHidden:YES];
+			[m_infoButton setHidden:YES];
+			[m_fieldURL setHidden:YES];
+			[m_labelURL setHidden:YES];
+			[m_fieldURLTitle setHidden:YES];
+			[m_labelURLTitle setHidden:YES];
+		}
+			break;
+			
+		case eMT_Email:
+		case eMT_PhoneCall:
+			// nothing to do here :-)
+			break;
+	}
+	
+	// starting Y position
+	CGFloat yPos = CGRectGetMaxY(m_fieldTo.frame) + S_CELL_VOFFSET;
+	
+	CGFloat xPos, fWidth, fHeight;
+	
+#define MOVE_OBJ_UP(_OBJ)  \
+		xPos = CGRectGetMinX( (_OBJ).frame ); \
+		fWidth = CGRectGetWidth( (_OBJ).frame); \
+		fHeight = CGRectGetHeight( (_OBJ).frame); \
+		(_OBJ).frame = CGRectMake(xPos, yPos, fWidth, fHeight)
+		
+	// subject line
+	if ( !m_fieldSubject.hidden )
+	{
+		MOVE_OBJ_UP(m_labelSubject);
+		MOVE_OBJ_UP(m_fieldSubject);
+		yPos = CGRectGetMaxY(m_fieldSubject.frame) + S_CELL_VOFFSET;
+	}
+	
+	// info button
+	if ( !m_infoButton.hidden )
+	{
+		MOVE_OBJ_UP(m_infoButton);
+		if ( m_labelMessage.hidden )
+		{
+			yPos = CGRectGetMaxY(m_infoButton.frame) + S_CELL_VOFFSET;
+		}
+	}
+	
+	// message label
+	if ( !m_labelMessage.hidden )
+	{
+		MOVE_OBJ_UP(m_labelMessage);
+		yPos = CGRectGetMaxY(m_labelMessage.frame) + S_CELL_VOFFSET;
+	}
+	
+	// message field
+	if ( !m_fieldMessage.hidden )
+	{
+		MOVE_OBJ_UP(m_fieldMessage);
+		MOVE_OBJ_UP(m_buttonMessage);
+		yPos = CGRectGetMaxY(m_fieldMessage.frame) + S_CELL_VOFFSET;
+	}
+	
+	// URL field
+	if ( !m_fieldURL.hidden )
+	{
+		MOVE_OBJ_UP(m_labelURL);
+		MOVE_OBJ_UP(m_fieldURL);
+		yPos = CGRectGetMaxY(m_fieldURL.frame) + S_CELL_VOFFSET;
+	}
+	
+	// URL title field
+	if ( !m_fieldURLTitle.hidden )
+	{
+		MOVE_OBJ_UP(m_labelURLTitle);
+		MOVE_OBJ_UP(m_fieldURLTitle);
+		yPos = CGRectGetMaxY(m_fieldURLTitle.frame) + S_CELL_VOFFSET;
+	}
+}
+
 
 - (id)opMakePhoneCall
 {
@@ -372,10 +602,18 @@ static ComposeMessageViewController *s_composer = NULL;
 	item.m_date = [NSDate date];
 	item.m_mygovURL = m_message.m_appURL;
 	item.m_mygovURLTitle = m_message.m_appURLTitle;
-	item.m_webURL = m_message.m_webURL;
-	item.m_webURLTitle = m_message.m_webURLTitle;
+	if ( [m_fieldURL.text length] > 0 )
+	{
+		item.m_webURL = [NSURL URLWithString:m_fieldURL.text];
+	}
+	else
+	{
+		item.m_webURL = m_message.m_webURL;
+	}
+	item.m_webURLTitle = (([m_fieldURLTitle.text length] > 0) ? m_fieldURLTitle.text : m_message.m_webURLTitle);
 	
-	// data is available - read disk data into memory (via a worker thread)
+	// send the out the new comment via a worker thread
+	// (as per the CommunityDataSourceProtocol contract)
 	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																		selector:@selector(sendCommunityItemViaDataSource:) 
 																		  object:item];
@@ -390,6 +628,40 @@ static ComposeMessageViewController *s_composer = NULL;
 }
 
 
+- (id)opSendMyGovReply
+{
+	NSInteger userID = 0;
+	NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_username"];
+	NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_password"];
+	
+	if ( [username length] < 1 || [password length] < 1 )
+	{
+		// XXX - the user should be logged in - take care of that right here!
+		// XXX - get the userID!
+	}
+	
+	CommunityComment *reply = [[CommunityComment alloc] init];
+	reply.m_id = @"mygov";
+	reply.m_creator = userID;
+	reply.m_title = m_fieldSubject.text;
+	reply.m_text = m_fieldMessage.text;
+	reply.m_communityItemID = m_message.m_communityThreadID;
+	
+	// send the out the new comment via a worker thread
+	// (as per the CommunityDataSourceProtocol contract)
+	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																		selector:@selector(sendCommunityReplyViaDataSource:) 
+																		  object:reply];
+	
+	// Add the operation to the internal operation queue managed by the application delegate.
+	[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+	
+	[theOp release];
+	
+	return nil;
+}
+
+
 - (void)twitterOpFinished:(NSString *)success
 {
 	[self.view setUserInteractionEnabled:YES];
@@ -400,6 +672,7 @@ static ComposeMessageViewController *s_composer = NULL;
 		NSString *err = [success substringFromIndex:2];
 		
 		// pop up an alert saying it failed!
+		m_alertType = eAlertType_TwitterError;
 		UIAlertView *alert = [[UIAlertView alloc] 
 							  initWithTitle:@"Tweet Error"
 							  message:[NSString stringWithFormat:@"Error: %@",err]
@@ -428,8 +701,41 @@ static ComposeMessageViewController *s_composer = NULL;
 	}
 	else
 	{
-		// XXX - ask the use what to do - couldn't send a message!
+		// ask the use what to do - couldn't send a message!
+		m_alertType = eAlertType_ChatterError;
+		UIAlertView *alert = [[UIAlertView alloc] 
+									initWithTitle:@"Chatter Error"
+									message:[NSString stringWithString:@"An error occurred while sending your comment."]
+									delegate:self
+									cancelButtonTitle:@"Cancel"
+									otherButtonTitles:@"Retry",nil];
+		[alert show];
+	}
+}
+
+
+- (void)sendCommunityReplyViaDataSource:(CommunityComment *)reply
+{
+	id<CommunityDataSourceProtocol> dataSource = [[myGovAppDelegate sharedCommunityData] dataSource];
+	
+	// this is the blocking call to the network submission...
+	BOOL success = [dataSource submitCommunityComment:reply withDelegate:nil];
+	
+	if ( success )
+	{
 		[self dismissModalViewControllerAnimated:YES];
+	}
+	else
+	{
+		// ask the use what to do - couldn't send a message!
+		m_alertType = eAlertType_ReplyError;
+		UIAlertView *alert = [[UIAlertView alloc] 
+							  initWithTitle:@"Reply Error"
+							  message:[NSString stringWithString:@"An error occurred while sending your comment."]
+							  delegate:self
+							  cancelButtonTitle:@"Cancel"
+							  otherButtonTitles:@"Retry",nil];
+		[alert show];
 	}
 }
 
@@ -439,17 +745,52 @@ static ComposeMessageViewController *s_composer = NULL;
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-	switch ( buttonIndex )
+	switch ( m_alertType )
 	{
-		case 0:
-			// retry
+		case eAlertType_TwitterError:
+			switch ( buttonIndex )
+			{
+				case 0:
+					// retry
+					break;
+					
+				case 1:
+					// reset credentials!
+					[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"twitter_username"];
+					[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"twitter_password"];
+					[[NSUserDefaults standardUserDefaults] synchronize];
+					break;
+			}
 			break;
-			
-		case 1:
-			// reset credentials!
-			[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"twitter_username"];
-			[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"twitter_password"];
-			[[NSUserDefaults standardUserDefaults] synchronize];
+		
+		case eAlertType_ChatterError:
+			switch ( buttonIndex )
+			{
+				case 1:
+					// retry
+					[self opSendMyGovComment];
+					break;
+					
+				case 0:
+					// cancel!
+					[self dismissModalViewControllerAnimated:YES];
+					break;
+			}
+			break;
+		
+		case eAlertType_ReplyError:
+			switch ( buttonIndex )
+			{
+				case 1:
+					// retry
+					[self opSendMyGovReply];
+					break;
+					
+				case 0:
+					// cancel!
+					[self dismissModalViewControllerAnimated:YES];
+					break;
+			}
 			break;
 	}
 }

@@ -15,7 +15,7 @@
 
 static NSString *kCCKey_ID = @"id";
 static NSString *kCCKey_Creator = @"creator";
-static NSString *kCCKey_CommunityItemID = @"community_item_id";
+static NSString *kCCKey_CommunityItemID = @"communityItemID";
 static NSString *kCCKey_Title = @"title";
 static NSString *kCCKey_Text = @"text";
 
@@ -53,7 +53,7 @@ static NSString *kCCKey_Text = @"text";
 	
 	[plistDict setValue:m_communityItemID forKey:kCCKey_CommunityItemID];
 	
-	[plistDict setValue:m_title forKey:kCCKey_Title];
+	[plistDict setValue:[m_title stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding] forKey:kCCKey_Title];
 	
 	[plistDict setValue:[m_text stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding] 
 				 forKey:kCCKey_Text];
@@ -65,7 +65,7 @@ static NSString *kCCKey_Text = @"text";
 
 
 @interface CommunityItem (private)
-	- (void)initFromPlistDict:(NSDictionary *)plistDict;
+	- (void)p_initFromPlistDict:(NSDictionary *)plistDict;
 @end
 
 
@@ -101,7 +101,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 {
 	if ( self = [super init] )
 	{
-		[self initFromPlistDict:nil]; // does all the basic initialization :-)
+		[self p_initFromPlistDict:nil]; // does all the basic initialization :-)
 	}
 	
 	return self;
@@ -116,6 +116,16 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 }
 
 
+- (id)initFromPlistDictionary:(NSDictionary *)dict
+{
+	if ( self = [super init] )
+	{
+		[self p_initFromPlistDict:dict];
+	}
+	return self;
+}
+
+
 - (id)initFromFile:(NSString *)fullPath
 {
 	if ( self = [super init] )
@@ -124,11 +134,11 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 		{
 			NSLog( @"Reading %@...", fullPath );
 			NSDictionary *plistDict = [NSDictionary dictionaryWithContentsOfFile:fullPath];
-			[self initFromPlistDict:plistDict];
+			[self p_initFromPlistDict:plistDict];
 		}
 		else
 		{
-			[self initFromPlistDict:nil];
+			[self p_initFromPlistDict:nil];
 		}
 	}
 	return self;
@@ -141,7 +151,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	{
 		// initialize from URL!
 		NSDictionary *plistDict = [[NSDictionary alloc] initWithContentsOfURL:url];
-		[self initFromPlistDict:plistDict];
+		[self p_initFromPlistDict:plistDict];
 		[plistDict release];
 	}
 	return self;
@@ -309,7 +319,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 #pragma mark CommunityItem Private
 
 
-- (void)initFromPlistDict:(NSDictionary *)plistDict
+- (void)p_initFromPlistDict:(NSDictionary *)plistDict
 {
 	m_id = nil;
 	m_type = eCommunity_Feedback; // default type

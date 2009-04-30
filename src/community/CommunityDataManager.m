@@ -324,6 +324,16 @@
 	}
 	
 	// now download any new data!
+	if ( NSOrderedSame == [newestDate compare:[NSDate distantPast]] )
+	{
+		// we have no cache - only download items within the 
+		// timeframe specified by the use preference
+		NSNumber *max_age_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_community_data_age"];
+		NSInteger max_age = -([max_age_str integerValue]);
+		
+		newestDate = [[NSDate date] addTimeInterval:max_age];
+	}
+	
 	[self downloadNewDataStartingAt:newestDate];
 	
 	isBusy = NO;

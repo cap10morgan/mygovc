@@ -16,6 +16,7 @@ typedef enum
 	eMT_Twitter,
 	eMT_Email,
 	eMT_MyGov,
+	eMT_MyGovUserComment,
 	eMT_PhoneCall,
 } MessageTransport;
 
@@ -54,28 +55,60 @@ typedef enum
 @end
 
 
+@interface ComposeMessageView : UIView
+{
+	id m_parentController;
+}
+@property (nonatomic,retain) id m_parentController;
+@end
+
+
 @interface ComposeMessageViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIAlertViewDelegate>
 {
+	IBOutlet ComposeMessageView *m_msgView;
+	
 	IBOutlet UIBarButtonItem *m_titleButton;
 	IBOutlet UITextField     *m_fieldTo;
 	IBOutlet UILabel         *m_labelSubject;
 	IBOutlet UITextField     *m_fieldSubject;
+	
+	IBOutlet UILabel         *m_labelMessage;
 	IBOutlet UITextView      *m_fieldMessage;
+	IBOutlet UIButton        *m_buttonMessage;
+	
 	IBOutlet UIButton        *m_infoButton;
+	
+	IBOutlet UILabel         *m_labelURL;
+	IBOutlet UITextField     *m_fieldURL;
+	IBOutlet UILabel         *m_labelURLTitle;
+	IBOutlet UITextField     *m_fieldURLTitle;
+	
 @private
 	MessageData *m_message;
 	TwitterLoginViewController *m_twitterLoginView;
 	ProgressOverlayViewController *m_hud;
 	
+	int m_alertType;
+	
+	id   m_activeTextField;
+	BOOL m_keyboardVisible;
 	id m_parentCtrl;
 }
 
+@property (nonatomic,retain) IBOutlet ComposeMessageView *m_msgView;
 @property (nonatomic,retain) IBOutlet UIBarButtonItem *m_titleButton;
 @property (nonatomic,retain) IBOutlet UITextField     *m_fieldTo;
 @property (nonatomic,retain) IBOutlet UILabel         *m_labelSubject;
 @property (nonatomic,retain) IBOutlet UITextField     *m_fieldSubject;
+@property (nonatomic,retain) IBOutlet UILabel         *m_labelMessage;
 @property (nonatomic,retain) IBOutlet UITextView      *m_fieldMessage;
+@property (nonatomic,retain) IBOutlet UIButton        *m_buttonMessage;
 @property (nonatomic,retain) IBOutlet UIButton        *m_infoButton;
+@property (nonatomic,retain) IBOutlet UITextField     *m_fieldURL;
+@property (nonatomic,retain) IBOutlet UILabel         *m_labelURL;
+@property (nonatomic,retain) IBOutlet UITextField     *m_fieldURLTitle;
+@property (nonatomic,retain) IBOutlet UILabel         *m_labelURLTitle;
+
 
 + (ComposeMessageViewController *)sharedComposer;
 
