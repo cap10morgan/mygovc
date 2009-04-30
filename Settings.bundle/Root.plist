@@ -116,7 +116,7 @@
 			<key>Title</key>
 			<string>Chatter Max Age</string>
 			<key>DefaultValue</key>
-			<integer>172800</integer>
+			<integer>604800</integer>
 			<key>Titles</key>
 			<array>
 				<string>One Day</string>
@@ -150,7 +150,7 @@
 			<key>Title</key>
 			<string>Reload Bill Data</string>
 			<key>DefaultValue</key>
-			<string>Every Day</string>
+			<integer>86400</integer>
 			<key>Titles</key>
 			<array>
 				<string>Never</string>

@@ -50,6 +50,7 @@ typedef enum
 	NSMutableDictionary *m_topAgencies;
 	NSMutableDictionary *m_topCategories;
 	
+	NSURL *m_currentURL;
 	XMLParserOperation *m_xmlParser;
 	BOOL m_parsingData;
 	BOOL m_parsingRecord;
@@ -95,6 +96,7 @@ typedef enum
 
 - (NSURL *)getContractorListURL;
 - (NSURL *)getTransactionListURL;
+- (NSURL *)getSummaryURL;
 
 - (void)downloadDataWithCallback:(SEL)sel onObject:(id)obj synchronously:(BOOL)waitForData;
 

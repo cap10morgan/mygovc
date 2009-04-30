@@ -422,6 +422,7 @@ typedef enum
 					break;
 				case 3:
 					shouldComment = YES;
+					appUrl = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://spending/%@",[psd m_place]]];
 					break;
 				default:
 					break;
@@ -433,6 +434,10 @@ typedef enum
 				msg.m_transport = eMT_MyGov;
 				msg.m_to = @"MyGovernment Community";
 				msg.m_subject = [NSString stringWithFormat:@"Spending: %@",legName];
+				msg.m_appURL = appUrl;
+				msg.m_appURLTitle = legName;
+				msg.m_webURL = [psd getTransactionListURL];
+				msg.m_webURLTitle = @"USASpending.gov";  
 				ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
 				[cmvc display:msg fromParent:self];
 				[msg release];

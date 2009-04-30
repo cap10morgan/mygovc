@@ -172,9 +172,11 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     // Dismiss the keyboard when the view outside the text field is touched.
-	[m_fieldMessage resignFirstResponder];
 	[m_fieldTo resignFirstResponder];
 	[m_fieldSubject resignFirstResponder];
+	[m_fieldMessage resignFirstResponder];
+	[m_fieldURL resignFirstResponder];
+	[m_fieldURLTitle resignFirstResponder];
     [super touchesBegan:touches withEvent:event];
 }
 
@@ -249,10 +251,12 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (IBAction)sendButtonPressed:(id)sender
 {
-	[m_fieldMessage resignFirstResponder];
     [m_fieldTo resignFirstResponder];
 	[m_fieldSubject resignFirstResponder];
-		
+	[m_fieldMessage resignFirstResponder];
+	[m_fieldURL resignFirstResponder];
+	[m_fieldURLTitle resignFirstResponder];
+	
 	SEL sendOp = nil;
 	switch ( m_message.m_transport )
 	{

@@ -78,6 +78,8 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	m_topAgencies = [[NSMutableDictionary alloc] initWithCapacity:10];
 	m_topCategories = [[NSMutableDictionary alloc] initWithCapacity:10];
 	
+	m_currentURL = nil;
+	
 	m_xmlParser = nil;
 	m_parsingData = NO;
 	m_parsingRecord = NO;
@@ -370,6 +372,12 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 }
 
 
+- (NSURL *)getSummaryURL
+{
+	return m_currentURL;
+}
+
+
 // Asynchronous download of 
 - (void)downloadDataWithCallback:(SEL)sel onObject:(id)obj synchronously:(BOOL)waitForData
 {
@@ -426,6 +434,8 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 													  sortedBy:eSpendingSortDollars xmlURL:YES];
 		detailSummaryURL = [NSURL URLWithString:urlStr];
 	}
+	
+	m_currentURL = [[detailSummaryURL retain] autorelease];
 	
 	// kick off the download/parsing of XML data 
 	if ( !waitForData )
