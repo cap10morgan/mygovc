@@ -36,6 +36,7 @@
 	- (NSDate *)dateFromCachePath:(NSString *)filePath;
 	- (void)loadData_imp;
 	- (void)downloadNewDataStartingAt:(NSDate *)date;
+	- (void)syncInMemoryDataWithServer;
 	- (void)purgeCacheItemsOlderThan:(NSDate *)date;
 	- (BOOL)addCommunityItem:(CommunityItem *)newItem;
 @end
@@ -66,9 +67,15 @@
 		
 		m_inMemoryStartDate = nil;
 		m_inMemoryEndData = nil;
-		m_feedbackData = nil;
+		m_chatterData = nil;
+		m_chatterIDDict = nil;
+		
 		m_eventData = nil;
+		m_eventIDDict = nil;
+		
 		m_searchData = nil;
+		
+		m_latestItemDate = [NSDate distantPast];
 		
 		// make sure the cache directories exists!
 		[[NSFileManager defaultManager] createDirectoryAtPath:[[CommunityDataManager dataCachePath] stringByAppendingPathComponent:@"data"]
@@ -95,8 +102,12 @@
 	[m_inMemoryStartDate release];
 	[m_inMemoryEndData release];
 	
-	[m_feedbackData release];
+	[m_chatterData release];
+	[m_chatterIDDict release];
+	
 	[m_eventData release];
+	[m_eventIDDict release];
+	
 	[m_searchData release];
 	
 	[super dealloc];
@@ -184,6 +195,23 @@
 }
 
 
+- (CommunityItem *)itemWithId:(NSInteger)itemID
+{
+	CommunityItem *item;
+	
+	// grrrr - I have to hack around the fact that I started using 
+	// a string ID, and now am using an int...
+	
+	item = [m_chatterIDDict objectForKey:[NSString stringWithFormat:@"%0d",itemID]];
+	if ( nil != item ) return item;
+	
+	item = [m_eventIDDict objectForKey:[NSString stringWithFormat:@"%0d",itemID]];
+	if ( nil != item ) return item;
+	
+	return nil;
+}
+
+
 // Table data methods
 - (NSInteger)numberOfSectionsForType:(CommunityItemType)type
 {
@@ -204,9 +232,9 @@
 		default:
 			return 0;
 			
-		case eCommunity_Feedback:
+		case eCommunity_Chatter:
 			if ( section >= 1 ) return 0;
-			else return [m_feedbackData count];
+			else return [m_chatterData count];
 			
 		case eCommunity_Event:
 			if ( section >= 1 ) return 0;
@@ -231,9 +259,9 @@
 		default:
 			break;
 		
-		case eCommunity_Feedback:
+		case eCommunity_Chatter:
 			if ( indexPath.section >= 1 ) break;
-			itemArray = m_feedbackData;
+			itemArray = m_chatterData;
 			break;
 			
 		case eCommunity_Event:
@@ -298,7 +326,7 @@
 {
 	isBusy = YES;
 	
-	NSDate *newestDate = [NSDate distantPast];
+	//NSDate *newestDate = [NSDate distantPast];
 	
 	[self setStatus:@"Loading cached data..."];
 	
@@ -314,30 +342,39 @@
 		// ignore return code...
 		[self addCommunityItem:newItem];
 		
-		if ( NSOrderedAscending == [newestDate compare:newItem.m_date] )
-		{
-			// newItem.m_date is more recent than 'newestDate'
-			newestDate = [[newItem.m_date retain] autorelease];
-		}
-		
 		[newItem release];
 	}
 	
 	// now download any new data!
-	if ( NSOrderedSame == [newestDate compare:[NSDate distantPast]] )
+	if ( NSOrderedSame == [m_latestItemDate compare:[NSDate distantPast]] )
 	{
 		// we have no cache - only download items within the 
-		// timeframe specified by the use preference
+		// timeframe specified by the user preference
 		NSNumber *max_age_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_community_data_age"];
 		NSInteger max_age = -([max_age_str integerValue]);
 		
-		newestDate = [[NSDate date] addTimeInterval:max_age];
+		m_latestItemDate = [[NSDate date] addTimeInterval:max_age];
 	}
 	
-	[self downloadNewDataStartingAt:newestDate];
+	// download any new items
+	[self downloadNewDataStartingAt:m_latestItemDate];
 	
 	isBusy = NO;
 	isDataAvailable = YES;
+	
+	// 
+	// Start a worker thread 
+	// Update all our cached/downloaded items one-by one
+	// to grab any new comments from users
+	// 
+	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self 
+																		selector:@selector(syncInMemoryDataWithServer) 
+																		  object:nil];
+	
+	// Add the operation to the internal operation queue managed by the application delegate.
+	[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+	
+	[theOp release];
 	
 	[self setStatus:@"finished."];
 }
@@ -351,13 +388,50 @@
 	
 	// perform the blocking data download: Feedback items
 	[self setStatus:@"Downloading chatter..."];
-	[m_dataSource downloadItemsOfType:eCommunity_Feedback notOlderThan:date withDelegate:self];
+	[m_dataSource downloadItemsOfType:eCommunity_Chatter notOlderThan:date withDelegate:self];
 	
 	// perform the blocking data download: Feedback items
 	[self setStatus:@"Downloading events..."];
 	[m_dataSource downloadItemsOfType:eCommunity_Event notOlderThan:date withDelegate:self];
 	
 	isBusy = NO;
+}
+
+
+- (void)syncInMemoryDataWithServer
+{
+	BOOL success = NO;
+	
+	// this method is intended to be run in a background thread
+	// as it linearly runs through all the community items we
+	// have in memory, and attempts to query the server for updates
+	
+	// retain a reference to the current set of CommunityItem objects
+	// because as we download new ones, the old ones are replaced!
+	NSMutableDictionary *itemDict = [[NSMutableDictionary alloc] initWithDictionary:m_chatterIDDict];
+	[itemDict addEntriesFromDictionary:m_eventIDDict];
+	
+	NSEnumerator *iEnum = [itemDict objectEnumerator];
+	CommunityItem *theItem = nil;
+	while ( theItem = [iEnum nextObject] )
+	{
+		// do the updating via the CommunityDataSource object
+		if ( [m_dataSource updateItemOfType:theItem.m_type 
+								 withItemID:[theItem.m_id integerValue]
+								andDelegate:self] )
+		{
+			success = YES;
+		}
+	}
+	
+	[itemDict release];
+	
+	if ( success )
+	{
+		// this will cause our associated UITableView to reload its data
+		// and thus re-display the info we just updated
+		[self setStatus:@"update finished"];
+	}
 }
 
 
@@ -383,6 +457,7 @@
 - (BOOL)addCommunityItem:(CommunityItem *)newItem
 {
 	NSMutableArray *itemArray = nil;
+	NSMutableDictionary *itemDict = nil;
 	
 	if ( nil == newItem ) return FALSE;
 	switch ( newItem.m_type )
@@ -390,33 +465,63 @@
 		default:
 			return FALSE;
 			
-		case eCommunity_Feedback:
-			if ( nil == m_feedbackData ) m_feedbackData = [[NSMutableArray alloc] initWithCapacity:2];
-			itemArray = m_feedbackData;
+		case eCommunity_Chatter:
+			if ( nil == m_chatterData ) m_chatterData = [[NSMutableArray alloc] initWithCapacity:2];
+			if ( nil == m_chatterIDDict ) m_chatterIDDict = [[NSMutableDictionary alloc] initWithCapacity:2];
+			itemArray = m_chatterData;
+			itemDict = m_chatterIDDict;
 			break;
 			
 		case eCommunity_Event:
 			if ( nil == m_eventData ) m_eventData = [[NSMutableArray alloc] initWithCapacity:2];
+			if ( nil == m_eventIDDict ) m_eventIDDict = [[NSMutableDictionary alloc] initWithCapacity:2];
 			itemArray = m_eventData;
+			itemDict = m_eventIDDict;
 			break;
 	}
 	
 	if ( nil == itemArray ) return FALSE;
 	
-	// search the array for duplicates: O(n)... boo...
-	NSEnumerator *objEnum = [itemArray objectEnumerator];
-	CommunityItem *obj;
-	while ( obj = [objEnum nextObject] )
+	// search the itemDict for duplicates
+	CommunityItem *obj = [itemDict objectForKey:newItem.m_id];
+	if ( nil != obj )
 	{
-		if ( [obj.m_id isEqualToString:newItem.m_id] )
+		NSLog( @"Replacing item: '%@'", newItem.m_id );
+		
+		NSUInteger arrayIdx = [itemArray indexOfObjectIdenticalTo:obj];
+		if ( NSNotFound == arrayIdx )
 		{
-			NSLog( @"Duplicate item: '%@' - ignoring!", newItem.m_id );
+			NSLog( @"Item '%@' is in the dictionary, but not the array?! Ignoring it.", newItem.m_id );
 			return FALSE;
 		}
+		
+		[itemArray replaceObjectAtIndex:arrayIdx withObject:newItem];
+		[itemDict setValue:newItem forKey:newItem.m_id];
+		
+		if ( isDataAvailable )
+		{
+			// if we're replacing an item, and data is available
+			// then we're probably updating something and the object
+			// managing us may appreciate a callback :-)
+			[self setStatus:m_currentStatusMessage];
+		}
+	}
+	else
+	{
+		// set the array value
+		[itemArray addObject:newItem];
+		[itemArray sortUsingSelector:@selector(compareItemByDate:)];
+		
+		// set the dictionary value
+		[itemDict setValue:newItem forKey:newItem.m_id];
 	}
 	
-	[itemArray addObject:newItem];
-	[itemArray sortUsingSelector:@selector(compareItemByDate:)];
+	if ( NSOrderedAscending == [m_latestItemDate compare:newItem.m_date] )
+	{
+		// newItem.m_date is more recent than 'm_latestItemDate'
+		m_latestItemDate = [[newItem.m_date retain] autorelease];
+	}
+	
 	return TRUE;
 }
 

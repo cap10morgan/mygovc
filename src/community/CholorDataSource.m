@@ -9,6 +9,11 @@
 #import "CholorDataSource.h"
 #import "DataProviders.h"
 
+@interface CholorDataSource (private)
+	- (BOOL)validResponse:(NSString *)postResponse;
+@end
+
+
 @implementation CholorDataSource
 
 + (NSString *)postStringFromDictionary:(NSDictionary *)dict
@@ -169,10 +174,13 @@
 	while ( objDict = [plEnum nextObject] )
 	{
 		CommunityItem *item = [[[CommunityItem alloc] initFromPlistDictionary:objDict] autorelease];
-		[delegateOrNil communityDataSource:self newCommunityItemArrived:item];
+		if ( nil != item )
+		{
+			[delegateOrNil communityDataSource:self newCommunityItemArrived:item];
+		}
 	}
 	
-	return FALSE;
+	return TRUE;
 }
 
 
@@ -200,12 +208,7 @@
 	[theRequest release];
 	
 	// check string response to indicate success / failure
-	if ( ![response isEqualToString:[DataProviders Cholor_CommunityItemPOSTSucess]] )
-	{
-		return FALSE;
-	}
-	
-	return TRUE;
+	return [self validResponse:response];
 }
 
 
@@ -233,9 +236,56 @@
 	[theRequest release];
 	
 	// check string response to indicate success / failure
-	if ( ![response isEqualToString:[DataProviders Cholor_CommunityItemPOSTSucess]] )
+	return [self validResponse:response];
+}
+
+
+- (BOOL)updateItemOfType:(CommunityItemType)type 
+			  withItemID:(NSInteger)itemID 
+			 andDelegate:(id<CommunityDataSourceDelegate>)delegatOrNil
+{
+	NSURL *cholorURL = [NSURL URLWithString:[DataProviders Cholor_DownloadURLFor:type]];
+	
+	NSString *postStr = [NSString stringWithFormat:@"date=%0d&id=%d",0,itemID];
+	NSData *postData = [NSData dataWithBytes:[postStr UTF8String] length:[postStr length]];
+	
+	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:cholorURL];
+	[theRequest setHTTPMethod:@"POST"];
+	[theRequest setHTTPBody:postData];
+	[theRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+	[theRequest setTimeoutInterval:10.0f]; // 10 second timeout
+	
+	NSURLResponse *theResponse = nil;
+	NSError *err = nil;
+	NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
+	
+	[theRequest release];
+	
+	if ( nil == retVal ) return FALSE;
+	
+	NSString *errString = nil;
+	NSPropertyListFormat plistFmt;
+	NSArray *plistArray = [NSPropertyListSerialization propertyListFromData:retVal 
+														   mutabilityOption:NSPropertyListImmutable 
+																	 format:&plistFmt 
+														   errorDescription:&errString];
+	
+	if ( [plistArray count] < 1 )
 	{
 		return FALSE;
+	}
+	
+	if ( [plistArray count] > 1 )
+	{
+		NSLog( @"More than 1 item was downloaded for update (this is a server issue)" );
+	}
+	
+	// just grab the first (and hopefully only) item
+	CommunityItem *item = [[CommunityItem alloc] initFromPlistDictionary:[plistArray objectAtIndex:0]];
+	if ( nil != item )
+	{
+		[delegatOrNil communityDataSource:self newCommunityItemArrived:item];
+		[item release];
 	}
 	
 	return TRUE;
@@ -256,5 +306,26 @@
 {
 	return FALSE;
 }
+
+
+#pragma mark CholorDataSource Private
+
+
+- (BOOL)validResponse:(NSString *)postResponse
+{
+	// 
+	// by looking for the success response in a more loose way
+	// I can be more tolerent of server-side errors which produce 
+	// warning output
+	// 
+	
+	NSRange range = [postResponse rangeOfString:[DataProviders Cholor_CommunityItemPOSTSucess]];
+	
+	// we found the string if the length is greater than 0
+	if ( range.length > 0 ) return TRUE;
+	
+	return FALSE;
+}
+
 
 @end

@@ -139,6 +139,20 @@
 
 
 /*!
+	@see downloadItemsOfType:notOlderThan:withDelegate:
+	
+	@param[in] type the CommunityItemType of the community item to update from the data source
+	@param[in] itemID the @c m_id of the CommunityItem to update from the data source
+	@param[in] delegateOrNil object implementing the CommunityDataSourceDelegate protocol (or nil for no callbacks)
+	
+	@returns @b TRUE on success, @b FALSE otherwise 
+ */
+- (BOOL)updateItemOfType:(CommunityItemType)type 
+			  withItemID:(NSInteger)itemID 
+			 andDelegate:(id<CommunityDataSourceDelegate>)delegatOrNil;
+
+
+/*!
 	@brief Community data upload
 	
 	@par

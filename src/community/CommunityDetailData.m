@@ -82,7 +82,7 @@
 	switch ( m_item.m_type )
 	{
 		default:
-		case eCommunity_Feedback:
+		case eCommunity_Chatter:
 			break;
 			
 		case eCommunity_Event:

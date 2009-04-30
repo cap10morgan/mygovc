@@ -12,7 +12,7 @@
 typedef enum
 {
 	eCommunity_InvalidItem  = 0,
-	eCommunity_Feedback     = 1,
+	eCommunity_Chatter     = 1,
 	eCommunity_Event        = 2,
 } CommunityItemType;
 

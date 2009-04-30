@@ -472,7 +472,7 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 		default:
 			return nil;
 		
-		case eCommunity_Feedback:
+		case eCommunity_Chatter:
 			return kCholor_downloadCommunityChatterURL;
 			
 		case eCommunity_Event:

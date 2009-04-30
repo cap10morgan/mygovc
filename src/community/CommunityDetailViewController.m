@@ -86,7 +86,7 @@ enum
 		}
 			break;
 		
-		case eCommunity_Feedback:
+		case eCommunity_Chatter:
 		{
 			MyGovUserData *mgud = [myGovAppDelegate sharedUserData];
 			MyGovUser *user = [mgud userFromID:m_item.m_creator];
@@ -335,7 +335,7 @@ enum
 {
 	if ( 0 == section )
 	{
-		if ( eCommunity_Feedback == m_item.m_type )
+		if ( eCommunity_Chatter == m_item.m_type )
 		{
 			return [self heightForFeedbackText];
 		}
@@ -360,7 +360,7 @@ enum
 	
 	if ( 0 == section )
 	{
-		if ( eCommunity_Feedback == m_item.m_type )
+		if ( eCommunity_Chatter == m_item.m_type )
 		{
 			lblText = m_item.m_text;
 		}

@@ -22,9 +22,16 @@
 	
 	NSDate *m_inMemoryStartDate;
 	NSDate *m_inMemoryEndData;
-	NSMutableArray *m_feedbackData; // array of CommunityItems of type eCommunity_Feedback
+	
+	NSMutableArray *m_chatterData; // array of CommunityItems of type eCommunity_Chatter
+	NSMutableDictionary *m_chatterIDDict; // same set of CommunityItem data, different index :-)
+	
 	NSMutableArray *m_eventData; // array of CommunityItems of type eCommunity_Event
+	NSMutableDictionary *m_eventIDDict;
+	
 	NSMutableArray *m_searchData; // array of CommunityItems that resulted from the last search operation
+	
+	NSDate *m_latestItemDate;
 	
 	NSMutableString *m_currentStatusMessage;
 	id m_notifyTarget;
@@ -49,6 +56,10 @@
 
 // drop items from cache which are too old (defined in a user preference)
 - (void)purgeOldItemsFromCache:(BOOL)blocking;
+
+// grab community items 
+- (CommunityItem *)itemWithId:(NSInteger)itemID;
+
 
 // Table data methods
 - (NSInteger)numberOfSectionsForType:(CommunityItemType)type;

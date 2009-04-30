@@ -38,12 +38,12 @@
 	[NSThread sleepForTimeInterval:2.0f];
 	
 	// feedback item
-	if ( eCommunity_Feedback == type )
+	if ( eCommunity_Chatter == type )
 	{
 		CommunityItem *ci = [[CommunityItem alloc] init];
 		ci.m_id = @"abcdefg";
 		ci.m_date = [NSDate date];
-		ci.m_type = eCommunity_Feedback;
+		ci.m_type = eCommunity_Chatter;
 		ci.m_title = @"He Twittered That?!";
 		ci.m_summary = @"On Tuesday Rep. Pete Hoekstra leaked national security information...";
 		ci.m_text = @"On Tuesday Rep. Pete Hoekstra leaked national security information via Twitter. He let the entire world know where he was and what he was doing in Iraq - when the mission was supposed to be secret!";
@@ -96,6 +96,14 @@
 		[NSThread sleepForTimeInterval:2.0f];
 	}
 	
+	return TRUE;
+}
+
+
+- (BOOL)updateItemOfType:(CommunityItemType)type 
+			  withItemID:(NSInteger)itemID 
+			 andDelegate:(id<CommunityDataSourceDelegate>)delegatOrNil
+{
 	return TRUE;
 }
 

@@ -46,6 +46,15 @@
 }
 
 
+- (BOOL)updateItemOfType:(CommunityItemType)type 
+			  withItemID:(NSInteger)itemID 
+			 andDelegate:(id<CommunityDataSourceDelegate>)delegatOrNil
+{
+	// XXX - this needs to be filled in!
+	return FALSE;
+}
+
+
 - (BOOL)submitCommunityItem:(CommunityItem *)item 
 			   withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {

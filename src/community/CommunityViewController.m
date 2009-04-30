@@ -79,7 +79,7 @@
 	m_segmentCtrl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	m_segmentCtrl.segmentedControlStyle = UISegmentedControlStyleBar;
 	m_segmentCtrl.selectedSegmentIndex = 0; // Default to the "Chatter"
-	m_selectedItemType = eCommunity_Feedback;
+	m_selectedItemType = eCommunity_Chatter;
 	m_segmentCtrl.frame = CGRectMake(0,0,200,30);
 	// saturation of 0.0 means black/white
 	m_segmentCtrl.tintColor = [UIColor darkGrayColor];
@@ -251,7 +251,7 @@
 		default:
 		case 0:
 			// This is the chatter (feedback) list
-			m_selectedItemType = eCommunity_Feedback;
+			m_selectedItemType = eCommunity_Chatter;
 			searchBar.placeholder = @"Search Chatter...";
 			break;
 			
@@ -287,7 +287,7 @@
 		default:
 			break;
 		
-		case eCommunity_Feedback:
+		case eCommunity_Chatter:
 		{
 			// create a new feedback item!
 			MessageData *msg = [[MessageData alloc] init];

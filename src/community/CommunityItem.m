@@ -322,7 +322,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 - (void)p_initFromPlistDict:(NSDictionary *)plistDict
 {
 	m_id = nil;
-	m_type = eCommunity_Feedback; // default type
+	m_type = eCommunity_Chatter; // default type
 	m_image = nil;
 	m_title = nil;
 	m_date = nil;

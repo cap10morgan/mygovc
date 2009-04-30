@@ -194,7 +194,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	if ( nil == m_item.m_image || m_item.m_image.size.height <= 1 || m_item.m_image.size.width <= 1 )
 	{
 		// use the system icon
-		if ( eCommunity_Feedback == m_item.m_type )
+		if ( eCommunity_Chatter == m_item.m_type )
 		{
 			m_item.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"personIcon.png"]];
 		}

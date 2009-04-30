@@ -590,7 +590,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	
 	[item generateUniqueItemID];
 	
-	item.m_type = eCommunity_Feedback;
+	item.m_type = eCommunity_Chatter;
 	item.m_creator = userID;
 	item.m_title = m_fieldSubject.text;
 	item.m_text = m_fieldMessage.text;
@@ -615,6 +615,12 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		item.m_webURL = m_message.m_webURL;
 	}
 	item.m_webURLTitle = (([m_fieldURLTitle.text length] > 0) ? m_fieldURLTitle.text : m_message.m_webURLTitle);
+	
+	[m_hud setText:@"Sending your comment..." andIndicateProgress:YES];
+	[m_hud show:YES];
+	
+	[self.view setUserInteractionEnabled:NO];
+	[self.view setNeedsDisplay];
 	
 	// send the out the new comment via a worker thread
 	// (as per the CommunityDataSourceProtocol contract)
@@ -650,6 +656,12 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	reply.m_title = m_fieldSubject.text;
 	reply.m_text = m_fieldMessage.text;
 	reply.m_communityItemID = m_message.m_communityThreadID;
+	
+	[m_hud setText:@"Sending your reply..." andIndicateProgress:YES];
+	[m_hud show:YES];
+	
+	[self.view setUserInteractionEnabled:NO];
+	[self.view setNeedsDisplay];
 	
 	// send the out the new comment via a worker thread
 	// (as per the CommunityDataSourceProtocol contract)
@@ -699,8 +711,14 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	// this is the blocking call to the network submission...
 	BOOL success = [dataSource submitCommunityItem:item withDelegate:nil];
 	
+	[self.view setUserInteractionEnabled:YES];
+	[m_hud show:NO];
+	
 	if ( success )
 	{
+		// Add the event manually to our in-memory collection!
+		[[myGovAppDelegate sharedCommunityData] communityDataSource:dataSource newCommunityItemArrived:item];
+		
 		[self dismissModalViewControllerAnimated:YES];
 	}
 	else
@@ -725,8 +743,15 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	// this is the blocking call to the network submission...
 	BOOL success = [dataSource submitCommunityComment:reply withDelegate:nil];
 	
+	[self.view setUserInteractionEnabled:YES];
+	[m_hud show:NO];
+	
 	if ( success )
 	{
+		// add the comment to our in-memory structure :-)
+		CommunityItem *ci = [[myGovAppDelegate sharedCommunityData] itemWithId:[reply.m_communityItemID integerValue]];
+		[ci addComment:reply];
+		
 		[self dismissModalViewControllerAnimated:YES];
 	}
 	else
