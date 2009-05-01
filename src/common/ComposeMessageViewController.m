@@ -236,7 +236,14 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	[m_fieldURL setText:[m_message.m_webURL absoluteString]];
 	[m_fieldURLTitle setText:m_message.m_webURLTitle];
 	
-	[m_fieldTo setEnabled:NO];
+	if ( m_message.m_transport == eMT_Twitter )
+	{
+		[m_fieldTo setEnabled:YES];
+	}
+	else
+	{
+		[m_fieldTo setEnabled:NO];
+	}
 	
 	m_parentCtrl = parentController;
 	[m_parentCtrl presentModalViewController:self animated:YES];
@@ -691,7 +698,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		m_alertType = eAlertType_TwitterError;
 		UIAlertView *alert = [[UIAlertView alloc] 
 							  initWithTitle:@"Tweet Error"
-							  message:[NSString stringWithFormat:@"Error: %@",err]
+							  message:[NSString stringWithFormat:@"Error: [%@]\nIs %@ following you?",err, m_fieldTo.text]
 							  delegate:self
 							  cancelButtonTitle:nil
 							  otherButtonTitles:@"OK",@"Reset",nil];
@@ -706,7 +713,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 // This runs in an NSOperation worker thread
 - (void)sendCommunityItemViaDataSource:(CommunityItem *)item
 {
-	id<CommunityDataSourceProtocol> dataSource = [[myGovAppDelegate sharedCommunityData] dataSource];
+	CommunityDataManager *cdm = [myGovAppDelegate sharedCommunityData];
+	id<CommunityDataSourceProtocol> dataSource = [cdm dataSource];
 	
 	// this is the blocking call to the network submission...
 	BOOL success = [dataSource submitCommunityItem:item withDelegate:nil];
@@ -717,7 +725,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	if ( success )
 	{
 		// Add the event manually to our in-memory collection!
-		[[myGovAppDelegate sharedCommunityData] communityDataSource:dataSource newCommunityItemArrived:item];
+		[cdm communityDataSource:dataSource newCommunityItemArrived:item];
 		
 		[self dismissModalViewControllerAnimated:YES];
 	}
@@ -738,7 +746,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (void)sendCommunityReplyViaDataSource:(CommunityComment *)reply
 {
-	id<CommunityDataSourceProtocol> dataSource = [[myGovAppDelegate sharedCommunityData] dataSource];
+	CommunityDataManager *cdm = [myGovAppDelegate sharedCommunityData];
+	id<CommunityDataSourceProtocol> dataSource = [cdm dataSource];
 	
 	// this is the blocking call to the network submission...
 	BOOL success = [dataSource submitCommunityComment:reply withDelegate:nil];
@@ -751,6 +760,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		// add the comment to our in-memory structure :-)
 		CommunityItem *ci = [[myGovAppDelegate sharedCommunityData] itemWithId:[reply.m_communityItemID integerValue]];
 		[ci addComment:reply];
+		[cdm communityDataSource:dataSource newCommunityItemArrived:ci];
 		
 		[self dismissModalViewControllerAnimated:YES];
 	}

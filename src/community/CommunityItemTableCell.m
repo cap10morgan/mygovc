@@ -30,19 +30,19 @@ enum
 
 static const CGFloat S_CELL_HOFFSET = 7.0f;
 static const CGFloat S_CELL_VOFFSET = 5.0f;
-static const CGFloat S_TITLE_HEIGHT = 20.0f;
-static const CGFloat S_TITLE_MAX_WIDTH = 160.0f;
+static const CGFloat S_TITLE_HEIGHT = 18.0f;
+static const CGFloat S_TITLE_MAX_WIDTH = 175.0f;
 static const CGFloat S_MAX_IMG_WIDTH = 64.0f;
 
 static const CGFloat S_MIN_HEIGHT = 64.0f;
 static const CGFloat S_MAX_HEIGHT = 84.0f;
 static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 
-#define TITLE_FONT  [UIFont boldSystemFontOfSize:14.0f]
+#define TITLE_FONT  [UIFont boldSystemFontOfSize:12.0f]
 #define TITLE_COLOR [UIColor blackColor]
 
-#define COMMENTS_FONT  [UIFont systemFontOfSize:14.0f]
-#define COMMENTS_COLOR [UIColor darkGrayColor]
+#define COMMENTS_FONT  [UIFont systemFontOfSize:12.0f]
+#define COMMENTS_COLOR [UIColor colorWithRed:0.2f green:0.25f blue:0.7f alpha:0.9f]
 
 #define SUMMARY_FONT  [UIFont systemFontOfSize:12.0f]
 #define SUMMARY_COLOR [UIColor darkGrayColor]
@@ -84,7 +84,8 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 		titleView.textColor = TITLE_COLOR;
 		titleView.font = TITLE_FONT;
 		titleView.textAlignment = UITextAlignmentLeft;
-		titleView.adjustsFontSizeToFitWidth = YES;
+		titleView.lineBreakMode = UILineBreakModeTailTruncation;
+		//titleView.adjustsFontSizeToFitWidth = YES;
 		[titleView setTag:eTAG_TITLE];
 		[self addSubview:titleView];
 		[titleView release];
@@ -217,7 +218,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	
 	CGSize titleSz = [m_item.m_title sizeWithFont:TITLE_FONT 
 								constrainedToSize:CGSizeMake(S_TITLE_MAX_WIDTH, S_TITLE_HEIGHT) 
-									lineBreakMode:UILineBreakModeWordWrap];
+									lineBreakMode:UILineBreakModeTailTruncation];
 	CGRect titleRect = CGRectMake( CGRectGetMaxX(imgRect) + S_CELL_HOFFSET,
 								   S_CELL_VOFFSET,
 								   titleSz.width, S_TITLE_HEIGHT );

@@ -32,6 +32,7 @@
 
 @interface CommunityDataManager (private)
 	- (void)setStatus:(NSString *)status;
+	- (void)timerNotify:(NSTimer *)timer;
 	- (NSString *)cachePathForItem:(CommunityItem *)item;
 	- (NSDate *)dateFromCachePath:(NSString *)filePath;
 	- (void)loadData_imp;
@@ -77,6 +78,8 @@
 		
 		m_latestItemDate = [NSDate distantPast];
 		
+		m_timer = nil;
+		
 		// make sure the cache directories exists!
 		[[NSFileManager defaultManager] createDirectoryAtPath:[[CommunityDataManager dataCachePath] stringByAppendingPathComponent:@"data"]
 								  withIntermediateDirectories:YES 
@@ -109,6 +112,9 @@
 	[m_eventIDDict release];
 	
 	[m_searchData release];
+	
+	if ( nil != m_timer ) [m_timer invalidate]; 
+	m_timer = nil;
 	
 	[super dealloc];
 }
@@ -289,6 +295,33 @@
 			[m_notifyTarget performSelector:m_notifySelector withObject:m_currentStatusMessage];
 		}
 	}
+	
+	// don't fire a notification every time, the timer essentially 
+	// aggregates the calls to the notify target to prevent thread
+	// synchronization and system instability issues 
+	if ( nil == m_timer )
+	{
+		m_timer = [NSTimer timerWithTimeInterval:0.75 target:self selector:@selector(timerNotify:) userInfo:nil repeats:NO];
+		[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+	}
+}
+
+
+- (void)timerNotify:(NSTimer *)timer
+{
+	if ( timer != m_timer ) return;
+	
+	// stop the timer
+	[timer invalidate];
+	m_timer = nil; // reset for next time
+		
+	if ( nil != m_notifyTarget )
+	{
+		if ( [m_notifyTarget respondsToSelector:m_notifySelector] )
+		{
+			[m_notifyTarget performSelector:m_notifySelector withObject:m_currentStatusMessage];
+		}
+	}
 }
 
 
@@ -401,6 +434,8 @@
 - (void)syncInMemoryDataWithServer
 {
 	BOOL success = NO;
+	
+	[self setStatus:@"SYNC"];
 	
 	// this method is intended to be run in a background thread
 	// as it linearly runs through all the community items we
@@ -535,9 +570,14 @@
 	// add the item to our in-memory structures
 	if ( ![self addCommunityItem:item] ) return;
 	
-	// store the item in our data cache!
-	NSString *filePath = [self cachePathForItem:item];
-	[item writeItemToFile:filePath];
+	// don't cache self-generated objects 
+	// (we'll just re-download them next time we startup or reload)
+	if ( [item.m_id integerValue] > 0 )
+	{
+		// store the item in our data cache!
+		NSString *filePath = [self cachePathForItem:item];
+		[item writeItemToFile:filePath];
+	}
 }
 
 

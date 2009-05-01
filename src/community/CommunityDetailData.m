@@ -96,6 +96,7 @@
 				rd.line1 = @"Add Comment";
 				rd.line1Font = [UIFont boldSystemFontOfSize:14.0f];
 				rd.line1Color = [UIColor blackColor];
+				rd.line1Alignment = UITextAlignmentLeft;
 				rd.url = nil;
 				rd.action = @selector(rowActionAddComment:);
 				[retVal addObject:rd];
@@ -116,6 +117,7 @@
 				rd.line1 = @"??";
 				rd.line1Color = TOP_DATA_COLOR;
 				rd.line1Font = TOP_DATA_FONT;
+				rd.line1Alignment = UITextAlignmentRight;
 				rd.url = nil;
 				rd.action = @selector(rowActionNone:);
 				[retVal addObject:rd];
@@ -128,6 +130,7 @@
 				rd.line1 = [[[myGovAppDelegate sharedUserData] userFromID:m_item.m_creator] m_username];
 				rd.line1Color = TOP_DATA_COLOR;
 				rd.line1Font = TOP_DATA_FONT;
+				rd.line1Alignment = UITextAlignmentRight;
 				rd.url = nil;
 				rd.action = @selector(rowActionNone:);
 				[retVal addObject:rd];
@@ -144,6 +147,7 @@
 				rd.line1 = [dateFormatter stringFromDate:[m_item m_date]];
 				rd.line1Color = TOP_DATA_COLOR;
 				rd.line1Font = TOP_DATA_FONT;
+				rd.line1Alignment = UITextAlignmentRight;
 				rd.url = nil;
 				rd.action = @selector(rowActionNone:);
 				[retVal addObject:rd];
@@ -159,6 +163,7 @@
 				rd.line1 = [dateFormatter stringFromDate:[m_item m_date]];
 				rd.line1Color = TOP_DATA_COLOR;
 				rd.line1Font = TOP_DATA_FONT;
+				rd.line1Alignment = UITextAlignmentRight;
 				rd.url = nil;
 				rd.action = @selector(rowActionNone:);
 				[retVal addObject:rd];
@@ -171,6 +176,7 @@
 				rd.line1 = [NSString stringWithFormat:@"%0d",[[m_item eventAttendees] count]];
 				rd.line1Color = TOP_DATA_COLOR;
 				rd.line1Font = TOP_DATA_FONT;
+				rd.line1Alignment = UITextAlignmentRight;
 				rd.url = nil;
 				rd.action = @selector(rowActionNone:);
 				[retVal addObject:rd];

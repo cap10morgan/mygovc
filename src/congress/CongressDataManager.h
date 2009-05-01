@@ -28,6 +28,7 @@ typedef enum
 @private
 	BOOL isDataAvailable;
 	BOOL isBusy;
+	BOOL isAnyDataCached;
 	
 	BOOL parsingLegislator;
 	BOOL storingCharacters;
@@ -55,6 +56,7 @@ typedef enum
 
 @property (readonly) BOOL isDataAvailable;
 @property (readonly) BOOL isBusy;
+@property (readonly) BOOL isAnyDataCached;
 
 + (NSString *)dataCachePath;
 

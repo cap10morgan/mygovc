@@ -34,6 +34,8 @@
 
 @synthesize isDataAvailable;
 @synthesize isBusy;
+@synthesize isAnyDataCached;
+
 
 // [KEY:state_district] -> [VALUE:legislator_container]
 static NSMutableDictionary *s_districts = NULL;
@@ -76,10 +78,12 @@ static NSString *kTitleValue_Senator = @"Sen";
 		if ( ![[NSFileManager defaultManager] fileExistsAtPath:congressDataValidPath] )
 		{
 			// we need to start a data download!
+			isAnyDataCached = NO;
 			[self beginDataDownload];
 		}
 		else
 		{
+			isAnyDataCached = YES;
 			// data is available - read disk data into memory (via a worker thread)
 			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																		  selector:@selector(initFromDisk:) object:self];
@@ -380,6 +384,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 		// XXX - what to do?
 	}
 	
+	isAnyDataCached = YES;
 	isBusy = NO;
 }
 
@@ -469,6 +474,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 {
 	isDataAvailable = NO;
 	isBusy = YES;
+	isAnyDataCached = NO;
 	
 	[self setStatus:@"Preparing Congress Data Download..."];
 	

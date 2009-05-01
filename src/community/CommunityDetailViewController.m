@@ -103,6 +103,16 @@ enum
 		}
 			break;
 	}
+	
+	UILabel *titleView = [[[UILabel alloc] initWithFrame:CGRectMake(0,0,240,32)] autorelease];
+	titleView.backgroundColor = [UIColor clearColor];
+	titleView.textColor = [UIColor whiteColor];
+	titleView.font = [UIFont boldSystemFontOfSize:18.0f];
+	titleView.textAlignment = UITextAlignmentCenter;
+	titleView.adjustsFontSizeToFitWidth = YES;
+	titleView.text = self.title;
+	self.navigationItem.titleView = titleView;
+	
 	[self.tableView reloadData];
 }
 
@@ -140,9 +150,9 @@ enum
 												  action:@selector(addItemComment)];
 	}
 	
-	// XXX - set tableHeaderView to a custom UIView which has legislator
-	//       photo, name, major info (party, state, district), add to contacts link
-	// m_tableView.tableHeaderView = headerView;
+	// 
+	// The header view loads up the user / event / chatter image
+	// and holds a title, and URL links
 	CGRect hframe = CGRectMake(0,0,320,150);
 	CDetailHeaderViewController *hdrViewCtrl;
 	hdrViewCtrl = [[CDetailHeaderViewController alloc] initWithNibName:@"CDetailHeaderView" bundle:nil ];
@@ -207,8 +217,8 @@ enum
 {
 	NSString *txt = m_item.m_text;
 	
-	CGSize txtSz = [txt sizeWithFont:[UIFont systemFontOfSize:14.0f] 
-					constrainedToSize:CGSizeMake(300.0f,220.0f) 
+	CGSize txtSz = [txt sizeWithFont:[UIFont systemFontOfSize:16.0f] 
+					constrainedToSize:CGSizeMake(300.0f,280.0f) 
 						lineBreakMode:UILineBreakModeWordWrap];
 	
 	return txtSz.height + 14.0f; // with some padding...
@@ -366,9 +376,9 @@ enum
 		}
 		
 		sectionLabel.backgroundColor = [UIColor clearColor];
-		sectionLabel.textColor = [UIColor darkGrayColor];
-		sectionLabel.font = [UIFont systemFontOfSize:14.0f];
-		sectionLabel.textAlignment = UITextAlignmentLeft;
+		sectionLabel.textColor = [UIColor grayColor];
+		sectionLabel.font = [UIFont systemFontOfSize:16.0f];
+		sectionLabel.textAlignment = UITextAlignmentCenter;
 		sectionLabel.lineBreakMode = UILineBreakModeWordWrap;
 		sectionLabel.numberOfLines = 0;
 		

@@ -9,6 +9,22 @@
 #import "ProgressOverlayViewController.h"
 #import <QuartzCore/CAAnimation.h>
 
+// 
+// HUD Text parameters 
+// 
+#define HUD_FONT             [UIFont boldSystemFontOfSize:20.0f]
+#define HUD_TXTCOLOR         [UIColor whiteColor]
+#define HUD_TXTSHADOW_COLOR  [UIColor blackColor]
+#define HUD_MAX_SIZE         CGSizeMake(200.0f,200.0f)
+#define HUD_TXT_MARGIN       32.0f
+
+enum
+{
+	eTAG_LABEL    = 111,
+	eTAG_ACTIVITY = 222,
+};
+
+
 // UIView subclass to draw rounded corners :-)
 @interface ProgressOverlayView : UIView
 {
@@ -27,17 +43,6 @@
 @end
 
 
-enum
-{
-	eTAG_LABEL    = 111,
-	eTAG_ACTIVITY = 222,
-};
-
-/*
-@interface ProgressOverlayViewController (private)
-	- (void)setupLabelAndActivityViews;
-@end
-*/
 
 @implementation ProgressOverlayViewController
 
@@ -209,14 +214,14 @@ enum
 	if ( nil == lbl )
 	{
 		lbl = [[UILabel alloc] initWithFrame:CGRectMake(0.0f,40.0f,200.0f,160.0f)];
-		lbl.font = [UIFont boldSystemFontOfSize:26.0f];
+		lbl.font = HUD_FONT;
 		lbl.adjustsFontSizeToFitWidth = YES;
-		lbl.numberOfLines = 3;
+		lbl.numberOfLines = 4;
 		lbl.backgroundColor = [UIColor clearColor];
 		lbl.lineBreakMode = UILineBreakModeWordWrap;
 		lbl.textAlignment = UITextAlignmentCenter;
-		lbl.textColor = [UIColor whiteColor];
-		lbl.shadowColor = [UIColor blackColor];
+		lbl.textColor = HUD_TXTCOLOR;
+		lbl.shadowColor = HUD_TXTSHADOW_COLOR;
 		lbl.shadowOffset = CGSizeMake(0.0f, -1.0f);
 		[lbl setTag:eTAG_LABEL];
 		[self addSubview:lbl];
@@ -258,7 +263,7 @@ enum
 	UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
 	
 	// get a rectangle which can minimally contain the text
-	CGSize fontSz = [text sizeWithFont:lbl.font constrainedToSize:CGSizeMake(200.0f,200.0f) lineBreakMode:UILineBreakModeWordWrap];
+	CGSize fontSz = [text sizeWithFont:lbl.font constrainedToSize:HUD_MAX_SIZE lineBreakMode:UILineBreakModeWordWrap];
 	CGRect fontRect = CGRectMake(20.0f, 50.0f, fontSz.width, fontSz.height);
 	CGRect parentRect = ([self superview] ? [self superview].frame : CGRectMake(0.0f,0.0f,320.0f,480.0f));
 	if ( CGRectGetWidth(parentRect) < 1 || CGRectGetHeight(parentRect) < 1 )
@@ -268,9 +273,8 @@ enum
 	
 	// create a rectangle for the view which can minimally contain the whole text
 	// (with a 20 pixel margin on all sides)
-	static CGFloat S_MARGIN = 40.0f;
-	CGFloat dx = CGRectGetWidth(parentRect) - fontSz.width - S_MARGIN;
-	CGFloat dy = CGRectGetHeight(parentRect) - fontSz.height - 50.0f - S_MARGIN;
+	CGFloat dx = CGRectGetWidth(parentRect) - fontSz.width - HUD_TXT_MARGIN;
+	CGFloat dy = CGRectGetHeight(parentRect) - fontSz.height - 50.0f - HUD_TXT_MARGIN;
 	CGRect viewRect = CGRectInset(parentRect, dx/2.0f, dy/2.0f );
 	if ( CGRectGetMinX(viewRect) <= 0 || CGRectGetMinY(viewRect) > 480.0f )
 	{
@@ -313,21 +317,24 @@ enum
 	{
 		m_animating = NO;
 		
-		// set the activity indicator here to avoid
-		// a crazy-looking flicker in the main animation :-)
-		UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
-		[activity setFrame:CGRectMake(0.0f,0.0f,32.0f,32.0f)];
-		[activity setCenter:CGPointMake(CGRectGetWidth(self.frame)/2.0f, 30.0f)];
-		if ( m_shouldAnimate ) { [activity startAnimating]; [activity setHidden:NO]; }
-		else [activity stopAnimating];
-		[self setNeedsDisplay];
-		
 		if ( m_needsToHide )
 		{
 			m_needsToHide = NO;
 			[self hideView];
 		}
+		
+		// set the activity indicator here to avoid
+		// a crazy-looking flicker in the main animation :-)
+		UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
+		[activity setFrame:CGRectMake(0.0f,0.0f,32.0f,32.0f)];
+		[activity setCenter:CGPointMake(CGRectGetWidth(self.frame)/2.0f, 30.0f)];
+		
+		if ( m_shouldAnimate ) { [activity startAnimating]; [activity setHidden:NO]; }
+		else [activity stopAnimating];
+		
+		[self setNeedsDisplay];
 	}
+	
 	[[self superview] setNeedsDisplay];
 }
 

@@ -306,12 +306,15 @@ enum
 	// set UILabel fonts
 	titleView.font = (nil == rd.titleFont ? TITLE_FONT : rd.titleFont);
 	titleView.textColor = (nil == rd.titleColor ? TITLE_COLOR : rd.titleColor);
+	titleView.textAlignment = rd.titleAlignment;
 	
 	line1View.font = (nil == rd.line1Font ? LINE1_FONT : rd.line1Font);
 	line1View.textColor = (nil == rd.line1Color ? LINE1_COLOR : rd.line1Color);
+	line1View.textAlignment = rd.line1Alignment;
 	
 	line2View.font = (nil == rd.line2Font ? LINE2_FONT : rd.line2Font);
 	line2View.textColor = (nil == rd.line2Color ? LINE2_COLOR : rd.line2Color);
+	line2View.textAlignment = rd.line2Alignment;
 	
 	[titleView setFrame:titleFrame];
 	[titleView setText:titleTxt];

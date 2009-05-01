@@ -63,7 +63,7 @@ static int kMAX_OPS_IN_QUEUE = 10;
 			// start a timer that will periodically check to see if
 			// congressional data is ready... no this is not the most
 			// efficient way of doing this...
-			m_timer = [NSTimer timerWithTimeInterval:0.75 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
+			m_timer = [NSTimer timerWithTimeInterval:0.4 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
 			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
 		}
 	}

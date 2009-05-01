@@ -12,9 +12,9 @@
 
 @implementation TableRowData
 
-@synthesize title, titleColor, titleFont;
-@synthesize line1, line1Color, line1Font;
-@synthesize line2, line2Color, line2Font;
+@synthesize title, titleColor, titleFont, titleAlignment;
+@synthesize line1, line1Color, line1Font, line1Alignment;
+@synthesize line2, line2Color, line2Font, line2Alignment;
 @synthesize url, action;
 
 - (id)init
@@ -24,14 +24,17 @@
 		title = nil;
 		titleColor = nil;
 		titleFont = nil;
+		titleAlignment = UITextAlignmentLeft;
 		
 		line1 = nil;
 		line1Color = nil;
 		line1Font = nil;
+		line1Alignment = UITextAlignmentLeft;
 		
 		line2 = nil;
 		line2Color = nil;
 		line2Font = nil;
+		line2Alignment = UITextAlignmentLeft;
 		
 		url = nil;
 		action = nil;

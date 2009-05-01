@@ -387,7 +387,7 @@ typedef enum
 			PlaceSpendingData *psd = [self getDataForIndexPath:[self.tableView indexPathForSelectedRow]];
 			NSArray *plArray = [psd placeLegislators:YES];
 			NSString *legName = [psd m_place];
-			NSURL *appUrl = nil;
+			NSURL *appUrl = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://spending/%@",[psd m_place]]];
 			switch ( buttonIndex )
 			{
 				case 0:
@@ -422,7 +422,7 @@ typedef enum
 					break;
 				case 3:
 					shouldComment = YES;
-					appUrl = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://spending/%@",[psd m_place]]];
+					appUrl = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://spending/place/%@",[psd m_place]]];
 					break;
 				default:
 					break;
@@ -469,6 +469,8 @@ typedef enum
 				msg.m_transport = eMT_MyGov;
 				msg.m_to = @"MyGovernment Community";
 				msg.m_subject = [NSString stringWithFormat:@"Spending: %@",ci.m_parentCompany];
+				msg.m_appURL = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://spending/contractor/%0d",ci.m_parentDUNS]];
+				msg.m_appURLTitle = ci.m_parentCompany;
 				ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
 				[cmvc display:msg fromParent:self];
 				[msg release];

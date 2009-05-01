@@ -148,7 +148,7 @@
 		// pop up an alert saying it failed!
 		UIAlertView *alert = [[UIAlertView alloc] 
 							  initWithTitle:@"Sign In Error"
-							  message:[NSString stringWithFormat:@"Error: %@",err]
+							  message:[NSString stringWithFormat:@"Error: [%@]\nBad username/password?",err]
 							  delegate:self
 							  cancelButtonTitle:nil
 							  otherButtonTitles:@"OK",nil];

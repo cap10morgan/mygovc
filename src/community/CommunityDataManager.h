@@ -33,6 +33,7 @@
 	
 	NSDate *m_latestItemDate;
 	
+	NSTimer *m_timer;
 	NSMutableString *m_currentStatusMessage;
 	id m_notifyTarget;
 	SEL m_notifySelector;

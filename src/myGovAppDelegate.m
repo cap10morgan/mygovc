@@ -212,6 +212,13 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 	while ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
 	{
 		[NSThread sleepForTimeInterval:0.1f];
+		if ( ![[myGovAppDelegate sharedCongressData] isAnyDataCached] )
+		{
+			// if we're downloading data, it could be a while so
+			// we should probably indicate some progress and let the user 
+			// interact with our UI a little ;-)
+			break;
+		}
 	}
 	
 	//

@@ -11,7 +11,6 @@
 		011592C40F6A36D2008BECCD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 011592C30F6A36D2008BECCD /* Default.png */; };
 		0126775E0F7F25CA00CF9C46 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */; };
 		012D5AD20FA6C098006DA53F /* system_avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 012D5AD10FA6C098006DA53F /* system_avatar.png */; };
-		012D5AEE0FA6CC5D006DA53F /* hoekstra.png in Resources */ = {isa = PBXBuildFile; fileRef = 012D5AED0FA6CC5D006DA53F /* hoekstra.png */; };
 		0178E3AF0F944AFF00B96BD1 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0178E3AE0F944AFF00B96BD1 /* Settings.bundle */; };
 		017C22500F721824008CA4ED /* billsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224D0F721824008CA4ED /* billsIcon.png */; };
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
@@ -25,6 +24,7 @@
 		01ACB0680FA8434900B6FF59 /* CDetailHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACB0660FA8434900B6FF59 /* CDetailHeaderViewController.m */; };
 		01B119440F70BD560076AFE0 /* location_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B119420F70BD560076AFE0 /* location_overlay.png */; };
 		01B119450F70BD560076AFE0 /* USStates.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01B119430F70BD560076AFE0 /* USStates.plist */; };
+		01B61CF80FAA8A37007E10E6 /* refreshIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B61CF70FAA8A37007E10E6 /* refreshIcon.png */; };
 		01B6C79D0FA56FE5000CEF90 /* JeremyaStaticDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */; };
 		01B6C7B90FA57319000CEF90 /* MyGovUserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B6C7B80FA57319000CEF90 /* MyGovUserData.m */; };
 		01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6ED0F8AEACD00619441 /* backButton.png */; };
@@ -102,7 +102,6 @@
 		011592C30F6A36D2008BECCD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		012D5AD10FA6C098006DA53F /* system_avatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = system_avatar.png; path = res/system_avatar.png; sourceTree = "<group>"; };
-		012D5AED0FA6CC5D006DA53F /* hoekstra.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = hoekstra.png; path = res/hoekstra.png; sourceTree = "<group>"; };
 		0178E3AE0F944AFF00B96BD1 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		017C224D0F721824008CA4ED /* billsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = billsIcon.png; path = res/billsIcon.png; sourceTree = "<group>"; };
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
@@ -119,6 +118,7 @@
 		01ACB0660FA8434900B6FF59 /* CDetailHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDetailHeaderViewController.m; sourceTree = "<group>"; };
 		01B119420F70BD560076AFE0 /* location_overlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = location_overlay.png; path = res/location_overlay.png; sourceTree = "<group>"; };
 		01B119430F70BD560076AFE0 /* USStates.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = USStates.plist; path = res/USStates.plist; sourceTree = "<group>"; };
+		01B61CF70FAA8A37007E10E6 /* refreshIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = refreshIcon.png; path = res/refreshIcon.png; sourceTree = "<group>"; };
 		01B6C7820FA548A5000CEF90 /* CommunityDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDataSource.h; sourceTree = "<group>"; };
 		01B6C79B0FA56FE5000CEF90 /* JeremyaStaticDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JeremyaStaticDataSource.h; sourceTree = "<group>"; };
 		01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JeremyaStaticDataSource.m; sourceTree = "<group>"; };
@@ -495,9 +495,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01B61CF70FAA8A37007E10E6 /* refreshIcon.png */,
 				01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */,
 				01ACAEF40FA80DA100B6FF59 /* personIcon.png */,
-				012D5AED0FA6CC5D006DA53F /* hoekstra.png */,
 				012D5AD10FA6C098006DA53F /* system_avatar.png */,
 				01E4C5820FA0278700E69CC8 /* twitter_logo_header.png */,
 				01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */,
@@ -592,10 +592,10 @@
 				01D7FE8B0FA5015700F78B92 /* RecoveryView.xib in Resources */,
 				01D7FEC00FA5023B00F78B92 /* LegislatorHeaderView.xib in Resources */,
 				012D5AD20FA6C098006DA53F /* system_avatar.png in Resources */,
-				012D5AEE0FA6CC5D006DA53F /* hoekstra.png in Resources */,
 				01ACAEF50FA80DA100B6FF59 /* communityEventIcon.png in Resources */,
 				01ACAEF60FA80DA100B6FF59 /* personIcon.png in Resources */,
 				01ACB0670FA8434900B6FF59 /* CDetailHeaderView.xib in Resources */,
+				01B61CF80FAA8A37007E10E6 /* refreshIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

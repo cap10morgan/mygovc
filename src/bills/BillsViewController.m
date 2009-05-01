@@ -557,8 +557,15 @@ enum
 			MessageData *msg = [[MessageData alloc] init];
 			msg.m_transport = eMT_MyGov;
 			msg.m_to = @"MyGovernment Community";
-			msg.m_subject = [NSString stringWithFormat:@"Comment on %@",[bill m_title]];
+			msg.m_subject = [NSString stringWithFormat:@"%@ %0d:", [BillContainer getBillTypeShortDescrip:bill.m_type], bill.m_number];
 			msg.m_body = @" ";
+			msg.m_appURL = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://bills/%@/%0d",
+												               [BillContainer stringFromBillType:bill.m_type],
+												               bill.m_number]
+							];
+			msg.m_appURLTitle = msg.m_subject;
+			msg.m_webURL = [bill getFullTextURL];
+			msg.m_webURLTitle = @"Full Bill Text";
 			// display the message composer
 			ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
 			[cmvc display:msg fromParent:self];

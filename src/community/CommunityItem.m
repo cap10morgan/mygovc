@@ -249,6 +249,9 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 
 - (void)generateUniqueItemID
 {
+	self.m_id = @"-1"; // unused - the server does this for us now!
+	
+	/*
 	CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
 	CFStringRef uuidStr = CFUUIDCreateString( kCFAllocatorDefault, uuid );
 	
@@ -257,6 +260,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	
 	CFRelease(uuidStr);
 	CFRelease(uuid);
+	*/
 }
 
 
