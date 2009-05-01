@@ -5,6 +5,7 @@
 //  Created by Jeremy C. Andrus on 4/19/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
+#import "ComposeMessageViewController.h"
 #import "ContractorSpendingData.h"
 #import "CustomTableCell.h"
 #import "PlaceSpendingData.h"
@@ -14,6 +15,7 @@
 
 @interface SpendingSummaryViewController (private)
 	- (void)deselectRow:(id)sender;
+	- (void)composeNewCommunityItem;
 @end
 
 
@@ -100,6 +102,17 @@
 	m_tableView.separatorColor = [UIColor blackColor];
 	m_tableView.backgroundColor = [UIColor blackColor];
 	
+	// 
+	// Add a "new" button which will add either a 
+	// new piece of chatter, or a new event depending on the 
+	// currently selected view!
+	// 
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
+											  initWithBarButtonSystemItem:UIBarButtonSystemItemCompose 
+											  target:self 
+											  action:@selector(composeNewCommunityItem)];
+	
+	
 	/*
 	 // XXX - set tableHeaderView to a custom UIView which has legislator
 	 //       photo, name, major info (party, state, district), add to contacts link
@@ -171,6 +184,39 @@
 	// de-select the currently selected row
 	// (so the user can go back to the same legislator)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+}
+
+
+- (void)composeNewCommunityItem
+{
+	MessageData *msg = [[MessageData alloc] init];
+	msg.m_transport = eMT_MyGov;
+	msg.m_to = @"MyGovernment Community";
+	
+	if ( nil != m_placeData )
+	{
+		// place 
+		msg.m_body = @" ";
+		
+		msg.m_subject = [NSString stringWithFormat:@"Spending: %@",[m_placeData m_place]];
+		msg.m_appURL = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://spending/place/%@",[m_placeData m_place]]];;
+		msg.m_appURLTitle = [m_placeData m_place];
+		
+		msg.m_appURLTitle = msg.m_subject;
+		msg.m_webURL = [m_placeData getTransactionListURL];
+		msg.m_webURLTitle = @"USASpending.gov";  
+	}
+	else
+	{
+		// contractor
+		msg.m_subject = [NSString stringWithFormat:@"Spending: %@",m_contractorData.m_parentCompany];
+		msg.m_appURL = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://spending/contractor/%0d",m_contractorData.m_parentDUNS]];
+		msg.m_appURLTitle = m_contractorData.m_parentCompany;
+	}
+	
+	// display the message composer
+	ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+	[cmvc display:msg fromParent:self];
 }
 
 

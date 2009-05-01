@@ -75,9 +75,12 @@ static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 // 
 // Cholor - cbell's PHP implementation of mygov server functionality :-)
 // 
+static NSString *kCholor_UserAuthURL = @"http://cholor.com/mygov/login.php";
+static NSString *kCholor_UserAddURL = @"http://cholor.com/mygov/addUser.php";
 static NSString *kCholor_CommunityItemPostURL = @"http://cholor.com/mygov/community.php";
 static NSString *kCholor_CommunityCommentPostURL = @"http://cholor.com/mygov/comments.php";
 static NSString *kCholor_CommunityItemPOSTSuccess = @"Posted";
+static NSString *kCholor_UserAuthFailedStr = @"Failure";
 
 static NSString *kCholor_downloadCommunityChatterURL = @"http://cholor.com/mygov/communityChatter.php";
 static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/communityEvents.php";
@@ -444,6 +447,24 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 				sortStr
 	 ];
 	return (NSString *)urlStr;
+}
+
+
++ (NSString *)Cholor_UserAuthURL
+{
+	return kCholor_UserAuthURL;
+}
+
+
++ (NSString *)Cholor_UserAddURL
+{
+	return kCholor_UserAddURL;
+}
+
+
++ (NSString *)Cholor_UserAuthFailedStr
+{
+	return kCholor_UserAuthFailedStr;
 }
 
 

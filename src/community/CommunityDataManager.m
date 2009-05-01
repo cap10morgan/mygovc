@@ -36,7 +36,7 @@
 	- (NSString *)cachePathForItem:(CommunityItem *)item;
 	- (NSDate *)dateFromCachePath:(NSString *)filePath;
 	- (void)loadData_imp;
-	- (void)downloadNewDataStartingAt:(NSDate *)date;
+	- (BOOL)downloadNewDataStartingAt:(NSDate *)date;
 	- (void)syncInMemoryDataWithServer;
 	- (void)purgeCacheItemsOlderThan:(NSDate *)date;
 	- (BOOL)addCommunityItem:(CommunityItem *)newItem;
@@ -59,6 +59,9 @@
 	{
 		isDataAvailable = NO;
 		isBusy = NO;
+		
+		m_currentUserUID = -1;
+		
 		m_currentStatusMessage = [[NSMutableString alloc] initWithString:@"Initializing..."];
 		m_notifyTarget = nil;
 		m_notifySelector = nil;
@@ -147,6 +150,12 @@
 }
 
 
+- (NSInteger)currentlyAuthenticatedUser
+{
+	return m_currentUserUID;
+}
+
+
 // starts a possible data cache load, plus new data download
 - (void)loadData
 {
@@ -154,6 +163,7 @@
 	if ( isBusy ) return;
 	
 	isBusy = YES;
+	isDataAvailable = NO;
 	[self setStatus:@"Loading Community Data..."];
 	
 	// read disk data into memory (via a worker thread)
@@ -288,20 +298,13 @@
 - (void)setStatus:(NSString *)status
 {
 	[m_currentStatusMessage setString:status];
-	if ( nil != m_notifyTarget )
-	{
-		if ( [m_notifyTarget respondsToSelector:m_notifySelector] )
-		{
-			[m_notifyTarget performSelector:m_notifySelector withObject:m_currentStatusMessage];
-		}
-	}
 	
 	// don't fire a notification every time, the timer essentially 
 	// aggregates the calls to the notify target to prevent thread
 	// synchronization and system instability issues 
 	if ( nil == m_timer )
 	{
-		m_timer = [NSTimer timerWithTimeInterval:0.75 target:self selector:@selector(timerNotify:) userInfo:nil repeats:NO];
+		m_timer = [NSTimer timerWithTimeInterval:0.4f target:self selector:@selector(timerNotify:) userInfo:nil repeats:NO];
 		[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
 	}
 }
@@ -357,6 +360,8 @@
 
 - (void)loadData_imp
 {
+	BOOL loadedCachedData = NO;
+	
 	isBusy = YES;
 	
 	//NSDate *newestDate = [NSDate distantPast];
@@ -365,6 +370,9 @@
 	
 	// load everything in our data cache!
 	NSString *cachePath = [[CommunityDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
+	// make sure the directoy exists!
+	[[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:NULL];
+	
 	NSDirectoryEnumerator *dEnum = [[NSFileManager defaultManager] enumeratorAtPath:cachePath];
 	NSString *file;
 	while ( file = [dEnum nextObject] )
@@ -376,6 +384,7 @@
 		[self addCommunityItem:newItem];
 		
 		[newItem release];
+		loadedCachedData = YES;
 	}
 	
 	// now download any new data!
@@ -384,16 +393,15 @@
 		// we have no cache - only download items within the 
 		// timeframe specified by the user preference
 		NSNumber *max_age_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_community_data_age"];
-		NSInteger max_age = -([max_age_str integerValue]);
+		NSInteger max_age = -604800; // default to ~1 week
+		if ( nil != max_age_str ) max_age = -([max_age_str integerValue]);
 		
-		m_latestItemDate = [[NSDate date] addTimeInterval:max_age];
+		m_latestItemDate = [[[[NSDate date] addTimeInterval:max_age] retain] autorelease];
 	}
 	
 	// download any new items
-	[self downloadNewDataStartingAt:m_latestItemDate];
-	
+	isDataAvailable = [self downloadNewDataStartingAt:m_latestItemDate] || loadedCachedData;
 	isBusy = NO;
-	isDataAvailable = YES;
 	
 	// 
 	// Start a worker thread 
@@ -413,21 +421,25 @@
 }
 
 
-- (void)downloadNewDataStartingAt:(NSDate *)date
+- (BOOL)downloadNewDataStartingAt:(NSDate *)date
 {
-	isBusy = YES;
-	
 	// XXX - validate username/password?!
 	
 	// perform the blocking data download: Feedback items
 	[self setStatus:@"Downloading chatter..."];
-	[m_dataSource downloadItemsOfType:eCommunity_Chatter notOlderThan:date withDelegate:self];
+	if ( ![m_dataSource downloadItemsOfType:eCommunity_Chatter notOlderThan:date withDelegate:self] )
+	{
+		return FALSE;
+	}
 	
 	// perform the blocking data download: Feedback items
 	[self setStatus:@"Downloading events..."];
-	[m_dataSource downloadItemsOfType:eCommunity_Event notOlderThan:date withDelegate:self];
+	if ( ![m_dataSource downloadItemsOfType:eCommunity_Event notOlderThan:date withDelegate:self] )
+	{
+		return FALSE;
+	}
 	
-	isBusy = NO;
+	return TRUE;
 }
 
 
@@ -482,7 +494,7 @@
 		if ( NSOrderedAscending == [itemDate compare:date] )
 		{
 			// 'itemDate' is earlier than the passed in date - remove this file!
-			NSLog( @"Removing community cache: %@", fPath );
+			//NSLog( @"Removing community cache: %@", fPath );
 			[[NSFileManager defaultManager] removeItemAtPath:fPath error:NULL];
 		}
 	}
@@ -521,7 +533,7 @@
 	CommunityItem *obj = [itemDict objectForKey:newItem.m_id];
 	if ( nil != obj )
 	{
-		NSLog( @"Replacing item: '%@'", newItem.m_id );
+		//NSLog( @"Replacing item: '%@'", newItem.m_id );
 		
 		NSUInteger arrayIdx = [itemArray indexOfObjectIdenticalTo:obj];
 		if ( NSNotFound == arrayIdx )
@@ -550,6 +562,8 @@
 		// set the dictionary value
 		[itemDict setValue:newItem forKey:newItem.m_id];
 	}
+	
+	NSLog( @"Grabbed '%@' from mygov server...",newItem.m_title );
 	
 	if ( NSOrderedAscending == [m_latestItemDate compare:newItem.m_date] )
 	{
@@ -586,6 +600,13 @@
 {
 	MyGovUserData *userData = [myGovAppDelegate sharedUserData];
 	[userData setUserInCache:user];
+}
+
+
+- (void)communityDataSource:(id)dataSource
+		  userAuthenticated:(NSInteger)uid
+{
+	m_currentUserUID = uid;
 }
 
 

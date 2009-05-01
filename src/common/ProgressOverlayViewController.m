@@ -317,20 +317,20 @@ enum
 	{
 		m_animating = NO;
 		
+		// set the activity indicator here to avoid
+		// a crazy-looking flicker in the main animation :-)
+		UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
+		[activity stopAnimating];
+		[activity setFrame:CGRectMake(0.0f,0.0f,32.0f,32.0f)];
+		[activity setCenter:CGPointMake(CGRectGetWidth(self.frame)/2.0f, 30.0f)];
+		
+		if ( m_shouldAnimate ) { [activity startAnimating]; [activity setHidden:NO]; }
+		
 		if ( m_needsToHide )
 		{
 			m_needsToHide = NO;
 			[self hideView];
 		}
-		
-		// set the activity indicator here to avoid
-		// a crazy-looking flicker in the main animation :-)
-		UIActivityIndicatorView *activity = (UIActivityIndicatorView *)[self viewWithTag:eTAG_ACTIVITY];
-		[activity setFrame:CGRectMake(0.0f,0.0f,32.0f,32.0f)];
-		[activity setCenter:CGPointMake(CGRectGetWidth(self.frame)/2.0f, 30.0f)];
-		
-		if ( m_shouldAnimate ) { [activity startAnimating]; [activity setHidden:NO]; }
-		else [activity stopAnimating];
 		
 		[self setNeedsDisplay];
 	}

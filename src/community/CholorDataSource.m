@@ -8,6 +8,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "CholorDataSource.h"
 #import "DataProviders.h"
+#import "MyGovUserData.h"
 
 @interface CholorDataSource (private)
 	- (BOOL)validResponse:(NSString *)postResponse;
@@ -105,6 +106,9 @@
 	if ( self = [super init] )
 	{
 		m_isBusy = NO;
+		m_username = nil;
+		m_password = nil;
+		m_authenticated_uid = -1;
 	}
 	return self;
 }
@@ -118,9 +122,57 @@
 
 - (BOOL)validateUsername:(NSString *)username 
 			 andPassword:(NSString *)password
+			withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
-	// all users are valid :-)
-	return TRUE;
+	if ( ([m_username isEqualToString:username]) &&
+		 ([m_password isEqualToString:password]) && 
+		 (m_authenticated_uid > 0)
+		)
+	{
+		// cached values (we're doing session management, baby!)
+		// ...
+		// (wow, this is the _hugest_ hack ever)
+		// 
+		return TRUE;
+	}
+	else
+	{
+		// do the user auth via Cholor...
+		NSURL *cholorURL = [NSURL URLWithString:[DataProviders Cholor_UserAuthURL]];
+		
+		NSString *postStr = [NSString stringWithFormat:@"username=%@&password=%@",username,password];
+		NSData *postData = [NSData dataWithBytes:[postStr UTF8String] length:[postStr length]];
+		
+		NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:cholorURL];
+		[theRequest setHTTPMethod:@"POST"];
+		[theRequest setHTTPBody:postData];
+		[theRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+		[theRequest setTimeoutInterval:10.0f]; // 10 second timeout
+		
+		NSURLResponse *theResponse = nil;
+		NSError *err = nil;
+		NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
+		NSString *response = [[[NSString alloc] initWithData:retVal encoding:NSMacOSRomanStringEncoding] autorelease];
+		
+		if ( [response isEqualToString:[DataProviders Cholor_UserAuthFailedStr]] )
+		{
+			return FALSE;
+		}
+		
+		NSInteger uid = [response integerValue];
+		if ( uid <= 0 )
+		{
+			return FALSE;
+		}
+		
+		m_authenticated_uid = uid;
+		m_username = [[username retain] autorelease];
+		m_password = [[password retain] autorelease];
+		
+		[delegateOrNil communityDataSource:self userAuthenticated:uid];
+		
+		return TRUE;
+	}
 }
 
 
@@ -128,7 +180,32 @@
 	  withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
 	// oh, that was successful alright!
-	return TRUE;
+	// do the user auth via Cholor...
+	NSURL *cholorURL = [NSURL URLWithString:[DataProviders Cholor_UserAddURL]];
+	
+	NSString *postStr = [NSString stringWithFormat:@"username=%@&password=%@&email=%@",
+									newUser.m_username, 
+									newUser.m_password, 
+									newUser.m_email ];
+	NSData *postData = [NSData dataWithBytes:[postStr UTF8String] length:[postStr length]];
+	
+	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:cholorURL];
+	[theRequest setHTTPMethod:@"POST"];
+	[theRequest setHTTPBody:postData];
+	[theRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+	[theRequest setTimeoutInterval:10.0f]; // 10 second timeout
+	
+	NSURLResponse *theResponse = nil;
+	NSError *err = nil;
+	NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
+	NSString *response = [[[NSString alloc] initWithData:retVal encoding:NSMacOSRomanStringEncoding] autorelease];
+	
+	if ( [response isEqualToString:[DataProviders Cholor_CommunityItemPOSTSucess]] )
+	{
+		return TRUE;
+	}
+	
+	return FALSE;
 }
 
 

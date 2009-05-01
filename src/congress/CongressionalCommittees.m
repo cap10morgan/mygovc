@@ -116,7 +116,7 @@ static NSString *kPropTitle_Parent = @"parent";
 
 - (void)initCommitteeDataFromFile:(NSString *)path
 {
-	NSLog( @"CongressionalCommittees: reading cached data from %@",path );
+	//NSLog( @"CongressionalCommittees: reading cached data from %@",path );
 	
 	[self clearState];
 	[self newState];
@@ -204,21 +204,22 @@ static NSString *kPropTitle_Parent = @"parent";
 	[self newState];
 	
 	m_congressSession = session;
-	NSLog( @"CongressionalCommittees: downloading %d committee data from %@ ...",session,[url absoluteString] );
+	//NSLog( @"CongressionalCommittees: downloading %d committee data from %@ ...",session,[url absoluteString] );
 	
 	NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
 	
 	if ( nil == xmlParser ) 
 	{
 		// dang - didn't get anything
-		NSLog( @"CongressionalCommittees: could not download committee data!" );
+		//NSLog( @"CongressionalCommittees: could not download committee data!" );
 		return;
 	}
 	
 	[xmlParser setDelegate:self];
-	BOOL success = [xmlParser parse];
+	//BOOL success = 
+	[xmlParser parse];
 	
-	NSLog( @"CongressionalCommittees: committee parsing ended %@",(success ? @"successfully." : @"in failure!") );
+	//NSLog( @"CongressionalCommittees: committee parsing ended %@",(success ? @"successfully." : @"in failure!") );
 }
 
 
@@ -274,7 +275,7 @@ static NSString *kPropTitle_Parent = @"parent";
 		// add a new committee
 		if ( nil != m_currentCommittee )
 		{
-			NSLog( @"CongressionalCommittee: previous committee (%@) did not terminate properly. Starting new one anyway...",m_currentCommittee.m_name );
+			//NSLog( @"CongressionalCommittee: previous committee (%@) did not terminate properly. Starting new one anyway...",m_currentCommittee.m_name );
 			[m_currentCommittee release];
 		}
 		m_currentCommittee = [[LegislativeCommittee alloc] init];
@@ -288,12 +289,12 @@ static NSString *kPropTitle_Parent = @"parent";
 		// add a subcommittee to the current committee
 		if ( nil == m_currentCommittee )
 		{
-			NSLog( @"CongressionalCommittee: malformed committee XML - subcommittee started outside a committee!" );
+			//NSLog( @"CongressionalCommittee: malformed committee XML - subcommittee started outside a committee!" );
 			return;
 		}
 		if ( nil != m_currentSubCommittee )
 		{
-			NSLog( @"CongressionalCommittee: previous subcommittee (%@) did not terminate properly. Stating new one anyway...",m_currentSubCommittee.m_name );
+			//NSLog( @"CongressionalCommittee: previous subcommittee (%@) did not terminate properly. Stating new one anyway...",m_currentSubCommittee.m_name );
 			[m_currentSubCommittee release];
 		}
 		m_currentSubCommittee = [[LegislativeCommittee alloc] init];
@@ -319,7 +320,7 @@ static NSString *kPropTitle_Parent = @"parent";
 		}
 		else
 		{
-			NSLog( @"CongressionalCommittees: member found outside a committe/subcommittee!" );
+			//NSLog( @"CongressionalCommittees: member found outside a committe/subcommittee!" );
 		}
 		NSMutableArray *committeeArray = [m_legislativeConnection objectForKey:member];
 		if ( nil == committeeArray ) 
@@ -379,14 +380,14 @@ static NSString *kPropTitle_Parent = @"parent";
 // XXX - handle XML parse errors in some sort of graceful way...
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError 
 {
-	NSLog( @"CongressionalCommittee: XML Parse Error: %@",[parseError localizedDescription] );
+	//NSLog( @"CongressionalCommittee: XML Parse Error: %@",[parseError localizedDescription] );
 	[self clearState];
 }
 
 
 - (void)parser:(NSXMLParser *)parser validationErrorOccurred:(NSError *)validError 
 {
-	NSLog( @"CongressionalCommittee: XML Validation Error: %@",[validError localizedDescription] );
+	//NSLog( @"CongressionalCommittee: XML Validation Error: %@",[validError localizedDescription] );
 	[self clearState];
 }
 

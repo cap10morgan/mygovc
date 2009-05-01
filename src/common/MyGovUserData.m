@@ -19,7 +19,7 @@
 
 @synthesize m_id, m_username, m_lastUpdated;
 @synthesize m_firstname, m_middlename, m_lastname;
-@synthesize m_avatar;	
+@synthesize m_email, m_avatar, m_password;
 	// XXX - more info here?!
 
 static NSString *kMGUKey_ID = @"id";

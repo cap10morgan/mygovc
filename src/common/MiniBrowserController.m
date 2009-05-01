@@ -122,9 +122,7 @@ static MiniBrowserController *s_browser = NULL;
 	m_loadingLabel.backgroundColor = [UIColor clearColor];
 	m_loadingLabel.highlightedTextColor = [UIColor darkGrayColor];
 	m_loadingLabel.textColor = [UIColor blackColor];
-	m_loadingLabel.shadowColor = [UIColor darkGrayColor];
-	m_loadingLabel.shadowOffset = CGSizeMake(0.0f,1.0f);
-	m_loadingLabel.font = [UIFont systemFontOfSize:16.0f];
+	m_loadingLabel.font = [UIFont boldSystemFontOfSize:14.0f];
 	m_loadingLabel.textAlignment = UITextAlignmentLeft;
 	m_loadingLabel.adjustsFontSizeToFitWidth = YES;
 	m_loadingLabel.text = @"Loading...";
@@ -361,6 +359,7 @@ static MiniBrowserController *s_browser = NULL;
 	
 	[m_activity startAnimating];
 	[m_loadingLabel setHidden:NO];
+	[m_webView setAlpha:0.75f];
 	
 	// always start loading - we're not real restrictive here...
 	return YES;
@@ -372,6 +371,7 @@ static MiniBrowserController *s_browser = NULL;
 	[m_toolBar setItems:m_normalItemList animated:NO];
 	[m_activity stopAnimating];
 	[m_loadingLabel setHidden:YES];
+	[m_webView setAlpha:1.0f];
 	
 	[self enableBackButton:m_webView.canGoBack];
 	[self enableFwdButton:m_webView.canGoForward];
@@ -401,6 +401,7 @@ static MiniBrowserController *s_browser = NULL;
 {
 	[m_activity startAnimating];
 	[m_loadingLabel setHidden:NO];
+	[m_webView setAlpha:0.75f];
 	
 	self.title = @"loading...";
 }

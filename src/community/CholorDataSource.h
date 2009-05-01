@@ -13,6 +13,10 @@
 {
 @private
 	BOOL m_isBusy;
+	
+	NSString *m_username;
+	NSString *m_password;
+	NSInteger m_authenticated_uid;
 }
 
 + (NSString *)postStringFromDictionary:(NSDictionary *)dict;

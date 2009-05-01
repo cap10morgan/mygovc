@@ -25,6 +25,8 @@
 		01B119440F70BD560076AFE0 /* location_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B119420F70BD560076AFE0 /* location_overlay.png */; };
 		01B119450F70BD560076AFE0 /* USStates.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01B119430F70BD560076AFE0 /* USStates.plist */; };
 		01B61CF80FAA8A37007E10E6 /* refreshIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B61CF70FAA8A37007E10E6 /* refreshIcon.png */; };
+		01B61DAD0FAA96ED007E10E6 /* MyGovLoginView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01B61DAC0FAA96ED007E10E6 /* MyGovLoginView.xib */; };
+		01B61DB00FAA9701007E10E6 /* MyGovLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B61DAF0FAA9701007E10E6 /* MyGovLoginViewController.m */; };
 		01B6C79D0FA56FE5000CEF90 /* JeremyaStaticDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */; };
 		01B6C7B90FA57319000CEF90 /* MyGovUserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B6C7B80FA57319000CEF90 /* MyGovUserData.m */; };
 		01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6ED0F8AEACD00619441 /* backButton.png */; };
@@ -119,6 +121,9 @@
 		01B119420F70BD560076AFE0 /* location_overlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = location_overlay.png; path = res/location_overlay.png; sourceTree = "<group>"; };
 		01B119430F70BD560076AFE0 /* USStates.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = USStates.plist; path = res/USStates.plist; sourceTree = "<group>"; };
 		01B61CF70FAA8A37007E10E6 /* refreshIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = refreshIcon.png; path = res/refreshIcon.png; sourceTree = "<group>"; };
+		01B61DAC0FAA96ED007E10E6 /* MyGovLoginView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyGovLoginView.xib; sourceTree = "<group>"; };
+		01B61DAE0FAA9701007E10E6 /* MyGovLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyGovLoginViewController.h; sourceTree = "<group>"; };
+		01B61DAF0FAA9701007E10E6 /* MyGovLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyGovLoginViewController.m; sourceTree = "<group>"; };
 		01B6C7820FA548A5000CEF90 /* CommunityDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDataSource.h; sourceTree = "<group>"; };
 		01B6C79B0FA56FE5000CEF90 /* JeremyaStaticDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JeremyaStaticDataSource.h; sourceTree = "<group>"; };
 		01B6C79C0FA56FE5000CEF90 /* JeremyaStaticDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JeremyaStaticDataSource.m; sourceTree = "<group>"; };
@@ -422,6 +427,9 @@
 				01D7FE510FA500DA00F78B92 /* DataProviders.m */,
 				01B6C7B70FA57319000CEF90 /* MyGovUserData.h */,
 				01B6C7B80FA57319000CEF90 /* MyGovUserData.m */,
+				01B61DAC0FAA96ED007E10E6 /* MyGovLoginView.xib */,
+				01B61DAE0FAA9701007E10E6 /* MyGovLoginViewController.h */,
+				01B61DAF0FAA9701007E10E6 /* MyGovLoginViewController.m */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -596,6 +604,7 @@
 				01ACAEF60FA80DA100B6FF59 /* personIcon.png in Resources */,
 				01ACB0670FA8434900B6FF59 /* CDetailHeaderView.xib in Resources */,
 				01B61CF80FAA8A37007E10E6 /* refreshIcon.png in Resources */,
+				01B61DAD0FAA96ED007E10E6 /* MyGovLoginView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -663,6 +672,7 @@
 				01ACAF3A0FA811B800B6FF59 /* CommunityDetailData.m in Sources */,
 				01ACB0680FA8434900B6FF59 /* CDetailHeaderViewController.m in Sources */,
 				01E6EC0F0FA8C224001BEAD3 /* CholorDataSource.m in Sources */,
+				01B61DB00FAA9701007E10E6 /* MyGovLoginViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -676,9 +686,11 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 0.1;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = src/myGov_Prefix.pch;
+				GCC_VERSION = 4.0;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
 			};
@@ -689,8 +701,11 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = src/myGov_Prefix.pch;
+				GCC_THREADSAFE_STATICS = NO;
+				GCC_VERSION = 4.0;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
 			};

@@ -22,7 +22,9 @@
 	- (void)communityItemTypeSwitch:(id)sender;
 	- (void)reloadCommunityItems;
 	- (void)composeNewCommunityItem;
-	- (void) deselectRow:(id)sender;
+	- (void)deselectRow:(id)sender;
+	- (void)setReloadButtonInNavBar;
+	- (void)setActivityViewInNavBar;
 @end
 
 
@@ -97,11 +99,11 @@
 	// new piece of chatter, or a new event depending on the 
 	// currently selected view!
 	// 
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
+	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] 
 											  initWithBarButtonSystemItem:UIBarButtonSystemItemCompose 
 											  target:self 
 											  action:@selector(composeNewCommunityItem)];
-/*
+	
 	// 
 	// Add a "refresh" button which will wipe out the on-device cache and 
 	// re-download congressional bill data 
@@ -110,7 +112,7 @@
 											  initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
 											  target:self 
 											  action:@selector(reloadCommunityItems)];
-*/	
+	
 	
 	[super viewDidLoad];
 }
@@ -121,12 +123,6 @@
 	[super viewWillAppear:animated];
 	
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
-	if ( ![m_data isDataAvailable] && ![m_data isBusy] )
-	{
-		[m_data loadData];
-		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
-		[m_HUD show:YES];
-	}
 	
 	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 }
@@ -223,12 +219,15 @@
 									cancelButtonTitle:nil
 									otherButtonTitles:@"OK",nil];
 		[alert show];
+		[self setReloadButtonInNavBar];
 	}
 	else if ( [m_data isDataAvailable] )
 	{
 		[m_HUD show:NO];
 		[self.tableView setUserInteractionEnabled:YES];
 		[self.tableView reloadData];
+		
+		[self setReloadButtonInNavBar];
 	}
 	else
 	{
@@ -276,7 +275,9 @@
 
 - (void)reloadCommunityItems
 {
-	// XXX - reload data..
+	[self setActivityViewInNavBar];
+	
+	[m_data loadData];
 }
 
 
@@ -325,6 +326,43 @@
 	// (so the user can go back to the same row)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
+
+
+
+- (void)setReloadButtonInNavBar
+{
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
+											 initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
+											 target:self 
+											 action:@selector(reloadCommunityItems)];
+}
+
+
+- (void)setActivityViewInNavBar
+{
+	UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 44.0f, 32.0f)];
+	UIActivityIndicatorView *aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+	//aiView.hidesWhenStopped = YES;
+	[aiView setFrame:CGRectMake(12.0f, 6.0f, 20.0f, 20.0f)];
+	[view addSubview:aiView];
+	[aiView startAnimating];
+	
+	//UIBarButtonItem *locBarButton = [[UIBarButtonItem alloc] initWithCustomView:aiView];
+	UIBarButtonItem *locBarButton = [[UIBarButtonItem alloc] 
+									 initWithBarButtonSystemItem:UIBarButtonSystemItemStop
+									 target:nil action:nil];
+	locBarButton.customView = view;
+	locBarButton.style = UIBarButtonItemStyleBordered;
+	locBarButton.target = nil;
+	self.navigationItem.rightBarButtonItem = locBarButton;
+	
+	[self.navigationController.navigationBar setNeedsDisplay];
+	
+	[view release];
+	[aiView release];
+	[locBarButton release];
+}
+
 
 
 #pragma mark UIAlertViewDelegate Methods

@@ -42,6 +42,7 @@
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;
 
 - (void)cancelAllDownloads;
+- (void)flushInMemoryCache;
 
 - (NSArray *)congressionalDistricts; // sortedBy:(SpendingSortMethod)order;
 - (NSInteger)numDistrictsInState:(NSString *)state; // sortedBy:(SpendingSortMethod)order;

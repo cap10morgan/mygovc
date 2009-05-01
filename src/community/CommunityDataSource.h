@@ -33,7 +33,12 @@
 	 */
 	- (void)communityDataSource:(id)dataSource 
 				userDataArrived:(MyGovUser *)user;
-
+	
+	/*!
+		user auth data arrived - this is the UID of the now-logged-in-user!
+	 */
+	- (void)communityDataSource:(id)dataSource
+				userAuthenticated:(NSInteger)uid;
 	/*!
 		Called during a search operaion every time new search results become
 		available.
@@ -79,7 +84,8 @@
 	
  */
 - (BOOL)validateUsername:(NSString *)username 
-			 andPassword:(NSString *)password;
+			 andPassword:(NSString *)password
+			withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil;
 
 
 /*!

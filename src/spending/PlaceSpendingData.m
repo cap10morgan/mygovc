@@ -479,7 +479,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
-	NSLog( @"[PlaceSpendingData:%@] started XML parsing...",m_place );
+	//NSLog( @"[PlaceSpendingData:%@] started XML parsing...",m_place );
 }
 
 
@@ -492,7 +492,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	{
 		[m_notifyTarget performSelector:m_notifySelector withObject:self];
 	}
-	NSLog( @"[PlaceSpendingData:%@] XML parsing ended %@", m_place, (success ? @"successfully." : @" in failure!") );
+	//NSLog( @"[PlaceSpendingData:%@] XML parsing ended %@", m_place, (success ? @"successfully." : @" in failure!") );
 	
 	if ( isDataAvailable )
 	{

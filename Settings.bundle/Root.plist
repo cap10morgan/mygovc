@@ -167,6 +167,8 @@
 			</array>
 		</dict>
 		<dict>
+			<key>DefaultValue</key>
+			<string>mygov://congress/</string>
 			<key>AutocorrectionType</key>
 			<string>No</string>
 			<key>Autocapitalization</key>

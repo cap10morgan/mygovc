@@ -235,7 +235,7 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
-	NSLog( @"[ContractorSpendingData] started XML Download..." );
+	//NSLog( @"[ContractorSpendingData] started XML Download..." );
 }
 
 
@@ -248,7 +248,7 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 	{
 		[m_notifyTarget performSelector:m_notifySelector withObject:self];
 	}
-	NSLog( @"[ContractorSpendingData] XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
+	//NSLog( @"[ContractorSpendingData] XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
 	
 	if ( isDataAvailable )
 	{
@@ -264,7 +264,7 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 {
 	if ( [elementName isEqualToString:kName_Data] )
 	{
-		NSLog( @"[ContractorSpendingData] XML Parsing started..." );
+		//NSLog( @"[ContractorSpendingData] XML Parsing started..." );
 		m_parsingData = YES;
 	}
     else if ( m_parsingData && [elementName isEqualToString:kName_Record] ) 

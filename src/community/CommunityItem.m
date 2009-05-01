@@ -132,7 +132,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	{
 		if ( [[NSFileManager defaultManager] fileExistsAtPath:fullPath] )
 		{
-			NSLog( @"Reading %@...", fullPath );
+			//NSLog( @"Reading %@...", fullPath );
 			NSDictionary *plistDict = [NSDictionary dictionaryWithContentsOfFile:fullPath];
 			[self p_initFromPlistDict:plistDict];
 		}
@@ -160,7 +160,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 
 - (void)writeItemToFile:(NSString *)fullPath
 {	
-	NSLog( @"Writing item '%@' to %@...", m_id, fullPath );
+	//NSLog( @"Writing item '%@' to %@...", m_id, fullPath );
 	
 	NSDictionary *plistDict = [self writeItemToPlistDictionary];
 	BOOL success = [plistDict writeToFile:fullPath atomically:YES];
@@ -298,7 +298,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 
 - (NSComparisonResult)compareItemByDate:(CommunityItem *)that
 {
-	return [m_date compare:[that m_date]];
+	return [[that m_date] compare:m_date];
 }
 
 
@@ -423,7 +423,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 			[self addEventAttendee:[obj integerValue]];
 		}
 		
-		NSLog( @"  initialized %@: '%@'", m_id, m_title );
+		//NSLog( @"  initialized %@: '%@'", m_id, m_title );
 	}
 }
 

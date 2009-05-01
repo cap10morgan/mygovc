@@ -23,6 +23,7 @@
 
 - (BOOL)validateUsername:(NSString *)username 
 			 andPassword:(NSString *)password
+			withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
 	// XXX - this needs to be filled in!
 	return FALSE;

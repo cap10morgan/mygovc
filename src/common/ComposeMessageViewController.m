@@ -65,6 +65,7 @@
 	- (void)keyboardWasShown:(NSNotification*)aNotification;
 	- (void)keyboardWasHidden:(NSNotification*)aNotification;
 	- (void)layoutUIForMessageType:(MessageTransport)type;
+	- (NSInteger)mygovUserAuthWithCallback:(SEL)callback;
 	- (id)opMakePhoneCall;
 	- (id)opSendEmail;
 	- (id)opSendTweet;
@@ -88,6 +89,7 @@ enum
 	eAlertType_TwitterError = 1,
 	eAlertType_ChatterError,
 	eAlertType_ReplyError,
+	eAlertType_MyGovAuthError,
 };
 
 static ComposeMessageViewController *s_composer = NULL;
@@ -114,6 +116,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		// Custom initialization
 		m_message = nil;
 		m_twitterLoginView = nil;
+		m_mygovLoginView = nil;
 		m_hud = nil;
 		m_activeTextField = nil;
 		m_keyboardVisible = NO;
@@ -501,6 +504,58 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 }
 
 
+- (NSInteger)mygovUserAuthWithCallback:(SEL)callback
+{
+	NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_username"];
+	NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_password"];
+	
+	CommunityDataManager *cdm = [myGovAppDelegate sharedCommunityData];
+	id<CommunityDataSourceProtocol> dataSource = [cdm dataSource];
+	
+	NSInteger userID = [cdm currentlyAuthenticatedUser];
+	
+	if ( userID <= 0 )
+	{
+		if ( [username length] < 1 || [password length] < 1 )
+		{
+			// no login info - show login view controller
+			if ( nil == m_twitterLoginView )
+			{
+				m_mygovLoginView = [[MyGovLoginViewController alloc] initWithNibName:@"MyGovLoginView" bundle:nil];
+			}
+			
+			[m_mygovLoginView setNotifyTarget:self withSelector:callback];
+			[m_mygovLoginView displayIn:self];
+			
+			return -1;
+		}
+		else
+		{
+			// authenticate the given username/password
+			BOOL success = [dataSource validateUsername:username andPassword:password withDelegate:cdm];
+			
+			if ( !success )
+			{
+				m_alertType = eAlertType_MyGovAuthError;
+				UIAlertView *alert = [[UIAlertView alloc] 
+									  initWithTitle:@"Login Error"
+									  message:[NSString stringWithString:@"Invalid username/password combo"]
+									  delegate:self
+									  cancelButtonTitle:nil
+									  otherButtonTitles:@"OK",nil];
+				[alert show];
+				return -1;
+			}
+		}
+	}
+	
+	// this should be the fully-authenticated userID!
+	userID = [cdm currentlyAuthenticatedUser];
+	
+	return userID;
+}
+
+
 - (id)opMakePhoneCall
 {
 	// make a phone call!
@@ -582,15 +637,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (id)opSendMyGovComment
 {
-	NSInteger userID = 0;
-	NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_username"];
-	NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_password"];
-	
-	if ( [username length] < 1 || [password length] < 1 )
-	{
-		// XXX - the user should be logged in - take care of that right here!
-		// XXX - get the userID!
-	}
+	NSInteger userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovComment)];
+	if ( userID <= 0 ) return nil;
 	
 	// create a new community item
 	CommunityItem * item = [[[CommunityItem alloc] init] autorelease];
@@ -647,15 +695,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (id)opSendMyGovReply
 {
-	NSInteger userID = 0;
-	NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_username"];
-	NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_password"];
-	
-	if ( [username length] < 1 || [password length] < 1 )
-	{
-		// XXX - the user should be logged in - take care of that right here!
-		// XXX - get the userID!
-	}
+	NSInteger userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovReply)];
+	if ( userID <= 0 ) return nil;
 	
 	CommunityComment *reply = [[CommunityComment alloc] init];
 	reply.m_id = @"mygov";
@@ -830,6 +871,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 					[self dismissModalViewControllerAnimated:YES];
 					break;
 			}
+			break;
+		case eAlertType_MyGovAuthError:
 			break;
 	}
 }

@@ -7,6 +7,7 @@
 //
 #import <AddressBook/AddressBook.h>
 
+#import "ComposeMessageViewController.h"
 #import "CustomTableCell.h"
 #import "LegislatorViewController.h"
 #import "LegislatorContainer.h"
@@ -18,6 +19,7 @@
 @interface LegislatorViewController (private)
 	- (void)deselectRow:(id)sender;
 	- (void)dataCallback:(NSString *)msg;
+	- (void)composeNewCommunityItem;
 @end
 
 
@@ -280,9 +282,18 @@
 	m_tableView.separatorColor = [UIColor blackColor];
 	m_tableView.backgroundColor = [UIColor blackColor];
 	
-	// XXX - set tableHeaderView to a custom UIView which has legislator
+	// 
+	// Add a "new" button which will add either a 
+	// new piece of chatter, or a new event depending on the 
+	// currently selected view!
+	// 
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
+											  initWithBarButtonSystemItem:UIBarButtonSystemItemCompose 
+											  target:self 
+											  action:@selector(composeNewCommunityItem)];
+	
+	// set tableHeaderView to a custom UIView which has legislator
 	//       photo, name, major info (party, state, district), add to contacts link
-	// m_tableView.tableHeaderView = headerView;
 	CGRect hframe = CGRectMake(0,0,320,150);
 	m_headerViewCtrl = [[LegislatorHeaderViewController alloc] initWithNibName:@"LegislatorHeaderView" bundle:nil ];
 	[m_headerViewCtrl.view setFrame:hframe];
@@ -365,8 +376,30 @@
 	}
 }
 
+- (void)composeNewCommunityItem
+{
+	// create a new feedback item!
+	MessageData *msg = [[MessageData alloc] init];
+	msg.m_transport = eMT_MyGov;
+	msg.m_to = @"MyGovernment Community";
+	msg.m_body = @" ";
+	msg.m_subject = [NSString stringWithFormat:@"%@:",[m_legislator shortName]];
+	msg.m_appURL = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://congress/%@",[m_legislator bioguide_id]]];
+	msg.m_appURLTitle = [m_legislator shortName];
+	if ( [[m_legislator website] length] > 0 )
+	{
+		msg.m_webURL = [NSURL URLWithString:[m_legislator website]];
+		msg.m_webURLTitle = @"Website";
+	}
+	
+	// display the message composer
+	ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+	[cmvc display:msg fromParent:self];
+}
+
 
 #pragma mark Table view methods
+
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {

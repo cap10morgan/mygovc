@@ -15,6 +15,7 @@
 
 - (BOOL)validateUsername:(NSString *)username 
 			 andPassword:(NSString *)password
+			withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
 	// all users are valid :-)
 	return TRUE;

@@ -435,7 +435,7 @@ static const NSInteger s_maxBillPages = 3;
 	[[NSFileManager defaultManager] createDirectoryAtPath:dataPath withIntermediateDirectories:YES attributes:nil error:NULL];
 	
 	NSString *billDataPath = [BillsDataManager billDataCacheFile]; 
-	NSLog( @"BillsDataManager: writing bill cache to: %@",billDataPath );
+	//NSLog( @"BillsDataManager: writing bill cache to: %@",billDataPath );
 	
 	NSMutableArray *billData = [[NSMutableArray alloc] initWithCapacity:([m_houseBills count] + [m_senateBills count])];
 	
@@ -469,7 +469,7 @@ static const NSInteger s_maxBillPages = 3;
 	BOOL success = [billData writeToFile:billDataPath atomically:YES];
 	if ( !success )
 	{
-		NSLog( @"BillsDataManager: error writing bill data to cache!" );
+		//NSLog( @"BillsDataManager: error writing bill data to cache!" );
 	}
 	else
 	{
@@ -500,12 +500,12 @@ static const NSInteger s_maxBillPages = 3;
 	[self setStatus:@"Reading Cached Bills..."];
 	
 	NSString *billDataPath = [BillsDataManager billDataCacheFile];
-	NSLog( @"BillsDataManager: reading bill cache from: %@", billDataPath );
+	//NSLog( @"BillsDataManager: reading bill cache from: %@", billDataPath );
 	
 	NSArray *billData = [NSArray arrayWithContentsOfFile:billDataPath];
 	if ( nil == billData )
 	{
-		NSLog( @"BillsDataManager: error reading cached data from file: starting re-download of data!" );
+		//NSLog( @"BillsDataManager: error reading cached data from file: starting re-download of data!" );
 		isBusy = NO;
 		isDataAvailable = NO;
 		m_billDownloadPage = 1;
@@ -665,7 +665,7 @@ static const NSInteger s_maxBillPages = 3;
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
 	[self setStatus:[NSString stringWithFormat:@"Downloading Bill Data (%d/%d)...",(m_billDownloadPage-1),s_maxBillPages-1]];
-	NSLog( @"BillsDataManager started XML download for page %0d...", m_billDownloadPage-1 );
+	//NSLog( @"BillsDataManager started XML download for page %0d...", m_billDownloadPage-1 );
 }
 
 
@@ -693,7 +693,7 @@ static const NSInteger s_maxBillPages = 3;
 	
 	[self setStatus:@"Finished."];
 	
-	NSLog( @"BillsDataManager XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
+	//NSLog( @"BillsDataManager XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
 	
 	if ( isDataAvailable )
 	{

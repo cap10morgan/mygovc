@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MyGovLoginViewController.h"
 #import "ProgressOverlayViewController.h"
 #import "TwitterLoginViewController.h"
+
 
 typedef enum
 {
@@ -86,6 +88,7 @@ typedef enum
 @private
 	MessageData *m_message;
 	TwitterLoginViewController *m_twitterLoginView;
+	MyGovLoginViewController   *m_mygovLoginView;
 	ProgressOverlayViewController *m_hud;
 	
 	int m_alertType;

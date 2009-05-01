@@ -96,7 +96,7 @@ static int kMAX_OPS_IN_QUEUE = 10;
 
 - (void)cancelAllDownloads
 {
-	NSLog( @"SpendingDataManager: Cancelling downloads..." );
+	//NSLog( @"SpendingDataManager: Cancelling downloads..." );
 	[m_downloadOperations cancelAllOperations];
 	
 	if ( nil != m_timer ) 
@@ -112,6 +112,18 @@ static int kMAX_OPS_IN_QUEUE = 10;
 	m_downloadOperations = [[NSOperationQueue alloc] init];
 	[m_downloadOperations setMaxConcurrentOperationCount:kMAX_CONCURRENT_DOWNLOADS];
 	 */
+}
+
+
+- (void)flushInMemoryCache
+{
+	[m_districtSpendingSummary release];
+	[m_stateSpendingSummary release];
+	[m_contractorSpendingSummary release];
+	
+	m_districtSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:480];
+	m_stateSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:50];
+	m_contractorSpendingSummary = [[ContractorSpendingData alloc] init];
 }
 
 
@@ -273,7 +285,7 @@ static int kMAX_OPS_IN_QUEUE = 10;
 - (void)downloadPlaceData:(PlaceSpendingData *)psd
 {
 	--m_downloadsInFlight;
-	NSLog( @"SpendingDataManager: downloading data for %@...",psd.m_place );
+	//NSLog( @"SpendingDataManager: downloading data for %@...",psd.m_place );
 	
 	[psd downloadDataWithCallback:nil onObject:nil synchronously:YES];
 	

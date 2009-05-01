@@ -138,7 +138,7 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 		
 		if ( !s_myCongressData )
 		{
-			NSLog( @"Initializing Congress Data..." );
+			//NSLog( @"Initializing Congress Data..." );
 			s_myCongressData = [[CongressDataManager alloc] initWithNotifyTarget:nil andSelector:nil];
 		}
 	}
@@ -166,6 +166,8 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application 
 {
+	[[NSUserDefaults standardUserDefaults] synchronize];
+	
 	// 
 	// Start loading the congress and bill data
 	// 
@@ -174,13 +176,12 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 		NSLog( @"Congress data loaded: wow that was fast!" );
 	}
 	
+	// start the bill data download (waits for congress data)
 	[[myGovAppDelegate sharedBillsData] loadData];
 	
 	// purge old community data
 	[[myGovAppDelegate sharedCommunityData] purgeOldItemsFromCache:YES];
 	
-	// start new community data download!
-	[[myGovAppDelegate sharedCommunityData] loadData];
 	
 	// run through all of the view controllers managed by the tab bar
 	// and setup our dictionary of view controllers which can handle URLs

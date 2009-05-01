@@ -70,7 +70,8 @@ enum
 		{
 			// put title on the left side, the height is then determined
 			// by the line1 data fitting into the right-hand-side
-			CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
+			//CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
+			CGFloat maxWidth = CELL_MAX_WIDTH_PORTRAIT;
 			maxWidth -= (TITLE_WIDTH + (4.0f*CELL_HPADDING) + CELL_DISCLOSURE_WIDTH);
 			line1Sz = [rd.line1 sizeWithFont:(rd.line1Font == nil ? LINE1_FONT : rd.line1Font)
 					   constrainedToSize:CGSizeMake(maxWidth,CELL_MAX_HEIGHT) 
@@ -79,7 +80,8 @@ enum
 		else
 		{
 			// full-width of the cell for line1
-			CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
+			//CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
+			CGFloat maxWidth = CELL_MAX_WIDTH_PORTRAIT;
 			maxWidth -= ((2.0f*CELL_HPADDING) + CELL_DISCLOSURE_WIDTH);
 			line1Sz = [rd.line1 sizeWithFont:(rd.line1Font == nil ? LINE1_FONT : rd.line1Font)
 					   constrainedToSize:CGSizeMake(maxWidth,CELL_MAX_HEIGHT) 
@@ -89,7 +91,8 @@ enum
 	else if ( [titleTxt length] > 0 )
 	{
 		// use the title for the entire line!
-		CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
+		//CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
+		CGFloat maxWidth = CELL_MAX_WIDTH_PORTRAIT;
 		maxWidth -= ((2.0f*CELL_HPADDING) + CELL_DISCLOSURE_WIDTH);
 		line1Sz = [rd.title sizeWithFont:(rd.titleFont == nil ? TITLE_FONT : rd.titleFont)
 				   constrainedToSize:CGSizeMake(maxWidth,CELL_MAX_HEIGHT) 
@@ -113,7 +116,8 @@ enum
 	if ( [rd.line2 length] > 0 )
 	{
 		// use the entire cell width
-		CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
+		//CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
+		CGFloat maxWidth = CELL_MAX_WIDTH_PORTRAIT;
 		maxWidth -= ((2.0f*CELL_HPADDING) + CELL_DISCLOSURE_WIDTH);
 		line2Sz = [rd.line2 sizeWithFont:(rd.line2Font == nil ? LINE2_FONT : rd.line2Font)
 		                    constrainedToSize:CGSizeMake(maxWidth,CELL_MAX_HEIGHT/2.0f) 
@@ -267,7 +271,8 @@ enum
 	CGFloat line2Height = [CustomTableCell line2HeightForRow:rd withOrientation:orientation];
 	
 	CGFloat cellMinX = CELL_XSTART;
-	CGFloat cellWidth = (UIDeviceOrientationPortrait == orientation ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE);
+	//CGFloat cellWidth = (UIDeviceOrientationPortrait == orientation ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE);
+	CGFloat cellWidth = CELL_MAX_WIDTH_PORTRAIT;
 	cellWidth -= (CELL_DISCLOSURE_WIDTH + (3.0f*CELL_HPADDING));
 	
 	CGRect titleFrame = CGRectMake(cellMinX,

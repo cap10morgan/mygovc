@@ -9,7 +9,14 @@
 #import "BillInfoViewController.h"
 #import "BillContainer.h"
 #import "BillInfoData.h"
+#import "ComposeMessageViewController.h"
 #import "CustomTableCell.h"
+
+@interface BillInfoViewController (private)
+	- (void)deselectRow;
+	- (void)composeNewCommunityItem;
+@end
+
 
 @implementation BillInfoViewController
 
@@ -74,6 +81,16 @@
 	m_tableView.separatorColor = [UIColor blackColor];
 	m_tableView.backgroundColor = [UIColor blackColor];
 	
+	// 
+	// Add a "new" button which will add either a 
+	// new piece of chatter, or a new event depending on the 
+	// currently selected view!
+	// 
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
+											  initWithBarButtonSystemItem:UIBarButtonSystemItemCompose 
+											  target:self 
+											  action:@selector(composeNewCommunityItem)];
+	
 	/*
 	// XXX - set tableHeaderView to a custom UIView which has legislator
 	//       photo, name, major info (party, state, district), add to contacts link
@@ -127,7 +144,7 @@
 }
 
 
-#pragma mark LegislatorViewController Private
+#pragma mark BillInfoViewController Private
 
 
 - (void)deselectRow:(id)sender
@@ -135,6 +152,26 @@
 	// de-select the currently selected row
 	// (so the user can go back to the same legislator)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+}
+
+
+- (void)composeNewCommunityItem
+{
+	MessageData *msg = [[MessageData alloc] init];
+	msg.m_transport = eMT_MyGov;
+	msg.m_to = @"MyGovernment Community";
+	msg.m_subject = [NSString stringWithFormat:@"%@ %0d:", [BillContainer getBillTypeShortDescrip:m_bill.m_type], m_bill.m_number];
+	msg.m_body = @" ";
+	msg.m_appURL = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://bills/%@/%0d",
+										 [BillContainer stringFromBillType:m_bill.m_type],
+										 m_bill.m_number]
+					];
+	msg.m_appURLTitle = msg.m_subject;
+	msg.m_webURL = [m_bill getFullTextURL];
+	msg.m_webURLTitle = @"Full Bill Text";
+	// display the message composer
+	ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+	[cmvc display:msg fromParent:self];
 }
 
 

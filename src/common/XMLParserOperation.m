@@ -171,7 +171,7 @@
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
 	// Nothing to do...
-	NSLog( @"XMLParserOperation parsing started..." );
+	//NSLog( @"XMLParserOperation parsing started..." );
 }
 
 
@@ -179,7 +179,7 @@
 - (void)xmlParseOp:(XMLParserOperation *)parseOp endedWith:(BOOL)success
 {
 	// Nothing to do...
-	NSLog( @"XMLParserOperation parsing ended %@", (success ? @"successfully!" : @"in failure!") );
+	//NSLog( @"XMLParserOperation parsing ended %@", (success ? @"successfully!" : @"in failure!") );
 }
 
 

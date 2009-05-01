@@ -18,8 +18,10 @@
 	NSString  *m_middlename;
 	NSString  *m_lastname;
 	
+	NSString  *m_email;
 	UIImage   *m_avatar;
 	
+	NSString  *m_password;
 	// XXX - more info here?!
 }
 
@@ -29,7 +31,9 @@
 @property (nonatomic,retain) NSString *m_firstname;
 @property (nonatomic,retain) NSString *m_middlename;
 @property (nonatomic,retain) NSString *m_lastname;
+@property (nonatomic,retain) NSString *m_email;
 @property (nonatomic,retain) UIImage  *m_avatar;
+@property (nonatomic,retain) NSString *m_password;
 
 + (MyGovUser *)systemUser;
 

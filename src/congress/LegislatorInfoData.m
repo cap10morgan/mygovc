@@ -357,7 +357,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 	// legislator's image download has a chance to start first...
 	// (yes this is a bit of a hack)
 	[NSThread sleepForTimeInterval:1.1f]; 
-	NSLog( @"LegislatorInfoData started OpenCongress download for %@...",[m_legislator shortName] );
+	//NSLog( @"LegislatorInfoData started OpenCongress download for %@...",[m_legislator shortName] );
 }
 
 
@@ -394,7 +394,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 		NSString *str = @"LINFO Success!";
 		[m_notifyTarget performSelector:m_notifySelector withObject:str];
 	}
-	NSLog( @"LegislatorInfoData XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
+	//NSLog( @"LegislatorInfoData XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
 }
 
 

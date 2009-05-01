@@ -30,6 +30,7 @@
 	- (void)deselectRow:(id)sender;
 	- (void)showPlaceDetail:(id)sender;
 	- (void)showContractorDetail:(id)sender;
+	- (void)reloadSpendingData;
 @end
 
 @implementation SpendingViewController
@@ -92,6 +93,15 @@ typedef enum
 	// add the buttons to the navigation bar
 	self.navigationItem.titleView = m_segmentCtrl;
 	[m_segmentCtrl release];
+	
+	// 
+	// Add a "refresh" button which will wipe out the on-device cache and 
+	// re-download spending data
+	// 
+	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] 
+											   initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
+											   target:self 
+											   action:@selector(reloadSpendingData)] autorelease];
 	
 	// 
 	// Add a "location" button which will be used to find senators/representatives
@@ -199,7 +209,7 @@ typedef enum
 
 - (void)dataManagerCallback:(id)msg
 {
-	NSLog( @"SpendingViewController: dataManagerCallback!" );
+	//NSLog( @"SpendingViewController: dataManagerCallback!" );
 	if ( [m_data isDataAvailable] )
 	{
 		[self.tableView reloadData];
@@ -344,6 +354,15 @@ typedef enum
 	[summaryViewCtrl setContractorData:ci];
 	[self.navigationController pushViewController:summaryViewCtrl animated:YES];
 	[summaryViewCtrl release];
+}
+
+
+- (void)reloadSpendingData
+{
+	[m_data cancelAllDownloads];
+	[m_data flushInMemoryCache];
+	[self.tableView reloadData];
+	[self.tableView setNeedsDisplay];
 }
 
 
