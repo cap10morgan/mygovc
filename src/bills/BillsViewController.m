@@ -199,22 +199,32 @@ enum
 {
 	NSMutableString *state = [[NSMutableString alloc] init];
 	
+	// Are we looking at a legislator?
+	id topView = self.navigationController.visibleViewController;
+	if ( [topView respondsToSelector:@selector(m_bill)] )
+	{
+		// grab the legislator currently being viewed
+		BillContainer *bill = [topView performSelector:@selector(m_bill)];
+		[state appendFormat:@"%@%d",[BillContainer stringFromBillType:[bill m_type]], [bill m_number]];
+	}
+	
+	
 	// current selected chamber
 	switch ( m_selectedChamber )
 	{
 		default:
 		case eCongressChamberHouse:
-			[state appendString:@"house"];
+			[state appendString:@":house"];
 			break;
 		case eCongressChamberSenate:
-			[state appendString:@"senate"];
+			[state appendString:@":senate"];
 			break;
 		case eCongressSearchResults:
-			[state appendString:@"search"];
+			[state appendString:@":search"];
 			[state appendString:[NSString stringWithFormat:@":%@",[m_data currentSearchString]]];
 			break;
 		case eCongressCommittee:
-			[state appendString:@"committee"];
+			[state appendString:@":committee"];
 			break;
 	}
 	
@@ -240,22 +250,41 @@ enum
 		}
 	}
 	
-	// Are we looking at a legislator?
-	id topView = self.navigationController.visibleViewController;
-	if ( [topView respondsToSelector:@selector(m_bill)] )
-	{
-		// grab the legislator currently being viewed
-		BillContainer *bill = [topView performSelector:@selector(m_bill)];
-		[state appendFormat:@":%d",[bill m_number]];
-	}
-	
 	return state;
 }
 
 
 - (void)handleURLParms:(NSString *)parms
 {
-	// XXX - do something to handle URL parameters!
+	// 
+	// This is really primitive - could be handled much better...
+	// 
+	
+	NSArray *pArray = [parms componentsSeparatedByString:@":"];
+	if ( [pArray count] < 1 ) return;
+	
+	NSString *billStr = [pArray objectAtIndex:0];
+	
+	if ( nil != billStr && ([billStr length] > 0) )
+	{
+		UISearchBar *searchBar = (UISearchBar *)self.tableView.tableHeaderView;
+		searchBar.text = billStr;
+		
+		[m_HUD setText:@"Searching Bills..." andIndicateProgress:YES];
+		[m_HUD show:YES];
+		[self.tableView setUserInteractionEnabled:NO];
+		
+		// kick off the search in a thread
+		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																			selector:@selector(searchForBills:) object:searchBar];
+		
+		// Add the operation to the internal operation queue managed by the application delegate.
+		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+		
+		[theOp release];
+		
+		[self.tableView setNeedsDisplay];
+	}
 }
 
 

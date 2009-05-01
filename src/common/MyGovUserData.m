@@ -128,6 +128,8 @@ static NSString *kMGUKey_Avatar = @"avatar";
 
 - (void)setUserInCache:(MyGovUser *)newUser
 {
+	if ( nil == newUser ) return;
+	
 	MyGovUser *nu = [[newUser retain] autorelease];
 	
 	// implicitly clear old data (allocated with autorelease)
@@ -171,6 +173,16 @@ static NSString *kMGUKey_Avatar = @"avatar";
 		return [MyGovUser systemUser];
 	}
 	return user;
+}
+
+
+- (BOOL)userIDExistsInCache:(NSInteger)userID
+{
+	MyGovUser *u = [self userFromID:userID];
+	if ( nil == u ) return FALSE;
+	if ( u.m_id == [MyGovUser systemUser].m_id ) return FALSE;
+	
+	return TRUE;
 }
 
 

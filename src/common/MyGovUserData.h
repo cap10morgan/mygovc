@@ -53,4 +53,6 @@
 
 - (MyGovUser *)userFromID:(NSInteger)userID;
 
+- (BOOL)userIDExistsInCache:(NSInteger)userID;
+
 @end

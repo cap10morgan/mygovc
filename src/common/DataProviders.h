@@ -78,6 +78,7 @@ typedef enum
 
 + (NSString *)Cholor_UserAuthURL;
 + (NSString *)Cholor_UserAddURL;
++ (NSString *)Cholor_UserLookupURL;
 + (NSString *)Cholor_UserAuthFailedStr;
 + (NSString *)Cholor_CommunityItemPOSTURL;
 + (NSString *)Cholor_CommunityCommentPOSTURL;

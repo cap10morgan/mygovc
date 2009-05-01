@@ -6,12 +6,16 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 #import <CoreLocation/CoreLocation.h>
+
+#import "myGovAppDelegate.h"
 #import "CholorDataSource.h"
 #import "DataProviders.h"
 #import "MyGovUserData.h"
 
 @interface CholorDataSource (private)
 	- (BOOL)validResponse:(NSString *)postResponse;
+	- (void)performUIDLookup:(NSInteger)uid 
+				withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil;
 @end
 
 
@@ -202,6 +206,8 @@
 	
 	if ( [response isEqualToString:[DataProviders Cholor_CommunityItemPOSTSucess]] )
 	{
+		// tell the delegate about it :-)
+		[delegateOrNil communityDataSource:self userDataArrived:newUser];
 		return TRUE;
 	}
 	
@@ -244,6 +250,8 @@
 		return FALSE;
 	}
 	
+	NSMutableDictionary *uidDict = [[NSMutableDictionary alloc] init];
+	
 	// run through each array item, create a CommunityItem object
 	// and let our delegate know about it!
 	NSEnumerator *plEnum = [plistArray objectEnumerator];
@@ -254,6 +262,35 @@
 		if ( nil != item )
 		{
 			[delegateOrNil communityDataSource:self newCommunityItemArrived:item];
+		}
+		
+		NSNumber *dummyArg = [NSNumber numberWithInt:1];
+		
+		// 
+		// collect all the unique user IDs so we can query for them later
+		// 
+		[uidDict setValue:dummyArg forKey:[NSString stringWithFormat:@"%d",item.m_creator]];
+		NSEnumerator *commentEnum = [[item comments] objectEnumerator];
+		CommunityComment *comment;
+		while ( comment = [commentEnum nextObject] )
+		{
+			[uidDict setValue:dummyArg forKey:[NSString stringWithFormat:@"%d",comment.m_creator]];
+		}
+	}
+	
+	// 
+	// now run through all the unique User IDs we received and query for
+	// user info from cholor.com 
+	// 
+	
+	NSEnumerator *uidEnum = [uidDict keyEnumerator];
+	NSString *uidNum;
+	while ( uidNum = [uidEnum nextObject] )
+	{
+		NSInteger uid = [uidNum integerValue];
+		if ( ![[myGovAppDelegate sharedUserData] userIDExistsInCache:uid] )
+		{
+			[self performUIDLookup:uid withDelegate:delegateOrNil];
 		}
 	}
 	
@@ -402,6 +439,39 @@
 	if ( range.length > 0 ) return TRUE;
 	
 	return FALSE;
+}
+
+
+- (void)performUIDLookup:(NSInteger)uid 
+			withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
+{
+	NSURL *cholorURL = [NSURL URLWithString:[DataProviders Cholor_UserLookupURL]];
+	
+	NSString *postStr = [NSString stringWithFormat:@"id=%0d",uid];
+	NSData *postData = [NSData dataWithBytes:[postStr UTF8String] length:[postStr length]];
+	
+	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:cholorURL];
+	[theRequest setHTTPMethod:@"POST"];
+	[theRequest setHTTPBody:postData];
+	[theRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+	[theRequest setTimeoutInterval:10.0f]; // 10 second timeout
+	
+	NSURLResponse *theResponse = nil;
+	NSError *err = nil;
+	NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
+	NSString *response = [[[NSString alloc] initWithData:retVal encoding:NSMacOSRomanStringEncoding] autorelease];
+	
+	[theRequest release];
+	
+	if ( ([response length] > 3) && ![[response substringWithRange:(NSRange){0,3}] isEqualToString:@"<br"] )
+	{
+		// create a new MyGovUser object and pass it up to our delegate
+		MyGovUser *user = [[MyGovUser alloc] init];
+		user.m_username = response;
+		user.m_id = uid;
+		
+		[delegateOrNil communityDataSource:self userDataArrived:user];
+	}
 }
 
 
