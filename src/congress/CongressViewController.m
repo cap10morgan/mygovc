@@ -928,7 +928,9 @@ show_legislator:
 			case eCongressSearchResults:
 				return nil;
 			default:
+			{
 				return [StateAbbreviations abbrTableIndexList];
+			}
 		}
 	}
 	else

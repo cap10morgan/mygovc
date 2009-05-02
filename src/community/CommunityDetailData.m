@@ -198,7 +198,7 @@
 			TableRowData *rd = [[TableRowData alloc] init];
 			
 			MyGovUser *user = [[myGovAppDelegate sharedUserData] userFromID:comment.m_creator];
-			rd.title = [NSString stringWithFormat:@"%@ says:",[user m_username]];
+			rd.title = [NSString stringWithFormat:@"%@ replied:",[user m_username]];
 			rd.titleColor = [UIColor blackColor];
 			rd.titleFont = [UIFont boldSystemFontOfSize:14.0f];
 			rd.line2 = comment.m_text;

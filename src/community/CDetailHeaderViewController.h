@@ -19,6 +19,7 @@
 	IBOutlet UILabel *m_mygovURLTitle;
 	IBOutlet UILabel *m_webURLTitle;
 	IBOutlet UIImageView *m_img;
+	IBOutlet UILabel *m_dateLabel;
 	
 	IBOutlet UIButton *m_myGovURLButton;
 	IBOutlet UIButton *m_webURLButton;
@@ -31,6 +32,7 @@
 @property (nonatomic, retain) UILabel *m_mygovURLTitle;
 @property (nonatomic, retain) UILabel *m_webURLTitle;
 @property (nonatomic, retain) UIImageView *m_img;
+@property (nonatomic, retain) UILabel *m_dateLabel;
 @property (nonatomic, retain) UIButton *m_myGovURLButton;
 @property (nonatomic, retain) UIButton *m_webURLButton;
 

@@ -347,6 +347,14 @@ enum
 		self.tableView.userInteractionEnabled = YES;
 		[m_HUD show:NO];
 		
+		// scroll to the top of the table
+		if ( [m_data totalBills] > 0 )
+		{
+			[self.tableView reloadData];
+			NSUInteger idx[2] = {0,0};
+			[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		}
+		
 		[self.tableView reloadData];
 	}
 	else

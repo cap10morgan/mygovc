@@ -153,7 +153,7 @@ enum
 	// 
 	// The header view loads up the user / event / chatter image
 	// and holds a title, and URL links
-	CGRect hframe = CGRectMake(0,0,320,150);
+	CGRect hframe = CGRectMake(0,0,320,165);
 	CDetailHeaderViewController *hdrViewCtrl;
 	hdrViewCtrl = [[CDetailHeaderViewController alloc] initWithNibName:@"CDetailHeaderView" bundle:nil ];
 	[hdrViewCtrl.view setFrame:hframe];

@@ -39,12 +39,13 @@
 					<object class="IBUILabel" id="533362426">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{62, 171}, {196, 69}}</string>
+						<string key="NSFrame">{{20, 173}, {286, 69}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
-						<string type="base64-UTF8" key="IBUIText">V2UncmUgd2FpdGluZyBmb3IgYSBkYXRhIEFQSSBmcm9tIHJlY292ZXJ5LmdvdiAuLi4</string>
+						<string type="base64-UTF8" key="IBUIText">V2UncmUgd2FpdGluZyBmb3IgYSBkYXRhIEFQSSBmZWVkLmdvdi4gSXQgc2hvdWxkIGJlIHJlYWR5IGJ5
+IGxhdGUgc3VtbWVyIDIwMDkuLi4</string>
 						<object class="NSColor" key="IBUITextColor">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MSAxIDEAA</bytes>

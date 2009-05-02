@@ -10,7 +10,7 @@
 #import "CDetailHeaderViewController.h"
 #import "CommunityItem.h"
 #import "MiniBrowserController.h"
-
+#import "MyGovUserData.h"
 
 @implementation CDetailHeaderViewController
 
@@ -18,6 +18,7 @@
 @synthesize m_mygovURLTitle;
 @synthesize m_webURLTitle;
 @synthesize m_img;
+@synthesize m_dateLabel;
 @synthesize m_myGovURLButton, m_webURLButton;
 
 - (void)didReceiveMemoryWarning 
@@ -39,6 +40,14 @@
 {
 	m_item = nil;
 	[super viewDidLoad];
+	
+	// adjust the header label parameters
+	m_name.font = [UIFont boldSystemFontOfSize:16.0f];
+	m_name.numberOfLines = 2;
+	m_name.lineBreakMode = UILineBreakModeWordWrap;
+	
+	m_mygovURLTitle.font = [UIFont systemFontOfSize:14.0f];
+	m_webURLTitle.font = [UIFont systemFontOfSize:14.0f];
 }
 
 
@@ -83,6 +92,14 @@
 	m_name.text = m_item.m_title;
 	m_mygovURLTitle.text = m_item.m_mygovURLTitle;
 	m_webURLTitle.text = m_item.m_webURLTitle;
+	
+	NSDateFormatter *dateFmt = [[[NSDateFormatter alloc] init] autorelease];
+	[dateFmt setDateFormat:@"yyyy-MM-dd 'at' HH:mm"];
+	
+	m_dateLabel.text = [NSString stringWithFormat:@"On %@, %@ said:", 
+									[dateFmt stringFromDate:m_item.m_date],
+									[[[myGovAppDelegate sharedUserData] userFromID:m_item.m_creator] m_username]
+						];
 	
 	if ( nil != m_item.m_image )
 	{

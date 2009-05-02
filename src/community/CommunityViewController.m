@@ -391,6 +391,7 @@
 	// use currently selected legislator to perfom the following action:
 	switch ( buttonIndex )
 	{
+/*
 		// View User Info
 		case 0:
 		{
@@ -404,9 +405,9 @@
 			[alert show];
 		}
 			break;
-			
+*/
 		// Reply/comment on this event or piece of chatter (feedback)
-		case 1:
+		case 0:
 		{
 			MessageData *msg = [[MessageData alloc] init];
 			msg.m_transport = eMT_MyGovUserComment;
@@ -512,7 +513,7 @@ deselect_and_return:
 													   delegate:self 
 											  cancelButtonTitle:@"Cancel" 
 										 destructiveButtonTitle:nil
-											  otherButtonTitles:@"View User Info",@"Reply!",nil,nil];
+											  otherButtonTitles:@"Reply!",nil,nil];
 	
 	// use the same style as the nav bar
 	sheet.actionSheetStyle = self.navigationController.navigationBar.barStyle;
