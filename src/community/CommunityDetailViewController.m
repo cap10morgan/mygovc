@@ -242,6 +242,8 @@ enum
 	// display the message composer
 	ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
 	[cmvc display:msg fromParent:self];
+	
+	[self.tableView reloadData];
 }
 
 

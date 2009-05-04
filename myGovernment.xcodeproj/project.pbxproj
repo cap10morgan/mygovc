@@ -10,6 +10,7 @@
 		0102D2EE0F58DECD005AE0EA /* eagleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2ED0F58DECD005AE0EA /* eagleIcon.png */; };
 		011592C40F6A36D2008BECCD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 011592C30F6A36D2008BECCD /* Default.png */; };
 		0126775E0F7F25CA00CF9C46 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */; };
+		012855160FAEA2D400E2B55E /* mygov_login_header.png in Resources */ = {isa = PBXBuildFile; fileRef = 012855150FAEA2D400E2B55E /* mygov_login_header.png */; };
 		012D5AD20FA6C098006DA53F /* system_avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 012D5AD10FA6C098006DA53F /* system_avatar.png */; };
 		0178E3AF0F944AFF00B96BD1 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0178E3AE0F944AFF00B96BD1 /* Settings.bundle */; };
 		017C22500F721824008CA4ED /* billsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224D0F721824008CA4ED /* billsIcon.png */; };
@@ -103,6 +104,7 @@
 		0102D2ED0F58DECD005AE0EA /* eagleIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = eagleIcon.png; path = res/eagleIcon.png; sourceTree = "<group>"; };
 		011592C30F6A36D2008BECCD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		012855150FAEA2D400E2B55E /* mygov_login_header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = mygov_login_header.png; path = res/mygov_login_header.png; sourceTree = "<group>"; };
 		012D5AD10FA6C098006DA53F /* system_avatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = system_avatar.png; path = res/system_avatar.png; sourceTree = "<group>"; };
 		0178E3AE0F944AFF00B96BD1 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		017C224D0F721824008CA4ED /* billsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = billsIcon.png; path = res/billsIcon.png; sourceTree = "<group>"; };
@@ -503,6 +505,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				012855150FAEA2D400E2B55E /* mygov_login_header.png */,
 				01B61CF70FAA8A37007E10E6 /* refreshIcon.png */,
 				01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */,
 				01ACAEF40FA80DA100B6FF59 /* personIcon.png */,
@@ -605,6 +608,7 @@
 				01ACB0670FA8434900B6FF59 /* CDetailHeaderView.xib in Resources */,
 				01B61CF80FAA8A37007E10E6 /* refreshIcon.png in Resources */,
 				01B61DAD0FAA96ED007E10E6 /* MyGovLoginView.xib in Resources */,
+				012855160FAEA2D400E2B55E /* mygov_login_header.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

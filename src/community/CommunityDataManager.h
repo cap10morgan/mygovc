@@ -61,6 +61,9 @@
 // drop items from cache which are too old (defined in a user preference)
 - (void)purgeOldItemsFromCache:(BOOL)blocking;
 
+// completely drop all current data... (used for re-load)
+- (void)purgeAllItemsFromCacheAndMemory;
+
 // grab community items 
 - (CommunityItem *)itemWithId:(NSInteger)itemID;
 

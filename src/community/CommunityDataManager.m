@@ -212,6 +212,29 @@
 }
 
 
+- (void)purgeAllItemsFromCacheAndMemory
+{
+	if ( isBusy ) return;
+	
+	isBusy = YES;
+	
+	// kill everything in cache
+	[self purgeCacheItemsOlderThan:[NSDate distantFuture]];
+	
+	// reset our latest event date
+	m_latestItemDate = [NSDate distantPast];
+	
+	// kill our in-memory data
+	[m_chatterIDDict release]; m_chatterIDDict = nil;
+	[m_chatterData release]; m_chatterData = nil;
+	[m_eventIDDict release]; m_eventIDDict = nil;
+	[m_eventData release]; m_eventData = nil;
+	
+	isDataAvailable = NO;
+	isBusy = NO;
+}
+
+
 - (CommunityItem *)itemWithId:(NSInteger)itemID
 {
 	CommunityItem *item;

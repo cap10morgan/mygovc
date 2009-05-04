@@ -277,6 +277,8 @@
 {
 	[self setActivityViewInNavBar];
 	
+	[m_data purgeAllItemsFromCacheAndMemory];
+	
 	[m_data loadData];
 }
 

@@ -114,7 +114,7 @@
 				rd.title = @"Location";
 				rd.titleColor = TOP_TITLE_COLOR;
 				rd.titleFont = TOP_TITLE_FONT;
-				rd.line1 = @"??";
+				rd.line1 = m_item.m_eventLocDescrip;
 				rd.line1Color = TOP_DATA_COLOR;
 				rd.line1Font = TOP_DATA_FONT;
 				rd.line1Alignment = UITextAlignmentRight;
@@ -144,7 +144,7 @@
 				rd.title = @"Date";
 				rd.titleColor = TOP_TITLE_COLOR;
 				rd.titleFont = TOP_TITLE_FONT;
-				rd.line1 = [dateFormatter stringFromDate:[m_item m_date]];
+				rd.line1 = [dateFormatter stringFromDate:[m_item m_eventDate]];
 				rd.line1Color = TOP_DATA_COLOR;
 				rd.line1Font = TOP_DATA_FONT;
 				rd.line1Alignment = UITextAlignmentRight;

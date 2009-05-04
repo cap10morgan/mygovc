@@ -212,7 +212,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			break;
 			
 		case opSendTwitterDM:
-			titleTxt = @"Twitte DM";
+			titleTxt = @"Twitter DM";
 			break;
 			
 		case eMT_Email:

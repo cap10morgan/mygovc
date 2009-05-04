@@ -93,13 +93,20 @@
 	m_mygovURLTitle.text = m_item.m_mygovURLTitle;
 	m_webURLTitle.text = m_item.m_webURLTitle;
 	
-	NSDateFormatter *dateFmt = [[[NSDateFormatter alloc] init] autorelease];
-	[dateFmt setDateFormat:@"yyyy-MM-dd 'at' HH:mm"];
-	
-	m_dateLabel.text = [NSString stringWithFormat:@"On %@, %@ said:", 
-									[dateFmt stringFromDate:m_item.m_date],
-									[[[myGovAppDelegate sharedUserData] userFromID:m_item.m_creator] m_username]
-						];
+	if ( m_item.m_type == eCommunity_Event )
+	{
+		m_dateLabel.text = @"Details:";
+	}
+	else
+	{
+		NSDateFormatter *dateFmt = [[[NSDateFormatter alloc] init] autorelease];
+		[dateFmt setDateFormat:@"yyyy-MM-dd 'at' HH:mm"];
+		
+		m_dateLabel.text = [NSString stringWithFormat:@"On %@, %@ said:", 
+										[dateFmt stringFromDate:m_item.m_date],
+										[[[myGovAppDelegate sharedUserData] userFromID:m_item.m_creator] m_username]
+							];
+	}
 	
 	if ( nil != m_item.m_image )
 	{
