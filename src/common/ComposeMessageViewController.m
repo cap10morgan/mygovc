@@ -68,7 +68,7 @@
 	- (NSInteger)mygovUserAuthWithCallback:(SEL)callback;
 	- (id)opMakePhoneCall;
 	- (id)opSendEmail;
-	- (id)opSendTweet;
+	- (id)opSendTwitterDM;
 	- (id)opSendMyGovComment;
 	- (id)opSendMyGovReply;
 	- (void)sendCommunityItemViaDataSource:(CommunityItem *)item;
@@ -211,8 +211,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			titleTxt = @"Reply";
 			break;
 			
-		case eMT_Twitter:
-			titleTxt = @"Tweet";
+		case opSendTwitterDM:
+			titleTxt = @"Twitte DM";
 			break;
 			
 		case eMT_Email:
@@ -239,7 +239,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	[m_fieldURL setText:[m_message.m_webURL absoluteString]];
 	[m_fieldURLTitle setText:m_message.m_webURLTitle];
 	
-	if ( m_message.m_transport == eMT_Twitter )
+	if ( m_message.m_transport == opSendTwitterDM )
 	{
 		[m_fieldTo setEnabled:YES];
 	}
@@ -279,8 +279,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			sendOp = @selector(opSendMyGovReply);
 			break;
 			
-		case eMT_Twitter:
-			sendOp = @selector(opSendTweet);
+		case opSendTwitterDM:
+			sendOp = @selector(opSendTwitterDM);
 			break;
 			
 		case eMT_Email:
@@ -423,7 +423,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		}
 			break;
 			
-		case eMT_Twitter:
+		case opSendTwitterDM:
 		{
 			// only show To: and Message: fields
 			[m_fieldSubject setHidden:YES];
@@ -585,7 +585,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 }
 
 
-- (id)opSendTweet
+- (id)opSendTwitterDM
 {
 	MGTwitterEngine *twitterEngine = [myGovAppDelegate sharedTwitterEngine];
 	[twitterEngine retain];
@@ -603,7 +603,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 				m_twitterLoginView = [[TwitterLoginViewController alloc] initWithNibName:@"TwitterLoginView" bundle:nil];
 			}
 			
-			[m_twitterLoginView setNotifyTarget:self withSelector:@selector(opSendTweet)];
+			[m_twitterLoginView setNotifyTarget:self withSelector:@selector(opSendTwitterDM)];
 			[m_twitterLoginView displayIn:self];
 			
 			return nil;
@@ -621,7 +621,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		tweet = [tweet substringToIndex:140];
 	}
 	
-	[m_hud setText:@"Sending Tweet!" andIndicateProgress:YES];
+	[m_hud setText:@"Sending Twitter DM!" andIndicateProgress:YES];
 	[m_hud show:YES];
 	
 	[self.view setUserInteractionEnabled:NO];
@@ -738,7 +738,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		// pop up an alert saying it failed!
 		m_alertType = eAlertType_TwitterError;
 		UIAlertView *alert = [[UIAlertView alloc] 
-							  initWithTitle:@"Tweet Error"
+							  initWithTitle:@"Twitter DM Error"
 							  message:[NSString stringWithFormat:@"Error: [%@]\nIs %@ following you?",err, m_fieldTo.text]
 							  delegate:self
 							  cancelButtonTitle:nil

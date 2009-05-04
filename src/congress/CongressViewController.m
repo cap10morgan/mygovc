@@ -211,7 +211,8 @@ enum
 	NSString *msg = message;
 	
 	NSRange msgTypeRange = {0, 5};
-	if ( NSOrderedSame == [msg compare:@"ERROR" options:NSCaseInsensitiveSearch range:msgTypeRange] )
+	if ( ([msg length] >= 5) && 
+		 (NSOrderedSame == [msg compare:@"ERROR" options:NSCaseInsensitiveSearch range:msgTypeRange]) )
 	{
 		// crap! an error occurred in the parsing/downloading: give the user
 		// an error message and leave it there...
@@ -219,11 +220,18 @@ enum
 		self.tableView.userInteractionEnabled = NO;
 		NSString *txt = [[[NSString alloc] initWithFormat:@"Error loading data%@",
 											([msg length] <= 6 ? @"!" : 
-											 [NSString stringWithFormat:@": \n%@",[msg substringFromIndex:6]])
+											 [NSString stringWithFormat:@":\n%@",[msg substringFromIndex:6]])
 						] autorelease];
 		
-		[m_HUD show:YES];
-		[m_HUD setText:txt andIndicateProgress:NO];
+		[m_HUD show:NO];
+		self.tableView.userInteractionEnabled = YES;
+		UIAlertView *alert = [[UIAlertView alloc] 
+							  initWithTitle:@"Error!"
+							  message:txt
+							  delegate:self
+							  cancelButtonTitle:nil
+							  otherButtonTitles:@"OK",nil];
+		[alert show];
 	}
 	else if ( NSOrderedSame == [msg compare:@"LOCTN" options:NSCaseInsensitiveSearch range:msgTypeRange] )
 	{
@@ -564,6 +572,13 @@ show_legislator:
 	if ( !m_locationManager.locationServicesEnabled )
 	{
 		// XXX - alert user of failure?!
+		UIAlertView *alert = [[UIAlertView alloc] 
+							  initWithTitle:@"Error finding local legislators"
+							  message:[NSString stringWithString:@"Sorry, localtion services seems to be disabled/non-functional!"]
+							  delegate:self
+							  cancelButtonTitle:nil
+							  otherButtonTitles:@"OK",nil];
+		[alert show];
 	}
 	else
 	{
@@ -814,7 +829,7 @@ show_legislator:
 			case 2:
 				if ( [[legislator twitter_id] length] > 0 )
 				{
-					msg.m_transport = eMT_Twitter;
+					msg.m_transport = opSendTwitterDM;
 					msg.m_to = [NSString stringWithFormat:@"@%@",[legislator twitter_id]];
 					msg.m_subject = @"";
 				}
@@ -1031,7 +1046,7 @@ show_legislator:
 	UIActionSheet *contactAlert =
 	[[UIActionSheet alloc] initWithTitle:[legislator shortName]
 							delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-							otherButtonTitles:@"Call",@"Email",@"Tweet",@"Comment!",nil];
+							otherButtonTitles:@"Call",@"Email",@"Twitter DM",@"Comment!",nil];
 	
 	// use the same style as the nav bar
 	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;

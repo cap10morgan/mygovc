@@ -15,7 +15,7 @@
 typedef enum
 {
 	eMT_Invalid = 0,
-	eMT_Twitter,
+	opSendTwitterDM,
 	eMT_Email,
 	eMT_MyGov,
 	eMT_MyGovUserComment,

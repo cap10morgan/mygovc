@@ -350,7 +350,8 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 		self.m_image = [UIImage imageWithData:[plistDict objectForKey:kCIKey_Image]];
 		self.m_title = [plistDict objectForKey:kCIKey_Title];
 		
-		NSDate *tmpDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:[[plistDict objectForKey:kCIKey_Date] integerValue]];
+		NSInteger dateInt = [[plistDict objectForKey:kCIKey_Date] integerValue];
+		NSDate *tmpDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:dateInt];
 		self.m_date = tmpDate;
 		[tmpDate release];
 		

@@ -14,9 +14,17 @@
 
 @synthesize m_tableRange, m_legislator;
 
-static const CGFloat S_TABLE_TITLE_WIDTH = 15.0f;
+static const CGFloat S_TABLE_TITLE_WIDTH = 30.0f;
 static const CGFloat S_INFO_OFFSET = 10.0f;
-static const CGFloat S_PARTY_INDICATOR_WIDTH = 40.0f;
+static const CGFloat S_PARTY_INDICATOR_WIDTH = 30.0f;
+static const CGFloat S_CELL_HPADDING = 7.0f;
+
+#define NAME_FONT  [UIFont boldSystemFontOfSize:18.0f]
+#define NAME_COLOR [UIColor blackColor]
+#define NAME_SHADOW_COLOR [UIColor clearColor]
+#define INFO_FONT  [UIFont systemFontOfSize:14.0f]
+#define INFO_COLOR [UIColor darkGrayColor]
+#define PARTY_FONT [UIFont systemFontOfSize:14.0f]
 
 enum
 {
@@ -33,7 +41,7 @@ enum
 		m_legislator = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
 		
-		CGFloat frameX = 10.0f;
+		CGFloat frameX = S_CELL_HPADDING;
 		CGFloat frameY = 0.0f;
 		CGFloat frameW = self.contentView.bounds.size.width - (frameX * 2.0f);
 		CGFloat frameH = self.contentView.bounds.size.height - (frameY * 2.0f);
@@ -53,32 +61,46 @@ enum
 									 frameH/1.5);
 		UILabel *nameView = [[UILabel alloc] initWithFrame:nameRect];
 		nameView.backgroundColor = [UIColor clearColor];
-		nameView.textColor = [UIColor blackColor];
-		nameView.font = [UIFont boldSystemFontOfSize:18.0f];
+		nameView.textColor = NAME_COLOR;
+		nameView.shadowColor = NAME_SHADOW_COLOR;
+		nameView.shadowOffset = CGSizeMake(0,-1);
+		nameView.font = NAME_FONT;
 		nameView.textAlignment = UITextAlignmentLeft;
 		nameView.adjustsFontSizeToFitWidth = YES;
 		[nameView setTag:eTAG_NAME];
 		
+		/*
 		CGRect partyRect = CGRectMake(CGRectGetMinX(detailRect) - S_PARTY_INDICATOR_WIDTH,
 									  frameY, 
 									  S_PARTY_INDICATOR_WIDTH, 
 									  frameH/1.5);
+		 */
+		CGRect partyRect = CGRectMake( frameX + S_INFO_OFFSET, 
+									   frameY + CGRectGetHeight(nameRect),
+									   S_PARTY_INDICATOR_WIDTH,
+									   frameH - CGRectGetHeight(nameRect) );
 		UILabel *partyView = [[UILabel alloc] initWithFrame:partyRect];
 		partyView.backgroundColor = [UIColor clearColor];
 		partyView.textColor = [UIColor darkGrayColor];
-		partyView.font = [UIFont systemFontOfSize:18.0f];
-		partyView.textAlignment = UITextAlignmentCenter;
+		partyView.font = PARTY_FONT;
+		partyView.textAlignment = UITextAlignmentRight;
 		partyView.adjustsFontSizeToFitWidth = YES;
 		[partyView setTag:eTAG_PARTY];
 		
+		/*
 		CGRect infoRect = CGRectMake( frameX + S_INFO_OFFSET, 
 									  frameY + CGRectGetHeight(nameRect),
 									  frameW - S_INFO_OFFSET - S_PARTY_INDICATOR_WIDTH,
 									  frameH - CGRectGetHeight(nameRect) );
+		 */
+		CGRect infoRect = CGRectMake( CGRectGetMaxX(partyRect) + S_CELL_HPADDING, 
+									  frameY + CGRectGetHeight(nameRect),
+									  CGRectGetMinX(detailRect) - S_PARTY_INDICATOR_WIDTH - S_INFO_OFFSET - S_CELL_HPADDING,
+									  frameH - CGRectGetHeight(nameRect) );
 		UILabel *infoView = [[UILabel alloc] initWithFrame:infoRect];
 		infoView.backgroundColor = [UIColor clearColor];
-		infoView.textColor = [UIColor darkGrayColor];
-		infoView.font = [UIFont systemFontOfSize:14.0f];
+		infoView.textColor = INFO_COLOR;
+		infoView.font = INFO_FONT;
 		infoView.textAlignment = UITextAlignmentLeft;
 		infoView.adjustsFontSizeToFitWidth = YES;
 		[infoView setTag:eTAG_INFO];

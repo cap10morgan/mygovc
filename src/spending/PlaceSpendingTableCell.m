@@ -37,7 +37,7 @@ enum
 
 static const CGFloat S_CELL_HOFFSET = 7.0f;
 static const CGFloat S_CELL_VOFFSET = 2.0f;
-static const CGFloat S_TABLE_TITLE_WIDTH = 20.0f;
+static const CGFloat S_TABLE_TITLE_WIDTH = 30.0f;
 static const CGFloat S_PLACE_TEXT_WIDTH = 120.0f;
 
 static const CGFloat S_ROW_HEIGHT = 23.0f;

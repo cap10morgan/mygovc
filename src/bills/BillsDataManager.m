@@ -531,7 +531,7 @@ static const NSInteger s_maxBillPages = 3;
 	isBusy = NO;
 	isDataAvailable = YES;
 	
-	[self setStatus:@"Finished."];
+	[self setStatus:@"END"];
 }
 
 
@@ -691,7 +691,7 @@ static const NSInteger s_maxBillPages = 3;
 	
 	isDataAvailable = success;
 	
-	[self setStatus:@"Finished."];
+	[self setStatus:@"END"];
 	
 	//NSLog( @"BillsDataManager XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
 	

@@ -537,7 +537,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 	m_currentCongressSession = [m_committees congressSession];
 	
 	isDataAvailable = YES;
-	[self setStatus:@"Finished."];
+	[self setStatus:@"END"];
 	
 	//NSLog( @"CongressDataManager cached data parsing complete." );
 }
@@ -673,7 +673,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 	
 	isDataAvailable = success;
 	
-	[self setStatus:(success ? @"Finished." : m_currentString)];
+	[self setStatus:(success ? @"END" : m_currentString)];
 	
 	//NSLog( @"CongressDataManager XML parsing ended %@", (success ? @"successfully." : @" in failure!") );
 	

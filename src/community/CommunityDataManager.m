@@ -186,7 +186,8 @@
 	isBusy = YES;
 	
 	NSNumber *max_age_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_community_data_age"];
-	NSInteger max_age = -([max_age_str integerValue]);
+	NSInteger max_age = -604800; // default to ~1 week
+	if ( nil != max_age_str ) max_age = -([max_age_str integerValue]);
 	
 	NSDate *oldestItemDate = [[NSDate date] addTimeInterval:max_age];
 	
@@ -301,10 +302,11 @@
 	
 	// don't fire a notification every time, the timer essentially 
 	// aggregates the calls to the notify target to prevent thread
-	// synchronization and system instability issues 
+	// synchronization and system instability issues that can occur
+	// when this callback handler make a [UITableView reloadData] call.
 	if ( nil == m_timer )
 	{
-		m_timer = [NSTimer timerWithTimeInterval:0.4f target:self selector:@selector(timerNotify:) userInfo:nil repeats:NO];
+		m_timer = [NSTimer timerWithTimeInterval:0.3f target:self selector:@selector(timerNotify:) userInfo:nil repeats:NO];
 		[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
 	}
 }
@@ -316,7 +318,6 @@
 	
 	// stop the timer
 	[timer invalidate];
-	m_timer = nil; // reset for next time
 		
 	if ( nil != m_notifyTarget )
 	{
@@ -325,6 +326,10 @@
 			[m_notifyTarget performSelector:m_notifySelector withObject:m_currentStatusMessage];
 		}
 	}
+	
+	// do this here so that subsequent timer initializations happen
+	// _after_ the last callback has completed
+	m_timer = nil; // reset for next time
 }
 
 
@@ -367,6 +372,7 @@
 	//NSDate *newestDate = [NSDate distantPast];
 	
 	[self setStatus:@"Loading cached data..."];
+	m_latestItemDate = [NSDate distantPast];
 	
 	// load everything in our data cache!
 	NSString *cachePath = [[CommunityDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
@@ -400,7 +406,9 @@
 	}
 	
 	// download any new items
-	isDataAvailable = [self downloadNewDataStartingAt:m_latestItemDate] || loadedCachedData;
+	BOOL downloadedData = [self downloadNewDataStartingAt:m_latestItemDate] || loadedCachedData;
+	
+	isDataAvailable = (loadedCachedData || downloadedData);
 	isBusy = NO;
 	
 	// 
@@ -408,16 +416,19 @@
 	// Update all our cached/downloaded items one-by one
 	// to grab any new comments from users
 	// 
-	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self 
-																		selector:@selector(syncInMemoryDataWithServer) 
-																		  object:nil];
+	if ( isDataAvailable )
+	{
+		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self 
+																			selector:@selector(syncInMemoryDataWithServer) 
+																			  object:nil];
+		
+		// Add the operation to the internal operation queue managed by the application delegate.
+		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+		
+		[theOp release];
+	}
 	
-	// Add the operation to the internal operation queue managed by the application delegate.
-	[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
-	
-	[theOp release];
-	
-	[self setStatus:@"finished."];
+	[self setStatus:@"END"];
 }
 
 
@@ -477,7 +488,7 @@
 	{
 		// this will cause our associated UITableView to reload its data
 		// and thus re-display the info we just updated
-		[self setStatus:@"update finished"];
+		[self setStatus:@"END"];
 	}
 }
 
@@ -563,7 +574,7 @@
 		[itemDict setValue:newItem forKey:newItem.m_id];
 	}
 	
-	NSLog( @"Grabbed '%@' from mygov server...",newItem.m_title );
+	NSLog( @"mygov chatter: '%@'...",newItem.m_title );
 	
 	if ( NSOrderedAscending == [m_latestItemDate compare:newItem.m_date] )
 	{

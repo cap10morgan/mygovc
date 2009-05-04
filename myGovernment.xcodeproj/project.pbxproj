@@ -289,16 +289,18 @@
 		0102D2DA0F58DB6B005AE0EA /* congress */ = {
 			isa = PBXGroup;
 			children = (
-				01D7FEA50FA5023A00F78B92 /* CongressDatabaseParser.h */,
-				01D7FEA60FA5023A00F78B92 /* CongressDatabaseParser.m */,
+				01D7FEAD0FA5023A00F78B92 /* CongressViewController.h */,
+				01D7FEAE0FA5023A00F78B92 /* CongressViewController.m */,
+				01D7FEB60FA5023A00F78B92 /* LegislatorNameCell.h */,
+				01D7FEB70FA5023A00F78B92 /* LegislatorNameCell.m */,
 				01D7FEA70FA5023A00F78B92 /* CongressDataManager.h */,
 				01D7FEA80FA5023A00F78B92 /* CongressDataManager.m */,
+				01D7FEA50FA5023A00F78B92 /* CongressDatabaseParser.h */,
+				01D7FEA60FA5023A00F78B92 /* CongressDatabaseParser.m */,
 				01D7FEA90FA5023A00F78B92 /* CongressionalCommittees.h */,
 				01D7FEAA0FA5023A00F78B92 /* CongressionalCommittees.m */,
 				01D7FEAB0FA5023A00F78B92 /* CongressLocationParser.h */,
 				01D7FEAC0FA5023A00F78B92 /* CongressLocationParser.m */,
-				01D7FEAD0FA5023A00F78B92 /* CongressViewController.h */,
-				01D7FEAE0FA5023A00F78B92 /* CongressViewController.m */,
 				01D7FEAF0FA5023A00F78B92 /* LegislatorContainer.h */,
 				01D7FEB00FA5023A00F78B92 /* LegislatorContainer.m */,
 				01D7FEB10FA5023A00F78B92 /* LegislatorHeaderView.xib */,
@@ -306,8 +308,6 @@
 				01D7FEB30FA5023A00F78B92 /* LegislatorHeaderViewController.m */,
 				01D7FEB40FA5023A00F78B92 /* LegislatorInfoData.h */,
 				01D7FEB50FA5023A00F78B92 /* LegislatorInfoData.m */,
-				01D7FEB60FA5023A00F78B92 /* LegislatorNameCell.h */,
-				01D7FEB70FA5023A00F78B92 /* LegislatorNameCell.m */,
 				01D7FEB80FA5023A00F78B92 /* LegislatorViewController.h */,
 				01D7FEB90FA5023A00F78B92 /* LegislatorViewController.m */,
 			);
