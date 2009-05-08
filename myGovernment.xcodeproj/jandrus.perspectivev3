@@ -305,7 +305,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>55</integer>
+									<integer>61</integer>
 									<integer>52</integer>
 									<integer>2</integer>
 									<integer>0</integer>
@@ -345,7 +345,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>0102D29F0F58D61A005AE0EA</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>CDetailHeaderViewController.m</string>
+								<string>CommunityItem.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -353,11 +353,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>0102D2A00F58D61A005AE0EA</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>CDetailHeaderViewController.m</string>
+										<string>CommunityItem.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>012855CB0FAEAD3600E2B55E</string>
+										<string>0149EA7F0FAF18F600D5AD11</string>
 										<key>history</key>
 										<array>
 											<string>0102D4AE0F59016E005AE0EA</string>
@@ -444,7 +444,6 @@
 											<string>0128556D0FAEA85D00E2B55E</string>
 											<string>0128556E0FAEA85D00E2B55E</string>
 											<string>0128558D0FAEA9CD00E2B55E</string>
-											<string>0128558E0FAEA9CD00E2B55E</string>
 											<string>012855B80FAEAD3100E2B55E</string>
 											<string>012855B90FAEAD3100E2B55E</string>
 											<string>012855BA0FAEAD3100E2B55E</string>
@@ -452,7 +451,8 @@
 											<string>012855BC0FAEAD3100E2B55E</string>
 											<string>012855BD0FAEAD3100E2B55E</string>
 											<string>012855BE0FAEAD3100E2B55E</string>
-											<string>012855BF0FAEAD3100E2B55E</string>
+											<string>0149EA6D0FAF17F700D5AD11</string>
+											<string>0149EA700FAF17F700D5AD11</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -543,31 +543,8 @@
 											<string>01B16C130FAE5B6D007B5527</string>
 											<string>01B16C290FAE5D13007B5527</string>
 											<string>01B16C300FAE5D5B007B5527</string>
-											<string>0128551E0FAEA37000E2B55E</string>
-											<string>0128551F0FAEA37000E2B55E</string>
-											<string>012855200FAEA37000E2B55E</string>
-											<string>012855210FAEA37000E2B55E</string>
-											<string>012855220FAEA37000E2B55E</string>
-											<string>012855230FAEA37000E2B55E</string>
-											<string>0128553D0FAEA3CE00E2B55E</string>
-											<string>012855550FAEA76800E2B55E</string>
-											<string>012855560FAEA76800E2B55E</string>
-											<string>012855570FAEA76800E2B55E</string>
-											<string>012855620FAEA7AF00E2B55E</string>
-											<string>012855720FAEA85D00E2B55E</string>
-											<string>012855740FAEA85D00E2B55E</string>
-											<string>012855900FAEA9CD00E2B55E</string>
-											<string>012855990FAEAA5A00E2B55E</string>
-											<string>012855C00FAEAD3100E2B55E</string>
-											<string>012855C10FAEAD3100E2B55E</string>
-											<string>012855C20FAEAD3100E2B55E</string>
-											<string>012855C30FAEAD3100E2B55E</string>
-											<string>012855C40FAEAD3100E2B55E</string>
-											<string>012855C50FAEAD3100E2B55E</string>
-											<string>012855C60FAEAD3100E2B55E</string>
-											<string>012855C70FAEAD3100E2B55E</string>
-											<string>012855C80FAEAD3100E2B55E</string>
 											<string>012855C90FAEAD3100E2B55E</string>
+											<string>0149EA6F0FAF17F700D5AD11</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -707,11 +684,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>012855100FAEA28300E2B55E</string>
+				<string>0149EA730FAF17F900D5AD11</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>012855110FAEA28300E2B55E</string>
+				<string>0149EA740FAF17F900D5AD11</string>
 				<string>0102D29F0F58D61A005AE0EA</string>
-				<string>012855120FAEA28300E2B55E</string>
+				<string>0149EA750FAF17F900D5AD11</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -872,14 +849,14 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>012855290FAEA37F00E2B55E</string>
+				<string>0149EA760FAF17F900D5AD11</string>
 				<string>1CCC7628064C1048000F2A68</string>
 				<string>1CCC7629064C1048000F2A68</string>
-				<string>0128552A0FAEA37F00E2B55E</string>
-				<string>0128552B0FAEA37F00E2B55E</string>
-				<string>0128552C0FAEA37F00E2B55E</string>
-				<string>0128552D0FAEA37F00E2B55E</string>
-				<string>0102D29F0F58D61A005AE0EA</string>
+				<string>0149EA770FAF17F900D5AD11</string>
+				<string>0149EA780FAF17F900D5AD11</string>
+				<string>0149EA790FAF17F900D5AD11</string>
+				<string>0149EA7A0FAF17F900D5AD11</string>
+				<string>0149EA660FAF17E200D5AD11</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -894,7 +871,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>263105846.14043301</real>
+	<real>263133430.96783701</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>2</integer>
 	<key>ToolbarIsVisible</key>
@@ -909,9 +886,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>012855CC0FAEAD3600E2B55E</string>
-		<string>012855410FAEA3CF00E2B55E</string>
-		<string>0128552F0FAEA37F00E2B55E</string>
+		<string>0149EA7E0FAF181900D5AD11</string>
+		<string>0149EA7C0FAF17F900D5AD11</string>
 		<string>/Users/jandrus/svn/external/timetraveltoaster/myGovernment/myGovernment.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
