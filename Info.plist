@@ -9,9 +9,9 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string>eagleIcon.png</string>
+	<string>eagleIcon_32x32.png</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.timetraveltoaster.myGovernment</string>
+	<string>com.iphonefloss.myGovernment</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
