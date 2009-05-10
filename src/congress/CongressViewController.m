@@ -627,7 +627,7 @@ show_legislator:
 	// we should be running in a thread, so this should give my table
 	// enough time to load itself up before I go and cover it up.
 	// (yeah, it's a bit of a hack...)
-	[NSThread sleepForTimeInterval:0.20f]; 
+	[NSThread sleepForTimeInterval:0.33f]; 
 	
 	[m_initialLegislatorID release]; m_initialLegislatorID = nil;
 	if ( nil != legislator )
@@ -829,7 +829,7 @@ show_legislator:
 			case 2:
 				if ( [[legislator twitter_id] length] > 0 )
 				{
-					msg.m_transport = opSendTwitterDM;
+					msg.m_transport = eMT_SendTwitterDM;
 					msg.m_to = [NSString stringWithFormat:@"@%@",[legislator twitter_id]];
 					msg.m_subject = @"";
 				}

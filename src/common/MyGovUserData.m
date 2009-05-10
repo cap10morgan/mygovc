@@ -17,12 +17,12 @@
 
 @implementation MyGovUser : NSObject 
 
-@synthesize m_id, m_username, m_lastUpdated;
+@synthesize m_username, m_lastUpdated;
 @synthesize m_firstname, m_middlename, m_lastname;
 @synthesize m_email, m_avatar, m_password;
 	// XXX - more info here?!
 
-static NSString *kMGUKey_ID = @"id";
+//static NSString *kMGUKey_ID = @"id";
 static NSString *kMGUKey_Username = @"username";
 static NSString *kMGUKey_LastUpdated = @"last_update";
 static NSString *kMGUKey_FirstName = @"fname";
@@ -37,7 +37,6 @@ static NSString *kMGUKey_Avatar = @"avatar";
 	{
 		s_systemUser = [[MyGovUser alloc] init];
 		
-		s_systemUser.m_id = 0;
 		s_systemUser.m_lastUpdated = [NSDate date];
 		s_systemUser.m_firstname = @"My";
 		s_systemUser.m_lastname = @"Government";
@@ -54,7 +53,7 @@ static NSString *kMGUKey_Avatar = @"avatar";
 	{
 		if ( nil == plistDict )
 		{
-			m_id = -1;
+			m_username = nil;
 			m_lastUpdated = nil;
 			m_firstname = nil;
 			m_middlename = nil;
@@ -63,7 +62,7 @@ static NSString *kMGUKey_Avatar = @"avatar";
 		}
 		else
 		{
-			self.m_id = [[plistDict objectForKey:kMGUKey_ID] integerValue];
+			//self.m_id = [[plistDict objectForKey:kMGUKey_ID] integerValue];
 			
 			NSDate *tmpDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:[[plistDict objectForKey:kMGUKey_LastUpdated] integerValue]];
 			self.m_lastUpdated = tmpDate;
@@ -83,7 +82,7 @@ static NSString *kMGUKey_Avatar = @"avatar";
 - (NSDictionary *)writeToPlistDict
 {
 	NSMutableDictionary *plistDict = [[[NSMutableDictionary alloc] init] autorelease];
-	[plistDict setValue:[NSNumber numberWithInt:m_id] forKey:kMGUKey_ID];
+	//[plistDict setValue:[NSNumber numberWithInt:m_id] forKey:kMGUKey_ID];
 	[plistDict setValue:[NSNumber numberWithInt:[m_lastUpdated timeIntervalSinceReferenceDate]] forKey:kMGUKey_LastUpdated];
 	[plistDict setValue:m_username forKey:kMGUKey_Username];
 	[plistDict setValue:m_firstname forKey:kMGUKey_FirstName];
@@ -96,7 +95,8 @@ static NSString *kMGUKey_Avatar = @"avatar";
 
 - (NSString *)getCacheFileName
 {
-	return [NSString stringWithFormat:@"%0d",m_id];
+	//return [NSString stringWithFormat:@"%0d",m_id];
+	return m_username;
 }
 
 @end
@@ -133,7 +133,7 @@ static NSString *kMGUKey_Avatar = @"avatar";
 	MyGovUser *nu = [[newUser retain] autorelease];
 	
 	// implicitly clear old data (allocated with autorelease)
-	[m_userData setObject:nu forKey:[NSNumber numberWithInt:[newUser m_id]]];
+	[m_userData setObject:nu forKey:nu.m_username];
 	
 	// store the new data to a local file
 	NSString *fPath = [[self dataCachePath] stringByAppendingPathComponent:[nu getCacheFileName]];
@@ -142,27 +142,27 @@ static NSString *kMGUKey_Avatar = @"avatar";
 }
 
 
-- (MyGovUser *)userFromID:(NSInteger)userID
+- (MyGovUser *)userFromUsername:(NSString *)username
 {
-	MyGovUser *user = [m_userData objectForKey:[NSNumber numberWithInt:userID]];
+	MyGovUser *user = [m_userData objectForKey:username];
 	if ( nil == user )
 	{
 		// not in memory - try disk
-		NSString *fPath = [[self dataCachePath] stringByAppendingPathComponent:[NSString stringWithFormat:@"%0d",userID]];
+		NSString *fPath = [[self dataCachePath] stringByAppendingPathComponent:username];
 		if ( [[NSFileManager defaultManager] fileExistsAtPath:fPath] )
 		{
 			NSDictionary *userData = [NSDictionary dictionaryWithContentsOfFile:fPath];
 			if ( nil != userData )
 			{
 				user = [[MyGovUser alloc] initWithPlistDict:userData];
-				if ( user.m_id < 0 )
+				if ( nil == user.m_username )
 				{
 					[user release]; user = nil;
 				}
 				else
 				{
 					// add the user to our in-memory cache so we don't have to touch the disk again :-)
-					[m_userData setObject:user forKey:[NSNumber numberWithInt:[user m_id]]];
+					[m_userData setObject:user forKey:user.m_username];
 				}
 			}
 		}
@@ -176,11 +176,11 @@ static NSString *kMGUKey_Avatar = @"avatar";
 }
 
 
-- (BOOL)userIDExistsInCache:(NSInteger)userID
+- (BOOL)usernameExistsInCache:(NSString *)username
 {
-	MyGovUser *u = [self userFromID:userID];
+	MyGovUser *u = [self userFromUsername:username];
 	if ( nil == u ) return FALSE;
-	if ( u.m_id == [MyGovUser systemUser].m_id ) return FALSE;
+	if ( u.m_username == [MyGovUser systemUser].m_username ) return FALSE;
 	
 	return TRUE;
 }

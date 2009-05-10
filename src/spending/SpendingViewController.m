@@ -440,6 +440,7 @@ typedef enum
 					}
 					break;
 				case 3:
+				case 4:
 					shouldComment = YES;
 					appUrl = [NSURL URLWithString:[NSString stringWithFormat:@"mygov://spending/place/%@",[psd m_place]]];
 					break;
@@ -449,14 +450,29 @@ typedef enum
 			
 			if ( shouldComment )
 			{
+				NSInteger totalOptions = [plArray count] + 2;
 				MessageData *msg = [[MessageData alloc] init];
-				msg.m_transport = eMT_MyGov;
-				msg.m_to = @"MyGovernment Community";
-				msg.m_subject = [NSString stringWithFormat:@"Spending: %@",legName];
-				msg.m_appURL = appUrl;
-				msg.m_appURLTitle = legName;
-				msg.m_webURL = [psd getTransactionListURL];
-				msg.m_webURLTitle = @"USASpending.gov";  
+				if ( (buttonIndex+1) == totalOptions )
+				{
+					// Comment!
+					msg.m_transport = eMT_MyGov;
+					msg.m_to = @"MyGovernment Community";
+					msg.m_subject = [NSString stringWithFormat:@"Spending: %@",legName];
+					msg.m_appURL = appUrl;
+					msg.m_appURLTitle = legName;
+					msg.m_webURL = [psd getTransactionListURL];
+					msg.m_webURLTitle = @"USASpending.gov";  
+				}
+				else
+				{
+					// Send Tweet!
+					msg.m_transport = eMT_SendTweet;
+					msg.m_body = [NSString stringWithFormat:@"#mygov %@ has spend %@ in govt. contracts this year!",
+												legName,
+												[psd rankStr]
+								  ];
+					if ( [msg.m_body length] > 140 ) msg.m_body = [msg.m_body substringToIndex:140];
+				}
 				ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
 				[cmvc display:msg fromParent:self];
 				[msg release];
@@ -659,7 +675,7 @@ typedef enum
 		case eSQMState:
 		{
 			PlaceSpendingData *psd = [self getDataForIndexPath:indexPath];
-			NSString *buttonName[4] = { nil, nil, nil, nil };
+			NSString *buttonName[5] = { nil, nil, nil, nil, nil };
 			{
 				NSArray *plArray = [psd placeLegislators:YES];
 				NSEnumerator *plEnum = [plArray objectEnumerator];
@@ -669,13 +685,14 @@ typedef enum
 				{
 					buttonName[ii++] = [legislator shortName];
 				}
+				buttonName[ii++] = @"Tweet This";
 				buttonName[ii++] = @"Comment!";
 			}
 			// pop up an alert asking the user what action to perform
 			UIActionSheet *contactAlert =
 			[[UIActionSheet alloc] initWithTitle:psd.m_place
 										delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-							   otherButtonTitles:buttonName[0],buttonName[1],buttonName[2],buttonName[3],nil];
+							   otherButtonTitles:buttonName[0],buttonName[1],buttonName[2],buttonName[3],buttonName[4],nil];
 			
 			// use the same style as the nav bar
 			contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;

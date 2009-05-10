@@ -26,38 +26,49 @@ enum
 	eTAG_COMMENTS   = 997,
 	eTAG_SUMMARY    = 996,
 	eTAG_IMAGE      = 995,
+	eTAG_USERNAME   = 994,
 };
 
 static const CGFloat S_CELL_HOFFSET = 7.0f;
 static const CGFloat S_CELL_VOFFSET = 5.0f;
-static const CGFloat S_TITLE_HEIGHT = 18.0f;
+static const CGFloat S_TITLE_HEIGHT = 16.0f;
 static const CGFloat S_TITLE_MAX_WIDTH = 175.0f;
 static const CGFloat S_MAX_IMG_WIDTH = 64.0f;
+static const CGFloat S_MAX_IMG_HEIGHT = 64.0f;
 
-static const CGFloat S_MIN_HEIGHT = 64.0f;
-static const CGFloat S_MAX_HEIGHT = 84.0f;
+static const CGFloat S_MIN_HEIGHT = 64.0f + (2.0f * 5.0f);
+static const CGFloat S_MAX_HEIGHT = 100.0f;
 static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 
-#define TITLE_FONT  [UIFont boldSystemFontOfSize:12.0f]
-#define TITLE_COLOR [UIColor blackColor]
+#define TITLE_FONT     [UIFont boldSystemFontOfSize:12.0f]
+#define TITLE_COLOR    [UIColor blackColor]
+
+#define USERNAME_FONT  [UIFont boldSystemFontOfSize:10.0f]
+#define USERNAME_COLOR [UIColor darkGrayColor];
 
 #define COMMENTS_FONT  [UIFont systemFontOfSize:12.0f]
 #define COMMENTS_COLOR [UIColor colorWithRed:0.2f green:0.25f blue:0.7f alpha:0.9f]
 
-#define SUMMARY_FONT  [UIFont systemFontOfSize:12.0f]
-#define SUMMARY_COLOR [UIColor darkGrayColor]
+#define SUMMARY_FONT   [UIFont systemFontOfSize:12.0f]
+#define SUMMARY_COLOR  [UIColor darkGrayColor]
 
 
 + (CGFloat)getCellHeightForItem:(CommunityItem *)item
 {
 	NSString *descrip = item.m_summary;
 	CGSize descripSz = [descrip sizeWithFont:SUMMARY_FONT 
-						   constrainedToSize:CGSizeMake(S_MAX_WIDTH_PORTRAIT - (3.0f*S_CELL_HOFFSET) - 32.0f, S_MAX_HEIGHT - S_TITLE_HEIGHT - (2.0f*S_CELL_VOFFSET)) 
+						   constrainedToSize:CGSizeMake(S_MAX_WIDTH_PORTRAIT - (3.0f*S_CELL_HOFFSET) - 32.0f, S_MAX_HEIGHT - (2.0f*S_TITLE_HEIGHT) - (3.0f*S_CELL_VOFFSET)) 
 							   lineBreakMode:UILineBreakModeWordWrap];
 	
 	CGFloat height = S_TITLE_HEIGHT + S_CELL_VOFFSET + 
+					 S_TITLE_HEIGHT + S_CELL_VOFFSET + 
 					 descripSz.height + S_CELL_VOFFSET;
+/*	
+	CGFloat imgHeight = S_MAX_IMG_HEIGHT + S_CELL_VOFFSET +
+						S_TITLE_HEIGHT + S_CELL_VOFFSET;
 	
+	CGFloat height = (txtHeight > imgHeight) ? txtHeight : imgHeight;
+*/	
 	if ( height > S_MIN_HEIGHT ) return height;
 	
 	return S_MIN_HEIGHT;
@@ -116,6 +127,18 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 		[imgView setTag:eTAG_IMAGE];
 		[self addSubview:imgView];
 		[imgView release];
+		
+		UILabel *unameView = [[UILabel alloc] initWithFrame:CGRectZero];
+		unameView.backgroundColor = [UIColor clearColor];
+		unameView.textColor = USERNAME_COLOR;
+		unameView.font = USERNAME_FONT;
+		unameView.textAlignment = UITextAlignmentLeft;
+		unameView.lineBreakMode = UILineBreakModeMiddleTruncation;
+		//titleView.adjustsFontSizeToFitWidth = YES;
+		[unameView setTag:eTAG_USERNAME];
+		[self addSubview:unameView];
+		[unameView release];
+		
 	}
 	return self;
 }
@@ -143,11 +166,8 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	lbl.highlighted = selected;
 	lbl = (UILabel *)[self viewWithTag:eTAG_SUMMARY];
 	lbl.highlighted = selected;
-	
-/**
-	UILabel *billNumView = (UILabel *)[self viewWithTag:eTAG_BILLNUM];
-	[billNumView setHighlighted:selected];
-**/
+	lbl = (UILabel *)[self viewWithTag:eTAG_USERNAME];
+	lbl.highlighted = selected;
 }
 
 
@@ -206,12 +226,24 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	}
 	
 	imgView.image = m_item.m_image;
-	CGFloat imgHeight = ((m_item.m_image.size.height < cellHeight) ? m_item.m_image.size.height : cellHeight);
-	CGFloat imgWidth = ((m_item.m_image.size.width < S_MAX_IMG_WIDTH) ? m_item.m_image.size.width : S_MAX_IMG_WIDTH);
+	CGSize imgSz = m_item.m_image.size;
+	if ( imgSz.height > S_MAX_IMG_HEIGHT ) imgSz.height = S_MAX_IMG_HEIGHT;
+	if ( imgSz.width > S_MAX_IMG_WIDTH ) imgSz.width = S_MAX_IMG_WIDTH;
 	CGRect imgRect = CGRectMake( S_CELL_HOFFSET,
-								 (cellHeight - imgHeight)/2.0f,
-								 imgWidth, imgHeight );
+								 S_CELL_VOFFSET,
+								 imgSz.width, 
+								 imgSz.height );
 	[imgView setFrame:imgRect];
+	
+	// username view just below the image 
+	CGRect unameRect = CGRectMake( CGRectGetMaxX(imgRect) + S_CELL_HOFFSET, 
+								   S_CELL_VOFFSET, 
+								   CGRectGetMinX(detailRect) - CGRectGetMaxX(imgRect) - (2.0f*S_CELL_HOFFSET), 
+								   S_TITLE_HEIGHT);
+	UILabel *unameView = (UILabel *)[self viewWithTag:eTAG_USERNAME];
+	[unameView setFrame:unameRect];
+	unameView.text = [NSString stringWithFormat:@"%@ says:",m_item.m_creator];
+	
 	
 	// title view: top-aligned, left-aligned against photo
 	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
@@ -220,7 +252,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 								constrainedToSize:CGSizeMake(S_TITLE_MAX_WIDTH, S_TITLE_HEIGHT) 
 									lineBreakMode:UILineBreakModeTailTruncation];
 	CGRect titleRect = CGRectMake( CGRectGetMaxX(imgRect) + S_CELL_HOFFSET,
-								   S_CELL_VOFFSET,
+								   CGRectGetMaxY(unameRect) + S_CELL_VOFFSET,
 								   titleSz.width, S_TITLE_HEIGHT );
 	[titleView setFrame:titleRect];
 	titleView.text = m_item.m_title;
@@ -228,7 +260,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	// comments view: left-aligned against title view
 	UILabel *commentView = (UILabel *)[self viewWithTag:eTAG_COMMENTS];
 	CGRect commentsRect = CGRectMake( CGRectGetMaxX(titleRect) + S_CELL_HOFFSET,
-									  S_CELL_VOFFSET,
+									  CGRectGetMinY(titleRect),
 									  CGRectGetMinX(detailRect) - CGRectGetMaxX(titleRect) - (2.0f*S_CELL_HOFFSET),
 									  S_TITLE_HEIGHT );
 	[commentView setFrame:commentsRect];
@@ -239,7 +271,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	CGRect summaryRect = CGRectMake( CGRectGetMinX(titleRect),
 									 CGRectGetMaxY(titleRect) + S_CELL_VOFFSET,
 									 CGRectGetMaxX(commentsRect) - CGRectGetMinX(titleRect),
-									 cellHeight - CGRectGetHeight(titleRect) - (3.0f*S_CELL_VOFFSET) );
+									 cellHeight - CGRectGetMaxY(titleRect) - S_CELL_VOFFSET );
 	[summaryView setFrame:summaryRect];
 	summaryView.text = m_item.m_summary;
 	

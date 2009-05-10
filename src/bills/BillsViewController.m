@@ -20,6 +20,7 @@
 
 @interface BillsViewController (private)
 	- (BillContainer *)billAtIndexPath:(NSIndexPath *)indexPath;
+	- (void)showInitialBill:(BillContainer *)bill;
 	- (void)reloadBillData;
 	- (void)dataManagerCallback:(id)sender;
 	- (void)shadowDataCallback:(id)sender;
@@ -57,6 +58,8 @@ enum
 - (void)viewDidLoad 
 {
 	m_data = [[myGovAppDelegate sharedBillsData] retain];
+	
+	m_initialBillID = nil;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
@@ -142,10 +145,24 @@ enum
 		}
 		[m_HUD show:YES];
 		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
+		[self.tableView setNeedsDisplay];
+		return;
 	}
 	else
 	{
 		[m_HUD show:NO];
+	}
+	
+	if ( nil != m_initialBillID )
+	{
+		//[self scrollToInitialPosition];
+		
+		BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
+		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																			selector:@selector(showInitialBill:) object:bill];
+		// Add the operation to the internal operation queue managed by the application delegate.
+		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+		[theOp release];
 	}
 	
 	[self.tableView setNeedsDisplay];
@@ -199,13 +216,13 @@ enum
 {
 	NSMutableString *state = [[NSMutableString alloc] init];
 	
-	// Are we looking at a legislator?
+	// Are we looking at a particular bill?
 	id topView = self.navigationController.visibleViewController;
 	if ( [topView respondsToSelector:@selector(m_bill)] )
 	{
 		// grab the legislator currently being viewed
 		BillContainer *bill = [topView performSelector:@selector(m_bill)];
-		[state appendFormat:@"%@%d",[BillContainer stringFromBillType:[bill m_type]], [bill m_number]];
+		[state appendFormat:@"%@/%d",[BillContainer stringFromBillType:[bill m_type]], [bill m_number]];
 	}
 	
 	
@@ -267,23 +284,20 @@ enum
 	
 	if ( nil != billStr && ([billStr length] > 0) )
 	{
-		UISearchBar *searchBar = (UISearchBar *)self.tableView.tableHeaderView;
-		searchBar.text = billStr;
+		m_initialBillID = [[NSString alloc] initWithString:[billStr stringByReplacingOccurrencesOfString:@"/" withString:@" "]
+						  ];
 		
-		[m_HUD setText:@"Searching Bills..." andIndicateProgress:YES];
-		[m_HUD show:YES];
-		[self.tableView setUserInteractionEnabled:NO];
-		
-		// kick off the search in a thread
-		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																			selector:@selector(searchForBills:) object:searchBar];
-		
-		// Add the operation to the internal operation queue managed by the application delegate.
-		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
-		
-		[theOp release];
-		
-		[self.tableView setNeedsDisplay];
+		if ( [m_data isDataAvailable] )
+		{
+			//[self scrollToInitialPosition];
+			
+			BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
+			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																				selector:@selector(showInitialBill:) object:bill];
+			// Add the operation to the internal operation queue managed by the application delegate.
+			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+			[theOp release];
+		}
 	}
 }
 
@@ -310,6 +324,48 @@ enum
 		}
 	}
 	return bc;
+}
+
+
+- (void)showInitialBill:(BillContainer *)bill
+{
+	// we should be running in a thread, so this should give my table
+	// enough time to load itself up before I go and cover it up.
+	// (yeah, it's a bit of a hack...)
+	[NSThread sleepForTimeInterval:0.33f]; 
+	
+	if ( nil != bill )
+	{
+		// only 1 bill at a time!
+		[self.navigationController popToRootViewControllerAnimated:NO];
+		
+		BillInfoViewController *biView = [[BillInfoViewController alloc] init];
+		[biView setBill:bill];
+		[self.navigationController pushViewController:biView animated:YES];
+		[biView release];
+	}
+	else
+	{
+		// search for bill (at OpenCongress.org!)
+		UISearchBar *searchBar = (UISearchBar *)self.tableView.tableHeaderView;
+		searchBar.text = m_initialBillID;
+		
+		[m_HUD setText:@"Searching Bills..." andIndicateProgress:YES];
+		[m_HUD show:YES];
+		[self.tableView setUserInteractionEnabled:NO];
+		
+		// kick off the search in a thread
+		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																			selector:@selector(searchForBills:) object:searchBar];
+		
+		// Add the operation to the internal operation queue managed by the application delegate.
+		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+		
+		[theOp release];
+	}
+	
+	[m_initialBillID release]; m_initialBillID = nil;
+	[self.tableView setNeedsDisplay];
 }
 
 
@@ -353,6 +409,19 @@ enum
 			[self.tableView reloadData];
 			NSUInteger idx[2] = {0,0};
 			[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		}
+		
+		// scroll to our initial position!
+		//[self scrollToInitialPosition];
+		
+		if ( nil != m_initialBillID )
+		{
+			BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
+			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																				selector:@selector(showInitialBill:) object:bill];
+			// Add the operation to the internal operation queue managed by the application delegate.
+			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+			[theOp release];
 		}
 		
 		[self.tableView reloadData];
@@ -516,9 +585,9 @@ enum
 	NSString *srchTxt = searchBar.text;
 	if ( [srchTxt length] > 0 )
 	{
+		[self.tableView setUserInteractionEnabled:NO];
 		[m_HUD setText:@"Searching Bills..." andIndicateProgress:YES];
 		[m_HUD show:YES];
-		[self.tableView setUserInteractionEnabled:NO];
 		
 		// kick off the search in a thread
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
@@ -588,8 +657,31 @@ enum
 		}
 			break;
 			
+		// Tweet This!
+		case 2: 
+		{
+			MessageData *msg = [[MessageData alloc] init];
+			msg.m_transport = eMT_SendTweet;
+			//msg.m_subject = [NSString stringWithFormat:@"%@ %0d:", [BillContainer getBillTypeShortDescrip:bill.m_type], bill.m_number];
+			msg.m_body = [NSString stringWithFormat:@"#mygov Check out %@ %0d: ",
+														[BillContainer getBillTypeShortDescrip:bill.m_type],
+														bill.m_number
+						  ];
+			NSString *shortDescrip = [bill summaryText];
+			NSInteger hdrLen = [msg.m_body length];
+			NSInteger maxLen = 140 - hdrLen;
+			if ( [shortDescrip length] > maxLen ) shortDescrip = [shortDescrip substringToIndex:maxLen];
+			
+			msg.m_body = [msg.m_body stringByAppendingString:shortDescrip];
+			
+			// display the message composer
+			ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+			[cmvc display:msg fromParent:self];
+		}
+			break;
+			
 		// Comment!
-		case 2:
+		case 3:
 		{
 			MessageData *msg = [[MessageData alloc] init];
 			msg.m_transport = eMT_MyGov;
@@ -728,7 +820,7 @@ deselect_and_return:
 	UIActionSheet *contactAlert =
 	[[UIActionSheet alloc] initWithTitle:[bill m_title]
 								delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-					   otherButtonTitles:@"Sponsor Info",@"Full Bill Text",@"Comment!",nil,nil];
+					   otherButtonTitles:@"Sponsor Info",@"Full Bill Text",@"Tweet This",@"Comment!",nil,nil];
 	
 	// use the same style as the nav bar
 	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;

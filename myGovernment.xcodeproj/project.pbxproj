@@ -319,9 +319,6 @@
 		0102D2DB0F58DB72005AE0EA /* community */ = {
 			isa = PBXGroup;
 			children = (
-				01ACB0640FA8434900B6FF59 /* CDetailHeaderView.xib */,
-				01ACB0650FA8434900B6FF59 /* CDetailHeaderViewController.h */,
-				01ACB0660FA8434900B6FF59 /* CDetailHeaderViewController.m */,
 				04B603100F59BE3000815A86 /* CommunityViewController.h */,
 				04B603110F59BE3000815A86 /* CommunityViewController.m */,
 				01D7FE450FA4F62100F78B92 /* CommunityDataManager.h */,
@@ -332,6 +329,9 @@
 				01D7FF150FA5080D00F78B92 /* CommunityItemTableCell.m */,
 				01ACAF350FA8119C00B6FF59 /* CommunityDetailViewController.h */,
 				01ACAF360FA8119C00B6FF59 /* CommunityDetailViewController.m */,
+				01ACB0640FA8434900B6FF59 /* CDetailHeaderView.xib */,
+				01ACB0650FA8434900B6FF59 /* CDetailHeaderViewController.h */,
+				01ACB0660FA8434900B6FF59 /* CDetailHeaderViewController.m */,
 				01ACAF380FA811B800B6FF59 /* CommunityDetailData.h */,
 				01ACAF390FA811B800B6FF59 /* CommunityDetailData.m */,
 				01B6C7820FA548A5000CEF90 /* CommunityDataSource.h */,

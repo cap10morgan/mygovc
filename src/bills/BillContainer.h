@@ -113,6 +113,8 @@ typedef enum
 
 - (NSArray *)billActions;
 
+- (NSString *)getIdent;
+
 - (NSString *)getShortTitle;
 
 - (NSURL *)getFullTextURL;

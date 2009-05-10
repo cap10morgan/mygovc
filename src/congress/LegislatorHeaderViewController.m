@@ -8,6 +8,7 @@
 
 #import "myGovAppDelegate.h"
 
+#import "DataProviders.h"
 #import "LegislatorContainer.h"
 #import "LegislatorHeaderViewController.h"
 #import "LegislatorViewController.h"
@@ -25,8 +26,6 @@
 @synthesize m_name;
 @synthesize m_partyInfo;
 @synthesize m_img;
-
-static NSString *kBioguideURLFmt = @"http://bioguide.congress.gov/scripts/biodisplay.pl?index=%@";
 
 
 - (void)didReceiveMemoryWarning 
@@ -82,9 +81,9 @@ static NSString *kBioguideURLFmt = @"http://bioguide.congress.gov/scripts/biodis
 	if ( nil == m_legislator ) return;
 	if ( nil == m_navController ) return;
 	
-	NSString *urlStr = [NSString stringWithFormat:kBioguideURLFmt,[m_legislator bioguide_id]];
+	NSURL *bioguideURL = [NSURL URLWithString:[DataProviders Bioguide_LegislatorBioURL:m_legislator]];
 	
-	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:[NSURL URLWithString:urlStr]];
+	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:bioguideURL];
 	[mbc display:m_navController];
 }
 

@@ -36,6 +36,8 @@ typedef enum
 @interface DataProviders : NSObject 
 {}
 
++ (NSString *)Bioguide_LegislatorBioURL:(LegislatorContainer *)legislator;
+
 + (NSString *)OpenCongress_APIKey;
 + (NSString *)OpenCongress_BillsURLOnPage:(NSInteger)page;
 + (NSString *)OpenCongress_BillsURLIntroducedSinceDate:(NSDate *)date onPage:(NSInteger)page;
@@ -75,6 +77,12 @@ typedef enum
 								   withDetail:(SpendingDetail)detail 
 									 sortedBy:(SpendingSortMethod)order 
 									   xmlURL:(BOOL)xmldata;
+
+
++ (NSString *)GAE_DownloadURLFor:(CommunityItemType)type;
++ (NSString *)GAE_GoogleURLsDictKey;
++ (NSString *)GAE_GoogleLoginURLDictKey;
++ (NSString *)GAE_ItemsDictKey;
 
 + (NSString *)Cholor_UserAuthURL;
 + (NSString *)Cholor_UserAddURL;

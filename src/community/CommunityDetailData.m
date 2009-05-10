@@ -127,7 +127,7 @@
 				rd.title = @"Organizer";
 				rd.titleColor = TOP_TITLE_COLOR;
 				rd.titleFont = TOP_TITLE_FONT;
-				rd.line1 = [[[myGovAppDelegate sharedUserData] userFromID:m_item.m_creator] m_username];
+				rd.line1 = [[[myGovAppDelegate sharedUserData] userFromUsername:m_item.m_creator] m_username];
 				rd.line1Color = TOP_DATA_COLOR;
 				rd.line1Font = TOP_DATA_FONT;
 				rd.line1Alignment = UITextAlignmentRight;
@@ -197,7 +197,7 @@
 		{
 			TableRowData *rd = [[TableRowData alloc] init];
 			
-			MyGovUser *user = [[myGovAppDelegate sharedUserData] userFromID:comment.m_creator];
+			MyGovUser *user = [[myGovAppDelegate sharedUserData] userFromUsername:comment.m_creator];
 			rd.title = [NSString stringWithFormat:@"%@ replied:",[user m_username]];
 			rd.titleColor = [UIColor blackColor];
 			rd.titleFont = [UIFont boldSystemFontOfSize:14.0f];

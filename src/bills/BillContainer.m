@@ -438,6 +438,16 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 }
 
 
+- (NSString *)getIdent
+{
+	NSString *ident = [[[NSString alloc] initWithFormat:@"%@ %0d",
+											[BillContainer stringFromBillType:m_type],
+											m_number
+					   ] autorelease];
+	return ident;
+}
+
+
 - (NSString *)getShortTitle
 {
 	NSString *shortTitle = [[[NSString alloc] initWithFormat:@"%@ %d",

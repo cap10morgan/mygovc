@@ -38,7 +38,7 @@
 		user auth data arrived - this is the UID of the now-logged-in-user!
 	 */
 	- (void)communityDataSource:(id)dataSource
-				userAuthenticated:(NSInteger)uid;
+				userAuthenticated:(NSString *)uid;
 	/*!
 		Called during a search operaion every time new search results become
 		available.
@@ -66,6 +66,10 @@
 	
  */
 @protocol CommunityDataSourceProtocol
+
+
+- (NSURL *)externalLoginURL;
+
 
 /*!
 	@brief Validate a username/password combo with the data source

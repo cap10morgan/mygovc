@@ -14,8 +14,10 @@
 
 @interface CholorDataSource (private)
 	- (BOOL)validResponse:(NSString *)postResponse;
+/*
 	- (void)performUIDLookup:(NSInteger)uid 
 				withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil;
+ */
 @end
 
 
@@ -124,6 +126,12 @@
 }
 
 
+- (NSURL *)externalLoginURL
+{
+	return nil;
+}
+
+
 - (BOOL)validateUsername:(NSString *)username 
 			 andPassword:(NSString *)password
 			withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
@@ -173,7 +181,7 @@
 		m_username = [[username retain] autorelease];
 		m_password = [[password retain] autorelease];
 		
-		[delegateOrNil communityDataSource:self userAuthenticated:uid];
+		[delegateOrNil communityDataSource:self userAuthenticated:m_username];
 		
 		return TRUE;
 	}
@@ -284,13 +292,12 @@
 	// 
 	
 	NSEnumerator *uidEnum = [uidDict keyEnumerator];
-	NSString *uidNum;
-	while ( uidNum = [uidEnum nextObject] )
+	NSString *username;
+	while ( username = [uidEnum nextObject] )
 	{
-		NSInteger uid = [uidNum integerValue];
-		if ( ![[myGovAppDelegate sharedUserData] userIDExistsInCache:uid] )
+		if ( ![[myGovAppDelegate sharedUserData] usernameExistsInCache:username] )
 		{
-			[self performUIDLookup:uid withDelegate:delegateOrNil];
+			//[self performUIDLookup:uid withDelegate:delegateOrNil];
 		}
 	}
 	
@@ -441,7 +448,7 @@
 	return FALSE;
 }
 
-
+/*
 - (void)performUIDLookup:(NSInteger)uid 
 			withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
@@ -473,6 +480,6 @@
 		[delegateOrNil communityDataSource:self userDataArrived:user];
 	}
 }
-
+*/
 
 @end

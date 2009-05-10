@@ -74,7 +74,9 @@
 	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
-	NSArray *buttonNames = [NSArray arrayWithObjects:@"Chatter", @"Events", nil];
+	
+	//NSArray *buttonNames = [NSArray arrayWithObjects:@"Chatter", @"Events", nil];
+	NSArray *buttonNames = [NSArray arrayWithObjects:@"Chatter", nil];
 	m_segmentCtrl = [[UISegmentedControl alloc] initWithItems:buttonNames];
 	
 	// default styles
@@ -208,6 +210,7 @@
 
 - (void)dataManagerCallback:(NSString *)msg
 {
+	NSRange endTypeRange = {0, 3};
 	NSRange msgTypeRange = {0, 5};
 	if ( NSOrderedSame == [msg compare:@"ERR: " options:NSCaseInsensitiveSearch range:msgTypeRange] )
 	{
@@ -227,6 +230,14 @@
 		[self.tableView setUserInteractionEnabled:YES];
 		[self.tableView reloadData];
 		
+		[self setReloadButtonInNavBar];
+	}
+	else if ( NSOrderedSame == [msg compare:@"END" options:NSCaseInsensitiveSearch range:endTypeRange] )
+	{
+		// the data manager is done doing what it was doing, so kill the HUD
+		[m_HUD show:NO];
+		[self.tableView setUserInteractionEnabled:YES];
+		[self.tableView reloadData];
 		[self setReloadButtonInNavBar];
 	}
 	else

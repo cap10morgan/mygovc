@@ -26,14 +26,17 @@ static NSString *kCCKey_Text = @"text";
 	{
 		if ( nil == plistDict )	
 		{
-			m_id = nil; m_creator = 0; 
+			m_id = nil; 
+			m_creator = nil; 
 			m_communityItemID = nil; 
-			m_title = nil; m_text = nil;
+			m_title = nil; 
+			m_text = nil;
 		}
 		else
 		{
 			self.m_id = [plistDict objectForKey:kCCKey_ID];
-			self.m_creator = [[plistDict objectForKey:kCCKey_Creator] integerValue];
+			//self.m_creator = [[plistDict objectForKey:kCCKey_Creator] integerValue];
+			self.m_creator = [plistDict objectForKey:kCCKey_Creator];
 			self.m_communityItemID = [plistDict objectForKey:kCCKey_CommunityItemID];
 			self.m_title = [plistDict objectForKey:kCCKey_Title];
 			self.m_text = [[plistDict objectForKey:kCCKey_Text] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
@@ -49,7 +52,8 @@ static NSString *kCCKey_Text = @"text";
 	
 	[plistDict setValue:m_id forKey:kCCKey_ID];
 	
-	[plistDict setValue:[NSNumber numberWithInt:m_creator] forKey:kCCKey_Creator];
+	//[plistDict setValue:[NSNumber numberWithInt:m_creator] forKey:kCCKey_Creator];
+	[plistDict setValue:m_creator forKey:kCCKey_Creator];
 	
 	[plistDict setValue:m_communityItemID forKey:kCCKey_CommunityItemID];
 	
@@ -82,19 +86,21 @@ static NSString *kCCKey_Text = @"text";
 static NSString *kCIKey_ID = @"id";
 static NSString *kCIKey_Type = @"type";
 static NSString *kCIKey_Image = @"image";
-static NSString *kCIKey_Title = @"title";
-static NSString *kCIKey_Date = @"date";
+static NSString *kCIKey_Title = @"subject";
+static NSString *kCIKey_Date = @"creation_date";
 static NSString *kCIKey_Creator = @"creator";
 static NSString *kCIKey_Summary = @"summary";
-static NSString *kCIKey_Text = @"text";
-static NSString *kCIKey_MyGovURLTitle = @"mygov_url_title";
-static NSString *kCIKey_MyGovURL = @"mygov_url";
-static NSString *kCIKey_WebURLTitle = @"web_url_title";
-static NSString *kCIKey_WebURL = @"web_url";
+static NSString *kCIKey_Text = @"message";
+static NSString *kCIKey_MyGovURLTitle = @"appurl_title";
+static NSString *kCIKey_MyGovURL = @"appurl";
+static NSString *kCIKey_WebURLTitle = @"exturl_title";
+static NSString *kCIKey_WebURL = @"exturl";
 static NSString *kCIKey_Comments = @"comments";
 static NSString *kCIKey_EventLocation = @"event_location";
 static NSString *kCIKey_EventDate = @"event_date";
 static NSString *kCIKey_EventAttendees = @"event_attendees";
+
+static NSString *kCIDateFormat = @"%Y-%m-%d %H:%M:%S";
 
 
 - (id)init
@@ -187,11 +193,20 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	[plistDict setValue:[m_title stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]
 				 forKey:kCIKey_Title];
 	
-	[plistDict setValue:[NSNumber numberWithInt:[m_date timeIntervalSinceReferenceDate]] 
+	NSDateFormatter *dateFmt = [[NSDateFormatter alloc] init];
+	[dateFmt setDateFormat:kCIDateFormat];
+	[plistDict setValue:[dateFmt stringFromDate:m_date] 
 				 forKey:kCIKey_Date];
 	
+	/*
+	[plistDict setValue:[NSNumber numberWithInt:[m_date timeIntervalSinceReferenceDate]] 
+				 forKey:kCIKey_Date];
+	*/
+	/*
 	[plistDict setValue:[NSNumber numberWithInt:m_creator] 
 				 forKey:kCIKey_Creator];
+	*/
+	[plistDict setValue:m_creator forKey:kCIKey_Creator];
 	
 	[plistDict setValue:[m_summary stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding] 
 				 forKey:kCIKey_Summary];
@@ -239,7 +254,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	while ( obj = [objEnum nextObject] )
 	{
 		MyGovUser *user = (MyGovUser *)obj;
-		[tmpArray addObject:[NSNumber numberWithInt:user.m_id]];
+		[tmpArray addObject:user.m_username];
 	}
 	[plistDict setValue:tmpArray forKey:kCIKey_EventAttendees];
 	
@@ -264,7 +279,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 }
 
 
-- (void)addComment:(NSString *)comment fromUser:(NSInteger)mygovUser withTitle:(NSString *)title
+- (void)addComment:(NSString *)comment fromUser:(NSString *)mygovUser withTitle:(NSString *)title
 {
 	if ( nil == m_userComments )
 	{
@@ -302,14 +317,14 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 }
 
 
-- (void)addEventAttendee:(NSInteger)mygovUser
+- (void)addEventAttendee:(NSString *)mygovUser
 {
 	if ( nil == m_eventAttendees )
 	{
 		m_eventAttendees = [[NSMutableArray alloc] initWithCapacity:2];
 	}
 	
-	MyGovUser *user = [[myGovAppDelegate sharedUserData] userFromID:mygovUser];
+	MyGovUser *user = [[myGovAppDelegate sharedUserData] userFromUsername:mygovUser];
 	if ( nil != user ) [m_eventAttendees addObject:user];
 }
 
@@ -330,7 +345,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	m_image = nil;
 	m_title = nil;
 	m_date = nil;
-	m_creator = 0;
+	m_creator = nil;
 	m_summary = nil;
 	m_text = nil;
 	m_mygovURLTitle = nil;
@@ -348,14 +363,26 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 		self.m_id = [plistDict objectForKey:kCIKey_ID];
 		self.m_type = (CommunityItemType)[[plistDict objectForKey:kCIKey_Type] integerValue];
 		self.m_image = [UIImage imageWithData:[plistDict objectForKey:kCIKey_Image]];
-		self.m_title = [plistDict objectForKey:kCIKey_Title];
 		
+		/*
 		NSInteger dateInt = [[plistDict objectForKey:kCIKey_Date] integerValue];
 		NSDate *tmpDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:dateInt];
 		self.m_date = tmpDate;
 		[tmpDate release];
+		*/
+		NSString *dateStr = [plistDict objectForKey:kCIKey_Date];
+		NSDateFormatter *dateFmt = [[NSDateFormatter alloc] init];
+		[dateFmt setDateFormat:kCIDateFormat];
+		// chop of the sub-second accuracy :-)
+		NSRange dotRange = [dateStr rangeOfString:@"."];
+		if ( dotRange.location > 0 )
+		{
+			dateStr = [dateStr substringToIndex:dotRange.location];
+		}
+		self.m_date = [dateFmt dateFromString:dateStr];
 		
-		self.m_creator = [[plistDict objectForKey:kCIKey_Creator] integerValue];
+		//self.m_creator = [[plistDict objectForKey:kCIKey_Creator] integerValue];
+		self.m_creator = [plistDict objectForKey:kCIKey_Creator];
 		self.m_title = [[plistDict objectForKey:kCIKey_Title] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
 		self.m_summary = [[plistDict objectForKey:kCIKey_Summary] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
 		self.m_text = [[plistDict objectForKey:kCIKey_Text] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
@@ -413,15 +440,43 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 			m_eventLocDescrip = nil;
 		}
 		
+		/*
 		tmpDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:[[plistDict objectForKey:kCIKey_EventDate] integerValue]];
 		self.m_eventDate = tmpDate;
 		[tmpDate release];
+		*/
+		dateStr = [plistDict objectForKey:kCIKey_EventDate];
+		dotRange = [dateStr rangeOfString:@"."];
+		if ( dotRange.location > 0 )
+		{
+			dateStr = [dateStr substringToIndex:dotRange.location];
+		}
+		if ( nil != dateStr )
+		{
+			self.m_eventDate = [dateFmt dateFromString:dateStr];
+		}
 		
 		tmpArray = [plistDict objectForKey:kCIKey_EventAttendees];
 		objEnum = [tmpArray objectEnumerator];
 		while ( obj = [objEnum nextObject] )
 		{
-			[self addEventAttendee:[obj integerValue]];
+			NSString *attendingUser = (NSString *)obj;
+			[self addEventAttendee:attendingUser];
+		}
+		
+		// 
+		// Make sure we have a summary here
+		// 
+		if ( nil == m_summary || [m_summary length] < 1 )
+		{
+			if ( [m_text length] < 120 )
+			{
+				self.m_summary = m_text;
+			}
+			else
+			{
+				self.m_summary = [[m_text substringToIndex:117] stringByAppendingString:@"..."];
+			}
 		}
 		
 		//NSLog( @"  initialized %@: '%@'", m_id, m_title );

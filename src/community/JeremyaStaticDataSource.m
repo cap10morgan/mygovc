@@ -13,6 +13,12 @@
 
 // XXX - I will fill this in with some static data for testing...
 
+- (NSURL *)externalLoginURL
+{
+	return nil;
+}
+
+
 - (BOOL)validateUsername:(NSString *)username 
 			 andPassword:(NSString *)password
 			withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil

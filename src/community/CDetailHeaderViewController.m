@@ -104,7 +104,7 @@
 		
 		m_dateLabel.text = [NSString stringWithFormat:@"On %@, %@ said:", 
 										[dateFmt stringFromDate:m_item.m_date],
-										[[[myGovAppDelegate sharedUserData] userFromID:m_item.m_creator] m_username]
+										[[[myGovAppDelegate sharedUserData] userFromUsername:m_item.m_creator] m_username]
 							];
 	}
 	

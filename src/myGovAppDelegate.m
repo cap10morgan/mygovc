@@ -305,6 +305,11 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 		}
 	}
 	
+	if ( [area isEqualToString:@"app"] )
+	{
+		// no area to view
+	}
+	
 	UIViewController *areaView = (UIViewController *)[m_urlHandler objectForKey:area];
 	if ( nil != areaView )
 	{

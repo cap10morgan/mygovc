@@ -10,7 +10,6 @@
 
 @interface MyGovUser : NSObject 
 {
-	NSInteger  m_id;
 	NSString  *m_username;
 	NSDate    *m_lastUpdated;
 	
@@ -25,7 +24,6 @@
 	// XXX - more info here?!
 }
 
-@property (nonatomic) NSInteger m_id;
 @property (nonatomic,retain) NSString *m_username;
 @property (nonatomic,retain) NSDate   *m_lastUpdated;
 @property (nonatomic,retain) NSString *m_firstname;
@@ -51,8 +49,8 @@
 
 - (void)setUserInCache:(MyGovUser *)newUser;
 
-- (MyGovUser *)userFromID:(NSInteger)userID;
+- (MyGovUser *)userFromUsername:(NSString *)username;
 
-- (BOOL)userIDExistsInCache:(NSInteger)userID;
+- (BOOL)usernameExistsInCache:(NSString *)username;
 
 @end

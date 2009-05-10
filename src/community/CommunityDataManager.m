@@ -13,8 +13,8 @@
 #import "MyGovUserData.h"
 
 #define COMMUNITY_USE_JEREMYA_STATIC_DATA 0
-#define COMMUNITY_USE_CHOLOR_DATA         1
-#define COMMUNITY_USE_GOOGLEAPPS_DATA     0
+#define COMMUNITY_USE_CHOLOR_DATA         0
+#define COMMUNITY_USE_GOOGLEAPPS_DATA     1
 
 #if COMMUNITY_USE_JEREMYA_STATIC_DATA
 #	import "JeremyaStaticDataSource.h"
@@ -60,7 +60,7 @@
 		isDataAvailable = NO;
 		isBusy = NO;
 		
-		m_currentUserUID = -1;
+		m_currentUserUID = nil;
 		
 		m_currentStatusMessage = [[NSMutableString alloc] initWithString:@"Initializing..."];
 		m_notifyTarget = nil;
@@ -150,9 +150,15 @@
 }
 
 
-- (NSInteger)currentlyAuthenticatedUser
+- (NSString *)currentlyAuthenticatedUser
 {
 	return m_currentUserUID;
+}
+
+
+- (NSURL *)dataSourceLoginURL
+{
+	return [m_dataSource externalLoginURL];
 }
 
 
@@ -457,23 +463,28 @@
 
 - (BOOL)downloadNewDataStartingAt:(NSDate *)date
 {
+	BOOL success = FALSE;
+	
 	// XXX - validate username/password?!
 	
 	// perform the blocking data download: Feedback items
 	[self setStatus:@"Downloading chatter..."];
 	if ( ![m_dataSource downloadItemsOfType:eCommunity_Chatter notOlderThan:date withDelegate:self] )
 	{
-		return FALSE;
+		return success;
 	}
+	success = TRUE;
 	
-	// perform the blocking data download: Feedback items
+	// perform the blocking data download: Event items
+	/*
 	[self setStatus:@"Downloading events..."];
 	if ( ![m_dataSource downloadItemsOfType:eCommunity_Event notOlderThan:date withDelegate:self] )
 	{
-		return FALSE;
+		return success; // at least one succeeded!
 	}
+	*/
 	
-	return TRUE;
+	return success;
 }
 
 
@@ -638,9 +649,9 @@
 
 
 - (void)communityDataSource:(id)dataSource
-		  userAuthenticated:(NSInteger)uid
+		  userAuthenticated:(NSString *)uid
 {
-	m_currentUserUID = uid;
+	m_currentUserUID = [[uid retain] autorelease];
 }
 
 

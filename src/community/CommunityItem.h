@@ -20,14 +20,15 @@ typedef enum
 @interface CommunityComment : NSObject
 {
 	NSString  *m_id;
-	NSInteger  m_creator;
+	//NSInteger  m_creator;
+	NSString  *m_creator;
 	NSString  *m_communityItemID;
 	NSString  *m_title;
 	NSString  *m_text;
 }
 
 @property (nonatomic,retain) NSString  *m_id;
-@property (nonatomic)        NSInteger  m_creator;
+@property (nonatomic,retain) NSString  *m_creator;
 @property (nonatomic,retain) NSString  *m_communityItemID;
 @property (nonatomic,retain) NSString  *m_title;
 @property (nonatomic,retain) NSString  *m_text;
@@ -46,7 +47,8 @@ typedef enum
 	UIImage   *m_image;
 	NSString  *m_title;
 	NSDate    *m_date;
-	NSInteger  m_creator; // ID of MyGovUser object 
+//	NSInteger  m_creator; // ID of MyGovUser object 
+	NSString  *m_creator; // GoogleUserID
 	NSString  *m_summary;
 	NSString  *m_text;
 	
@@ -69,7 +71,7 @@ typedef enum
 @property (nonatomic,retain) UIImage    *m_image;
 @property (nonatomic,retain) NSString   *m_title;
 @property (nonatomic,retain) NSDate     *m_date;
-@property (nonatomic)        NSInteger   m_creator;
+@property (nonatomic,retain) NSString   *m_creator;
 @property (nonatomic,retain) NSString   *m_summary;
 @property (nonatomic,retain) NSString   *m_text;
 
@@ -92,13 +94,13 @@ typedef enum
 
 - (void)generateUniqueItemID;
 
-- (void)addComment:(NSString *)comment fromUser:(NSInteger)mygovUser withTitle:(NSString *)title;
+- (void)addComment:(NSString *)comment fromUser:(NSString *)mygovUser withTitle:(NSString *)title;
 - (void)addComment:(CommunityComment *)comment;
 - (NSArray *)comments;
 
 - (NSComparisonResult)compareItemByDate:(CommunityItem *)that;
 
-- (void)addEventAttendee:(NSInteger)mygovUser;
+- (void)addEventAttendee:(NSString *)mygovUser;
 - (NSArray *)eventAttendees;
 
 

@@ -65,10 +65,11 @@
 	- (void)keyboardWasShown:(NSNotification*)aNotification;
 	- (void)keyboardWasHidden:(NSNotification*)aNotification;
 	- (void)layoutUIForMessageType:(MessageTransport)type;
-	- (NSInteger)mygovUserAuthWithCallback:(SEL)callback;
+	- (NSString *)mygovUserAuthWithCallback:(SEL)callback;
 	- (id)opMakePhoneCall;
 	- (id)opSendEmail;
 	- (id)opSendTwitterDM;
+	- (id)opSendTweet;
 	- (id)opSendMyGovComment;
 	- (id)opSendMyGovReply;
 	- (void)sendCommunityItemViaDataSource:(CommunityItem *)item;
@@ -79,7 +80,7 @@
 @implementation ComposeMessageViewController
 
 @synthesize m_msgView;
-@synthesize m_titleButton, m_fieldTo, m_labelSubject, m_fieldSubject;
+@synthesize m_titleButton, m_labelTo, m_fieldTo, m_labelSubject, m_fieldSubject;
 @synthesize m_labelMessage, m_fieldMessage, m_buttonMessage, m_infoButton;
 @synthesize m_labelURL, m_fieldURL, m_labelURLTitle, m_fieldURLTitle;
 
@@ -151,6 +152,16 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	// set ourselves up to receive touch events from the container UIView object...
 	m_msgView.m_parentController = self;
 	
+	m_hud = [[ProgressOverlayViewController alloc] initWithWindow:self.view];
+}
+
+
+- (void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:animated];
+	
+	m_keyboardVisible = NO;
+	
 	// register to receive keyboard notifications
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(keyboardWasShown:)
@@ -160,7 +171,6 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 											 selector:@selector(keyboardWasHidden:)
 												 name:UIKeyboardDidHideNotification object:nil];
 	
-	m_hud = [[ProgressOverlayViewController alloc] initWithWindow:self.view];
 }
 
 
@@ -211,8 +221,12 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			titleTxt = @"Reply";
 			break;
 			
-		case opSendTwitterDM:
+		case eMT_SendTwitterDM:
 			titleTxt = @"Twitter DM";
+			break;
+			
+		case eMT_SendTweet:
+			titleTxt = @"Tweet";
 			break;
 			
 		case eMT_Email:
@@ -233,13 +247,16 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	// (not all transports need to see _all_ the GUI)
 	[self layoutUIForMessageType:m_message.m_transport];
 	
+	// XXX - This is always hidden for now :-)
+	[m_infoButton setHidden:YES];
+	
 	[m_fieldTo setText:m_message.m_to];
 	[m_fieldSubject setText:m_message.m_subject];
 	[m_fieldMessage setText:m_message.m_body];
 	[m_fieldURL setText:[m_message.m_webURL absoluteString]];
 	[m_fieldURLTitle setText:m_message.m_webURLTitle];
 	
-	if ( m_message.m_transport == opSendTwitterDM )
+	if ( m_message.m_transport == eMT_SendTwitterDM )
 	{
 		[m_fieldTo setEnabled:YES];
 	}
@@ -279,8 +296,12 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			sendOp = @selector(opSendMyGovReply);
 			break;
 			
-		case opSendTwitterDM:
+		case eMT_SendTwitterDM:
 			sendOp = @selector(opSendTwitterDM);
+			break;
+			
+		case eMT_SendTweet:
+			sendOp = @selector(opSendTweet);
 			break;
 			
 		case eMT_Email:
@@ -399,6 +420,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		case eMT_MyGov:
 		{
 			// everything is shown!
+			[m_labelTo setHidden:NO];
+			[m_fieldTo setHidden:NO];
 			[m_fieldSubject setHidden:NO];
 			[m_labelSubject setHidden:NO];
 			[m_infoButton setHidden:NO];
@@ -412,6 +435,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		case eMT_MyGovUserComment:
 		{
 			// don't show URL, or URLTitle fields
+			[m_labelTo setHidden:NO];
+			[m_fieldTo setHidden:NO];
 			[m_fieldSubject setHidden:NO];
 			[m_fieldSubject setText:@""];
 			[m_labelSubject setHidden:NO];
@@ -423,9 +448,11 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		}
 			break;
 			
-		case opSendTwitterDM:
+		case eMT_SendTwitterDM:
 		{
 			// only show To: and Message: fields
+			[m_labelTo setHidden:NO];
+			[m_fieldTo setHidden:NO];
 			[m_fieldSubject setHidden:YES];
 			[m_labelSubject setHidden:YES];
 			[m_infoButton setHidden:YES];
@@ -436,6 +463,21 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		}
 			break;
 			
+		case eMT_SendTweet:
+		{
+			// only show Message: field
+			[m_labelTo setHidden:YES];
+			[m_fieldTo setHidden:YES];
+			[m_fieldSubject setHidden:YES];
+			[m_labelSubject setHidden:YES];
+			[m_infoButton setHidden:YES];
+			[m_fieldURL setHidden:YES];
+			[m_labelURL setHidden:YES];
+			[m_fieldURLTitle setHidden:YES];
+			[m_labelURLTitle setHidden:YES];
+		}
+			break;
+		
 		case eMT_Email:
 		case eMT_PhoneCall:
 			// nothing to do here :-)
@@ -452,7 +494,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		fWidth = CGRectGetWidth( (_OBJ).frame); \
 		fHeight = CGRectGetHeight( (_OBJ).frame); \
 		(_OBJ).frame = CGRectMake(xPos, yPos, fWidth, fHeight)
-		
+	
 	// subject line
 	if ( !m_fieldSubject.hidden )
 	{
@@ -504,7 +546,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 }
 
 
-- (NSInteger)mygovUserAuthWithCallback:(SEL)callback
+- (NSString *)mygovUserAuthWithCallback:(SEL)callback
 {
 	NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_username"];
 	NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_password"];
@@ -512,13 +554,14 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	CommunityDataManager *cdm = [myGovAppDelegate sharedCommunityData];
 	id<CommunityDataSourceProtocol> dataSource = [cdm dataSource];
 	
-	NSInteger userID = [cdm currentlyAuthenticatedUser];
+	NSString *userID = [cdm currentlyAuthenticatedUser];
 	
-	if ( userID <= 0 )
+	if ( nil == userID )
 	{
 		if ( [username length] < 1 || [password length] < 1 )
 		{
 			// no login info - show login view controller
+			/*
 			if ( nil == m_twitterLoginView )
 			{
 				m_mygovLoginView = [[MyGovLoginViewController alloc] initWithNibName:@"MyGovLoginView" bundle:nil];
@@ -526,8 +569,11 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			
 			[m_mygovLoginView setNotifyTarget:self withSelector:callback];
 			[m_mygovLoginView displayIn:self];
+			*/
 			
-			return -1;
+			// XXX - grab the web-based URL and throw it up in the MiniBrowser
+			
+			return nil;
 		}
 		else
 		{
@@ -544,7 +590,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 									  cancelButtonTitle:nil
 									  otherButtonTitles:@"OK",nil];
 				[alert show];
-				return -1;
+				return nil;
 			}
 		}
 	}
@@ -635,10 +681,59 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 }
 
 
+- (id)opSendTweet
+{
+	MGTwitterEngine *twitterEngine = [myGovAppDelegate sharedTwitterEngine];
+	[twitterEngine retain];
+	
+	if ( nil == m_twitterLoginView || ![m_twitterLoginView isLoggedIn] )
+	{
+		NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"twitter_username"];
+		NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"twitter_password"];
+		
+		if ( ([username length] < 1) || ([password length] < 1) )
+		{
+			// no login info - show login view controller
+			if ( nil == m_twitterLoginView )
+			{
+				m_twitterLoginView = [[TwitterLoginViewController alloc] initWithNibName:@"TwitterLoginView" bundle:nil];
+			}
+			
+			[m_twitterLoginView setNotifyTarget:self withSelector:@selector(opSendTweet)];
+			[m_twitterLoginView displayIn:self];
+			
+			return nil;
+		}
+		else
+		{
+			[twitterEngine setUsername:username password:password];
+		}
+	}
+	
+	NSString *tweet = m_fieldMessage.text;
+	if ( [tweet length] > 140 )
+	{
+		tweet = [tweet substringToIndex:140];
+	}
+	
+	[m_hud setText:@"Sending Tweet!" andIndicateProgress:YES];
+	[m_hud show:YES];
+	
+	[self.view setUserInteractionEnabled:NO];
+	[self.view setNeedsDisplay];
+	
+	[[myGovAppDelegate sharedAppDelegate] setTwitterNotifyTarget:self];
+	[twitterEngine sendUpdate:tweet];
+	
+	[twitterEngine release];
+	return nil;
+}
+
+
 - (id)opSendMyGovComment
 {
-	NSInteger userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovComment)];
-	if ( userID <= 0 ) return nil;
+	NSString *userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovComment)];
+	if ( nil == userID ) return nil;
 	
 	// create a new community item
 	CommunityItem * item = [[[CommunityItem alloc] init] autorelease];
@@ -695,8 +790,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (id)opSendMyGovReply
 {
-	NSInteger userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovReply)];
-	if ( userID <= 0 ) return nil;
+	NSString *userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovReply)];
+	if ( nil == userID ) return nil;
 	
 	CommunityComment *reply = [[CommunityComment alloc] init];
 	reply.m_id = @"mygov";

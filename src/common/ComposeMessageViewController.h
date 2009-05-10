@@ -15,7 +15,8 @@
 typedef enum
 {
 	eMT_Invalid = 0,
-	opSendTwitterDM,
+	eMT_SendTwitterDM,
+	eMT_SendTweet,
 	eMT_Email,
 	eMT_MyGov,
 	eMT_MyGovUserComment,
@@ -70,6 +71,7 @@ typedef enum
 	IBOutlet ComposeMessageView *m_msgView;
 	
 	IBOutlet UIBarButtonItem *m_titleButton;
+	IBOutlet UILabel         *m_labelTo;
 	IBOutlet UITextField     *m_fieldTo;
 	IBOutlet UILabel         *m_labelSubject;
 	IBOutlet UITextField     *m_fieldSubject;
@@ -100,6 +102,7 @@ typedef enum
 
 @property (nonatomic,retain) IBOutlet ComposeMessageView *m_msgView;
 @property (nonatomic,retain) IBOutlet UIBarButtonItem *m_titleButton;
+@property (nonatomic,retain) IBOutlet UILabel         *m_labelTo;
 @property (nonatomic,retain) IBOutlet UITextField     *m_fieldTo;
 @property (nonatomic,retain) IBOutlet UILabel         *m_labelSubject;
 @property (nonatomic,retain) IBOutlet UITextField     *m_fieldSubject;

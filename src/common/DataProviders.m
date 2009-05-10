@@ -23,6 +23,12 @@ static NSString *kSunlight_APIKey = @"345973d49743956706bb04030ee5713b";
 
 
 // 
+// Bioguide
+// 
+static NSString *kBioguideURLFmt = @"http://bioguide.congress.gov/scripts/biodisplay.pl?index=%@";
+
+
+// 
 // OpenCongress.org 
 // 
 static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/bills?key=%@&congress=%d&per_page=30&page=%d";
@@ -73,6 +79,16 @@ static NSString *kUSASpending_ContractorKey = @"&company_name";
 static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 
 // 
+// GAE 
+// 
+static NSString *kGAE_downloadCommunityChatterURL = @"http://mygov-mobile.appspot.com/community/items.plist";
+static NSString *kGAE_downloadCommunityEventsURL = @"http://mygov-mobile.appspot.com/community/events.plist";
+static NSString *kGAE_GoogleURLsDictKey = @"google_urls";
+static NSString *kGAE_GoogleLoginURLDictKey = @"url";
+static NSString *kGAE_ItemsDictKey = @"items";
+
+
+// 
 // Cholor - cbell's PHP implementation of mygov server functionality :-)
 // 
 static NSString *kCholor_UserAuthURL = @"http://cholor.com/mygov/login.php";
@@ -85,6 +101,15 @@ static NSString *kCholor_UserAuthFailedStr = @"Failure";
 
 static NSString *kCholor_downloadCommunityChatterURL = @"http://cholor.com/mygov/communityChatter.php";
 static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/communityEvents.php";
+
+
++ (NSString *)Bioguide_LegislatorBioURL:(LegislatorContainer *)legislator
+{
+	NSString *urlStr = [[[NSString alloc] initWithFormat:kBioguideURLFmt,
+											[legislator bioguide_id]
+						 ] autorelease];
+	return urlStr;
+}
 
 
 + (NSString *)OpenCongress_APIKey
@@ -448,6 +473,42 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 				sortStr
 	 ];
 	return (NSString *)urlStr;
+}
+
+
++ (NSString *)GAE_DownloadURLFor:(CommunityItemType)type
+{
+	switch ( type )
+	{
+		default:
+			return nil;
+			
+		case eCommunity_Chatter:
+			return kGAE_downloadCommunityChatterURL;
+			
+		case eCommunity_Event:
+			return kGAE_downloadCommunityEventsURL;
+	}
+	
+	return nil;
+}
+
+
++ (NSString *)GAE_GoogleURLsDictKey
+{
+	return kGAE_GoogleURLsDictKey;
+}
+
+
++ (NSString *)GAE_GoogleLoginURLDictKey
+{
+	return kGAE_GoogleLoginURLDictKey;
+}
+
+
++ (NSString *)GAE_ItemsDictKey
+{
+	return kGAE_ItemsDictKey;
 }
 
 

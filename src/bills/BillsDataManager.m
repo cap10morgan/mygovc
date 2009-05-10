@@ -32,7 +32,7 @@
 @synthesize isDataAvailable;
 @synthesize isBusy;
 
-static const NSInteger s_maxBillPages = 3;
+static NSInteger s_maxBillPages = 0;
 
 + (NSString *)dataCachePath
 {
@@ -55,6 +55,8 @@ static const NSInteger s_maxBillPages = 3;
 	{
 		isDataAvailable = NO;
 		isBusy = NO;
+		isDownloading = NO;
+		isReadingCache = NO;
 		
 		m_currentStatusMessage = [[NSMutableString alloc] init];
 		[m_currentStatusMessage setString:@"Waiting for congress data..."];
@@ -63,6 +65,8 @@ static const NSInteger s_maxBillPages = 3;
 		m_notifySelector = nil;
 		
 		// initialize data arrays...
+		m_billData = [[NSMutableDictionary alloc] initWithCapacity:24];
+		
 		m_houseSections = [[NSMutableArray alloc] initWithCapacity:12];
 		m_houseBills = [[NSMutableDictionary alloc] initWithCapacity:12];
 		m_senateSections = [[NSMutableArray alloc] initWithCapacity:12];
@@ -86,6 +90,8 @@ static const NSInteger s_maxBillPages = 3;
 {
 	isDataAvailable = NO;
 	isBusy = NO;
+	isDownloading = NO;
+	isReadingCache = NO;
 	
 	[m_xmlParser abort];
 	[m_xmlParser release];
@@ -95,6 +101,7 @@ static const NSInteger s_maxBillPages = 3;
 	[m_houseBills release];
 	[m_senateSections release];
 	[m_senateBills release];
+	[m_billData release];
 	
 	[m_searchResults release];
 	[m_currentSearchString release];
@@ -144,13 +151,7 @@ static const NSInteger s_maxBillPages = 3;
 		}
 	}
 	
-	if ( shouldReDownload || ![[NSFileManager defaultManager] fileExistsAtPath:cachePath] )
-	{
-		// we need to start a data download!
-		m_billDownloadPage = 1;
-		[self beginBillSummaryDownload];
-	}
-	else
+	// Read cached data in 
 	{
 		// data is available - read disk data into memory (via a worker thread)
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
@@ -161,6 +162,13 @@ static const NSInteger s_maxBillPages = 3;
 		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
 		
 		[theOp release];
+	}
+	
+	if ( shouldReDownload || ![[NSFileManager defaultManager] fileExistsAtPath:cachePath] )
+	{
+		// we need to start a data download!
+		m_billDownloadPage = 1;
+		[self beginBillSummaryDownload];
 	}
 }
 
@@ -175,7 +183,14 @@ static const NSInteger s_maxBillPages = 3;
 
 - (NSInteger)totalBills
 {
-	return ([self houseBills] + [self senateBills]);
+	//return ([self houseBills] + [self senateBills]);
+	return [m_billData count];
+}
+
+
+- (BillContainer *)billWithIdentifier:(NSString *)billIdent
+{
+	return [m_billData objectForKey:billIdent];
 }
 
 
@@ -306,7 +321,24 @@ static const NSInteger s_maxBillPages = 3;
 	// 
 	// NOTE: This is _completely_ blocking!
 	// 
+	
 	m_currentSearchString = [[searchText retain] autorelease];
+	
+	// wait up to 30 seconds for congress data
+	while ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
+	{
+		static const CGFloat SLEEP_INTERVAL = 0.5f;
+		static const CGFloat MAX_SLEEP_TIME = 30.0f;
+		CGFloat sleepTime = 0.0f;
+		[NSThread sleepForTimeInterval:SLEEP_INTERVAL];
+		sleepTime += SLEEP_INTERVAL;
+		if ( sleepTime > MAX_SLEEP_TIME ) break;
+	}
+	
+	if ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
+	{
+		return;
+	}
 	
 	NSString *searchUrlStr = [DataProviders OpenCongress_BillQueryURL:searchText];
 	NSURL *searchURL = [NSURL URLWithString:searchUrlStr];
@@ -357,7 +389,8 @@ static const NSInteger s_maxBillPages = 3;
 
 - (void)beginBillSummaryDownload
 {
-	isDataAvailable = NO;
+	if ( isDownloading ) return;
+	
 	isBusy = YES;
 	
 	// make sure we have congress data before downloading bill data - 
@@ -377,33 +410,56 @@ static const NSInteger s_maxBillPages = 3;
 		return;
 	}
 	
+	isDownloading = YES;
 	[self setStatus:@"Preparing Bill Download..."];
 	
 	// This yields _so_ much noise it's not worth it:
 	// use the default OpenCongress set of bills...
-#if 0
+	NSString *xmlURL;
+#if 1
+	NSDateComponents *dateComps = [[NSCalendar currentCalendar] components:(NSYearCalendarUnit | NSMonthCalendarUnit) fromDate:[NSDate date]];
+	
+	// Determine the number of pages (number of months this year)
+	if ( 0 == s_maxBillPages )
+	{
+		NSInteger currentMonth = [dateComps month];
+		s_maxBillPages = currentMonth + 1;
+	}
+	
 	// Use [DataProviders OpenCongress_BillsURLIntroducedSinceDate:];
 	// 
-	// Gather bill data starting from January of the current year
+	// Gather up to 30 bills from the current month
 	// (users can search for other bills)
 	// 
 	NSDate *startDate = nil;
+	if ( 1 == m_billDownloadPage )
 	{
-		NSInteger currentYear = [[[NSCalendar currentCalendar] components:NSYearCalendarUnit fromDate:[NSDate date]] year];
+		NSInteger currentYear = [dateComps year];
 		NSDateComponents *comps = [[NSDateComponents alloc] init];
 		[comps setDay:1];
-		[comps setMonth:1];
+		[comps setMonth:s_maxBillPages-m_billDownloadPage];
 		[comps setYear:currentYear];
 		NSCalendar *gregorian = [[NSCalendar alloc]
 								 initWithCalendarIdentifier:NSGregorianCalendar];
 		startDate = [gregorian dateFromComponents:comps];
 		[comps release];
+		
+		xmlURL = [DataProviders OpenCongress_BillsURLIntroducedSinceDate:startDate onPage:1];
+	}
+	else
+	{
+		xmlURL = [DataProviders OpenCongress_BillsURLOnPage:m_billDownloadPage-1];
 	}
 	
-	NSString *xmlURL = [DataProviders OpenCongress_BillsURLIntroducedSinceDate:startDate onPage:m_billDownloadPage];
 #endif
 	
-	NSString *xmlURL = [DataProviders OpenCongress_BillsURLOnPage:m_billDownloadPage];
+#if 0
+	if ( 0 == s_maxBillPages )
+	{
+		s_maxBillPages = 3;
+	}
+	xmlURL = [DataProviders OpenCongress_BillsURLOnPage:m_billDownloadPage];
+#endif
 	
 	m_billsDownloaded = 0;
 	m_billDownloadPage++;
@@ -430,6 +486,11 @@ static const NSInteger s_maxBillPages = 3;
 - (void)writeBillDataToCache:(id)sender
 {	
 	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
+	
+	while ( isReadingCache || isDownloading )
+	{
+		[NSThread sleepForTimeInterval:0.5f];
+	}
 	
 	// make sure the directoy exists!
 	[[NSFileManager defaultManager] createDirectoryAtPath:dataPath withIntermediateDirectories:YES attributes:nil error:NULL];
@@ -487,7 +548,10 @@ static const NSInteger s_maxBillPages = 3;
 
 - (void)readBillDataFromCache:(id)sender
 {
-	if ( isBusy ) return;
+	if ( isReadingCache ) return;
+	
+	isReadingCache = YES;
+	isBusy = YES;
 	
 	// we're in a worker thread, so we can block like this:
 	// wait until the congressional data loads!
@@ -496,7 +560,7 @@ static const NSInteger s_maxBillPages = 3;
 		[NSThread sleepForTimeInterval:0.5f];
 	}
 	
-	isBusy = YES;
+	isReadingCache = YES;
 	[self setStatus:@"Reading Cached Bills..."];
 	
 	NSString *billDataPath = [BillsDataManager billDataCacheFile];
@@ -506,16 +570,22 @@ static const NSInteger s_maxBillPages = 3;
 	if ( nil == billData )
 	{
 		//NSLog( @"BillsDataManager: error reading cached data from file: starting re-download of data!" );
-		isBusy = NO;
-		isDataAvailable = NO;
-		m_billDownloadPage = 1;
-		[self beginBillSummaryDownload];
+		if ( !isDownloading )
+		{
+			isBusy = NO;
+			isDataAvailable = NO;
+			isReadingCache = NO;
+			[self clearData];
+			m_billDownloadPage = 1;
+			[self beginBillSummaryDownload];
+		}
 		return;
 	}
 	
 	// remove any current data 
-	[self clearData];
+	//[self clearData];
 	
+	NSInteger billsAdded = 0;
 	NSEnumerator *e = [billData objectEnumerator];
 	id billDict;
 	while ( billDict = [e nextObject] )
@@ -525,11 +595,13 @@ static const NSInteger s_maxBillPages = 3;
 		{
 			[self addNewBill:bc checkForDuplicates:NO];
 			[bc release];
+			++billsAdded;
 		}
 	}
 	
-	isBusy = NO;
-	isDataAvailable = YES;
+	isBusy = (isDownloading ? YES : NO);
+	isDataAvailable = (billsAdded > 0) ? YES : NO;
+	isReadingCache = NO;
 	
 	[self setStatus:@"END"];
 }
@@ -621,6 +693,9 @@ static const NSInteger s_maxBillPages = 3;
 	[monthArray sortUsingSelector:@selector(lastActionDateCompare:)];
 	
 	[monthArray release];
+	
+	// also add this bill to our global hash of bills
+	[m_billData setValue:bill forKey:[bill getIdent]];
 }
 
 
@@ -630,7 +705,9 @@ static const NSInteger s_maxBillPages = 3;
 	[m_houseBills release];
 	[m_senateSections release];
 	[m_senateBills release];
+	[m_billData release];
 	
+	m_billData = [[NSMutableDictionary alloc] initWithCapacity:24];
 	m_houseSections = [[NSMutableArray alloc] initWithCapacity:12];
 	m_houseBills = [[NSMutableDictionary alloc] initWithCapacity:12];
 	m_senateSections = [[NSMutableArray alloc] initWithCapacity:12];
@@ -664,13 +741,15 @@ static const NSInteger s_maxBillPages = 3;
 
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
-	[self setStatus:[NSString stringWithFormat:@"Downloading Bill Data (%d/%d)...",(m_billDownloadPage-1),s_maxBillPages-1]];
-	//NSLog( @"BillsDataManager started XML download for page %0d...", m_billDownloadPage-1 );
+	[self setStatus:[NSString stringWithFormat:@"Downloading Bill Data (%0d/%0d)...",(m_billDownloadPage-1),s_maxBillPages-1]];
+	NSLog( @"BillsDataManager started XML download for page %0d of %0d...", m_billDownloadPage-1, s_maxBillPages-1 );
 }
 
 
 - (void)xmlParseOp:(XMLParserOperation *)parseOp endedWith:(BOOL)success
 {
+	isDownloading = NO;
+	
 	// we received the maximum number of bills - there might be more!
 	// (don't go above a maximum numbe of pages)
 	if ( (m_billDownloadPage < s_maxBillPages) &&
@@ -689,7 +768,7 @@ static const NSInteger s_maxBillPages = 3;
 		return;
 	}
 	
-	isDataAvailable = success;
+	isDataAvailable = success || isDataAvailable;
 	
 	[self setStatus:@"END"];
 	

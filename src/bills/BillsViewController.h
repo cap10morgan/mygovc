@@ -19,6 +19,8 @@
 	BillsDataManager *m_data;
 	BillsDataManager *m_shadowData;
 	
+	NSString *m_initialBillID;
+	
 	UISegmentedControl *m_segmentCtrl;
 	CongressChamber m_selectedChamber;
 	

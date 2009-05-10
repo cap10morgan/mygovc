@@ -91,7 +91,7 @@ static NSString *kNewsItem_Source = @"source";
 static NSString *kNewsItem_Title = @"title";
 
 /*
-	For the future: more person stats!
+	For the future: more person stats from OpenCongress.org
  *
 static NSString *kName_PersonStats = @"person-stats";
 static NSString *kName_CosponsoredBills = @"cosponsored-bills"; // integer
@@ -305,7 +305,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 {
 	// display a message composer to tweet the legislator!
 	MessageData *msg = [[MessageData alloc] init];
-	msg.m_transport = opSendTwitterDM;
+	msg.m_transport = eMT_SendTwitterDM;
 	msg.m_to = [NSString stringWithFormat:@"@%@",[m_legislator twitter_id]];
 	msg.m_subject = @"";
 	

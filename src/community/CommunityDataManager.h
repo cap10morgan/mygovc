@@ -19,7 +19,7 @@
 	
 	id<CommunityDataSourceProtocol> m_dataSource;
 	MyGovUserData *m_userData;
-	NSInteger m_currentUserUID;
+	NSString *m_currentUserUID;
 	
 	NSDate *m_inMemoryStartDate;
 	NSDate *m_inMemoryEndData;
@@ -53,7 +53,9 @@
 
 - (NSString *)currentStatusMessage;
 
-- (NSInteger)currentlyAuthenticatedUser;
+- (NSString *)currentlyAuthenticatedUser;
+
+- (NSURL *)dataSourceLoginURL;
 
 // starts a possible data cache load, plus new data download
 - (void)loadData;

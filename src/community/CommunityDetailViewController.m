@@ -89,7 +89,7 @@ enum
 		case eCommunity_Chatter:
 		{
 			MyGovUserData *mgud = [myGovAppDelegate sharedUserData];
-			MyGovUser *user = [mgud userFromID:m_item.m_creator];
+			MyGovUser *user = [mgud userFromUsername:m_item.m_creator];
 			NSString *uname;
 			if ( nil == user || nil == user.m_username )
 			{
