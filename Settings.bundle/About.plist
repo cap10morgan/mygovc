@@ -24,9 +24,9 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>SunlightLabs.com</string>
+			<string>Bioguide.congress.gov</string>
 			<key>Key</key>
-			<string>about_sunlightlabs</string>
+			<string>about_bioguide</string>
 			<key>Type</key>
 			<string>PSTitleValueSpecifier</string>
 		</dict>
@@ -48,9 +48,31 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
+			<string>SunlightLabs.com</string>
+			<key>Key</key>
+			<string>about_sunlightlabs</string>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
 			<string>USASpending.gov</string>
 			<key>Key</key>
 			<string>about_usaspending</string>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+		</dict>
+		<dict>
+			<key>Title</key>
+			<string>Some Icons Provided By</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<string>Oxygen Refit2 Gnome Icons</string>
+			<key>Key</key>
+			<string>about_oxygen_refit</string>
 			<key>Type</key>
 			<string>PSTitleValueSpecifier</string>
 		</dict>

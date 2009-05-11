@@ -12,6 +12,7 @@
 #import "CommunityItem.h"
 #import "ComposeMessageViewController.h"
 #import "MGTwitterEngine.h"
+#import "MiniBrowserController.h"
 #import "ProgressOverlayViewController.h"
 #import "TwitterLoginViewController.h"
 
@@ -121,6 +122,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		m_hud = nil;
 		m_activeTextField = nil;
 		m_keyboardVisible = NO;
+		m_shouldRespondToKbdEvents = YES;
 		m_alertType = eAlertType_TwitterError;
 	}
 	return self;
@@ -161,7 +163,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	[super viewDidAppear:animated];
 	
 	m_keyboardVisible = NO;
-	
+	m_shouldRespondToKbdEvents = YES;
 	// register to receive keyboard notifications
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(keyboardWasShown:)
@@ -176,6 +178,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (void)viewWillDisappear:(BOOL)animated 
 {
+	m_shouldRespondToKbdEvents = NO;
+	
 	// resign keyboard notifications
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -371,6 +375,11 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (void)keyboardWasShown:(NSNotification*)aNotification
 {
+	if ( !m_shouldRespondToKbdEvents )
+	{
+		return;
+	}
+	
 	if ( !m_keyboardVisible )
 	{
 		NSDictionary* info = [aNotification userInfo];
@@ -397,6 +406,11 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (void)keyboardWasHidden:(NSNotification*)aNotification
 {
+	if ( !m_shouldRespondToKbdEvents )
+	{
+		return;
+	}
+	
 	NSDictionary* info = [aNotification userInfo];
 
 	// Get the size of the keyboard.
@@ -548,8 +562,10 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (NSString *)mygovUserAuthWithCallback:(SEL)callback
 {
-	NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_username"];
-	NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_password"];
+	m_shouldRespondToKbdEvents = YES;
+	
+	NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"gae_username"];
+	NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"gae_password"];
 	
 	CommunityDataManager *cdm = [myGovAppDelegate sharedCommunityData];
 	id<CommunityDataSourceProtocol> dataSource = [cdm dataSource];
@@ -560,19 +576,24 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	{
 		if ( [username length] < 1 || [password length] < 1 )
 		{
-			// no login info - show login view controller
-			/*
-			if ( nil == m_twitterLoginView )
+			if ( nil == m_mygovLoginView )
 			{
 				m_mygovLoginView = [[MyGovLoginViewController alloc] initWithNibName:@"MyGovLoginView" bundle:nil];
 			}
 			
 			[m_mygovLoginView setNotifyTarget:self withSelector:callback];
 			[m_mygovLoginView displayIn:self];
+			/*
+			// Grab the web-based URL and throw it up in the MiniBrowser
+			NSURLRequest *loginURLRequest = [cdm dataSourceLoginURLRequest];
+			
+			MiniBrowserController *mbc = [MiniBrowserController sharedBrowser];
+			m_shouldRespondToKbdEvents = NO;
+			mbc.m_shouldUseParentsView = YES;
+			[mbc LoadRequest:loginURLRequest];
+			[mbc display:self];
+			[mbc setAuthCallback:callback];
 			*/
-			
-			// XXX - grab the web-based URL and throw it up in the MiniBrowser
-			
 			return nil;
 		}
 		else
@@ -588,7 +609,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 									  message:[NSString stringWithString:@"Invalid username/password combo"]
 									  delegate:self
 									  cancelButtonTitle:nil
-									  otherButtonTitles:@"OK",nil];
+									  otherButtonTitles:@"OK",@"Reset",nil];
 				[alert show];
 				return nil;
 			}
@@ -861,7 +882,10 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	if ( success )
 	{
 		// Add the event manually to our in-memory collection!
-		[cdm communityDataSource:dataSource newCommunityItemArrived:item];
+		//[cdm communityDataSource:dataSource newCommunityItemArrived:item];
+		
+		// re-load the community data to grab the new item
+		[cdm loadData];
 		
 		[self dismissModalViewControllerAnimated:YES];
 	}
@@ -894,9 +918,11 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	if ( success )
 	{
 		// add the comment to our in-memory structure :-)
-		CommunityItem *ci = [[myGovAppDelegate sharedCommunityData] itemWithId:[reply.m_communityItemID integerValue]];
-		[ci addComment:reply];
-		[cdm communityDataSource:dataSource newCommunityItemArrived:ci];
+		//CommunityItem *ci = [[myGovAppDelegate sharedCommunityData] itemWithId:[reply.m_communityItemID integerValue]];
+		//[ci addComment:reply];
+		//[cdm communityDataSource:dataSource newCommunityItemArrived:ci];
+		
+		[cdm loadData];
 		
 		[self dismissModalViewControllerAnimated:YES];
 	}
@@ -968,6 +994,18 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			}
 			break;
 		case eAlertType_MyGovAuthError:
+			switch ( buttonIndex )
+			{
+				default:
+				case 1:
+					break;
+				case 2:
+					// reset credentials!
+					[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"twitter_username"];
+					[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"twitter_password"];
+					[[NSUserDefaults standardUserDefaults] synchronize];
+					break;
+			}
 			break;
 	}
 }

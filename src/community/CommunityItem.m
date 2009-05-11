@@ -100,7 +100,7 @@ static NSString *kCIKey_EventLocation = @"event_location";
 static NSString *kCIKey_EventDate = @"event_date";
 static NSString *kCIKey_EventAttendees = @"event_attendees";
 
-static NSString *kCIDateFormat = @"%Y-%m-%d %H:%M:%S";
+static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 
 
 - (id)init

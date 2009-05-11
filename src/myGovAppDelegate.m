@@ -12,6 +12,7 @@
 #import "CongressDataManager.h"
 #import "SpendingDataManager.h"
 #import "MGTwitterEngine.h"
+#import "MiniBrowserController.h"
 #import "MyGovUserData.h"
 #import <objc/runtime.h>
 
@@ -305,9 +306,12 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 		}
 	}
 	
-	if ( [area isEqualToString:@"app"] )
+	if ( [area isEqualToString:@"auth"] )
 	{
-		// no area to view
+		// no area to view - kill any visible MiniBrowser window
+		MiniBrowserController *mbc = [MiniBrowserController sharedBrowser];
+		[mbc authCompleteCallback];
+		return YES;
 	}
 	
 	UIViewController *areaView = (UIViewController *)[m_urlHandler objectForKey:area];

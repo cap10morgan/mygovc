@@ -25,6 +25,8 @@
 		01ACB0680FA8434900B6FF59 /* CDetailHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACB0660FA8434900B6FF59 /* CDetailHeaderViewController.m */; };
 		01B119440F70BD560076AFE0 /* location_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B119420F70BD560076AFE0 /* location_overlay.png */; };
 		01B119450F70BD560076AFE0 /* USStates.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01B119430F70BD560076AFE0 /* USStates.plist */; };
+		01B374780FB7568600DDA991 /* eagleIcon_32x32.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B374760FB7568600DDA991 /* eagleIcon_32x32.png */; };
+		01B374790FB7568600DDA991 /* eagleIcon_57x57.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B374770FB7568600DDA991 /* eagleIcon_57x57.png */; };
 		01B61CF80FAA8A37007E10E6 /* refreshIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B61CF70FAA8A37007E10E6 /* refreshIcon.png */; };
 		01B61DAD0FAA96ED007E10E6 /* MyGovLoginView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01B61DAC0FAA96ED007E10E6 /* MyGovLoginView.xib */; };
 		01B61DB00FAA9701007E10E6 /* MyGovLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B61DAF0FAA9701007E10E6 /* MyGovLoginViewController.m */; };
@@ -33,6 +35,7 @@
 		01B7B6EF0F8AEACE00619441 /* backButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6ED0F8AEACD00619441 /* backButton.png */; };
 		01B7B6F00F8AEACE00619441 /* fwdButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B7B6EE0F8AEACD00619441 /* fwdButton.png */; };
 		01B7D87A0FA5E5DF00CFF880 /* GoogleAppsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B7D8790FA5E5DF00CFF880 /* GoogleAppsDataSource.m */; };
+		01BFE8130FB7D62500ECC015 /* google_logo_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 01BFE8120FB7D62500ECC015 /* google_logo_small.png */; };
 		01C075BC0F8EE96E00F5B2A1 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */; };
 		01C075C10F8EE98700F5B2A1 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */; };
 		01C729D80F9EEBBF00EA3FF9 /* recoveryIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */; };
@@ -122,6 +125,8 @@
 		01ACB0660FA8434900B6FF59 /* CDetailHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDetailHeaderViewController.m; sourceTree = "<group>"; };
 		01B119420F70BD560076AFE0 /* location_overlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = location_overlay.png; path = res/location_overlay.png; sourceTree = "<group>"; };
 		01B119430F70BD560076AFE0 /* USStates.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = USStates.plist; path = res/USStates.plist; sourceTree = "<group>"; };
+		01B374760FB7568600DDA991 /* eagleIcon_32x32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = eagleIcon_32x32.png; path = res/eagleIcon_32x32.png; sourceTree = "<group>"; };
+		01B374770FB7568600DDA991 /* eagleIcon_57x57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = eagleIcon_57x57.png; path = res/eagleIcon_57x57.png; sourceTree = "<group>"; };
 		01B61CF70FAA8A37007E10E6 /* refreshIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = refreshIcon.png; path = res/refreshIcon.png; sourceTree = "<group>"; };
 		01B61DAC0FAA96ED007E10E6 /* MyGovLoginView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyGovLoginView.xib; sourceTree = "<group>"; };
 		01B61DAE0FAA9701007E10E6 /* MyGovLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyGovLoginViewController.h; sourceTree = "<group>"; };
@@ -135,6 +140,7 @@
 		01B7B6EE0F8AEACD00619441 /* fwdButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fwdButton.png; path = res/fwdButton.png; sourceTree = "<group>"; };
 		01B7D8780FA5E5DF00CFF880 /* GoogleAppsDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAppsDataSource.h; sourceTree = "<group>"; };
 		01B7D8790FA5E5DF00CFF880 /* GoogleAppsDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleAppsDataSource.m; sourceTree = "<group>"; };
+		01BFE8120FB7D62500ECC015 /* google_logo_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = google_logo_small.png; path = res/google_logo_small.png; sourceTree = "<group>"; };
 		01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = recoveryIcon.png; path = res/recoveryIcon.png; sourceTree = "<group>"; };
@@ -505,6 +511,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01BFE8120FB7D62500ECC015 /* google_logo_small.png */,
+				01B374760FB7568600DDA991 /* eagleIcon_32x32.png */,
+				01B374770FB7568600DDA991 /* eagleIcon_57x57.png */,
 				012855150FAEA2D400E2B55E /* mygov_login_header.png */,
 				01B61CF70FAA8A37007E10E6 /* refreshIcon.png */,
 				01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */,
@@ -609,6 +618,9 @@
 				01B61CF80FAA8A37007E10E6 /* refreshIcon.png in Resources */,
 				01B61DAD0FAA96ED007E10E6 /* MyGovLoginView.xib in Resources */,
 				012855160FAEA2D400E2B55E /* mygov_login_header.png in Resources */,
+				01B374780FB7568600DDA991 /* eagleIcon_32x32.png in Resources */,
+				01B374790FB7568600DDA991 /* eagleIcon_57x57.png in Resources */,
+				01BFE8130FB7D62500ECC015 /* google_logo_small.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

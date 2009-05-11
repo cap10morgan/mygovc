@@ -15,10 +15,10 @@
 {
 	IBOutlet UITextField *username;
 	IBOutlet UITextField *password;
-	IBOutlet UILabel     *labelPasswordVerify;
-	IBOutlet UITextField *passwordVerify;
 	IBOutlet UISwitch    *saveCredentials;
-	IBOutlet UISwitch    *newUser;
+//	IBOutlet UILabel     *labelPasswordVerify;
+//	IBOutlet UITextField *passwordVerify;
+//	IBOutlet UISwitch    *newUser;
 	
 @private
 	id   m_notifyTarget;
@@ -31,16 +31,17 @@
 
 @property (nonatomic,retain) IBOutlet UITextField *username;
 @property (nonatomic,retain) IBOutlet UITextField *password;
-@property (nonatomic,retain) IBOutlet UILabel     *labelPasswordVerify;
-@property (nonatomic,retain) IBOutlet UITextField *passwordVerify;
 @property (nonatomic,retain) IBOutlet UISwitch    *saveCredentials;
-@property (nonatomic,retain) IBOutlet UISwitch    *newUser;
+//@property (nonatomic,retain) IBOutlet UILabel     *labelPasswordVerify;
+//@property (nonatomic,retain) IBOutlet UITextField *passwordVerify;
+//@property (nonatomic,retain) IBOutlet UISwitch    *newUser;
 
 - (void)displayIn:(id)parent;
 
-- (IBAction)switchNewUser:(id)sender;
+//- (IBAction)switchNewUser:(id)sender;
 - (IBAction)signIn:(id)sender;
 - (IBAction)cancel:(id)sender;
+- (IBAction)createNewAccount:(id)sender;
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)selector;
 

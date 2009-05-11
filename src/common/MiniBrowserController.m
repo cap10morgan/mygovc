@@ -10,7 +10,7 @@
 
 @interface MiniBrowserController (private)
 	- (void)animate;
-	- (void)textAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context;
+	- (void)animationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context;
 	- (void)enableBackButton:(BOOL)enable;
 	- (void)enableFwdButton:(BOOL)enable;
 @end
@@ -29,6 +29,7 @@ enum
 
 @synthesize m_toolBar, m_webView, m_shouldStopLoadingOnHide;
 @synthesize m_backButton, m_reloadButton, m_fwdButton;
+@synthesize m_shouldUseParentsView;
 
 static MiniBrowserController *s_browser = NULL;
 
@@ -67,13 +68,15 @@ static MiniBrowserController *s_browser = NULL;
 	{
 		m_shouldStopLoadingOnHide = YES;
 		m_loadingInterrupted = NO;
-		m_urlToLoad = nil;
+		m_urlRequestToLoad = nil;
 		m_activity = nil;
 		m_loadingLabel = nil;
 		m_parentCtrl = nil;
+		m_shouldUseParentsView = NO;
 		m_shouldDisplayOnViewLoad = NO;
 		m_normalItemList = nil;
 		m_loadingItemList = nil;
+		m_authCallback = nil;
 		[self enableBackButton:NO];
 		[self enableFwdButton:NO];
 	}
@@ -90,7 +93,7 @@ static MiniBrowserController *s_browser = NULL;
 
 - (void)dealloc 
 {
-	[m_urlToLoad release];
+	[m_urlRequestToLoad release];
 	[m_normalItemList release];
 	[m_loadingItemList release];
 	[super dealloc];
@@ -178,10 +181,10 @@ static MiniBrowserController *s_browser = NULL;
 {
 	[super viewDidAppear:animated];
 	
-	if ( nil != m_urlToLoad )
+	if ( nil != m_urlRequestToLoad )
 	{
-		[self loadURL:m_urlToLoad];
-		[m_urlToLoad release]; m_urlToLoad = nil;
+		[self LoadRequest:m_urlRequestToLoad];
+		[m_urlRequestToLoad release]; m_urlRequestToLoad = nil;
 	}
 	else if ( m_loadingInterrupted )
 	{
@@ -220,6 +223,7 @@ static MiniBrowserController *s_browser = NULL;
 - (void)display:(id)parentController
 {
 	m_parentCtrl = parentController;
+	m_authCallback = nil;
 	if ( nil != m_webView )
 	{
 		//[m_parentCtrl presentModalViewController:self animated:NO];
@@ -277,15 +281,34 @@ static MiniBrowserController *s_browser = NULL;
 	
 	if ( [self.view isHidden] )
 	{
-		// do it this goofy way just in case (url == m_urlToLoad)
-		[url retain];
-		[m_urlToLoad release];
-		m_urlToLoad = [[NSURL alloc] initWithString:[url absoluteString]];
-		[url release];
+		[m_urlRequestToLoad release];
+		m_urlRequestToLoad = [[NSURLRequest alloc] initWithURL:url];
 	}
 	else
 	{
 		[m_webView loadRequest:[NSURLRequest requestWithURL:url]];
+	}
+}
+
+
+- (void)LoadRequest:(NSURLRequest *)urlRequest
+{
+	m_loadingInterrupted = NO;
+	
+	// cancel any transaction currently taking place
+	if ( m_webView.loading ) [m_webView stopLoading];
+	
+	if ( [self.view isHidden] )
+	{
+		// do it this goofy way just in case (url == m_urlRequestToLoad)
+		[urlRequest retain];
+		[m_urlRequestToLoad release];
+		m_urlRequestToLoad = [[NSURLRequest alloc] initWithURL:[urlRequest URL]];
+		[urlRequest release];
+	}
+	else
+	{
+		[m_webView loadRequest:urlRequest];
 	}
 }
 
@@ -301,11 +324,52 @@ static MiniBrowserController *s_browser = NULL;
 }
 
 
+- (void)setAuthCallback:(SEL)callback
+{
+	m_authCallback = callback;
+}
+
+
+- (void)authCompleteCallback
+{
+	// remove ourself from the view stack
+	// once authentication is complete
+	if ( [self.view superview] )
+	{
+		[self animate];
+	}
+	
+	// do the auth-callback if requested
+	if ( nil != m_authCallback )
+	{
+		if ( [m_parentCtrl respondsToSelector:m_authCallback] )
+		{
+			[m_parentCtrl performSelector:m_authCallback];
+		}
+	}
+}
+
+
 #pragma mark MiniBrowserController Private
 
 - (void)animate
 {
-	UIView *topView = [[myGovAppDelegate sharedAppDelegate] topView];
+	
+	UIView *topView;
+	if ( m_shouldUseParentsView )
+	{
+		topView = [m_parentCtrl view];
+		if ( nil == topView )
+		{
+			topView = [[myGovAppDelegate sharedAppDelegate] topView];
+		}
+	}
+	else
+	{
+		topView = [[myGovAppDelegate sharedAppDelegate] topView];
+	}
+	
+	m_shouldUseParentsView = NO;
 	
 	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationDuration:0.7f];
@@ -326,7 +390,7 @@ static MiniBrowserController *s_browser = NULL;
 	[UIView commitAnimations];
 }
 
-- (void)textAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context
+- (void)animationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context
 {
 }
 

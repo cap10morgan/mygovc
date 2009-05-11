@@ -11,7 +11,7 @@
 
 @interface GoogleAppsDataSource : NSObject <CommunityDataSourceProtocol>
 {
-	NSURL *m_loginURL;
+	NSURLRequest *m_loginURLRequest;
 }
 
 @end

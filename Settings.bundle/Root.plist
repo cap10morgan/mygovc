@@ -48,9 +48,9 @@
 			<key>DefaultValue</key>
 			<string></string>
 			<key>Key</key>
-			<string>mygov_username</string>
+			<string>gae_username</string>
 			<key>Title</key>
-			<string>MyGovUsername</string>
+			<string>GoogleEmail</string>
 			<key>Type</key>
 			<string>PSTextFieldSpecifier</string>
 		</dict>
@@ -66,9 +66,9 @@
 			<key>DefaultValue</key>
 			<string></string>
 			<key>Key</key>
-			<string>mygov_password</string>
+			<string>gae_password</string>
 			<key>Title</key>
-			<string>MyGovPassword</string>
+			<string>GooglePasswd</string>
 			<key>Type</key>
 			<string>PSTextFieldSpecifier</string>
 		</dict>

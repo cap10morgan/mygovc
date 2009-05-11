@@ -557,14 +557,14 @@ static NSInteger s_maxBillPages = 0;
 	// wait until the congressional data loads!
 	while ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
 	{
-		[NSThread sleepForTimeInterval:0.5f];
+		[NSThread sleepForTimeInterval:0.1f];
 	}
 	
 	isReadingCache = YES;
 	[self setStatus:@"Reading Cached Bills..."];
 	
 	NSString *billDataPath = [BillsDataManager billDataCacheFile];
-	//NSLog( @"BillsDataManager: reading bill cache from: %@", billDataPath );
+	NSLog( @"BillsDataManager: reading bill cache..." );
 	
 	NSArray *billData = [NSArray arrayWithContentsOfFile:billDataPath];
 	if ( nil == billData )

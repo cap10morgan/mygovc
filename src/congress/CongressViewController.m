@@ -627,7 +627,14 @@ show_legislator:
 	// we should be running in a thread, so this should give my table
 	// enough time to load itself up before I go and cover it up.
 	// (yeah, it's a bit of a hack...)
-	[NSThread sleepForTimeInterval:0.33f]; 
+	//[NSThread sleepForTimeInterval:0.33f]; 
+	while ( self.navigationController.visibleViewController != self && 
+		   !self.tableView.userInteractionEnabled
+		   )
+	{
+		[NSThread sleepForTimeInterval:0.2f];
+	}
+	[NSThread sleepForTimeInterval:0.35f];
 	
 	[m_initialLegislatorID release]; m_initialLegislatorID = nil;
 	if ( nil != legislator )

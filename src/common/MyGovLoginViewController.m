@@ -9,6 +9,7 @@
 #import "myGovAppDelegate.h"
 #import "CommunityDataManager.h"
 #import "CommunityDataSource.h"
+#import "MiniBrowserController.h"
 #import "MyGovLoginViewController.h"
 #import "MyGovUserData.h"
 #import "ProgressOverlayViewController.h"
@@ -17,14 +18,14 @@
 @interface MyGovLoginViewController (private)
 	- (void)performAuthentication;
 	- (void)animate:(id)parent;
-	- (void)textAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context;
+	- (void)animationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context;
 @end
 
 
 @implementation MyGovLoginViewController
 
-@synthesize username, password, labelPasswordVerify, passwordVerify;
-@synthesize saveCredentials, newUser;
+@synthesize username, password, saveCredentials;
+//@synthesize labelPasswordVerify, passwordVerify, newUser;
 
 
 // The designated initializer. Override to perform setup that is required before the view is loaded.
@@ -65,8 +66,8 @@
 	[super viewDidLoad];
 	
 	// hide by default 
-	[passwordVerify setHidden:YES];
-	[labelPasswordVerify setHidden:YES];
+//	[passwordVerify setHidden:YES];
+//	[labelPasswordVerify setHidden:YES];
 }
 
 
@@ -84,7 +85,7 @@
     // Dismiss the keyboard when the view outside the text field is touched.
 	[username resignFirstResponder];
 	[password resignFirstResponder];
-	[passwordVerify resignFirstResponder];
+//	[passwordVerify resignFirstResponder];
 	
     [super touchesBegan:touches withEvent:event];
 }
@@ -121,6 +122,7 @@
 }
 
 
+/*
 - (IBAction)switchNewUser:(id)sender
 {
 	[UIView beginAnimations:nil context:NULL];
@@ -142,10 +144,11 @@
 	
 	[UIView commitAnimations];
 }
-
+*/
 
 - (IBAction)signIn:(id)sender
 {
+	/*
 	if ( newUser.isOn )
 	{
 		[m_hud setText:@"Creating MyGov Account..." andIndicateProgress:YES];
@@ -162,6 +165,7 @@
 		}
 	}
 	else
+	*/
 	{
 		[m_hud setText:@"Logging in to MyGov..." andIndicateProgress:YES];
 	}
@@ -170,7 +174,6 @@
 	
 	[self.view setUserInteractionEnabled:NO];
 	[self.view setNeedsDisplay];
-	
 	
 	// run the auth in a background thread
 	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
@@ -187,6 +190,17 @@
 - (IBAction)cancel:(id)sender
 {
 	[self animate:m_parent];
+}
+
+
+- (IBAction)createNewAccount:(id)sender
+{
+	NSString *googleNewAcctURLStr = @"https://www.google.com/accounts/NewAccount";
+	NSURL *newAcctURL = [NSURL URLWithString:googleNewAcctURLStr];
+	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:newAcctURL];
+	
+	mbc.m_shouldUseParentsView = YES;
+	[mbc display:self];
 }
 
 
@@ -207,6 +221,7 @@
 	
 	BOOL success;
 	
+	/*
 	if ( newUser.isOn )
 	{
 		// attempt to create a new user 
@@ -231,6 +246,7 @@
 			return;
 		}
 	}
+	*/
 	
 	// authenticate the given username/password
 	success = [dataSource validateUsername:username.text andPassword:password.text withDelegate:cdm];
@@ -243,7 +259,7 @@
 	{
 		UIAlertView *alert = [[UIAlertView alloc] 
 							  initWithTitle:@"Login Error"
-							  message:[NSString stringWithString:@"Invalid username/password combo"]
+							  message:[NSString stringWithString:@"Invalid Email/Password combo"]
 							  delegate:self
 							  cancelButtonTitle:nil
 							  otherButtonTitles:@"OK",nil];
@@ -254,10 +270,13 @@
 	{
 		if ( saveCredentials.isOn )
 		{
-			[[NSUserDefaults standardUserDefaults] setObject:self.username.text forKey:@"mygov_username"];
-			[[NSUserDefaults standardUserDefaults] setObject:self.password.text forKey:@"mygov_password"];
+			[[NSUserDefaults standardUserDefaults] setObject:self.username.text forKey:@"gae_username"];
+			[[NSUserDefaults standardUserDefaults] setObject:self.password.text forKey:@"gae_password"];
 			[[NSUserDefaults standardUserDefaults] synchronize];
 		}
+		
+		// dismiss the view
+		[self animate:m_parent];
 		
 		// make the callback - we're logged in!
 		if ( nil != m_notifyTarget )
@@ -267,9 +286,6 @@
 				[m_notifyTarget performSelector:m_notifySelector];
 			}
 		}
-		
-		// dismiss the view
-		[self animate:m_parent];
 	}
 }
 
@@ -298,7 +314,7 @@
 }
 
 
-- (void)textAnimationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context
+- (void)animationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context
 {
 }
 

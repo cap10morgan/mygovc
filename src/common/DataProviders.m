@@ -31,11 +31,11 @@ static NSString *kBioguideURLFmt = @"http://bioguide.congress.gov/scripts/biodis
 // 
 // OpenCongress.org 
 // 
-static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/bills?key=%@&congress=%d&per_page=30&page=%d";
-static NSString *kOpenCongress_BillsSinceFmt = @"http://www.opencongress.org/api/bills_introduced_since?key=%@&per_page=30&page=%d&date=%@";
+static NSString *kOpenCongress_BillsXMLFmt = @"http://www.opencongress.org/api/bills?key=%@&congress=%d&per_page=15&page=%d";
+static NSString *kOpenCongress_BillsSinceFmt = @"http://www.opencongress.org/api/bills_introduced_since?key=%@&per_page=15&page=%d&date=%@";
 static NSString *kOpenCongress_PersonXMLFmt = @"http://www.opencongress.org/api/people?key=%@&state=%@&first_name=%@&last_name=%@";
 static NSString *kOpenCongress_BillQueryFmt = @"http://www.opencongress.org/api/bills_by_query?key=%@&congress=%d&q=%@"; 
-static NSInteger kOpenCongress_MaxBillsReturnedPerQuery = 30;
+static NSInteger kOpenCongress_MaxBillsReturnedPerQuery = 15;
 
 // 
 // SunlightLabs 
@@ -86,7 +86,8 @@ static NSString *kGAE_downloadCommunityEventsURL = @"http://mygov-mobile.appspot
 static NSString *kGAE_GoogleURLsDictKey = @"google_urls";
 static NSString *kGAE_GoogleLoginURLDictKey = @"url";
 static NSString *kGAE_ItemsDictKey = @"items";
-
+static NSString *kGAE_GoogleURLTitleDictKey = @"url_linktext";
+static NSString *kGAE_GoogleLoginURLTitle = @"Login";
 
 // 
 // Cholor - cbell's PHP implementation of mygov server functionality :-)
@@ -101,6 +102,91 @@ static NSString *kCholor_UserAuthFailedStr = @"Failure";
 
 static NSString *kCholor_downloadCommunityChatterURL = @"http://cholor.com/mygov/communityChatter.php";
 static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/communityEvents.php";
+
+
+
++ (NSString *)postStringFromDictionary:(NSDictionary *)dict
+{
+	NSMutableString *postStr = [[[NSMutableString alloc] init] autorelease];
+	
+	NSEnumerator *keyEnum = [dict keyEnumerator];
+	NSString *key;
+	while ( key = [keyEnum nextObject] )
+	{
+		id obj = [dict objectForKey:key];
+		NSString *valStr = nil;
+		
+		// NSString objects
+		if ( [obj isKindOfClass:[NSString class]] )
+		{
+			valStr = (NSString *)obj;
+		}
+		// NSNumber objects
+		else if ( [obj isKindOfClass:[NSNumber class]] )
+		{
+			valStr = [obj stringValue];
+		}
+		else if ( [obj isKindOfClass:[NSArray class]] )
+		{
+			// compile the array string
+			if ( [obj count] > 0 )
+			{
+				NSMutableString *arrayStr = [[[NSMutableString alloc] init] autorelease];
+				NSString *arrayAmp = @"";
+				NSEnumerator *arrayEnum = [obj objectEnumerator];
+				id arrayObj;
+				while ( arrayObj = [arrayEnum nextObject] )
+				{
+					if ( [arrayObj isKindOfClass:[NSNumber class]] )
+					{
+						[arrayStr appendFormat:@"%@%@[]=%@",arrayAmp, key, [arrayObj stringValue]];
+						arrayAmp = @"&"; // empty the first time through - set to ampersand when we need it!
+					}
+					else if ( [arrayObj isKindOfClass:[NSString class]] )
+					{
+						NSString *str = [arrayObj stringByReplacingOccurrencesOfString:@"&" withString:@"&amp;"];
+						[arrayStr appendFormat:@"%@%@[]=%@", arrayAmp, key, str];
+						arrayAmp = @"&"; // empty the first time through - set to ampersand when we need it!
+					}
+					//  - ignore this element: no nested arrays/dictionaries
+				}
+				
+				if ( [arrayStr length] > 0 )
+				{
+					// XXX - do I need to [retain] this?!
+					valStr = arrayStr;
+					key = @""; // mash!
+				}
+			}
+		}
+		else
+		{
+			// no NSDictionary support!
+			NSLog( @"Ignoring unsupported PList object '%@' in dictionary...", key );
+		}
+		
+		if ( nil != valStr )
+		{
+			NSString *amp = @"";
+			if ( 0 != [postStr length] )
+			{
+				amp = @"&";
+			}
+			if ( [key length] > 0 )
+			{
+				valStr = [valStr stringByReplacingOccurrencesOfString:@"&" withString:@"&amp;"];
+				[postStr appendFormat:@"%@%@=%@", amp, key, valStr];
+			}
+			else
+			{
+				// just use the 'valStr' for arrays :-)
+				[postStr appendString:valStr];
+			}
+		}
+	}
+	
+	return postStr; //[postStr stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
+}
 
 
 + (NSString *)Bioguide_LegislatorBioURL:(LegislatorContainer *)legislator
@@ -494,6 +580,24 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 }
 
 
++ (NSString *)GAE_CommunityItemPOSTURLFor:(CommunityItemType)type
+{
+	switch ( type )
+	{
+		default:
+			return nil;
+			
+		case eCommunity_Chatter:
+			return kGAE_downloadCommunityChatterURL;
+			
+		case eCommunity_Event:
+			return kGAE_downloadCommunityEventsURL;
+	}
+	
+	return nil;
+}
+
+
 + (NSString *)GAE_GoogleURLsDictKey
 {
 	return kGAE_GoogleURLsDictKey;
@@ -509,6 +613,17 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 + (NSString *)GAE_ItemsDictKey
 {
 	return kGAE_ItemsDictKey;
+}
+
++ (NSString *)GAE_GoogleURLTitleDictKey
+{
+	return kGAE_GoogleURLTitleDictKey;
+}
+
+
++ (NSString *)GAE_GoogleLoginURLTitle
+{
+	return kGAE_GoogleLoginURLTitle;
 }
 
 

@@ -20,6 +20,7 @@
 
 @interface BillsViewController (private)
 	- (BillContainer *)billAtIndexPath:(NSIndexPath *)indexPath;
+	- (void)scrollToInitialPosition;
 	- (void)showInitialBill:(BillContainer *)bill;
 	- (void)reloadBillData;
 	- (void)dataManagerCallback:(id)sender;
@@ -44,6 +45,11 @@ enum
 - (void)dealloc 
 {
 	[m_data release];
+	[m_HUD release];
+	
+	[m_initialSearchString release];
+	[m_initialIndexPath release];
+	[m_initialBillID release];
 	[super dealloc];
 }
 
@@ -59,6 +65,8 @@ enum
 {
 	m_data = [[myGovAppDelegate sharedBillsData] retain];
 	
+	m_initialSearchString = nil;
+	m_initialIndexPath = nil;
 	m_initialBillID = nil;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
@@ -151,6 +159,11 @@ enum
 	else
 	{
 		[m_HUD show:NO];
+	}
+	
+	if ( nil != m_initialIndexPath || nil != m_initialSearchString )
+	{
+		[self scrollToInitialPosition];
 	}
 	
 	if ( nil != m_initialBillID )
@@ -274,23 +287,70 @@ enum
 - (void)handleURLParms:(NSString *)parms
 {
 	// 
-	// This is really primitive - could be handled much better...
+	// Handle Bill URLs
 	// 
 	
+	NSInteger parmIdx = 0;
+	NSString *chamber = nil;
 	NSArray *pArray = [parms componentsSeparatedByString:@":"];
 	if ( [pArray count] < 1 ) return;
 	
-	NSString *billStr = [pArray objectAtIndex:0];
+	NSString *billStr = [pArray objectAtIndex:parmIdx];
 	
+	if ( [pArray count] < ++parmIdx ) goto get_out;
+	
+	// Congressional Chamber selected
+	chamber = [pArray objectAtIndex:parmIdx];
+	if ( [chamber isEqualToString:@"senate"] )
+	{
+		m_selectedChamber = eCongressChamberSenate;
+		m_segmentCtrl.selectedSegmentIndex = 1;
+	}
+	else if ( [chamber isEqualToString:@"house"] )
+	{
+		m_selectedChamber = eCongressChamberHouse;
+		m_segmentCtrl.selectedSegmentIndex = 0;
+	}
+	else if ( [chamber isEqualToString:@"committee"] )
+	{
+		// XXX - unsupported!
+	}
+	else if ( [chamber isEqualToString:@"search"] )
+	{
+		m_selectedChamber = eCongressSearchResults;
+		[m_initialSearchString release]; m_initialSearchString = nil;
+		if ( ++parmIdx < [pArray count] ) m_initialSearchString = [[NSString alloc] initWithString:[[pArray objectAtIndex:parmIdx] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]];
+	}
+	
+	// Current index in the table
+	if ( ++parmIdx < [pArray count] )
+	{
+		NSInteger section = 0;
+		NSInteger row = 0;
+		section = [[pArray objectAtIndex:parmIdx] integerValue];
+		if ( ++parmIdx < [pArray count] ) row = [[pArray objectAtIndex:parmIdx] integerValue];
+		
+		[m_initialIndexPath release];
+		NSUInteger idx[2] = {section,row};
+		m_initialIndexPath = [[NSIndexPath alloc] initWithIndexes:idx length:2];
+	}
+	
+get_out:
 	if ( nil != billStr && ([billStr length] > 0) )
 	{
 		m_initialBillID = [[NSString alloc] initWithString:[billStr stringByReplacingOccurrencesOfString:@"/" withString:@" "]
 						  ];
-		
-		if ( [m_data isDataAvailable] )
+	}
+	
+	if ( [m_data isDataAvailable] )
+	{
+		if ( nil != m_initialIndexPath || nil != m_initialSearchString )
 		{
-			//[self scrollToInitialPosition];
-			
+			[self scrollToInitialPosition];
+		}
+		
+		if ( nil != m_initialBillID )
+		{
 			BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
 			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																				selector:@selector(showInitialBill:) object:bill];
@@ -327,12 +387,54 @@ enum
 }
 
 
+- (void)scrollToInitialPosition
+{
+	BOOL isReloading = NO;
+	
+	if ( nil != m_initialSearchString )
+	{
+		UISearchBar *searchBar = (UISearchBar *)(self.tableView.tableHeaderView);
+		[searchBar setText:m_initialSearchString];
+		// this function does all the table data reloading for us :-)
+		[self searchBar:searchBar textDidChange:m_initialSearchString];
+		isReloading = YES;
+	}
+	
+	if ( nil != m_initialIndexPath )
+	{
+		if ( !isReloading ) [self.tableView reloadData];
+		// make sure the new index is within the bounds of our table
+		if ( [self.tableView numberOfSections] > m_initialIndexPath.section &&
+			[self.tableView numberOfRowsInSection:m_initialIndexPath.section] > m_initialIndexPath.row )
+		{
+			// scroll there!
+			[self.tableView scrollToRowAtIndexPath:m_initialIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		}
+	}
+	
+	// clear all the state (no matter what)
+	[m_initialSearchString release]; m_initialSearchString = nil;
+	[m_initialIndexPath release]; m_initialIndexPath = nil;
+}
+
+
 - (void)showInitialBill:(BillContainer *)bill
 {
 	// we should be running in a thread, so this should give my table
 	// enough time to load itself up before I go and cover it up.
 	// (yeah, it's a bit of a hack...)
-	[NSThread sleepForTimeInterval:0.33f]; 
+	//[NSThread sleepForTimeInterval:0.33f]; 
+	while ( self.navigationController.visibleViewController != self && 
+		    !self.tableView.userInteractionEnabled
+		  )
+	{
+		[m_HUD show:YES];
+		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
+		[self.tableView setNeedsDisplay];
+		
+		[NSThread sleepForTimeInterval:0.2f];
+	}
+	[NSThread sleepForTimeInterval:0.35f];
 	
 	if ( nil != bill )
 	{
@@ -403,16 +505,20 @@ enum
 		self.tableView.userInteractionEnabled = YES;
 		[m_HUD show:NO];
 		
-		// scroll to the top of the table
-		if ( [m_data totalBills] > 0 )
+		if ( nil != m_initialIndexPath || nil != m_initialSearchString )
 		{
-			[self.tableView reloadData];
-			NSUInteger idx[2] = {0,0};
-			[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+			[self scrollToInitialPosition];
 		}
-		
-		// scroll to our initial position!
-		//[self scrollToInitialPosition];
+		else
+		{
+			// scroll to the top of the table
+			if ( [m_data totalBills] > 0 )
+			{
+				[self.tableView reloadData];
+				NSUInteger idx[2] = {0,0};
+				[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+			}
+		}
 		
 		if ( nil != m_initialBillID )
 		{

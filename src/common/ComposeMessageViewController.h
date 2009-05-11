@@ -97,6 +97,7 @@ typedef enum
 	
 	id   m_activeTextField;
 	BOOL m_keyboardVisible;
+	BOOL m_shouldRespondToKbdEvents;
 	id m_parentCtrl;
 }
 

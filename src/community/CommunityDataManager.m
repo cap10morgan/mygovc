@@ -152,13 +152,18 @@
 
 - (NSString *)currentlyAuthenticatedUser
 {
+	if ( nil == m_currentUserUID )
+	{
+		// attempt to login with defaults provided in our settings
+		[m_dataSource validateUsername:nil andPassword:nil withDelegate:self];
+	}
 	return m_currentUserUID;
 }
 
 
-- (NSURL *)dataSourceLoginURL
+- (NSURLRequest *)dataSourceLoginURLRequest
 {
-	return [m_dataSource externalLoginURL];
+	return [m_dataSource externalLoginURLRequest];
 }
 
 
@@ -651,7 +656,17 @@
 - (void)communityDataSource:(id)dataSource
 		  userAuthenticated:(NSString *)uid
 {
-	m_currentUserUID = [[uid retain] autorelease];
+	NSRange atSymbol = [uid rangeOfString:@"@"];
+	NSString *cleanUser;
+	if ( (atSymbol.location > 0) && (atSymbol.length == 1) )
+	{
+		cleanUser = [uid substringToIndex:atSymbol.location];
+	}
+	else
+	{
+		cleanUser = uid;
+	}
+	m_currentUserUID = [[cleanUser retain] autorelease];
 }
 
 

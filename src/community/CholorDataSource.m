@@ -126,7 +126,7 @@
 }
 
 
-- (NSURL *)externalLoginURL
+- (NSURLRequest *)externalLoginURLRequest
 {
 	return nil;
 }

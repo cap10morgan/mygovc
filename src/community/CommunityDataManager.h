@@ -55,7 +55,7 @@
 
 - (NSString *)currentlyAuthenticatedUser;
 
-- (NSURL *)dataSourceLoginURL;
+- (NSURLRequest *)dataSourceLoginURLRequest;
 
 // starts a possible data cache load, plus new data download
 - (void)loadData;

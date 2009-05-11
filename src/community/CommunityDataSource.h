@@ -68,7 +68,7 @@
 @protocol CommunityDataSourceProtocol
 
 
-- (NSURL *)externalLoginURL;
+- (NSURLRequest *)externalLoginURLRequest;
 
 
 /*!

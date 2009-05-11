@@ -36,6 +36,9 @@ typedef enum
 @interface DataProviders : NSObject 
 {}
 
++ (NSString *)postStringFromDictionary:(NSDictionary *)dict;
+
+
 + (NSString *)Bioguide_LegislatorBioURL:(LegislatorContainer *)legislator;
 
 + (NSString *)OpenCongress_APIKey;
@@ -80,9 +83,12 @@ typedef enum
 
 
 + (NSString *)GAE_DownloadURLFor:(CommunityItemType)type;
++ (NSString *)GAE_CommunityItemPOSTURLFor:(CommunityItemType)type;
 + (NSString *)GAE_GoogleURLsDictKey;
 + (NSString *)GAE_GoogleLoginURLDictKey;
 + (NSString *)GAE_ItemsDictKey;
++ (NSString *)GAE_GoogleURLTitleDictKey;
++ (NSString *)GAE_GoogleLoginURLTitle;
 
 + (NSString *)Cholor_UserAuthURL;
 + (NSString *)Cholor_UserAddURL;

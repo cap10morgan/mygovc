@@ -13,7 +13,7 @@
 
 // XXX - I will fill this in with some static data for testing...
 
-- (NSURL *)externalLoginURL
+- (NSURLRequest *)externalLoginURLRequest
 {
 	return nil;
 }
