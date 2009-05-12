@@ -63,7 +63,7 @@ enum
 
 #define CONTACT_ROWACTION @selector(rowActionMailto:),\
                           @selector(rowActionPhoneCall:), \
-                          @selector(rowActionTwitterDM:), \
+                          @selector(rowActionTwitterMention:), \
                           @selector(rowActionNone:), \
                           @selector(rowActionURL:), \
                           @selector(rowActionURL:), \
@@ -89,7 +89,7 @@ enum
 @interface LegislatorInfoData (private)
 	- (NSArray *)setupDataSection:(NSInteger)section;
 	- (void)startActivityDownload;
-	- (void)rowActionTwitterDM:(NSIndexPath *)indexPath;
+	- (void)rowActionTwitterMention:(NSIndexPath *)indexPath;
 	- (void)rowActionLegislatorMap:(NSIndexPath *)indexPath;
 	- (void)rowActionShowCommittee:(NSIndexPath *)indexPath;
 @end
@@ -318,11 +318,11 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 }
 
 
-- (void)rowActionTwitterDM:(NSIndexPath *)indexPath
+- (void)rowActionTwitterMention:(NSIndexPath *)indexPath
 {
 	// display a message composer to tweet the legislator!
 	MessageData *msg = [[MessageData alloc] init];
-	msg.m_transport = eMT_SendTwitterDM;
+	msg.m_transport = eMT_SendTwitterMention;
 	msg.m_to = [NSString stringWithFormat:@"@%@",[m_legislator twitter_id]];
 	msg.m_subject = @"";
 	

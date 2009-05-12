@@ -39,6 +39,9 @@
 @synthesize m_communityThreadID;
 @synthesize m_image;
 
+static const NSInteger MAX_TWEET_LEN = 140;
+
+
 - (id)init
 {
 	if ( self = [super init] )
@@ -84,7 +87,7 @@
 	- (NSString *)mygovUserAuthWithCallback:(SEL)callback;
 	- (id)opMakePhoneCall;
 	- (id)opSendEmail;
-	- (id)opSendTwitterDM;
+	- (id)opSendTwitterMention;
 	- (id)opSendTweet;
 	- (id)opSendMyGovComment;
 	- (id)opSendMyGovReply;
@@ -173,12 +176,13 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 }
 
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
-	[super viewDidAppear:animated];
+	[super viewWillAppear:animated];
 	
 	m_keyboardVisible = NO;
 	m_shouldRespondToKbdEvents = YES;
+	
 	// register to receive keyboard notifications
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(keyboardWasShown:)
@@ -187,7 +191,12 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
     [[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(keyboardWasHidden:)
 												 name:UIKeyboardDidHideNotification object:nil];
-	
+}
+
+
+- (void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:animated];
 }
 
 
@@ -240,8 +249,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			titleTxt = @"Reply";
 			break;
 			
-		case eMT_SendTwitterDM:
-			titleTxt = @"Twitter DM";
+		case eMT_SendTwitterMention:
+			titleTxt = @"Twitter Mention";
 			break;
 			
 		case eMT_SendTweet:
@@ -275,7 +284,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	[m_fieldURL setText:[m_message.m_webURL absoluteString]];
 	[m_fieldURLTitle setText:m_message.m_webURLTitle];
 	
-	if ( m_message.m_transport == eMT_SendTwitterDM )
+	if ( m_message.m_transport == eMT_SendTwitterMention )
 	{
 		[m_fieldTo setEnabled:YES];
 	}
@@ -315,8 +324,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			sendOp = @selector(opSendMyGovReply);
 			break;
 			
-		case eMT_SendTwitterDM:
-			sendOp = @selector(opSendTwitterDM);
+		case eMT_SendTwitterMention:
+			sendOp = @selector(opSendTwitterMention);
 			break;
 			
 		case eMT_SendTweet:
@@ -385,6 +394,27 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 }
 
 
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+	switch ( m_message.m_transport )
+	{
+		case eMT_SendTweet:
+		case eMT_SendTwitterMention:
+		{
+			NSInteger spaceLeft = MAX_TWEET_LEN - [m_fieldTo.text length] - [textView.text length];
+			NSInteger spaceAfterInsert = spaceLeft - [text length];
+			if ( spaceAfterInsert < 0 ) return NO;
+			
+			m_labelMessage.text = [NSString stringWithFormat:@"Tweet (%0d)",spaceAfterInsert];
+			return YES;
+		}
+			
+		default:
+			return TRUE;
+	}
+}
+
+
 #pragma mark ComposeMessageViewController Private 
 
 
@@ -449,6 +479,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		case eMT_MyGov:
 		{
 			// everything is shown!
+			m_labelMessage.text = @"Comment";
 			[m_labelTo setHidden:NO];
 			[m_fieldTo setHidden:NO];
 			[m_fieldSubject setHidden:NO];
@@ -464,6 +495,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		case eMT_MyGovUserComment:
 		{
 			// don't show URL, or URLTitle fields
+			m_labelMessage.text = @"Message";
 			[m_labelTo setHidden:NO];
 			[m_fieldTo setHidden:NO];
 			[m_fieldSubject setHidden:NO];
@@ -477,9 +509,10 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		}
 			break;
 			
-		case eMT_SendTwitterDM:
+		case eMT_SendTwitterMention:
 		{
 			// only show To: and Message: fields
+			m_labelMessage.text = [NSString stringWithFormat:@"Tweet (%0d)",MAX_TWEET_LEN - [m_message.m_to length] - [m_message.m_body length]];
 			[m_labelTo setHidden:NO];
 			[m_fieldTo setHidden:NO];
 			[m_fieldSubject setHidden:YES];
@@ -495,6 +528,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		case eMT_SendTweet:
 		{
 			// only show Message: field
+			m_labelMessage.text = [NSString stringWithFormat:@"Tweet (%0d)",MAX_TWEET_LEN - [m_message.m_to length] - [m_message.m_body length]];
 			[m_labelTo setHidden:YES];
 			[m_fieldTo setHidden:YES];
 			[m_fieldSubject setHidden:YES];
@@ -667,7 +701,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 }
 
 
-- (id)opSendTwitterDM
+- (id)opSendTwitterMention
 {
 	MGTwitterEngine *twitterEngine = [myGovAppDelegate sharedTwitterEngine];
 	[twitterEngine retain];
@@ -685,7 +719,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 				m_twitterLoginView = [[TwitterLoginViewController alloc] initWithNibName:@"TwitterLoginView" bundle:nil];
 			}
 			
-			[m_twitterLoginView setNotifyTarget:self withSelector:@selector(opSendTwitterDM)];
+			[m_twitterLoginView setNotifyTarget:self withSelector:@selector(opSendTwitterMention)];
 			[m_twitterLoginView displayIn:self];
 			
 			return nil;
@@ -696,21 +730,23 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		}
 	}
 	
-	NSString *twitterID = [m_fieldTo.text stringByReplacingOccurrencesOfString:@"@" withString:@""];
-	NSString *tweet = m_fieldMessage.text;
+	//NSString *twitterID = [m_fieldTo.text stringByReplacingOccurrencesOfString:@"@" withString:@""];
+	NSString *tweet = [NSString stringWithFormat:@"%@ %@",m_fieldTo.text, m_fieldMessage.text];
 	if ( [tweet length] > 140 )
 	{
 		tweet = [tweet substringToIndex:140];
 	}
 	
-	[m_hud setText:@"Sending Twitter DM!" andIndicateProgress:YES];
+	[m_hud setText:@"Sending Tweet!" andIndicateProgress:YES];
 	[m_hud show:YES];
 	
 	[self.view setUserInteractionEnabled:NO];
 	[self.view setNeedsDisplay];
 	
 	[[myGovAppDelegate sharedAppDelegate] setTwitterNotifyTarget:self];
-	[twitterEngine sendDirectMessage:tweet to:twitterID];
+	[twitterEngine sendUpdate:tweet];
+	//[twitterEngine sendDirectMessage:tweet to:twitterID];
+	
 	
 	[twitterEngine release];
 	return nil;
@@ -869,11 +905,11 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		// pop up an alert saying it failed!
 		m_alertType = eAlertType_TwitterError;
 		UIAlertView *alert = [[UIAlertView alloc] 
-							  initWithTitle:@"Twitter DM Error"
-							  message:[NSString stringWithFormat:@"Error: [%@]\nIs %@ following you?",err, m_fieldTo.text]
+							  initWithTitle:@"Twitter Error"
+							  message:[NSString stringWithFormat:@"Error: [%@]",err]
 							  delegate:self
-							  cancelButtonTitle:nil
-							  otherButtonTitles:@"OK",@"Reset",nil];
+							  cancelButtonTitle:@"Close"
+							  otherButtonTitles:@"Reset U/P",nil];
 		[alert show];
 		return;
 	}

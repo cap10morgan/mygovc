@@ -114,8 +114,19 @@ enum
 	[m_segmentCtrl addTarget:self action:@selector(communityItemTypeSwitch:) forControlEvents:UIControlEventValueChanged];
 	
 	// add the buttons to the navigation bar
-	self.navigationItem.titleView = m_segmentCtrl;
-	[m_segmentCtrl release];
+	//self.navigationItem.titleView = m_segmentCtrl;
+	//[m_segmentCtrl release];
+	
+	UILabel *lblView = [[UILabel alloc] initWithFrame:CGRectMake(0.0f,0.0f,200.0f,44.0f)];
+	lblView.font = [UIFont boldSystemFontOfSize:16.0f];
+	lblView.textColor = [UIColor whiteColor];
+	lblView.backgroundColor = [UIColor clearColor];
+	lblView.text = @"Chatter";
+	lblView.textAlignment = UITextAlignmentCenter;
+	self.navigationItem.titleView = lblView;
+	[lblView release];
+	
+	[m_segmentCtrl autorelease];
 	
 	
 	// 

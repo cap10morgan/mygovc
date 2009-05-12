@@ -46,10 +46,19 @@
 	- (LegislatorContainer *)legislatorFromIndexPath:(NSIndexPath *)idx;
 @end
 
+
 enum
 {
 	eTAG_ACTIVITY = 999,
 };
+
+enum
+{
+	eAlertType_General = 0,
+	eAlertType_TweetAnyways = 1,
+};
+
+
 
 @implementation CongressViewController
 
@@ -101,6 +110,8 @@ enum
 	{
 		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
 	}
+	
+	m_alertViewFunction = eAlertType_General;
 	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
@@ -240,6 +251,7 @@ enum
 		
 		[m_HUD show:NO];
 		self.tableView.userInteractionEnabled = YES;
+		m_alertViewFunction = eAlertType_General;
 		UIAlertView *alert = [[UIAlertView alloc] 
 							  initWithTitle:@"Error!"
 							  message:txt
@@ -593,7 +605,8 @@ show_legislator:
 	
 	if ( !m_locationManager.locationServicesEnabled )
 	{
-		// XXX - alert user of failure?!
+		// alert user of failure?!
+		m_alertViewFunction = eAlertType_General;
 		UIAlertView *alert = [[UIAlertView alloc] 
 							  initWithTitle:@"Error finding local legislators"
 							  message:[NSString stringWithString:@"Sorry, localtion services seems to be disabled/non-functional!"]
@@ -852,9 +865,10 @@ show_legislator:
 					else
 					{
 						// No twitter ID
+						m_alertViewFunction = eAlertType_General;
 						UIAlertView *alert = [[UIAlertView alloc] 
 											  initWithTitle:@"Email Unavailable"
-											  message:[NSString stringWithFormat:@"%@ has not registered any form of email contact!",[legislator shortName]]
+											  message:[NSString stringWithFormat:@"%@ has not registered any form of email contact.\nSomeone should really fix this!",[legislator shortName]]
 											  delegate:self
 											  cancelButtonTitle:nil
 											  otherButtonTitles:@"OK",nil];
@@ -867,20 +881,23 @@ show_legislator:
 			case 2:
 				if ( [[legislator twitter_id] length] > 0 )
 				{
-					msg.m_transport = eMT_SendTwitterDM;
+					msg.m_transport = eMT_SendTwitterMention;
 					msg.m_to = [NSString stringWithFormat:@"@%@",[legislator twitter_id]];
 					msg.m_subject = @"";
 				}
 				else
 				{
 					// No twitter ID
+					m_alertViewFunction = eAlertType_TweetAnyways;
 					UIAlertView *alert = [[UIAlertView alloc] 
 											initWithTitle:@"Twitter Unavailable"
-											message:[NSString stringWithFormat:@"%@ does not have a registered twitter account.",[legislator shortName]]
+											message:[NSString stringWithFormat:@"%@ does not have a registered twitter account.\nTweet about them anyway?",[legislator shortName]]
 											delegate:self
-											cancelButtonTitle:nil
-											otherButtonTitles:@"OK",nil];
+											cancelButtonTitle:@"No"
+											otherButtonTitles:@"Yes",nil];
 					[alert show];
+					[msg release];
+					return;
 				}
 				break;
 			case 3:
@@ -946,7 +963,39 @@ show_legislator:
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-	// Do something here?!
+	switch ( m_alertViewFunction )
+	{
+		default:
+		case eAlertType_General:
+			break;
+			
+		case eAlertType_TweetAnyways:
+			switch ( buttonIndex )
+			{
+				case 1: // YES: Tweet about the current rep anyways!
+				{
+					LegislatorContainer *legislator = [self legislatorFromIndexPath:[self.tableView indexPathForSelectedRow]];
+					if ( nil != legislator )
+					{
+						MessageData *msg = [[MessageData alloc] init];
+						msg.m_transport = eMT_SendTweet;
+						msg.m_body = [NSString stringWithFormat:@"%@: ",[legislator shortName]];
+						// display the message composer
+						ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
+						[cmvc display:msg fromParent:self];
+						[msg release];
+					}
+				}
+					break;
+					
+				default:
+				case 0: // NO: no tweeting here...
+					break;
+			}
+			[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+			break;
+	}
+	m_alertViewFunction = eAlertType_General;
 }
 
 
@@ -1084,7 +1133,7 @@ show_legislator:
 	UIActionSheet *contactAlert =
 	[[UIActionSheet alloc] initWithTitle:[legislator shortName]
 							delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-							otherButtonTitles:@"Call",@"Email",@"Twitter DM",@"Comment!",nil];
+							otherButtonTitles:@"Call",@"Email",@"Twitter Mention",@"Comment!",nil];
 	
 	// use the same style as the nav bar
 	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;

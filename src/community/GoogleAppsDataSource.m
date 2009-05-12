@@ -31,6 +31,10 @@
 @interface GoogleAppsDataSource (private)
 	- (BOOL)doUserAuthFor:(NSString *)username 
 			 withPassword:(NSString *)password;
+
+	- (void)gatherUserInfo:(NSDictionary *)usernameDict 
+			andUseDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil;
+
 	- (NSURLRequest *)shapeLoginURL:(NSString *)url;
 @end
 
@@ -230,23 +234,8 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 		[idDict setValue:dummyArg forKey:item.m_creator];
 	}
 	
-	// run through the idDict and make sure
-	// our on-device usercache is up-to-date
-	NSEnumerator *idEnum = [idDict keyEnumerator];
-	NSString *username;
-	while ( username = [idEnum nextObject] )
-	{
-		if ( ![[myGovAppDelegate sharedUserData] usernameExistsInCache:username] )
-		{
-			// XXX - query for more info?!
-			
-			// create a new MyGovUser object and pass it up to our delegate
-			MyGovUser *user = [[MyGovUser alloc] init];
-			user.m_username = username;
-			
-			[delegateOrNil communityDataSource:self userDataArrived:user];
-		}
-	}
+	[self gatherUserInfo:idDict andUseDelegate:delegateOrNil];
+	[idDict release];
 	
 	return TRUE;
 }
@@ -284,6 +273,9 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	NSDictionary *itemsDict = [plistDict objectForKey:[DataProviders GAE_ItemsDictKey]];
 	if ( nil == itemsDict ) return FALSE;
 	
+	// store all known userIDs (usernames)
+	NSMutableDictionary *idDict = [[NSMutableDictionary alloc] init];
+	
 	// run through each array item, create a CommunityItem object
 	// and let our delegate know about it!
 	NSEnumerator *plEnum = [itemsDict objectEnumerator];
@@ -305,8 +297,15 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 				comment.m_communityItemID = item.m_id;
 				[item addComment:comment];
 			}
+			
+			// collect all unique usernames 
+			NSNumber *dummyArg = [NSNumber numberWithInt:1];
+			[idDict setValue:dummyArg forKey:comment.m_creator];
 		}
 	}
+	
+	[self gatherUserInfo:idDict andUseDelegate:delegateOrNil];
+	[idDict release];
 	
 	[delegateOrNil communityDataSource:self newCommunityItemArrived:item];
 	
@@ -470,6 +469,33 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	if ( nil == cookieData ) return FALSE;
 	
 	return TRUE;
+}
+
+
+- (void)gatherUserInfo:(NSDictionary *)usernameDict 
+		andUseDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
+{
+	if ( nil == usernameDict ) return;
+	
+	// run through the idDict and make sure
+	// our on-device usercache is up-to-date
+	NSEnumerator *idEnum = [usernameDict keyEnumerator];
+	NSString *username;
+	while ( username = [idEnum nextObject] )
+	{
+		if ( ![[myGovAppDelegate sharedUserData] usernameExistsInCache:username] )
+		{
+			// XXX - query for more info?!
+			
+			// create a new MyGovUser object and pass it up to our delegate
+			MyGovUser *user = [[MyGovUser alloc] init];
+			user.m_username = username;
+			
+			[delegateOrNil communityDataSource:self userDataArrived:user];
+		}
+	}
+	
+	return;
 }
 
 

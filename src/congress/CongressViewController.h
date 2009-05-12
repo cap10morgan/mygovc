@@ -52,6 +52,7 @@ typedef enum
 	CLLocation *m_currentLocation;
 	
 	ProgressOverlayViewController *m_HUD;
+	int m_alertViewFunction;
 }
 
 - (void)dataManagerCallback:(id)message;

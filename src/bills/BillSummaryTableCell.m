@@ -62,6 +62,9 @@ static const CGFloat S_ROW_HEIGHT = 25.0f;
 #define D_STATUS_COLOR [UIColor blackColor]
 #define D_VOTE_COLOR [UIColor darkGrayColor]
 
+#define VOTE_PASSED_COLOR [UIColor colorWithRed:0.1f green:0.65f blue:0.1f alpha:1.0f]
+#define VOTE_FAILED_COLOR [UIColor darkGrayColor];
+
 
 + (CGFloat)getCellHeightForBill:(BillContainer *)bill
 {
@@ -300,11 +303,11 @@ static const CGFloat S_ROW_HEIGHT = 25.0f;
 		UIColor *voteColor;
 		if ( [voteTxt isEqualToString:@"Passed"] )
 		{
-			voteColor = [UIColor greenColor];
+			voteColor = VOTE_PASSED_COLOR;
 		}
 		else
 		{
-			voteColor = [UIColor darkGrayColor];
+			voteColor = VOTE_FAILED_COLOR;
 		}
 		[voteView setText:voteTxt];
 		voteView.textColor = voteColor;

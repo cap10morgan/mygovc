@@ -220,7 +220,7 @@
 			rd.title = [NSString stringWithFormat:@"%@ replied:", [user m_username]];
 			rd.titleColor = [UIColor blackColor];
 			rd.titleFont = [UIFont boldSystemFontOfSize:14.0f];
-			rd.line2 = [NSString stringWithFormat:@"(%@) %@",dateStr, comment.m_text];
+			rd.line2 = [NSString stringWithFormat:@"(%@) %@\n%@",dateStr, comment.m_title, comment.m_text];
 			rd.line2Color = [UIColor darkGrayColor];
 			rd.line2Font = [UIFont systemFontOfSize:12.0f];
 			rd.url = nil;

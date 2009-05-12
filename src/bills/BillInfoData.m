@@ -77,6 +77,10 @@ enum
                         nil, nil, nil, nil
 
 
+#define VOTE_PASSED_COLOR [UIColor colorWithRed:0.1f green:0.65f blue:0.1f alpha:1.0f]
+#define VOTE_FAILED_COLOR [UIColor darkGrayColor];
+
+
 @interface BillInfoData (private)
 	- (NSArray *)setupDataSection:(NSInteger)section;
 @end
@@ -158,13 +162,13 @@ enum
 						rd.line2Font = [UIFont boldSystemFontOfSize:14.0f];
 						if ( [rd.line2 isEqualToString:@"Passed"] )
 						{
-							rd.line2 = [NSString stringWithFormat:@"                    %@",rd.line2];
-							rd.line2Color = [UIColor greenColor];
+							rd.line2 = [NSString stringWithFormat:@"                   %@",rd.line2];
+							rd.line2Color = VOTE_PASSED_COLOR;
 						}
 						else if ( [rd.line2 isEqualToString:@"Failed"] )
 						{
-							rd.line2 = [NSString stringWithFormat:@"                    %@",rd.line2];
-							rd.line2Color = [UIColor blackColor];
+							rd.line2 = [NSString stringWithFormat:@"                   %@",rd.line2];
+							rd.line2Color = VOTE_FAILED_COLOR;
 						}
 						else
 						{

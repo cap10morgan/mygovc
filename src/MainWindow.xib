@@ -208,37 +208,6 @@
 							</object>
 						</object>
 					</object>
-					<object class="IBUINavigationController" id="349198514">
-						<object class="IBUITabBarItem" key="IBUITabBarItem" id="11147867">
-							<string key="IBUITitle">Recovery</string>
-							<object class="NSCustomResource" key="IBUIImage">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">recoveryIcon.png</string>
-							</object>
-							<reference key="IBUITabBar"/>
-						</object>
-						<reference key="IBUIParentViewController" ref="1034742383"/>
-						<object class="IBUISimulatedStatusBarMetrics" key="IBUISimulatedStatusBarMetrics"/>
-						<object class="IBUINavigationBar" key="IBUINavigationBar" id="777344360">
-							<nil key="NSNextResponder"/>
-							<int key="NSvFlags">256</int>
-							<string key="NSFrameSize">{0, 0}</string>
-							<bool key="IBUIOpaque">NO</bool>
-							<bool key="IBUIClipsSubviews">YES</bool>
-							<bool key="IBUIMultipleTouchEnabled">YES</bool>
-							<int key="IBUIBarStyle">1</int>
-						</object>
-						<object class="NSMutableArray" key="IBUIViewControllers">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBUIViewController" id="929635108">
-								<object class="IBUINavigationItem" key="IBUINavigationItem" id="939348979">
-									<string key="IBUITitle">Recovery</string>
-								</object>
-								<reference key="IBUIParentViewController" ref="349198514"/>
-								<string key="IBUINibName">RecoveryView</string>
-							</object>
-						</object>
-					</object>
 					<object class="IBUINavigationController" id="382814786">
 						<object class="IBUITabBarItem" key="IBUITabBarItem" id="738529085">
 							<string key="IBUITitle">Community</string>
@@ -428,7 +397,6 @@
 							<reference ref="795333663"/>
 							<reference ref="578262494"/>
 							<reference ref="960204606"/>
-							<reference ref="349198514"/>
 							<reference ref="521573019"/>
 							<reference ref="382814786"/>
 						</object>
@@ -614,41 +582,6 @@
 						<reference key="object" ref="466935272"/>
 						<reference key="parent" ref="898141821"/>
 					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">200</int>
-						<reference key="object" ref="349198514"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="929635108"/>
-							<reference ref="777344360"/>
-							<reference ref="11147867"/>
-						</object>
-						<reference key="parent" ref="1034742383"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">201</int>
-						<reference key="object" ref="929635108"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="939348979"/>
-						</object>
-						<reference key="parent" ref="349198514"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">202</int>
-						<reference key="object" ref="777344360"/>
-						<reference key="parent" ref="349198514"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">203</int>
-						<reference key="object" ref="939348979"/>
-						<reference key="parent" ref="929635108"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">204</int>
-						<reference key="object" ref="11147867"/>
-						<reference key="parent" ref="349198514"/>
-					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -687,10 +620,6 @@
 					<string>2.IBAttributePlaceholdersKey</string>
 					<string>2.IBEditorWindowLastContentRect</string>
 					<string>2.IBPluginDependency</string>
-					<string>200.IBPluginDependency</string>
-					<string>201.IBPluginDependency</string>
-					<string>202.IBPluginDependency</string>
-					<string>203.IBPluginDependency</string>
 					<string>3.CustomClassName</string>
 					<string>3.IBPluginDependency</string>
 				</object>
@@ -698,7 +627,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>UIApplication</string>
 					<string>UIResponder</string>
-					<string>{{467, 330}, {320, 480}}</string>
+					<string>{{557, 352}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -735,10 +664,6 @@
 						</object>
 					</object>
 					<string>{{229, 373}, {320, 480}}</string>
-					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>myGovAppDelegate</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
