@@ -42,6 +42,12 @@
 	- (void)setActivityViewInNavBar;
 @end
 
+enum
+{
+	eAlertType_General = 0,
+	eAlertType_ReloadQuestion = 1,
+};
+
 
 @implementation CommunityViewController
 
@@ -70,6 +76,7 @@
 	[m_HUD show:NO];
 	[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
 	
+	m_alertViewFunction = eAlertType_General;
 	
 /* Leave this off for now - maybe in the next release...
  
@@ -231,9 +238,11 @@
 		 NSOrderedSame == [msg compare:@"ERR: " options:NSCaseInsensitiveSearch range:msgTypeRange] )
 	{
 		// pop up an alert dialog to let the user know that an error has occurred!
+		NSString *errMsg = ([msg length] > msgTypeRange.length) ? [msg substringFromIndex:msgTypeRange.length-1] : @"Unknown Error";
+		m_alertViewFunction = eAlertType_General;
 		UIAlertView *alert = [[UIAlertView alloc] 
 										initWithTitle:@"Community Data Error"
-											  message:[msg substringFromIndex:msgTypeRange.length-1]
+											  message:errMsg
 											 delegate:self
 									cancelButtonTitle:nil
 									otherButtonTitles:@"OK",nil];
@@ -305,11 +314,18 @@
 
 - (void)reloadCommunityItems
 {
+	// ask the user if they want to kill
+	// their local data store!
+	m_alertViewFunction = eAlertType_ReloadQuestion;
+	UIAlertView *alert = [[UIAlertView alloc] 
+						  initWithTitle:@"Reload Community Chatter"
+						  message:@"Do you want to remove cached comments?"
+						  delegate:self
+						  cancelButtonTitle:@"No"
+						  otherButtonTitles:@"Yes",nil];
+	[alert show];
+	
 	[self setActivityViewInNavBar];
-	
-	[m_data purgeAllItemsFromCacheAndMemory];
-	
-	[m_data loadData];
 }
 
 
@@ -339,6 +355,7 @@
 		case eCommunity_Event:
 		{
 			NSString *title = @"New Community Event";
+			m_alertViewFunction = eAlertType_General;
 			UIAlertView *alert = [[UIAlertView alloc] 
 								  initWithTitle:title
 								  message:@"This action is temporarily disabled..."
@@ -402,7 +419,27 @@
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-	// Do something here?!
+	switch ( m_alertViewFunction )
+	{
+		default:
+		case eAlertType_General:
+			break;
+		
+		case eAlertType_ReloadQuestion:
+			switch ( buttonIndex )
+			{
+				case 1: // YES: Please remove local cache
+					[m_data purgeAllItemsFromCacheAndMemory];
+					// fall-through to begin the data re-load!
+					
+				default:
+				case 0: // NO: don't remove local cache
+					[m_data loadData];
+					break;
+			}
+			break;
+	}
+	m_alertViewFunction = eAlertType_General;
 }
 
 
@@ -428,6 +465,7 @@
 		case 0:
 		{
 			// XXX - not ready for this yet...
+			m_alertViewFunction = eAlertType_General;
 			UIAlertView *alert = [[UIAlertView alloc] 
 								  initWithTitle:[[[myGovAppDelegate sharedUserData] userFromID:item.m_creator] m_username]
 								  message:@"User info view is currently disabled"

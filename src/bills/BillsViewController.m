@@ -48,6 +48,13 @@
 @end
 
 
+enum
+{
+	eAlertType_General = 0,
+	eAlertType_ReloadQuestion = 1,
+};
+
+
 
 @implementation BillsViewController
 
@@ -83,6 +90,7 @@ enum
 	m_initialSearchString = nil;
 	m_initialIndexPath = nil;
 	m_initialBillID = nil;
+	m_alertViewFunction = eAlertType_General;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
@@ -488,28 +496,19 @@ get_out:
 
 - (void)reloadBillData
 {
-	[m_shadowData release];
-	
-	// we want this to happen in the background, 
-	// so here's what we'll do:
-	// 
-	// Make a completely new copy of our bill data object, and tell it 
-	// to download the data. When it's done, we'll release the old data
-	// object, replace it with the new one and reload our table data!
-	// 
+	m_alertViewFunction = eAlertType_ReloadQuestion;
+	UIAlertView *alert = [[UIAlertView alloc] 
+						  initWithTitle:@"Reload Bill Data"
+						  message:@"Remove cached bill data?\nAnswering NO will download more recent bill data."
+						  delegate:self
+						  cancelButtonTitle:@"No"
+						  otherButtonTitles:@"Yes",nil];
+	[alert show];
 	
 	// set an activity button in the navbar to indicate progress
 	// (and also prevent this from happening again until we're ready)
 	[self setActivityViewInNavBar];
 	
-	// allocate a new data manager
-	m_shadowData = [[BillsDataManager alloc] init];
-	
-	// hook it up to our shadow callback
-	[m_shadowData setNotifyTarget:self withSelector:@selector(shadowDataCallback:)];
-	
-	// start downloading and let the callback handle the data-swap-and-reload
-	[m_shadowData loadDataByDownload];
 }
 
 
@@ -678,6 +677,7 @@ get_out:
 		else
 		{
 			// Search results!
+			m_alertViewFunction = eAlertType_General;
 			UIAlertView *alert = [[UIAlertView alloc] 
 										  initWithTitle:@"Not Found"
 										  message:[NSString stringWithString:@"Sorry, no bills were found which matched your search string. Did you spell it right?"]
@@ -837,7 +837,41 @@ deselect_and_return:
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-	// Do something here?!
+	switch ( m_alertViewFunction )
+	{
+		default:
+		case eAlertType_General:
+			break;
+			
+		case eAlertType_ReloadQuestion:
+			[m_shadowData release]; m_shadowData = nil;
+			// we want this to happen in the background, 
+			// so here's what we'll do:
+			// 
+			// Make a completely new copy of our bill data object, and tell it 
+			// to download the data. When it's done, we'll release the old data
+			// object, replace it with the new one and reload our table data!
+			// 
+			// allocate a new data manager
+			m_shadowData = [[BillsDataManager alloc] init];
+			// hook it up to our shadow callback
+			[m_shadowData setNotifyTarget:self withSelector:@selector(shadowDataCallback:)];
+			
+			switch ( buttonIndex )
+			{
+				case 1: // YES: Please remove local cache
+					// start downloading and let the callback handle the data-swap-and-reload
+					[m_shadowData loadDataByDownload:YES];
+					break;
+					
+				default:
+				case 0: // NO: don't remove local cache
+					[m_shadowData loadDataByDownload:NO];
+					break;
+			}
+			break;
+	}
+	m_alertViewFunction = eAlertType_General;
 }
 
 

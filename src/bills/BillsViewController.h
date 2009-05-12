@@ -43,6 +43,7 @@
 	
 	NSString *m_HUDTxt;
 	ProgressOverlayViewController *m_HUD;
+	int m_alertViewFunction;
 }
 
 - (NSString *)areaName;

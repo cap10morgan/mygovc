@@ -55,6 +55,8 @@ typedef enum
 - (id)initWithPlistDict:(NSDictionary *)plistDict;
 - (NSDictionary *)writeToPlistDict;
 
+- (NSComparisonResult)compareCommentByDate:(CommunityComment *)that;
+
 @end
 
 

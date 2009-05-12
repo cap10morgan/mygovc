@@ -37,6 +37,8 @@
 	CommunityItemType   m_selectedItemType;
 	
 	ProgressOverlayViewController *m_HUD;
+	
+	int m_alertViewFunction;
 }
 
 - (void)showCommunityDetail:(id)sender;

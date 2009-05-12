@@ -205,7 +205,7 @@
 	// add all the user comments (when in _either_ an event, _or_ a feedback item)
 	if ( eCDetailSection_UserComments == section )
 	{
-		NSArray *ucArray = [m_item comments];
+		NSArray *ucArray = [[m_item comments] sortedArrayUsingSelector:@selector(compareCommentByDate:)];
 		NSEnumerator *ucEnum = [ucArray objectEnumerator];
 		CommunityComment *comment;
 		while ( comment = [ucEnum nextObject] )
@@ -213,14 +213,14 @@
 			TableRowData *rd = [[TableRowData alloc] init];
 			
 			NSDateFormatter *dateFmt = [[[NSDateFormatter alloc] init] autorelease];
-			[dateFmt setDateFormat:@"'on' yyyy-MM-dd 'at' HH:mm:ss"];
+			[dateFmt setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 			NSString *dateStr = (comment.m_date ? [dateFmt stringFromDate:comment.m_date] : @"");
 			
 			MyGovUser *user = [[myGovAppDelegate sharedUserData] userFromUsername:comment.m_creator];
-			rd.title = [NSString stringWithFormat:@"%@ replied%@:",[user m_username], dateStr];
+			rd.title = [NSString stringWithFormat:@"%@ replied:", [user m_username]];
 			rd.titleColor = [UIColor blackColor];
 			rd.titleFont = [UIFont boldSystemFontOfSize:14.0f];
-			rd.line2 = comment.m_text;
+			rd.line2 = [NSString stringWithFormat:@"(%@) %@",dateStr, comment.m_text];
 			rd.line2Color = [UIColor darkGrayColor];
 			rd.line2Font = [UIFont systemFontOfSize:12.0f];
 			rd.url = nil;

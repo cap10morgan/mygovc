@@ -89,6 +89,7 @@ static NSInteger s_maxBillPages = 0;
 		
 		m_billsDownloaded = 0;
 		m_billDownloadPage = 1;
+		m_downloadReallyRecentStuff = NO;
 		
 		m_searching = NO;
 		m_searchResults = nil;
@@ -162,6 +163,7 @@ static NSInteger s_maxBillPages = 0;
 		CGFloat now = (CGFloat)[[NSDate date] timeIntervalSinceReferenceDate];
 		if ( (now - lastUpdate) > updateInterval ) // this will still be true if the file wasn't found :-)
 		{
+			m_downloadReallyRecentStuff = YES; // get the latest and greatest :-)
 			shouldReDownload = YES;
 		}
 	}
@@ -188,9 +190,17 @@ static NSInteger s_maxBillPages = 0;
 }
 
 
-- (void)loadDataByDownload
+- (void)loadDataByDownload:(BOOL)removeCache
 {
-	[self clearData];
+	if ( removeCache )
+	{
+		[self clearData];
+		m_downloadReallyRecentStuff = NO;
+	}
+	else
+	{
+		m_downloadReallyRecentStuff = YES;
+	}
 	m_billDownloadPage = 1;
 	[self beginBillSummaryDownload];
 }
@@ -431,8 +441,8 @@ static NSInteger s_maxBillPages = 0;
 	// This yields _so_ much noise it's not worth it:
 	// use the default OpenCongress set of bills...
 	NSString *xmlURL;
-#if 1
-	NSDateComponents *dateComps = [[NSCalendar currentCalendar] components:(NSYearCalendarUnit | NSMonthCalendarUnit) fromDate:[NSDate date]];
+	NSDateComponents *dateComps = [[NSCalendar currentCalendar] components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) 
+																  fromDate:[NSDate date]];
 	
 	// Determine the number of pages (number of months this year)
 	if ( 0 == s_maxBillPages )
@@ -461,20 +471,27 @@ static NSInteger s_maxBillPages = 0;
 		
 		xmlURL = [DataProviders OpenCongress_BillsURLIntroducedSinceDate:startDate onPage:1];
 	}
+	else if ( m_billDownloadPage >= s_maxBillPages )
+	{
+		// download _really_ recent stuff!
+		static const CGFloat S_A_WEEK_OF_SECONDS = 604800.0f;
+		dateComps = [[NSCalendar currentCalendar] components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) 
+													fromDate:[[NSDate date] addTimeInterval:-S_A_WEEK_OF_SECONDS]];
+		NSDateComponents *comps = [[NSDateComponents alloc] init];
+		[comps setDay:[dateComps day]];
+		[comps setMonth:[dateComps month]];
+		[comps setYear:[dateComps year]];
+		NSCalendar *gregorian = [[NSCalendar alloc]
+								 initWithCalendarIdentifier:NSGregorianCalendar];
+		startDate = [gregorian dateFromComponents:comps];
+		[comps release];
+		
+		xmlURL = [DataProviders OpenCongress_BillsURLIntroducedSinceDate:startDate onPage:1];
+	}
 	else
 	{
 		xmlURL = [DataProviders OpenCongress_BillsURLOnPage:m_billDownloadPage-1];
 	}
-	
-#endif
-	
-#if 0
-	if ( 0 == s_maxBillPages )
-	{
-		s_maxBillPages = 3;
-	}
-	xmlURL = [DataProviders OpenCongress_BillsURLOnPage:m_billDownloadPage];
-#endif
 	
 	m_billsDownloaded = 0;
 	m_billDownloadPage++;
@@ -765,12 +782,24 @@ static NSInteger s_maxBillPages = 0;
 {
 	isDownloading = NO;
 	
+	if ( m_downloadReallyRecentStuff && 
+		 (m_billDownloadPage > s_maxBillPages) 
+		)
+	{
+		// only allow this to happen once :-)
+		m_downloadReallyRecentStuff = NO;
+	}
+	
 	// we received the maximum number of bills - there might be more!
 	// (don't go above a maximum numbe of pages)
-	if ( (m_billDownloadPage < s_maxBillPages) &&
-		 (m_billsDownloaded >= [DataProviders OpenCongress_MaxBillsReturned])  ) 
+	if ( m_downloadReallyRecentStuff ||
+		 (
+		   (m_billDownloadPage < s_maxBillPages) &&
+		   (m_billsDownloaded >= [DataProviders OpenCongress_MaxBillsReturned])  
+		 )
+	   ) 
 	{
-		// start another download from the current date (m_lastBillAction)
+		// start another download !
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																			selector:@selector(beginBillSummaryDownload) 
 																			  object:nil];
@@ -783,6 +812,7 @@ static NSInteger s_maxBillPages = 0;
 		return;
 	}
 	
+skip_newdownload:
 	isDataAvailable = success || isDataAvailable;
 	
 	[self setStatus:@"END"];

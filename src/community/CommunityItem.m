@@ -35,7 +35,7 @@ static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 
 static NSString *kCCKey_ID = @"id";
 static NSString *kCCKey_Creator = @"creator";
-static NSString *kCCKey_Date = @"date";
+static NSString *kCCKey_Date = @"creation_date";
 static NSString *kCCKey_CommunityItemID = @"communityItemID";
 static NSString *kCCKey_Title = @"subject";
 static NSString *kCCKey_Text = @"message";
@@ -125,6 +125,13 @@ static NSString *kCCKey_Text = @"message";
 				 forKey:kCCKey_Text];
 	
 	return (NSDictionary *)plistDict;
+}
+
+
+- (NSComparisonResult)compareCommentByDate:(CommunityComment *)that
+{
+	// don't allow "top posting": sort in reverse!
+	return [m_date compare:[that m_date]];
 }
 
 @end 

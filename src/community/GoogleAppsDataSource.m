@@ -459,7 +459,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	 acceptance policy." – Brian Hammond
 	 */
 	NSURL* cookieUrl = [NSURL URLWithString:[NSString stringWithFormat:@"https://mygov-mobile.appspot.com/_ah/login?continue=http://mygov-mobile.appspot.com/&auth=%@", [token objectForKey:@"Auth"]]];
-    NSLog( [cookieUrl description] );
+    //NSLog( [cookieUrl description] );
     NSHTTPURLResponse* cookieResponse;
     NSError* cookieError;
     NSMutableURLRequest *cookieRequest = [[[NSMutableURLRequest alloc] initWithURL:cookieUrl] autorelease];

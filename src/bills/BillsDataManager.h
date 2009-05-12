@@ -44,6 +44,7 @@
 	
 	NSInteger  m_billsDownloaded;
 	NSInteger  m_billDownloadPage;
+	BOOL       m_downloadReallyRecentStuff;
 	
 	BOOL            m_searching;
 	NSMutableArray *m_searchResults;
@@ -68,7 +69,7 @@
 - (NSString *)currentStatusMessage;
 
 - (void)loadData;
-- (void)loadDataByDownload;
+- (void)loadDataByDownload:(BOOL)removeCache;
 
 - (NSInteger)totalBills;
 - (BillContainer *)billWithIdentifier:(NSString *)billIdent;

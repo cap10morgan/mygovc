@@ -35,7 +35,7 @@ static const CGFloat CELL_DISCLOSURE_WIDTH = 18.0f;
 
 static const CGFloat CELL_MAX_WIDTH_PORTRAIT = 306.0f;
 static const CGFloat CELL_MAX_WIDTH_LANDSCAPE = 466.0f;
-static const CGFloat CELL_MAX_HEIGHT = 190.0f;
+static const CGFloat CELL_MAX_HEIGHT = 280.0f;
 static const CGFloat CELL_MIN_HEIGHT = 30.0f;
 
 #define TITLE_COLOR [UIColor blackColor]

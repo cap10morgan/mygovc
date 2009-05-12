@@ -80,6 +80,8 @@
 {
 	[super viewDidLoad];
 	
+	m_hud = [[ProgressOverlayViewController alloc] initWithWindow:self.view];
+	
 	[username setFont:[UIFont systemFontOfSize:16.0f]];
 	[password setFont:[UIFont systemFontOfSize:16.0f]];
 	
@@ -184,10 +186,7 @@
 	}
 	else
 	*/
-	{
-		[m_hud setText:@"Logging in to MyGov..." andIndicateProgress:YES];
-	}
-	
+	[m_hud setText:@"Logging in to Google Account..." andIndicateProgress:YES];
 	[m_hud show:YES];
 	
 	[self.view setUserInteractionEnabled:NO];
