@@ -91,6 +91,7 @@ enum
 	- (void)startActivityDownload;
 	- (void)rowActionTwitterDM:(NSIndexPath *)indexPath;
 	- (void)rowActionLegislatorMap:(NSIndexPath *)indexPath;
+	- (void)rowActionShowCommittee:(NSIndexPath *)indexPath;
 @end
 
 
@@ -261,7 +262,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 				rd.line2 = committee.m_name;
 				rd.line2Font = [UIFont systemFontOfSize:14.0f];
 				
-				rd.action = @selector(rowActionNone:);
+				rd.action = @selector(rowActionShowCommittee:);
 				[retVal addObject:rd];
 			}
 		}
@@ -332,34 +333,30 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 
 - (void)rowActionLegislatorMap:(NSIndexPath *)indexPath
 {
-	static NSString * kGoogleMapsURLFmt = @"http://maps.google.com/maps?q=%@+%@+%@+Washington+DC&ie=UTF&z=18&cd=1";
-	
-	NSString *title = @"representative";
-	if ( [[[m_legislator title] uppercaseString] isEqualToString:@"Sen"] )
-	{
-		title = @"senator";
-	}
-	else if ( [[[m_legislator title] uppercaseString] isEqualToString:@"Del"] )
-	{
-		title = @"delegate";
-	}
-	
-	NSString *genderTitle = @"Congressman";
-	if ( [[[m_legislator gender] uppercaseString] isEqualToString:@"F"] )
-	{
-		genderTitle = @"Congresswoman";
-	}
-	NSString *name = [NSString stringWithFormat:@"%@+%@", 
-								[m_legislator firstname], [m_legislator lastname]];
-	name = [name stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+	static NSString * kGoogleMapsURLFmt = @"http://maps.google.com/maps?q=%@+Washington+DC&ie=UTF&z=18&cd=1";
 	
 	NSString *urlStr = [NSString stringWithFormat:kGoogleMapsURLFmt,
-									title,
-									genderTitle, 
-									name];
+									[[m_legislator shortName] stringByReplacingOccurrencesOfString:@" " withString:@"+"]
+						];
 	
 	// open GoogleMaps application!
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlStr]];
+}
+
+
+- (void)rowActionShowCommittee:(NSIndexPath *)indexPath
+{
+	TableRowData *rd = [self dataAtIndexPath:indexPath];
+	
+	NSArray *titleComponents = [rd.title componentsSeparatedByString:@"_"];
+	NSString *committeeID = ([titleComponents count] >= 1) ? [titleComponents objectAtIndex:0] : rd.title;
+	NSString *committeeName = [rd.line2 stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
+	
+	NSString *appURLStr = [NSString stringWithFormat:@"mygov://congress/search:%@:%@",
+										committeeID, committeeName
+						   ];
+	NSURL *appURL = [NSURL URLWithString:appURLStr];
+	[[UIApplication sharedApplication] openURL:appURL];
 }
 
 

@@ -185,6 +185,21 @@ static NSString *kTitleValue_Senator = @"Sen";
 	// build a new search array
 	m_searchArray = [[NSMutableArray alloc] initWithCapacity:10];
 	
+	// see if this search string is a committee key
+	NSArray *committeeMembers = [m_committees legislatorsInCommittee:m_currentSearchString];
+	if ( nil != committeeMembers )
+	{
+		NSEnumerator *cmEnum = [committeeMembers objectEnumerator];
+		NSString *legGovTrackID;
+		while ( legGovTrackID = [cmEnum nextObject] )
+		{
+			[m_searchArray addObject:[self getLegislatorFromGovtrackID:legGovTrackID]];
+		}
+		[m_searchArray sortUsingSelector:@selector(districtCompare:)];
+		
+		return;
+	}
+	
 	// this is a district specification - build the search list quick and easy :-)
 	if ( [string length] == 4 && [[string substringFromIndex:2] integerValue] > 0 )
 	{
@@ -304,6 +319,44 @@ static NSString *kTitleValue_Senator = @"Sen";
 		while ( legislator = [legEnum nextObject] )
 		{
 			if ( [[legislator bioguide_id] isEqualToString:bioguideid] )
+			{
+				return (LegislatorContainer *)legislator;
+			}
+		}
+	}
+	
+	return nil;
+}
+
+
+- (LegislatorContainer *)getLegislatorFromGovtrackID:(NSString *)govtrackID
+{
+	// XXX - Linear search... maybe speed this up someday?
+	
+	// house data
+	NSEnumerator *houseEnum = [m_house objectEnumerator];
+	id state;
+	id legislator;
+	while ( state = [houseEnum nextObject] ) 
+	{
+		NSEnumerator *legEnum = [state objectEnumerator];
+		while ( legislator = [legEnum nextObject] )
+		{
+			if ( [[legislator govtrack_id] isEqualToString:govtrackID] )
+			{
+				return (LegislatorContainer *)legislator;
+			}
+		}
+	}
+	
+	// senate data
+	NSEnumerator *senateEnum = [m_senate objectEnumerator];
+	while ( state = [senateEnum nextObject] ) 
+	{
+		NSEnumerator *legEnum = [state objectEnumerator];
+		while ( legislator = [legEnum nextObject] )
+		{
+			if ( [[legislator govtrack_id] isEqualToString:govtrackID] )
 			{
 				return (LegislatorContainer *)legislator;
 			}

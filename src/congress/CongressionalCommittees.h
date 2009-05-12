@@ -74,5 +74,7 @@
 // Return an array of LegislativeCommittee objects
 - (NSArray *)getCommitteeDataFor:(LegislatorContainer *)legislator;
 
+// Retrieve all the legislators in the given committee
+- (NSArray *)legislatorsInCommittee:(NSString *)committeeKey;
 
 @end

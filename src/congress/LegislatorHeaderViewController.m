@@ -118,6 +118,7 @@
 	[m_legislator setCallbackObject:self];
 	
 	// set legislator name 
+	/*
 	NSString *nickname = [m_legislator nickname];
 	NSString *fname = [m_legislator firstname];
 	NSString *mname = ([nickname length] > 0 ? @"" : [m_legislator middlename]);
@@ -128,8 +129,9 @@
 									(mname ? mname : @""),
 									(mname ? @" " : @""),lname
 					];
-	m_name.text = nm;
-	[nm release];
+	*/
+	m_name.text = [m_legislator shortName];
+	//[nm release];
 	
 	// set legislator party info
 	NSString *party = [m_legislator party];

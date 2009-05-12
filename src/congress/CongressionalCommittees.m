@@ -158,10 +158,9 @@ static NSString *kPropTitle_Parent = @"parent";
 		
 		// build legislator connection data
 		NSEnumerator *memEnum = [[committeeData objectForKey:kProp_MemberID] objectEnumerator];
-		id memObj;
-		while ( (memObj = [memEnum nextObject]) )
+		NSString *memberID;
+		while ( (memberID = [memEnum nextObject]) )
 		{
-			NSString *memberID = (NSString *)memObj;
 			NSMutableArray *committeeArray = [m_legislativeConnection objectForKey:memberID];
 			if ( nil == committeeArray ) 
 			{
@@ -174,6 +173,9 @@ static NSString *kPropTitle_Parent = @"parent";
 			}
 			[committeeArray addObject:committee.m_id];
 			[committeeArray release];
+			
+			// add the member to the committee object!
+			[committee.m_members addObject:memberID];
 		}
 		
 		// add committee to our in-memory structure
@@ -251,6 +253,15 @@ static NSString *kPropTitle_Parent = @"parent";
 	[emptyContainer release];
 	
 	return [retVal sortedArrayUsingSelector:@selector(compareCommittee:)];
+}
+
+
+- (NSArray *)legislatorsInCommittee:(NSString *)committeeKey
+{
+	LegislativeCommittee *committee = [m_committees objectForKey:[committeeKey uppercaseString]];
+	if ( nil == committee ) return nil;
+	
+	return committee.m_members;
 }
 
 

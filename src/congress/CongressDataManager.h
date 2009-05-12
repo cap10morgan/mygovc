@@ -96,6 +96,7 @@ typedef enum
 
 // legislator by BioGuide ID
 - (LegislatorContainer *)getLegislatorFromBioguideID:(NSString *)bioguideid;
+- (LegislatorContainer *)getLegislatorFromGovtrackID:(NSString *)govtrackID;
 
 // legislators by district
 - (NSArray *)congressionalDistricts;

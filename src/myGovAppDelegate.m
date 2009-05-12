@@ -192,13 +192,6 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 		NSLog( @"Congress data loaded: wow that was fast!" );
 	}
 	
-	// start the bill data download (waits for congress data)
-	[[myGovAppDelegate sharedBillsData] loadData];
-	
-	// purge old community data
-	[[myGovAppDelegate sharedCommunityData] purgeOldItemsFromCache:YES];
-	
-	
 	// run through all of the view controllers managed by the tab bar
 	// and setup our dictionary of view controllers which can handle URLs
 	NSArray *tabViews = m_tabBarController.viewControllers;
@@ -237,6 +230,13 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 			break;
 		}
 	}
+	
+	// start the bill data download (waits for congress data)
+	[[myGovAppDelegate sharedBillsData] loadData];
+	
+	// purge old community data, and start the download of new data!
+	[[myGovAppDelegate sharedCommunityData] purgeOldItemsFromCache:YES];
+	[[myGovAppDelegate sharedCommunityData] loadData];
 	
 	//
 	// Go back to the last application page viewed

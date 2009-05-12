@@ -182,6 +182,7 @@ enum
 				}
 			}
 		}
+			[retVal sortUsingSelector:@selector(compareTitle:)];
 			break;
 			
 		case eSection_Sponsor:
@@ -208,7 +209,7 @@ enum
 			
 		case eSection_CoSponsors:
 		{
-			NSArray *csArray = [m_bill cosponsors];
+			NSArray *csArray = [[m_bill cosponsors] sortedArrayUsingSelector:@selector(districtCompare:)];
 			NSEnumerator *csEnum = [csArray objectEnumerator];
 			id legislator;
 			while ( legislator = [csEnum nextObject] )
@@ -256,8 +257,6 @@ enum
 		
 	} // switch ( section )
 	
-	
-	[retVal sortUsingSelector:@selector(compareTitle:)];
 	return retVal;
 }
 

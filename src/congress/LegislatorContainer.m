@@ -130,10 +130,21 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 
 - (NSComparisonResult)districtCompare:(LegislatorContainer *)aLegislator
 {
+	NSString  *aState = [aLegislator state];
+	NSString  *myState = [self state];
+	
 	NSInteger aDist  = [[aLegislator district] integerValue];
 	NSInteger myDist = [[self district] integerValue];
-	if ( myDist < aDist ) return NSOrderedAscending;
-	if ( myDist > aDist ) return NSOrderedDescending;
+	
+	if ( [myState isEqualToString:aState] )
+	{
+		if ( myDist < aDist ) return NSOrderedAscending;
+		if ( myDist > aDist ) return NSOrderedDescending;
+	}
+	else
+	{
+		return [myState compare:aState];
+	}
 	return NSOrderedSame;
 }
 

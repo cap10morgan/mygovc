@@ -449,8 +449,15 @@ show_legislator:
 		[self scrollToInitialPosition];
 		
 		[m_initialLegislatorID release]; m_initialLegislatorID = nil;
-		if ( nil != bioguideID )
+		if ( nil == bioguideID )
 		{
+			// if no legislator is requested: pop everything off 
+			// the navigation controller's stack :-)
+			[self.navigationController popToRootViewControllerAnimated:YES];
+		}
+		else
+		{
+			// show the requested legislator!
 			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:bioguideID];
 			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																		  selector:@selector(showInitialLegislator:) object:legislator];
@@ -612,10 +619,19 @@ show_legislator:
 	
 	if ( nil != m_initialSearchString )
 	{
+		NSString *searchResultsTitle = [m_searchResultsTitle retain];
+		
 		UISearchBar *searchBar = (UISearchBar *)(self.tableView.tableHeaderView);
 		[searchBar setText:m_initialSearchString];
 		// this function does all the table data reloading for us :-)
+		// but it also mashes the search results title, so I need to
+		// reset that just after this call!
 		[self searchBar:searchBar textDidChange:m_initialSearchString];
+		
+		[m_searchResultsTitle release];
+		m_searchResultsTitle = [searchResultsTitle retain];
+		[searchResultsTitle release];
+		
 		isReloading = YES;
 	}
 	
