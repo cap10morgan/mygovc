@@ -23,8 +23,9 @@
 
 #import "myGovAppDelegate.h"
 
-#import "GoogleAppsDataSource.h"
+#import "CommunityDataManager.h"
 #import "DataProviders.h"
+#import "GoogleAppsDataSource.h"
 #import "MyGovUserData.h"
 
 @interface GoogleAppsDataSource (private)
@@ -237,7 +238,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	{
 		if ( ![[myGovAppDelegate sharedUserData] usernameExistsInCache:username] )
 		{
-			// XXX - query for more info!
+			// XXX - query for more info?!
 			
 			// create a new MyGovUser object and pass it up to our delegate
 			MyGovUser *user = [[MyGovUser alloc] init];
@@ -252,11 +253,64 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 
 
 - (BOOL)updateItemOfType:(CommunityItemType)type 
-			  withItemID:(NSInteger)itemID 
-			 andDelegate:(id<CommunityDataSourceDelegate>)delegatOrNil
+			  withItemID:(NSString *)itemID 
+			 andDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
-	// XXX - this needs to be filled in!
-	return FALSE;
+	CommunityItem *item = [[myGovAppDelegate sharedCommunityData] itemWithId:itemID];
+	if ( nil == item ) return FALSE;
+	
+	NSString *gaeURLStr = [DataProviders GAE_CommunityItemCommentsURLFor:item];
+	NSURL *gaeURL = [NSURL URLWithString:gaeURLStr];
+	
+	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:gaeURL];
+	[theRequest setHTTPMethod:@"GET"];
+	[theRequest setTimeoutInterval:10.0f]; // 10 second timeout
+	
+	NSURLResponse *theResponse = nil;
+	NSError *err = nil;
+	NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
+	
+	[theRequest release];
+	
+	if ( nil == retVal ) return FALSE;
+	
+	NSString *errString = nil;
+	NSPropertyListFormat plistFmt;
+	NSDictionary *plistDict = [NSPropertyListSerialization propertyListFromData:retVal 
+															   mutabilityOption:NSPropertyListImmutable 
+																		 format:&plistFmt 
+															   errorDescription:&errString];
+	
+	NSDictionary *itemsDict = [plistDict objectForKey:[DataProviders GAE_ItemsDictKey]];
+	if ( nil == itemsDict ) return FALSE;
+	
+	// run through each array item, create a CommunityItem object
+	// and let our delegate know about it!
+	NSEnumerator *plEnum = [itemsDict objectEnumerator];
+	NSDictionary *objDict;
+	while ( objDict = [plEnum nextObject] )
+	{
+		CommunityComment *comment = [[[CommunityComment alloc] initWithPlistDict:objDict] autorelease];
+		if ( nil != comment )
+		{
+			if ( [item.m_id isEqualToString:comment.m_id] )
+			{
+				// this item is really a comment, and should _not_
+				// show up in the main community screen...
+				[delegateOrNil communityDataSource:self removeCommunityItem:item];
+				return TRUE;
+			}
+			else
+			{
+				comment.m_communityItemID = item.m_id;
+				[item addComment:comment];
+			}
+		}
+	}
+	
+	[delegateOrNil communityDataSource:self newCommunityItemArrived:item];
+	
+	return TRUE;
 }
 
 
@@ -284,6 +338,11 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	[theRequest release];
 	
 	// check string response to indicate success / failure
+	if ( nil == response || ([response length] <= 0) )
+	{
+		return FALSE;
+	}
+	
 	return TRUE; //[self validResponse:response];
 }
 
@@ -291,8 +350,33 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 - (BOOL)submitCommunityComment:(CommunityComment *)comment 
 				  withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
-	// XXX - this needs to be filled in!
-	return FALSE;
+	// create an NSURLRequest object from the community item
+	// to perform a POST-style HTTP request
+	NSURL *gaeURL = [NSURL URLWithString:[DataProviders GAE_CommunityReplyPOSTURLFor:comment.m_communityItemID]];
+	
+	NSString *itemStr = [DataProviders postStringFromDictionary:[comment writeToPlistDict]];
+	NSData *itemAsPostData = [NSData dataWithBytes:[itemStr UTF8String] length:[itemStr length]];
+	
+	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:gaeURL];
+	[theRequest setHTTPMethod:@"POST"];
+	[theRequest setHTTPBody:itemAsPostData];
+	[theRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+	[theRequest setTimeoutInterval:10.0f]; // 10 second timeout
+	
+	NSURLResponse *theResponse = nil;
+	NSError *err = nil;
+	NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
+	NSString *response = [[[NSString alloc] initWithData:retVal encoding:NSMacOSRomanStringEncoding] autorelease];
+	
+	[theRequest release];
+	
+	// check string response to indicate success / failure
+	if ( nil == response || ([response length] <= 0) )
+	{
+		return FALSE;
+	}
+	
+	return TRUE; //[self validResponse:response];
 }
 
 

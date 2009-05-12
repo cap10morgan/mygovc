@@ -77,6 +77,7 @@ enum
 		self.title = @"Community Item"; // this will be updated later...
 		m_item = nil;
 		m_data = nil;
+		m_tableView = nil;
 		m_alertSheetUsed = eCDV_AlertShouldAttend;
 	}
 	return self;
@@ -215,6 +216,12 @@ enum
 {
 	// Return YES for supported orientations
 	return YES;
+}
+
+
+- (UITableView *)getTableView
+{
+	return m_tableView;
 }
 
 

@@ -932,11 +932,12 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	
 	if ( success )
 	{
+		/*
 		// add the comment to our in-memory structure :-)
-		//CommunityItem *ci = [[myGovAppDelegate sharedCommunityData] itemWithId:[reply.m_communityItemID integerValue]];
-		//[ci addComment:reply];
-		//[cdm communityDataSource:dataSource newCommunityItemArrived:ci];
-		
+		CommunityItem *ci = [[myGovAppDelegate sharedCommunityData] itemWithId:reply.m_communityItemID];
+		[ci addComment:reply];
+		[cdm communityDataSource:dataSource newCommunityItemArrived:ci];
+		*/
 		[cdm loadData];
 		
 		[self dismissModalViewControllerAnimated:YES];

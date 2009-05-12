@@ -99,6 +99,8 @@ typedef enum
 
 + (NSString *)GAE_DownloadURLFor:(CommunityItemType)type;
 + (NSString *)GAE_CommunityItemPOSTURLFor:(CommunityItemType)type;
++ (NSString *)GAE_CommunityItemCommentsURLFor:(CommunityItem *)item;
++ (NSString *)GAE_CommunityReplyPOSTURLFor:(NSString *)itemID;
 + (NSString *)GAE_GoogleURLsDictKey;
 + (NSString *)GAE_GoogleLoginURLDictKey;
 + (NSString *)GAE_ItemsDictKey;

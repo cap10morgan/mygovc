@@ -451,8 +451,8 @@ show_legislator:
 		[m_initialLegislatorID release]; m_initialLegislatorID = nil;
 		if ( nil == bioguideID )
 		{
-			// if no legislator is requested: pop everything off 
-			// the navigation controller's stack :-)
+			// if no legislator is requested: pop everything 
+			// off the navigation controller's stack
 			[self.navigationController popToRootViewControllerAnimated:YES];
 		}
 		else
@@ -1000,7 +1000,7 @@ show_legislator:
 		switch ( m_selectedChamber )
 		{
 			case eCongressSearchResults:
-				return m_searchResultsTitle;
+				return [m_searchResultsTitle stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
 			default:
 				// get full state name
 				return [[StateAbbreviations nameList] objectAtIndex:section];

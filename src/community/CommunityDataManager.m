@@ -55,6 +55,7 @@
 	- (void)syncInMemoryDataWithServer;
 	- (void)purgeCacheItemsOlderThan:(NSDate *)date;
 	- (BOOL)addCommunityItem:(CommunityItem *)newItem;
+	- (void)removeCommunityItem:(CommunityItem *)item;
 @end
 
 
@@ -261,17 +262,14 @@
 }
 
 
-- (CommunityItem *)itemWithId:(NSInteger)itemID
+- (CommunityItem *)itemWithId:(NSString *)itemID
 {
 	CommunityItem *item;
 	
-	// grrrr - I have to hack around the fact that I started using 
-	// a string ID, and now am using an int...
-	
-	item = [m_chatterIDDict objectForKey:[NSString stringWithFormat:@"%0d",itemID]];
+	item = [m_chatterIDDict objectForKey:itemID];
 	if ( nil != item ) return item;
 	
-	item = [m_eventIDDict objectForKey:[NSString stringWithFormat:@"%0d",itemID]];
+	item = [m_eventIDDict objectForKey:itemID];
 	if ( nil != item ) return item;
 	
 	return nil;
@@ -529,7 +527,7 @@
 	{
 		// do the updating via the CommunityDataSource object
 		if ( [m_dataSource updateItemOfType:theItem.m_type 
-								 withItemID:[theItem.m_id integerValue]
+								 withItemID:theItem.m_id
 								andDelegate:self] )
 		{
 			success = YES;
@@ -628,7 +626,7 @@
 		[itemDict setValue:newItem forKey:newItem.m_id];
 	}
 	
-	NSLog( @"mygov chatter: '%@'...",newItem.m_title );
+	//NSLog( @"mygov chatter: '%@'...",newItem.m_title );
 	
 	if ( NSOrderedAscending == [m_latestItemDate compare:newItem.m_date] )
 	{
@@ -637,6 +635,50 @@
 	}
 	
 	return TRUE;
+}
+
+
+- (void)removeCommunityItem:(CommunityItem *)item
+{
+	NSMutableArray *itemArray = nil;
+	NSMutableDictionary *itemDict = nil;
+	
+	if ( nil == item ) return;
+	switch ( item.m_type )
+	{
+		default:
+			return;
+			
+		case eCommunity_Chatter:
+			if ( nil == m_chatterData ) m_chatterData = [[NSMutableArray alloc] initWithCapacity:2];
+			if ( nil == m_chatterIDDict ) m_chatterIDDict = [[NSMutableDictionary alloc] initWithCapacity:2];
+			itemArray = m_chatterData;
+			itemDict = m_chatterIDDict;
+			break;
+			
+		case eCommunity_Event:
+			if ( nil == m_eventData ) m_eventData = [[NSMutableArray alloc] initWithCapacity:2];
+			if ( nil == m_eventIDDict ) m_eventIDDict = [[NSMutableDictionary alloc] initWithCapacity:2];
+			itemArray = m_eventData;
+			itemDict = m_eventIDDict;
+			break;
+	}
+	
+	if ( nil == itemArray ) return;
+	
+	// remove the item from both the array, and the dictionary
+	// First, get a handle to the in-memory item
+	CommunityItem *obj = [itemDict objectForKey:item.m_id];
+	if ( nil != obj )
+	{
+		[itemArray removeObject:obj];
+		[itemDict removeObjectForKey:item.m_id];
+		
+		// remove any cached file too!
+		NSString *filePath = [self cachePathForItem:item];
+		NSFileManager *fileManager = [NSFileManager defaultManager];
+		[fileManager removeItemAtPath:filePath error:NULL];
+	}
 }
 
 
@@ -649,14 +691,23 @@
 	// add the item to our in-memory structures
 	if ( ![self addCommunityItem:item] ) return;
 	
+	[self setStatus:m_currentStatusMessage];
+	
 	// don't cache self-generated objects 
 	// (we'll just re-download them next time we startup or reload)
-	if ( [item.m_id integerValue] > 0 )
+	if ( nil != item.m_id && [item.m_id length] > 1 )
 	{
 		// store the item in our data cache!
 		NSString *filePath = [self cachePathForItem:item];
 		[item writeItemToFile:filePath];
 	}
+}
+
+
+- (void)communityDataSource:(id)dataSource 
+		removeCommunityItem:(CommunityItem *)item
+{
+	[self removeCommunityItem:item];
 }
 
 

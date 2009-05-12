@@ -80,6 +80,9 @@
 {
 	[super viewDidLoad];
 	
+	[username setFont:[UIFont systemFontOfSize:16.0f]];
+	[password setFont:[UIFont systemFontOfSize:16.0f]];
+	
 	// hide by default 
 //	[passwordVerify setHidden:YES];
 //	[labelPasswordVerify setHidden:YES];

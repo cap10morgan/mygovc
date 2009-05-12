@@ -348,11 +348,26 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 {
 	TableRowData *rd = [self dataAtIndexPath:indexPath];
 	
-	NSArray *titleComponents = [rd.title componentsSeparatedByString:@"_"];
-	NSString *committeeID = ([titleComponents count] >= 1) ? [titleComponents objectAtIndex:0] : rd.title;
+	NSMutableArray *titleComponents = [[NSMutableArray alloc] initWithArray:[rd.title componentsSeparatedByString:@"_"]];
+	NSString *committeeID;
+	//([titleComponents count] >= 1) ? [titleComponents objectAtIndex:0] : rd.title;
+	if ( [titleComponents count] < 1 ) committeeID = rd.title;
+	if ( [titleComponents count] == 2 ) committeeID = [titleComponents objectAtIndex:0];
+	else
+	{
+		// remove the last item, and concatenate the rest
+		[titleComponents removeLastObject];
+		committeeID = [titleComponents componentsJoinedByString:@"_"];
+	}
+	
 	NSString *committeeName = [rd.line2 stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
 	
-	NSString *appURLStr = [NSString stringWithFormat:@"mygov://congress/search:%@:%@",
+	committeeName = [committeeName stringByReplacingOccurrencesOfString:@"House" withString:@"H."];
+	committeeName = [committeeName stringByReplacingOccurrencesOfString:@"Senate" withString:@"S."];
+	committeeName = [committeeName stringByReplacingOccurrencesOfString:@"Committee" withString:@"Com."];
+	committeeName = [committeeName stringByReplacingOccurrencesOfString:@"on" withString:@""];
+	
+	NSString *appURLStr = [NSString stringWithFormat:@"mygov://congress/search:%@:%@:0:0",
 										committeeID, committeeName
 						   ];
 	NSURL *appURL = [NSURL URLWithString:appURLStr];

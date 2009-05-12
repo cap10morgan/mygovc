@@ -589,11 +589,11 @@ static NSInteger s_maxBillPages = 0;
 		{
 			isBusy = NO;
 			isDataAvailable = NO;
-			isReadingCache = NO;
 			[self clearData];
 			m_billDownloadPage = 1;
 			[self beginBillSummaryDownload];
 		}
+		isReadingCache = NO;
 		return;
 	}
 	

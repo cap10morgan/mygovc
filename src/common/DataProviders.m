@@ -98,6 +98,11 @@ static NSString *kUSASpending_SearchAppendKey = @"&mustrn=y";
 // 
 static NSString *kGAE_downloadCommunityChatterURL = @"http://mygov-mobile.appspot.com/community/items.plist";
 static NSString *kGAE_downloadCommunityEventsURL = @"http://mygov-mobile.appspot.com/community/events.plist";
+static NSString *kGAE_postCommunityChatterURL = @"http://mygov-mobile.appspot.com/community/item/";
+static NSString *kGAE_postCommunityEventsURL = @"http://mygov-mobile.appspot.com/community/events/";
+static NSString *kGAE_downloadCommentsURL = @"http://mygov-mobile.appspot.com/community/item/%@/comments.plist";
+static NSString *kGAE_postCommunityCommentURL = @"http://mygov-mobile.appspot.com/community/item/%@/comment";
+
 static NSString *kGAE_GoogleURLsDictKey = @"google_urls";
 static NSString *kGAE_GoogleLoginURLDictKey = @"url";
 static NSString *kGAE_ItemsDictKey = @"items";
@@ -603,13 +608,34 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 			return nil;
 			
 		case eCommunity_Chatter:
-			return kGAE_downloadCommunityChatterURL;
+			return kGAE_postCommunityChatterURL;
 			
 		case eCommunity_Event:
-			return kGAE_downloadCommunityEventsURL;
+			return kGAE_postCommunityEventsURL;
 	}
 	
 	return nil;
+}
+
+
++ (NSString *)GAE_CommunityItemCommentsURLFor:(CommunityItem *)item
+{
+	if ( nil == item ) return nil;
+	
+	NSString *urlStr = [[[NSString alloc] initWithFormat:kGAE_downloadCommentsURL,
+											item.m_id
+						] autorelease];
+	return urlStr;
+}
+
+
++ (NSString *)GAE_CommunityReplyPOSTURLFor:(NSString *)itemID
+{
+	if ( nil == itemID ) return nil;
+	NSString *urlStr = [[[NSString alloc] initWithFormat:kGAE_postCommunityCommentURL,
+											itemID
+						] autorelease];
+	return urlStr;
 }
 
 

@@ -40,6 +40,8 @@
 
 @property (nonatomic, retain, setter=setItem:) CommunityItem *m_item;
 
+- (UITableView *)getTableView;
+
 - (void)setItem:(CommunityItem *)item;
 
 

@@ -227,7 +227,8 @@
 {
 	NSRange endTypeRange = {0, 3};
 	NSRange msgTypeRange = {0, 5};
-	if ( NSOrderedSame == [msg compare:@"ERR: " options:NSCaseInsensitiveSearch range:msgTypeRange] )
+	if ( [msg length] >= msgTypeRange.length &&
+		 NSOrderedSame == [msg compare:@"ERR: " options:NSCaseInsensitiveSearch range:msgTypeRange] )
 	{
 		// pop up an alert dialog to let the user know that an error has occurred!
 		UIAlertView *alert = [[UIAlertView alloc] 
@@ -239,21 +240,24 @@
 		[alert show];
 		[self setReloadButtonInNavBar];
 	}
-	else if ( [m_data isDataAvailable] )
+	else if ( [m_data isDataAvailable] ||
+			  ([msg length] >= endTypeRange.length && NSOrderedSame == [msg compare:@"END" options:NSCaseInsensitiveSearch range:endTypeRange])
+			 )
 	{
 		[m_HUD show:NO];
 		[self.tableView setUserInteractionEnabled:YES];
 		[self.tableView reloadData];
 		
 		[self setReloadButtonInNavBar];
-	}
-	else if ( NSOrderedSame == [msg compare:@"END" options:NSCaseInsensitiveSearch range:endTypeRange] )
-	{
-		// the data manager is done doing what it was doing, so kill the HUD
-		[m_HUD show:NO];
-		[self.tableView setUserInteractionEnabled:YES];
-		[self.tableView reloadData];
-		[self setReloadButtonInNavBar];
+		
+		// if we have a view controller currently showing, send it 
+		// a data-reload notice as well!
+		id topView = self.navigationController.visibleViewController;
+		if ( topView != self && [topView respondsToSelector:@selector(getTableView)] )
+		{
+			[[topView getTableView] reloadData];
+			[[topView getTableView] setNeedsDisplay];
+		}
 	}
 	else
 	{

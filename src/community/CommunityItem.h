@@ -36,15 +36,18 @@ typedef enum
 @interface CommunityComment : NSObject
 {
 	NSString  *m_id;
-	//NSInteger  m_creator;
-	NSString  *m_creator;
+	NSString  *m_creator; // Google UserID
+	NSDate    *m_date;
 	NSString  *m_communityItemID;
 	NSString  *m_title;
 	NSString  *m_text;
+@private
+	NSInteger m_localSecondsFromGMT;
 }
 
 @property (nonatomic,retain) NSString  *m_id;
 @property (nonatomic,retain) NSString  *m_creator;
+@property (nonatomic,retain) NSDate    *m_date;
 @property (nonatomic,retain) NSString  *m_communityItemID;
 @property (nonatomic,retain) NSString  *m_title;
 @property (nonatomic,retain) NSString  *m_text;
@@ -63,7 +66,6 @@ typedef enum
 	UIImage   *m_image;
 	NSString  *m_title;
 	NSDate    *m_date;
-//	NSInteger  m_creator; // ID of MyGovUser object 
 	NSString  *m_creator; // GoogleUserID
 	NSString  *m_summary;
 	NSString  *m_text;
@@ -73,13 +75,16 @@ typedef enum
 	
 	NSString  *m_webURLTitle;
 	NSURL     *m_webURL;
-	NSMutableArray *m_userComments; // array of CommunityComment items
+	NSMutableDictionary *m_userComments; // dictionary of CommunityComment items
 	
 	// used for events (m_type == eCommunityEvent)
 	CLLocation     *m_eventLocation;
 	NSString       *m_eventLocDescrip;
 	NSDate         *m_eventDate;
 	NSMutableArray *m_eventAttendees; // array of mygov users
+	
+@private
+	NSInteger  m_localSecondsFromGMT;
 }
 
 @property (nonatomic,retain) NSString   *m_id;

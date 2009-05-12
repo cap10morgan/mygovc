@@ -46,7 +46,7 @@ enum
 
 static const CGFloat S_CELL_HOFFSET = 7.0f;
 static const CGFloat S_CELL_VOFFSET = 5.0f;
-static const CGFloat S_TITLE_HEIGHT = 16.0f;
+static const CGFloat S_TITLE_HEIGHT = 18.0f;
 static const CGFloat S_TITLE_MAX_WIDTH = 175.0f;
 static const CGFloat S_MAX_IMG_WIDTH = 64.0f;
 static const CGFloat S_MAX_IMG_HEIGHT = 64.0f;
@@ -55,16 +55,16 @@ static const CGFloat S_MIN_HEIGHT = 64.0f + (2.0f * 5.0f);
 static const CGFloat S_MAX_HEIGHT = 100.0f;
 static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 
-#define TITLE_FONT     [UIFont boldSystemFontOfSize:12.0f]
+#define TITLE_FONT     [UIFont boldSystemFontOfSize:14.0f]
 #define TITLE_COLOR    [UIColor blackColor]
 
-#define USERNAME_FONT  [UIFont boldSystemFontOfSize:10.0f]
-#define USERNAME_COLOR [UIColor darkGrayColor];
+#define USERNAME_FONT  [UIFont boldSystemFontOfSize:12.0f]
+#define USERNAME_COLOR [UIColor colorWithRed:0.5f green:0.5f blue:0.3f alpha:1.0f]
 
-#define COMMENTS_FONT  [UIFont systemFontOfSize:12.0f]
-#define COMMENTS_COLOR [UIColor colorWithRed:0.2f green:0.25f blue:0.7f alpha:0.9f]
+#define COMMENTS_FONT  [UIFont systemFontOfSize:14.0f]
+#define COMMENTS_COLOR [UIColor colorWithRed:0.2f green:0.25f blue:0.8f alpha:0.95f]
 
-#define SUMMARY_FONT   [UIFont systemFontOfSize:12.0f]
+#define SUMMARY_FONT   [UIFont systemFontOfSize:13.0f]
 #define SUMMARY_COLOR  [UIColor darkGrayColor]
 
 

@@ -82,7 +82,7 @@
 - (void)purgeAllItemsFromCacheAndMemory;
 
 // grab community items 
-- (CommunityItem *)itemWithId:(NSInteger)itemID;
+- (CommunityItem *)itemWithId:(NSString *)itemID;
 
 
 // Table data methods

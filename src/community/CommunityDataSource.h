@@ -42,6 +42,15 @@
 	- (void)communityDataSource:(id)dataSource 
 		newCommunityItemArrived:(CommunityItem *)item;
 	
+
+	/*!
+		Called when the data source determines that this particular 
+	    community item is no longer needed / relevent
+	 */
+	- (void)communityDataSource:(id)dataSource 
+			removeCommunityItem:(CommunityItem *)item;
+	
+	
 	/*!
 		Called evey time the data source encounters a new user - it passes
 		up the recently encountered user data
@@ -173,7 +182,7 @@
 	@returns @b TRUE on success, @b FALSE otherwise 
  */
 - (BOOL)updateItemOfType:(CommunityItemType)type 
-			  withItemID:(NSInteger)itemID 
+			  withItemID:(NSString *)itemID 
 			 andDelegate:(id<CommunityDataSourceDelegate>)delegatOrNil;
 
 

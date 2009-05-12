@@ -70,8 +70,8 @@
 	
 	m_hud = [[ProgressOverlayViewController alloc] initWithWindow:self.view];
 	
-	[username setFont:[UIFont systemFontOfSize:14.0f]];
-	[password setFont:[UIFont systemFontOfSize:14.0f]];
+	[username setFont:[UIFont systemFontOfSize:16.0f]];
+	[password setFont:[UIFont systemFontOfSize:16.0f]];
 }
 
 

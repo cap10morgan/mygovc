@@ -308,11 +308,11 @@ enum
 	NSInteger parmIdx = 0;
 	NSString *chamber = nil;
 	NSArray *pArray = [parms componentsSeparatedByString:@":"];
-	if ( [pArray count] < 1 ) return;
+	if ( parmIdx >= [pArray count] ) return;
 	
 	NSString *billStr = [pArray objectAtIndex:parmIdx];
 	
-	if ( [pArray count] < ++parmIdx ) goto get_out;
+	if ( ++parmIdx >= [pArray count] ) goto get_out;
 	
 	// Congressional Chamber selected
 	chamber = [pArray objectAtIndex:parmIdx];

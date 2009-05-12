@@ -208,7 +208,7 @@ static NSString *kTitleValue_Senator = @"Sen";
 		NSString *state = [[string substringToIndex:2] uppercaseString];
 		
 		// representative
-		LegislatorContainer *lc = [self districtRepresentative:string]; 
+		LegislatorContainer *lc = [self districtRepresentative:[string uppercaseString]]; 
 		if ( nil != lc ) [m_searchArray addObject:lc];
 		
 		// senators

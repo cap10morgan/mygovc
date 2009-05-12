@@ -378,12 +378,12 @@
 
 
 - (BOOL)updateItemOfType:(CommunityItemType)type 
-			  withItemID:(NSInteger)itemID 
+			  withItemID:(NSString *)itemID 
 			 andDelegate:(id<CommunityDataSourceDelegate>)delegatOrNil
 {
 	NSURL *cholorURL = [NSURL URLWithString:[DataProviders Cholor_DownloadURLFor:type]];
 	
-	NSString *postStr = [NSString stringWithFormat:@"date=%0d&id=%d",0,itemID];
+	NSString *postStr = [NSString stringWithFormat:@"date=%0d&id=%d",0,[itemID integerValue]];
 	NSData *postData = [NSData dataWithBytes:[postStr UTF8String] length:[postStr length]];
 	
 	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:cholorURL];

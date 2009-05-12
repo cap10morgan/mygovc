@@ -124,7 +124,7 @@
 
 
 - (BOOL)updateItemOfType:(CommunityItemType)type 
-			  withItemID:(NSInteger)itemID 
+			  withItemID:(NSString *)itemID 
 			 andDelegate:(id<CommunityDataSourceDelegate>)delegatOrNil
 {
 	return TRUE;

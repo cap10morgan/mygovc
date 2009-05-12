@@ -27,14 +27,33 @@
 #import "CommunityItem.h"
 #import "MyGovUserData.h"
 
+static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
+
+
 @implementation CommunityComment
-@synthesize m_id, m_creator, m_communityItemID, m_title, m_text;
+@synthesize m_id, m_creator, m_date, m_communityItemID, m_title, m_text;
 
 static NSString *kCCKey_ID = @"id";
 static NSString *kCCKey_Creator = @"creator";
+static NSString *kCCKey_Date = @"date";
 static NSString *kCCKey_CommunityItemID = @"communityItemID";
-static NSString *kCCKey_Title = @"title";
-static NSString *kCCKey_Text = @"text";
+static NSString *kCCKey_Title = @"subject";
+static NSString *kCCKey_Text = @"message";
+
+
+- (id)init
+{
+	if ( self = [super init] )
+	{
+		m_id = nil; 
+		m_creator = nil; 
+		m_communityItemID = nil; 
+		m_title = nil; 
+		m_text = nil;
+		m_localSecondsFromGMT = 0;
+	}
+	return self;
+}
 
 
 - (id)initWithPlistDict:(NSDictionary *)plistDict
@@ -52,8 +71,28 @@ static NSString *kCCKey_Text = @"text";
 		else
 		{
 			self.m_id = [plistDict objectForKey:kCCKey_ID];
-			//self.m_creator = [[plistDict objectForKey:kCCKey_Creator] integerValue];
 			self.m_creator = [plistDict objectForKey:kCCKey_Creator];
+			
+			NSString *dateStr = [plistDict objectForKey:kCCKey_Date]; // this is in GMT
+			if ( nil == dateStr )
+			{
+				m_date = nil;
+			}
+			else
+			{
+				NSDateFormatter *dateFmt = [[NSDateFormatter alloc] init];
+				[dateFmt setDateFormat:kCIDateFormat];
+				// chop of the sub-second accuracy :-)
+				NSRange dotRange = [dateStr rangeOfString:@"."];
+				if ( dotRange.location > 0 && dotRange.length == 1 )
+				{
+					dateStr = [dateStr substringToIndex:dotRange.location];
+				}
+				NSDate *tmpDate = [dateFmt dateFromString:dateStr];
+				m_localSecondsFromGMT = [[NSTimeZone localTimeZone] secondsFromGMTForDate:tmpDate];
+				self.m_date = [tmpDate addTimeInterval:m_localSecondsFromGMT];
+			}
+			
 			self.m_communityItemID = [plistDict objectForKey:kCCKey_CommunityItemID];
 			self.m_title = [plistDict objectForKey:kCCKey_Title];
 			self.m_text = [[plistDict objectForKey:kCCKey_Text] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
@@ -71,6 +110,12 @@ static NSString *kCCKey_Text = @"text";
 	
 	//[plistDict setValue:[NSNumber numberWithInt:m_creator] forKey:kCCKey_Creator];
 	[plistDict setValue:m_creator forKey:kCCKey_Creator];
+	
+	NSDateFormatter *dateFmt = [[NSDateFormatter alloc] init];
+	[dateFmt setDateFormat:kCIDateFormat];
+	NSDate *tmpDate = [self.m_date addTimeInterval:-m_localSecondsFromGMT];
+	[plistDict setValue:[dateFmt stringFromDate:tmpDate] 
+				 forKey:kCCKey_Date];
 	
 	[plistDict setValue:m_communityItemID forKey:kCCKey_CommunityItemID];
 	
@@ -116,8 +161,6 @@ static NSString *kCIKey_Comments = @"comments";
 static NSString *kCIKey_EventLocation = @"event_location";
 static NSString *kCIKey_EventDate = @"event_date";
 static NSString *kCIKey_EventAttendees = @"event_attendees";
-
-static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 
 
 - (id)init
@@ -194,6 +237,7 @@ static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 
 - (NSDictionary *)writeItemToPlistDictionary
 {
+	NSString *urlStr;
 	NSEnumerator *objEnum;
 	id obj;
 	
@@ -210,9 +254,10 @@ static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 	[plistDict setValue:[m_title stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]
 				 forKey:kCIKey_Title];
 	
-	NSDateFormatter *dateFmt = [[NSDateFormatter alloc] init];
+	NSDateFormatter *dateFmt = [[[NSDateFormatter alloc] init] autorelease];
 	[dateFmt setDateFormat:kCIDateFormat];
-	[plistDict setValue:[dateFmt stringFromDate:m_date] 
+	NSDate *tmpDate = [self.m_date addTimeInterval:-m_localSecondsFromGMT];
+	[plistDict setValue:[dateFmt stringFromDate:tmpDate] 
 				 forKey:kCIKey_Date];
 	
 	/*
@@ -234,13 +279,23 @@ static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 	[plistDict setValue:[m_mygovURLTitle stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding] 
 				 forKey:kCIKey_MyGovURLTitle];
 	
-	[plistDict setValue:[[m_mygovURL absoluteString] stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding] 
+	// be extra-careful about URLs...
+	urlStr = [[m_mygovURL absoluteString] stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
+	urlStr = [urlStr stringByReplacingOccurrencesOfString:@"?" withString:@"%3F"];
+	urlStr = [urlStr stringByReplacingOccurrencesOfString:@"=" withString:@"%3D"];
+	urlStr = [urlStr stringByReplacingOccurrencesOfString:@"&" withString:@"%26"];
+	[plistDict setValue:urlStr
 				 forKey:kCIKey_MyGovURL];
 	
 	[plistDict setValue:[m_webURLTitle stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding] 
 				 forKey:kCIKey_WebURLTitle];
 	
-	[plistDict setValue:[[m_webURL absoluteString] stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]
+	// be extra-careful about URLs...
+	urlStr = [[m_webURL absoluteString] stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
+	urlStr = [urlStr stringByReplacingOccurrencesOfString:@"?" withString:@"%3F"];
+	urlStr = [urlStr stringByReplacingOccurrencesOfString:@"=" withString:@"%3D"];
+	urlStr = [urlStr stringByReplacingOccurrencesOfString:@"&" withString:@"%26"];
+	[plistDict setValue:urlStr
 				 forKey:kCIKey_WebURL];
 	
 	// get comments into a nice array
@@ -262,7 +317,8 @@ static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 						] 
 				 forKey:kCIKey_EventLocation];
 	
-	[plistDict setValue:[NSNumber numberWithInt:[m_eventDate timeIntervalSinceReferenceDate]] 
+	tmpDate = [self.m_eventDate addTimeInterval:-m_localSecondsFromGMT];
+	[plistDict setValue:[dateFmt stringFromDate:tmpDate] 
 				 forKey:kCIKey_EventDate];
 	
 	// this is an array of MyGovUser objects
@@ -298,33 +354,32 @@ static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 
 - (void)addComment:(NSString *)comment fromUser:(NSString *)mygovUser withTitle:(NSString *)title
 {
-	if ( nil == m_userComments )
-	{
-		m_userComments = [[NSMutableArray alloc] initWithCapacity:2];
-	}
-	
-	CommunityComment *cc = [[CommunityComment alloc] init];
+	CommunityComment *cc = [[[CommunityComment alloc] init] autorelease];
+	cc.m_communityItemID = self.m_id;
 	cc.m_text = comment;
 	cc.m_title = title;
 	cc.m_creator = mygovUser;
 	
-	[m_userComments addObject:cc];
+	[self addComment:cc];
 }
 
 
 - (void)addComment:(CommunityComment *)comment
 {
+	if ( nil == comment ) return;
+	
 	if ( nil == m_userComments )
 	{
-		m_userComments = [[NSMutableArray alloc] initWithCapacity:2];
+		m_userComments = [[NSMutableDictionary alloc] initWithCapacity:4];
 	}
-	[m_userComments addObject:comment];
+	
+	[m_userComments setValue:comment forKey:comment.m_id];
 }
 
 
 - (NSArray *)comments
 {
-	return (NSArray *)m_userComments;
+	return (NSArray *)[m_userComments allValues];
 }
 
 
@@ -373,6 +428,7 @@ static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 	m_eventLocation = nil;
 	m_eventDate = nil;
 	m_eventAttendees = nil;
+	m_localSecondsFromGMT = 0;
 	
 	// read file data!
 	if ( nil != plistDict )
@@ -387,16 +443,27 @@ static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 		self.m_date = tmpDate;
 		[tmpDate release];
 		*/
-		NSString *dateStr = [plistDict objectForKey:kCIKey_Date];
-		NSDateFormatter *dateFmt = [[NSDateFormatter alloc] init];
-		[dateFmt setDateFormat:kCIDateFormat];
-		// chop of the sub-second accuracy :-)
-		NSRange dotRange = [dateStr rangeOfString:@"."];
-		if ( dotRange.location > 0 )
+		NSRange dotRange;
+		NSDateFormatter *dateFmt = [[[NSDateFormatter alloc] init] autorelease];
+		
+		NSString *dateStr = [plistDict objectForKey:kCIKey_Date]; // date in GMT
+		if ( nil == dateStr )
 		{
-			dateStr = [dateStr substringToIndex:dotRange.location];
+			m_date = nil;
 		}
-		self.m_date = [dateFmt dateFromString:dateStr];
+		else
+		{
+			[dateFmt setDateFormat:kCIDateFormat];
+			// chop of the sub-second accuracy :-)
+			dotRange = [dateStr rangeOfString:@"."];
+			if ( dotRange.location > 0 && dotRange.length == 1 )
+			{
+				dateStr = [dateStr substringToIndex:dotRange.location];
+			}
+			NSDate *tmpDate = [dateFmt dateFromString:dateStr];
+			m_localSecondsFromGMT = [[NSTimeZone localTimeZone] secondsFromGMTForDate:tmpDate];
+			self.m_date = [tmpDate addTimeInterval:m_localSecondsFromGMT];
+		}
 		
 		//self.m_creator = [[plistDict objectForKey:kCIKey_Creator] integerValue];
 		self.m_creator = [plistDict objectForKey:kCIKey_Creator];
@@ -463,13 +530,17 @@ static NSString *kCIDateFormat = @"yyyy-MM-dd HH:mm:ss";//@"%Y-%m-%d %H:%M:%S";
 		[tmpDate release];
 		*/
 		dateStr = [plistDict objectForKey:kCIKey_EventDate];
-		dotRange = [dateStr rangeOfString:@"."];
-		if ( dotRange.location > 0 )
+		if ( nil == dateStr )
 		{
-			dateStr = [dateStr substringToIndex:dotRange.location];
+			self.m_eventDate = nil;
 		}
-		if ( nil != dateStr )
+		else
 		{
+			dotRange = [dateStr rangeOfString:@"."];
+			if ( dotRange.location > 0 && dotRange.length == 1 )
+			{
+				dateStr = [dateStr substringToIndex:dotRange.location];
+			}
 			self.m_eventDate = [dateFmt dateFromString:dateStr];
 		}
 		

@@ -212,8 +212,12 @@
 		{
 			TableRowData *rd = [[TableRowData alloc] init];
 			
+			NSDateFormatter *dateFmt = [[[NSDateFormatter alloc] init] autorelease];
+			[dateFmt setDateFormat:@"'on' yyyy-MM-dd 'at' HH:mm:ss"];
+			NSString *dateStr = (comment.m_date ? [dateFmt stringFromDate:comment.m_date] : @"");
+			
 			MyGovUser *user = [[myGovAppDelegate sharedUserData] userFromUsername:comment.m_creator];
-			rd.title = [NSString stringWithFormat:@"%@ replied:",[user m_username]];
+			rd.title = [NSString stringWithFormat:@"%@ replied%@:",[user m_username], dateStr];
 			rd.titleColor = [UIColor blackColor];
 			rd.titleFont = [UIFont boldSystemFontOfSize:14.0f];
 			rd.line2 = comment.m_text;
