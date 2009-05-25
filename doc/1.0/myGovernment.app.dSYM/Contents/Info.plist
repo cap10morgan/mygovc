@@ -12,12 +12,14 @@
 		<string>dSYM</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
+		<key>CFBundleShortVersionString</key>
+		<string>1.0</string>
 		<key>CFBundleVersion</key>
 		<string>1.0</string>
 		<key>dSYM_UUID</key>
 		<dict>
 			<key>arm</key>
-			<string>4B98EEB1-AE19-EAB7-4619-440A25213C38</string>
+			<string>13D4D9E6-4010-69D0-D463-B9D55C204113</string>
 		</dict>
 	</dict>
 </plist>
