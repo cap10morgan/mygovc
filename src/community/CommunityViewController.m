@@ -599,7 +599,8 @@ deselect_and_return:
 	// use the same style as the nav bar
 	sheet.actionSheetStyle = self.navigationController.navigationBar.barStyle;
 	
-	[sheet showInView:self.view];
+	//[sheet showInView:self.view];
+	[sheet showFromTabBar:(UITabBar *)[myGovAppDelegate sharedAppDelegate].m_tabBarController.view];
 	[sheet release];
 	
 	//[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];

@@ -39,6 +39,8 @@
 		01C075BC0F8EE96E00F5B2A1 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */; };
 		01C075C10F8EE98700F5B2A1 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */; };
 		01C729D80F9EEBBF00EA3FF9 /* recoveryIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */; };
+		01D4FF110FCB29B10000FAE7 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D4FF100FCB29B10000FAE7 /* Reachability.m */; };
+		01D4FF140FCB2A0D0000FAE7 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D4FF130FCB2A0D0000FAE7 /* SystemConfiguration.framework */; };
 		01D7FE470FA4F62100F78B92 /* CommunityDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE460FA4F62100F78B92 /* CommunityDataManager.m */; };
 		01D7FE520FA500DA00F78B92 /* ComposeMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01D7FE4B0FA500DA00F78B92 /* ComposeMessageView.xib */; };
 		01D7FE530FA500DA00F78B92 /* ComposeMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FE4D0FA500DA00F78B92 /* ComposeMessageViewController.m */; };
@@ -144,6 +146,10 @@
 		01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = recoveryIcon.png; path = res/recoveryIcon.png; sourceTree = "<group>"; };
+		01D4FEDE0FCB24620000FAE7 /* myGovCompileOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myGovCompileOptions.h; sourceTree = "<group>"; };
+		01D4FF0F0FCB29B10000FAE7 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		01D4FF100FCB29B10000FAE7 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		01D4FF130FCB2A0D0000FAE7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		01D7FE450FA4F62100F78B92 /* CommunityDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDataManager.h; sourceTree = "<group>"; };
 		01D7FE460FA4F62100F78B92 /* CommunityDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityDataManager.m; sourceTree = "<group>"; };
 		01D7FE4B0FA500DA00F78B92 /* ComposeMessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ComposeMessageView.xib; sourceTree = "<group>"; };
@@ -274,6 +280,7 @@
 				0126775E0F7F25CA00CF9C46 /* CoreLocation.framework in Frameworks */,
 				01C075BC0F8EE96E00F5B2A1 /* AddressBook.framework in Frameworks */,
 				01C075C10F8EE98700F5B2A1 /* AddressBookUI.framework in Frameworks */,
+				01D4FF140FCB2A0D0000FAE7 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +415,8 @@
 		01BC2FA00F5B840F00E7ABD0 /* common */ = {
 			isa = PBXGroup;
 			children = (
+				01D4FF0F0FCB29B10000FAE7 /* Reachability.h */,
+				01D4FF100FCB29B10000FAE7 /* Reachability.m */,
 				01D7FE6C0FA5010400F78B92 /* main.m */,
 				01D7FE6D0FA5010400F78B92 /* MainWindow.xib */,
 				01D7FE6E0FA5010400F78B92 /* myGovAppDelegate.h */,
@@ -438,6 +447,7 @@
 				01B61DAC0FAA96ED007E10E6 /* MyGovLoginView.xib */,
 				01B61DAE0FAA9701007E10E6 /* MyGovLoginViewController.h */,
 				01B61DAF0FAA9701007E10E6 /* MyGovLoginViewController.m */,
+				01D4FEDE0FCB24620000FAE7 /* myGovCompileOptions.h */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -540,6 +550,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				01D4FF130FCB2A0D0000FAE7 /* SystemConfiguration.framework */,
 				01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */,
 				01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */,
 				0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */,
@@ -689,6 +700,7 @@
 				01ACB0680FA8434900B6FF59 /* CDetailHeaderViewController.m in Sources */,
 				01E6EC0F0FA8C224001BEAD3 /* CholorDataSource.m in Sources */,
 				01B61DB00FAA9701007E10E6 /* MyGovLoginViewController.m in Sources */,
+				01D4FF110FCB29B10000FAE7 /* Reachability.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -755,7 +767,7 @@
 				GCC_VERSION = 4.0;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0D0B9CA2-26D5-4B7C-B667-CDA79CACEE36";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7944CA24-75AD-4FB9-A2B5-D43C73DB0D96";
 			};
 			name = Release;
 		};

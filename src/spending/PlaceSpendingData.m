@@ -461,11 +461,20 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	else
 	{
 		// download synchronously :-)
+		if ( ![myGovAppDelegate networkIsAvailable:YES] )
+		{
+			isDataAvailable = NO;
+			isBusy = NO;
+			return;
+		}
+		
 		//NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:detailSummaryURL];
 		NSData *data = [NSData dataWithContentsOfURL:detailSummaryURL];
 		NSString *xmlStr = [[NSString alloc] initWithData:data encoding:NSMacOSRomanStringEncoding];
 		NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithData:[xmlStr dataUsingEncoding:NSUTF8StringEncoding]];
 		[xmlStr release];
+		
+		[myGovAppDelegate networkNoLongerInUse];
 		
 		if ( nil == xmlParser ) 
 		{

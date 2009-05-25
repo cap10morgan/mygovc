@@ -20,6 +20,7 @@
  
  $Id: $
  */
+#import <objc/runtime.h>
 
 #import "myGovAppDelegate.h"
 #import "CommunityDataManager.h"
@@ -29,7 +30,7 @@
 #import "MGTwitterEngine.h"
 #import "MiniBrowserController.h"
 #import "MyGovUserData.h"
-#import <objc/runtime.h>
+#import "Reachability.h"
 
 @implementation myGovAppDelegate
 
@@ -41,6 +42,8 @@ static BillsDataManager *s_myBillsData = NULL;
 static CongressDataManager *s_myCongressData = NULL;
 static SpendingDataManager *s_mySpendingData = NULL;
 static MGTwitterEngine *s_myTwitterEngine = NULL;
+
+static int s_threads_using_network = 0;
 
 @synthesize m_window;
 @synthesize m_tabBarController;
@@ -65,6 +68,37 @@ static MGTwitterEngine *s_myTwitterEngine = NULL;
 	else
 	{
 		return path;
+	}
+}
+
+
++ (BOOL)networkIsAvailable:(BOOL)andWillBeBusy
+{
+	NetworkStatus status = [[Reachability sharedReachability] internetConnectionStatus];
+	BOOL available = (status != NotReachable);
+	
+	if ( available && andWillBeBusy )
+	{
+		// set status bar network activity indicator
+		++s_threads_using_network;
+		[UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+	}
+	else if ( !available )
+	{
+		s_threads_using_network = 0;
+		[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+	}
+	
+	return available;
+}
+
+
++ (void)networkNoLongerInUse
+{
+	if ( --s_threads_using_network <= 0 )
+	{
+		s_threads_using_network = 0;
+		[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 	}
 }
 

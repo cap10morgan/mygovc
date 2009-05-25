@@ -139,9 +139,17 @@
 
 - (void)downloadAndParse:(id)data
 {
-	if ( nil != m_xmlParser ) [m_xmlParser release];
+	if ( nil != m_xmlParser ) [m_xmlParser release]; m_xmlParser = nil;
 	
 	[m_opDelegate xmlParseOpStarted:self];
+	
+	if ( ![myGovAppDelegate networkIsAvailable:YES] )
+	{
+		m_finished = YES;
+		m_success = NO;
+		[m_opDelegate xmlParseOp:self endedWith:m_success];
+		return;
+	}
 	
 	if ( NSUTF8StringEncoding == m_strEncoding )
 	{
@@ -155,6 +163,8 @@
 		m_xmlParser = [[NSXMLParser alloc] initWithData:[xmlStr dataUsingEncoding:NSUTF8StringEncoding]];
 		[xmlStr release];
 	}
+	
+	[myGovAppDelegate networkNoLongerInUse];
 	
 	if ( nil == m_xmlParser ) 
 	{

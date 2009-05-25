@@ -61,7 +61,7 @@
 
 @implementation CommunityDataManager
 
-@synthesize isDataAvailable, isBusy;
+@synthesize isDataAvailable, isBusy, m_latestItemDate;
 
 + (NSString *)dataCachePath
 {
@@ -95,7 +95,8 @@
 		
 		m_searchData = nil;
 		
-		m_latestItemDate = [NSDate distantPast];
+		self.m_latestItemDate = [NSDate distantPast];
+		//self.m_latestItemDate = [[[NSDate alloc] initWithTimeIntervalSinceReferenceDate:[[NSDate distantPast] timeIntervalSinceReferenceDate]] autorelease];
 		
 		m_timer = nil;
 		
@@ -249,7 +250,8 @@
 	[self purgeCacheItemsOlderThan:[NSDate distantFuture]];
 	
 	// reset our latest event date
-	m_latestItemDate = [NSDate distantPast];
+	self.m_latestItemDate = [NSDate distantPast];
+	//self.m_latestItemDate = [[[NSDate alloc] initWithTimeIntervalSinceReferenceDate:[[NSDate distantPast] timeIntervalSinceReferenceDate]] autorelease];
 	
 	// kill our in-memory data
 	[m_chatterIDDict release]; m_chatterIDDict = nil;
@@ -419,7 +421,7 @@
 	//NSDate *newestDate = [NSDate distantPast];
 	
 	[self setStatus:@"Loading cached data..."];
-	m_latestItemDate = [NSDate distantPast];
+	self.m_latestItemDate = [NSDate distantPast];
 	
 	// load everything in our data cache!
 	NSString *cachePath = [[CommunityDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
@@ -449,7 +451,7 @@
 		NSInteger max_age = -604800; // default to ~1 week
 		if ( nil != max_age_str ) max_age = -([max_age_str integerValue]);
 		
-		m_latestItemDate = [[[[NSDate date] addTimeInterval:max_age] retain] autorelease];
+		self.m_latestItemDate = [[NSDate date] addTimeInterval:max_age];
 	}
 	
 	// download any new items
@@ -483,7 +485,10 @@
 {
 	BOOL success = FALSE;
 	
-	// XXX - validate username/password?!
+	if ( ![myGovAppDelegate networkIsAvailable:YES] )
+	{
+		return FALSE;
+	}
 	
 	// perform the blocking data download: Feedback items
 	[self setStatus:@"Downloading chatter..."];
@@ -501,6 +506,8 @@
 		return success; // at least one succeeded!
 	}
 	*/
+	
+	[myGovAppDelegate networkNoLongerInUse];
 	
 	return success;
 }
@@ -631,7 +638,8 @@
 	if ( NSOrderedAscending == [m_latestItemDate compare:newItem.m_date] )
 	{
 		// newItem.m_date is more recent than 'm_latestItemDate'
-		m_latestItemDate = [[newItem.m_date retain] autorelease];
+		self.m_latestItemDate = newItem.m_date;
+		//self.m_latestItemDate = [[[NSDate alloc] initWithTimeIntervalSinceReferenceDate:[newItem.m_date timeIntervalSinceReferenceDate]] autorelease];
 	}
 	
 	return TRUE;

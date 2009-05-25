@@ -87,7 +87,7 @@ typedef enum
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
-	[m_HUD setText:@"Waiting for data..." andIndicateProgress:YES];
+	[m_HUD setText:@"Waiting for congress data..." andIndicateProgress:YES];
 	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
@@ -322,7 +322,8 @@ typedef enum
 	sortAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
 	
 	m_actionSheetType = eAST_ContractorSort;
-	[sortAlert showInView:self.view];
+	//[sortAlert showInView:self.view];
+	[sortAlert showFromTabBar:(UITabBar *)[myGovAppDelegate sharedAppDelegate].m_tabBarController.view];
 	[sortAlert release];
 }
 
@@ -714,7 +715,8 @@ typedef enum
 			contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
 			
 			m_actionSheetType = eAST_PlaceAction;
-			[contactAlert showInView:self.view];
+			//[contactAlert showInView:self.view];
+			[contactAlert showFromTabBar:(UITabBar *)[myGovAppDelegate sharedAppDelegate].m_tabBarController.view];
 			[contactAlert release];
 		}
 			break;
@@ -732,7 +734,8 @@ typedef enum
 			contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
 			
 			m_actionSheetType = eAST_ContractorAction;
-			[contactAlert showInView:self.view];
+			//[contactAlert showInView:self.view];
+			[contactAlert showFromTabBar:(UITabBar *)[myGovAppDelegate sharedAppDelegate].m_tabBarController.view];
 			[contactAlert release];
 		}
 			break;

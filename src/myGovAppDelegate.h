@@ -50,6 +50,9 @@
 + (myGovAppDelegate *)sharedAppDelegate;
 + (NSString *)sharedAppCacheDir;
 
++ (BOOL)networkIsAvailable:(BOOL)andWillBeBusy;
++ (void)networkNoLongerInUse;
+
 + (MyGovUserData *)sharedUserData;
 
 + (CommunityDataManager *)sharedCommunityData;
@@ -59,6 +62,7 @@
 + (SpendingDataManager *)sharedSpendingData;
 
 + (MGTwitterEngine *)sharedTwitterEngine;
+
 
 - (UIView *)topView;
 - (UIViewController *)topViewController;

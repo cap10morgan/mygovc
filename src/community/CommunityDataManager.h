@@ -57,6 +57,7 @@
 
 @property (readonly) BOOL isDataAvailable;
 @property (readonly) BOOL isBusy;
+@property (retain) NSDate *m_latestItemDate;
 
 + (NSString *)dataCachePath;
 

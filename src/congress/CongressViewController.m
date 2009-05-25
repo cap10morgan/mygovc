@@ -20,7 +20,7 @@
  
  $Id: $
  */
-
+#import "myGovCompileOptions.h"
 #import "myGovAppDelegate.h"
 
 #import "ComposeMessageViewController.h"
@@ -102,6 +102,8 @@ enum
 	m_initialLegislatorID = nil;
 	m_initialSearchString = nil;
 	
+	m_hasShownNoNetworkAlert = NO;
+	
 	m_actionType = eActionReload;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
@@ -178,6 +180,25 @@ enum
 {
 	[super viewDidAppear:animated];
 	
+	if ( ![myGovAppDelegate networkIsAvailable:NO]  )
+	{
+		[m_HUD show:NO];
+		if ( !m_hasShownNoNetworkAlert )
+		{
+			m_hasShownNoNetworkAlert = YES;
+			m_alertViewFunction = eAlertType_General;
+			UIAlertView *alert = [[UIAlertView alloc] 
+								  initWithTitle:@"Network Unavailable"
+								  message:@"The device does not have an active internet connection. Some features of the application may not work correctly!"
+								  delegate:self
+								  cancelButtonTitle:nil
+								  otherButtonTitles:@"OK",nil];
+			[alert show];
+			[alert release];
+		}
+		goto deselect_and_return;
+	}
+	
 	if ( [m_data isDataAvailable] )
 	{
 		self.tableView.userInteractionEnabled = YES;
@@ -201,6 +222,7 @@ enum
 		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
 	}
 	
+deselect_and_return:
 	[self.tableView setNeedsDisplay];
 	
 	// de-select the currently selected row
@@ -227,7 +249,7 @@ enum
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
     // Return YES for supported orientations
-    return YES; // (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return MYGOV_SHOULD_SUPPORT_ROTATION;
 }
 
 
@@ -259,6 +281,7 @@ enum
 							  cancelButtonTitle:nil
 							  otherButtonTitles:@"OK",nil];
 		[alert show];
+		[alert release];
 	}
 	else if ( NSOrderedSame == [msg compare:@"LOCTN" options:NSCaseInsensitiveSearch range:msgTypeRange] )
 	{
@@ -576,7 +599,8 @@ show_legislator:
 	// use the same style as the nav bar
 	reloadAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
 	
-	[reloadAlert showInView:self.view];
+	//[reloadAlert showInView:self.view];
+	[reloadAlert showFromTabBar:(UITabBar *)[myGovAppDelegate sharedAppDelegate].m_tabBarController.view];
 	[reloadAlert release];
 }
 
@@ -614,6 +638,7 @@ show_legislator:
 							  cancelButtonTitle:nil
 							  otherButtonTitles:@"OK",nil];
 		[alert show];
+		[alert release];
 	}
 	else
 	{
@@ -873,6 +898,7 @@ show_legislator:
 											  cancelButtonTitle:nil
 											  otherButtonTitles:@"OK",nil];
 						[alert show];
+						[alert release];
 					}
 					goto deselect_and_return;
 				}
@@ -896,6 +922,7 @@ show_legislator:
 											cancelButtonTitle:@"No"
 											otherButtonTitles:@"Yes",nil];
 					[alert show];
+					[alert release];
 					[msg release];
 					return;
 				}
@@ -1138,7 +1165,8 @@ show_legislator:
 	// use the same style as the nav bar
 	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
 	
-	[contactAlert showInView:self.view];
+	//[contactAlert showInView:self.view];
+	[contactAlert showFromTabBar:(UITabBar *)[myGovAppDelegate sharedAppDelegate].m_tabBarController.view];
 	[contactAlert release];
 }
 

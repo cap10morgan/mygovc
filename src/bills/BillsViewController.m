@@ -980,7 +980,8 @@ deselect_and_return:
 	// use the same style as the nav bar
 	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;
 	
-	[contactAlert showInView:self.view];
+	//[contactAlert showInView:self.view];
+	[contactAlert showFromTabBar:(UITabBar *)[myGovAppDelegate sharedAppDelegate].m_tabBarController.view];
 	[contactAlert release];
 }
 
