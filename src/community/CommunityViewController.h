@@ -38,6 +38,8 @@
 	
 	ProgressOverlayViewController *m_HUD;
 	
+	UITabBarItem *m_tbarItem;
+	NSTimer *m_timer;
 	int m_alertViewFunction;
 }
 
@@ -46,6 +48,5 @@
 - (NSString *)areaName;
 - (NSString *)getURLStateParms;
 - (void)handleURLParms:(NSString *)parms;
-
 
 @end

@@ -62,6 +62,7 @@
 @implementation CommunityDataManager
 
 @synthesize isDataAvailable, isBusy, m_latestItemDate;
+@synthesize m_numNewItems;
 
 + (NSString *)dataCachePath
 {
@@ -94,6 +95,8 @@
 		m_eventIDDict = nil;
 		
 		m_searchData = nil;
+		
+		m_numNewItems = 0;
 		
 		self.m_latestItemDate = [NSDate distantPast];
 		//self.m_latestItemDate = [[[NSDate alloc] initWithTimeIntervalSinceReferenceDate:[[NSDate distantPast] timeIntervalSinceReferenceDate]] autorelease];
@@ -443,6 +446,7 @@
 	}
 	
 	// now download any new data!
+	m_numNewItems = 0;
 	if ( NSOrderedSame == [m_latestItemDate compare:[NSDate distantPast]] )
 	{
 		// we have no cache - only download items within the 
@@ -455,7 +459,7 @@
 	}
 	
 	// download any new items
-	BOOL downloadedData = [self downloadNewDataStartingAt:m_latestItemDate] || loadedCachedData;
+	BOOL downloadedData = [self downloadNewDataStartingAt:m_latestItemDate];
 	
 	isDataAvailable = (loadedCachedData || downloadedData);
 	isBusy = NO;
@@ -603,6 +607,14 @@
 	CommunityItem *obj = [itemDict objectForKey:newItem.m_id];
 	if ( nil != obj )
 	{
+		// XXX - we seem to sometimes re-download items without comments
+		// XXX - this extra check prevents needless overwriting and incorrect 
+		// XXX - "new items" badging.
+		if ( [[newItem comments] count] < [[obj comments] count] )
+		{
+			goto end_add_item;
+		}
+		
 		//NSLog( @"Replacing item: '%@'", newItem.m_id );
 		
 		NSUInteger arrayIdx = [itemArray indexOfObjectIdenticalTo:obj];
@@ -610,6 +622,14 @@
 		{
 			NSLog( @"Item '%@' is in the dictionary, but not the array?! Ignoring it.", newItem.m_id );
 			return FALSE;
+		}
+		
+		// we mostly replace items if there are new comments - if that's
+		// the case update the new items counter
+		if ( [[newItem comments] count] != [[obj comments] count] )
+		{
+			// XXX - mark item as new?!
+			m_numNewItems += [[newItem comments] count] - [[obj comments] count];
 		}
 		
 		[itemArray replaceObjectAtIndex:arrayIdx withObject:newItem];
@@ -631,10 +651,14 @@
 		
 		// set the dictionary value
 		[itemDict setValue:newItem forKey:newItem.m_id];
+		
+		// this is a new item!
+		++m_numNewItems;
 	}
 	
 	//NSLog( @"mygov chatter: '%@'...",newItem.m_title );
 	
+end_add_item:	
 	if ( NSOrderedAscending == [m_latestItemDate compare:newItem.m_date] )
 	{
 		// newItem.m_date is more recent than 'm_latestItemDate'

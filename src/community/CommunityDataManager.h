@@ -53,11 +53,15 @@
 	NSMutableString *m_currentStatusMessage;
 	id m_notifyTarget;
 	SEL m_notifySelector;
+	
+	NSInteger m_numNewItems;
 }
 
 @property (readonly) BOOL isDataAvailable;
 @property (readonly) BOOL isBusy;
 @property (retain) NSDate *m_latestItemDate;
+@property NSInteger m_numNewItems;
+
 
 + (NSString *)dataCachePath;
 
@@ -92,6 +96,5 @@
 - (NSInteger)numberOfRowsInSection:(NSInteger)section forType:(CommunityItemType)type;
 - (CGFloat)heightForDataAtIndexPath:(NSIndexPath *)indexPath forType:(CommunityItemType)type;
 - (CommunityItem *)itemForIndexPath:(NSIndexPath *)indexPath andType:(CommunityItemType)type;
-
 
 @end

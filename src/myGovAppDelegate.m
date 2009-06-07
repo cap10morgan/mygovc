@@ -48,7 +48,7 @@ static int s_threads_using_network = 0;
 @synthesize m_window;
 @synthesize m_tabBarController;
 @synthesize m_operationQueue;
-
+@synthesize m_tabBar;
 
 // Initialize the singleton instance if needed and return
 + (myGovAppDelegate *)sharedAppDelegate

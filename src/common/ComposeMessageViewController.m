@@ -106,6 +106,7 @@ static const NSInteger MAX_TWEET_LEN = 140;
 
 enum
 {
+	eAlertType_General = 0,
 	eAlertType_TwitterError = 1,
 	eAlertType_ChatterError,
 	eAlertType_ReplyError,
@@ -311,6 +312,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	[m_fieldMessage resignFirstResponder];
 	[m_fieldURL resignFirstResponder];
 	[m_fieldURLTitle resignFirstResponder];
+	
+	m_fieldMessage.text = [m_fieldMessage.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	
 	SEL sendOp = nil;
 	switch ( m_message.m_transport )
@@ -703,6 +706,21 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (id)opSendTwitterMention
 {
+	m_fieldMessage.text = [m_fieldMessage.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	if ( [m_fieldMessage.text length] <= 0 )
+	{
+		// pop up an alert saying it failed!
+		m_alertType = eAlertType_General;
+		UIAlertView *alert = [[UIAlertView alloc] 
+							  initWithTitle:@"Message Error"
+							  message:@"Please type a tweet!"
+							  delegate:self
+							  cancelButtonTitle:@"OK"
+							  otherButtonTitles:nil];
+		[alert show];
+		return nil;
+	}
+	
 	MGTwitterEngine *twitterEngine = [myGovAppDelegate sharedTwitterEngine];
 	[twitterEngine retain];
 	
@@ -755,6 +773,21 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (id)opSendTweet
 {
+	m_fieldMessage.text = [m_fieldMessage.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	if ( [m_fieldMessage.text length] <= 0 )
+	{
+		// pop up an alert saying it failed!
+		m_alertType = eAlertType_General;
+		UIAlertView *alert = [[UIAlertView alloc] 
+							  initWithTitle:@"Message Error"
+							  message:@"Please type a tweet!"
+							  delegate:self
+							  cancelButtonTitle:@"OK"
+							  otherButtonTitles:nil];
+		[alert show];
+		return nil;
+	}
+	
 	MGTwitterEngine *twitterEngine = [myGovAppDelegate sharedTwitterEngine];
 	[twitterEngine retain];
 	
@@ -806,6 +839,21 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 {
 	NSString *userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovComment)];
 	if ( nil == userID ) return nil;
+	
+	m_fieldMessage.text = [m_fieldMessage.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	if ( [m_fieldMessage.text length] <= 0 )
+	{
+		// pop up an alert saying it failed!
+		m_alertType = eAlertType_General;
+		UIAlertView *alert = [[UIAlertView alloc] 
+							  initWithTitle:@"Message Error"
+							  message:@"Please type a message!"
+							  delegate:self
+							  cancelButtonTitle:@"OK"
+							  otherButtonTitles:nil];
+		[alert show];
+		return nil;
+	}
 	
 	// create a new community item
 	CommunityItem * item = [[[CommunityItem alloc] init] autorelease];
@@ -864,6 +912,23 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 {
 	NSString *userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovReply)];
 	if ( nil == userID ) return nil;
+	
+	NSLog( @"Text Len = %0d ('%@')", [m_fieldMessage.text length], m_fieldMessage.text );
+	
+	m_fieldMessage.text = [m_fieldMessage.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	if ( [m_fieldMessage.text length] == 0 )
+	{
+		// pop up an alert saying it failed!
+		m_alertType = eAlertType_General;
+		UIAlertView *alert = [[UIAlertView alloc] 
+							  initWithTitle:@"Message Error"
+							  message:@"Please type a message!"
+							  delegate:self
+							  cancelButtonTitle:@"OK"
+							  otherButtonTitles:nil];
+		[alert show];
+		return nil;
+	}
 	
 	CommunityComment *reply = [[CommunityComment alloc] init];
 	reply.m_id = @"mygov";
@@ -1000,6 +1065,9 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 {
 	switch ( m_alertType )
 	{
+		case eAlertType_General:
+			break;
+		
 		case eAlertType_TwitterError:
 			switch ( buttonIndex )
 			{
@@ -1053,8 +1121,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 					break;
 				case 2:
 					// reset credentials!
-					[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"twitter_username"];
-					[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"twitter_password"];
+					[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"gae_username"];
+					[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"gae_password"];
 					[[NSUserDefaults standardUserDefaults] synchronize];
 					break;
 			}

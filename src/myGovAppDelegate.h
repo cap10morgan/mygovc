@@ -34,7 +34,8 @@
 {
     UIWindow *m_window;
     UITabBarController *m_tabBarController;
-
+	UITabBar *m_tabBar;
+	
 @private
 	NSOperationQueue *m_operationQueue;
 	NSMutableDictionary *m_urlHandler;
@@ -44,6 +45,7 @@
 
 @property (nonatomic, retain) IBOutlet UIWindow *m_window;
 @property (nonatomic, retain) IBOutlet UITabBarController *m_tabBarController;
+@property (nonatomic, retain) IBOutlet UITabBar *m_tabBar;
 
 @property (nonatomic, retain) NSOperationQueue *m_operationQueue;
 

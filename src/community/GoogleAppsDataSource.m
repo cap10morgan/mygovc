@@ -163,9 +163,10 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	NSString *gaeURLBase = [DataProviders GAE_DownloadURLFor:type];
 	
 	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init]  autorelease];
+	//[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[dateFormatter setDateFormat:@"yyyy-MM-dd"];
-	[dateFormatter setTimeStyle:NSDateFormatterNoStyle];
-	NSString *urlAddStr = [NSString stringWithFormat:@"?continue_url=mygov://auth/&not_older_than=%@",[dateFormatter stringFromDate:startDate]];
+	//[dateFormatter setTimeStyle:NSDateFormatterNoStyle];
+	NSString *urlAddStr = [NSString stringWithFormat:@"?not_older_than=%@",[dateFormatter stringFromDate:startDate]];
 	NSURL *gaeURL = [NSURL URLWithString:[gaeURLBase stringByAppendingString:urlAddStr]];
 	
 	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:gaeURL];
@@ -245,7 +246,10 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 			  withItemID:(NSString *)itemID 
 			 andDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
-	CommunityItem *item = [[myGovAppDelegate sharedCommunityData] itemWithId:itemID];
+	// I grab a deep copy of this to prevent threading issues,
+	// and to make sure my "new items" bading work properly :-)
+	CommunityItem *item = [[[myGovAppDelegate sharedCommunityData] itemWithId:itemID] copy];
+	
 	if ( nil == item ) return FALSE;
 	
 	NSString *gaeURLStr = [DataProviders GAE_CommunityItemCommentsURLFor:item];
@@ -308,6 +312,8 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	[idDict release];
 	
 	[delegateOrNil communityDataSource:self newCommunityItemArrived:item];
+	
+	[item release];
 	
 	return TRUE;
 }

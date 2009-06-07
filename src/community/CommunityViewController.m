@@ -77,6 +77,7 @@ enum
 	[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
 	
 	m_alertViewFunction = eAlertType_General;
+	m_timer = nil;
 	
 /* Leave this off for now - maybe in the next release...
  
@@ -181,15 +182,31 @@ enum
 		[m_HUD show:NO];
 	}
 	
+	if ( nil != self.navigationController.tabBarItem.badgeValue )
+	{	
+		// start a timer which will set the badge value to nil
+		if ( nil == m_timer )
+		{
+			m_timer = [NSTimer timerWithTimeInterval:3.1 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:NO];
+			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+		}
+	}
+	
 	[self.tableView setNeedsDisplay];
 }
 
 
-/*
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated 
+{
 	[super viewWillDisappear:animated];
+	
+	if ( nil != m_timer )
+	{
+		[m_timer invalidate];
+		m_timer = nil;
+	}
 }
-*/
+
 /*
 - (void)viewDidDisappear:(BOOL)animated {
 	[super viewDidDisappear:animated];
@@ -278,6 +295,12 @@ enum
 			[[topView getTableView] reloadData];
 			[[topView getTableView] setNeedsDisplay];
 		}
+		
+		// set the tab bar badge if we have any new items!
+		if ( m_data.m_numNewItems > 0 )
+		{
+			self.navigationController.tabBarItem.badgeValue = [NSString stringWithFormat:@"%d",m_data.m_numNewItems];
+		}
 	}
 	else
 	{
@@ -288,6 +311,18 @@ enum
 	}
 	
 	[self.tableView setNeedsDisplay];
+}
+
+
+- (void)timerFireMethod:(NSTimer *)timer
+{
+	if ( timer != m_timer ) return;
+	
+	[m_timer invalidate];
+	
+	self.navigationController.tabBarItem.badgeValue = nil;
+	
+	m_timer = nil;
 }
 
 

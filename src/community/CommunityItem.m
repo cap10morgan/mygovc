@@ -417,6 +417,13 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 #pragma mark CommunityItem Private
 
 
+- (id)copyWithZone:(NSZone *)zone
+{
+	if ( nil != zone ) return nil;
+	CommunityItem *newItem = [[CommunityItem alloc] initFromPlistDictionary:[self writeItemToPlistDictionary]];
+	return newItem;
+}
+
 - (void)p_initFromPlistDict:(NSDictionary *)plistDict
 {
 	m_id = nil;
