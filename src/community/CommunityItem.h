@@ -28,10 +28,18 @@
 typedef enum
 {
 	eCommunity_InvalidItem  = 0,
-	eCommunity_Chatter     = 1,
+	eCommunity_Chatter      = 1,
 	eCommunity_Event        = 2,
 } CommunityItemType;
 
+
+typedef enum
+{
+	eCommunityItem_Old = 0,
+	eCommunityItem_New,
+} CommunityItemStatus;
+
+	
 
 @interface CommunityComment : NSObject
 {
@@ -87,6 +95,7 @@ typedef enum
 	
 @private
 	NSInteger  m_localSecondsFromGMT;
+	CommunityItemStatus m_uiStatus;
 }
 
 @property (nonatomic,retain) NSString   *m_id;
@@ -108,6 +117,8 @@ typedef enum
 @property (nonatomic,retain) NSString   *m_eventLocDescrip;
 @property (nonatomic,retain) NSDate     *m_eventDate;
 
+@property (nonatomic) CommunityItemStatus m_uiStatus;
+
 - (id)initFromPlistDictionary:(NSDictionary *)dict;
 - (id)initFromFile:(NSString *)fullPath;
 - (id)initFromURL:(NSURL *)url;
@@ -125,6 +136,5 @@ typedef enum
 
 - (void)addEventAttendee:(NSString *)mygovUser;
 - (NSArray *)eventAttendees;
-
 
 @end

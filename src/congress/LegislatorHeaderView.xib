@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="7.03">
 	<data>
 		<int key="IBDocument.SystemTarget">528</int>
-		<string key="IBDocument.SystemVersion">9G55</string>
+		<string key="IBDocument.SystemVersion">9J61</string>
 		<string key="IBDocument.InterfaceBuilderVersion">677</string>
-		<string key="IBDocument.AppKitVersion">949.43</string>
+		<string key="IBDocument.AppKitVersion">949.46</string>
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -161,7 +161,7 @@
 					<object class="IBUILabel" id="867394369">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{118, 46}, {182, 18}}</string>
+						<string key="NSFrame">{{118, 42}, {182, 26}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -181,6 +181,7 @@
 						</object>
 						<int key="IBUIBaselineAdjustment">1</int>
 						<float key="IBUIMinimumFontSize">1.000000e+01</float>
+						<int key="IBUINumberOfLines">0</int>
 					</object>
 				</object>
 				<string key="NSFrameSize">{320, 140}</string>
@@ -265,9 +266,9 @@
 							<reference ref="1024331275"/>
 							<reference ref="41780085"/>
 							<reference ref="130112261"/>
-							<reference ref="867394369"/>
 							<reference ref="839296209"/>
 							<reference ref="116060101"/>
+							<reference ref="867394369"/>
 						</object>
 						<reference key="parent" ref="360949347"/>
 					</object>

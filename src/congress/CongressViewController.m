@@ -104,6 +104,8 @@ enum
 	
 	m_hasShownNoNetworkAlert = NO;
 	
+	m_outOfScope = NO;
+	
 	m_actionType = eActionReload;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
@@ -152,7 +154,10 @@ enum
 	[self setLocationButtonInNavBar];
 	
 	// create a search bar which will be used as our table's header view
-	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 50.0f)];
+//	UIView *sbarView = [[UIView alloc] initWithFrame:CGRectMake(0.0f,0.0f,320.0f, 44.0f)];
+//	sbarView.backgroundColor = [UIColor colorWithRed:0.05f green:0.05f blue:0.05f alpha:0.96f];
+	
+	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 44.0f)];
 	searchBar.delegate = self;
 	searchBar.prompt = @"";
 	searchBar.placeholder = @"Search for legislator...";
@@ -161,6 +166,8 @@ enum
 	searchBar.barStyle = UIBarStyleBlackOpaque;
 	searchBar.showsCancelButton = YES;
 	
+//	[sbarView addSubview:searchBar];
+//	self.tableView.tableHeaderView = sbarView;
 	self.tableView.tableHeaderView = searchBar;
 	self.tableView.tableHeaderView.userInteractionEnabled = YES;
 	
@@ -223,19 +230,26 @@ enum
 	}
 	
 deselect_and_return:
-	[self.tableView setNeedsDisplay];
-	
 	// de-select the currently selected row
 	// (so the user can go back to the same legislator)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+	
+	// if we were previously out-of-scope, reload the data
+	// to refresh our view
+	if ( m_outOfScope )
+	{
+		m_outOfScope = NO;
+		[self.tableView reloadData];
+	}
 }
 
-/*
+
 - (void)viewWillDisappear:(BOOL)animated 
 {
+	m_outOfScope = YES;
 	[super viewWillDisappear:animated];
 }
-*/
+
 
 /*
 - (void)viewDidDisappear:(BOOL)animated 
@@ -342,6 +356,8 @@ deselect_and_return:
 	
 	LegislatorNameCell *sdr = (LegislatorNameCell *)[button superview];
 	if ( nil == sdr ) return;
+	
+	m_outOfScope = YES;
 	
 	LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
 	[legViewCtrl setLegislator:[sdr m_legislator]];
@@ -657,6 +673,8 @@ show_legislator:
 	
 	if ( nil != m_initialSearchString )
 	{
+		m_outOfScope = NO;
+		
 		NSString *searchResultsTitle = [m_searchResultsTitle retain];
 		
 		UISearchBar *searchBar = (UISearchBar *)(self.tableView.tableHeaderView);
@@ -675,7 +693,7 @@ show_legislator:
 	
 	if ( nil != m_initialIndexPath )
 	{
-		if ( !isReloading ) [self.tableView reloadData];
+		if ( !isReloading ) { m_outOfScope = NO; [self.tableView reloadData]; }
 		// make sure the new index is within the bounds of our table
 		if ( [self.tableView numberOfSections] > m_initialIndexPath.section &&
 			 [self.tableView numberOfRowsInSection:m_initialIndexPath.section] > m_initialIndexPath.row )
@@ -757,8 +775,8 @@ show_legislator:
 	else if ( nil != oldLocation )
 	{
 		// try to smooth this a little - wait until the distance between
-		// two subsequent readings is less than ~0.5km
-		if ( [newLocation getDistanceFrom:oldLocation] < 500.0f )
+		// two subsequent readings is less than ~0.25km
+		if ( [newLocation getDistanceFrom:oldLocation] < 250.0f )
 		{
 			[m_locationManager stopUpdatingLocation]; // save power!
 			[m_data setSearchLocation:newLocation];
@@ -1030,6 +1048,8 @@ show_legislator:
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
+	if ( m_outOfScope ) return 1;
+	
 	if ( [m_data isDataAvailable] )
 	{
 		switch ( m_selectedChamber )
@@ -1050,6 +1070,8 @@ show_legislator:
 
 - (NSArray *)sectionIndexTitlesForTableView: (UITableView *)tableView
 {
+	if ( m_outOfScope ) return nil;
+	
 	if ( [m_data isDataAvailable] )
 	{
 		switch ( m_selectedChamber )
@@ -1071,6 +1093,8 @@ show_legislator:
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
+	if ( m_outOfScope ) return nil;
+	
 	if ( [m_data isDataAvailable] )
 	{
 		switch ( m_selectedChamber )
@@ -1092,6 +1116,8 @@ show_legislator:
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
+	if ( m_outOfScope ) return 0;
+	
 	if ( [m_data isDataAvailable] )
 	{
 		//NSString *state = [[m_data states] objectAtIndex:section];
@@ -1117,7 +1143,6 @@ show_legislator:
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-    
 	static NSString *CellIdentifier = @"CongressCell";
 
 	LegislatorNameCell *cell = (LegislatorNameCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -1128,6 +1153,7 @@ show_legislator:
 	
 	cell.m_tableRange = (NSRange){indexPath.section, indexPath.row};
 	
+	if ( m_outOfScope ) return cell;
 	if ( ![m_data isDataAvailable] ) return cell;
 	
 	LegislatorContainer *legislator = [self legislatorFromIndexPath:indexPath];

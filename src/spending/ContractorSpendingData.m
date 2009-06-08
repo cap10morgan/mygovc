@@ -24,7 +24,7 @@
 #import "ContractorSpendingData.h"
 #import "SpendingDataManager.h"
 
-static const int kNumContractorsToQuery = 100;
+static const int kNumContractorsToQuery = 50;
 
 
 @implementation ContractorInfo

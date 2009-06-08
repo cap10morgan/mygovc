@@ -44,6 +44,8 @@
 	NSString *m_HUDTxt;
 	ProgressOverlayViewController *m_HUD;
 	int m_alertViewFunction;
+	
+	BOOL m_outOfScope;
 }
 
 - (NSString *)areaName;

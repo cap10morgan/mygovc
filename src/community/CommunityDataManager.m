@@ -54,7 +54,7 @@
 	- (BOOL)downloadNewDataStartingAt:(NSDate *)date;
 	- (void)syncInMemoryDataWithServer;
 	- (void)purgeCacheItemsOlderThan:(NSDate *)date;
-	- (BOOL)addCommunityItem:(CommunityItem *)newItem;
+	- (BOOL)addCommunityItem:(CommunityItem *)newItem andUpdateStatus:(BOOL)updateUIStatus;
 	- (void)removeCommunityItem:(CommunityItem *)item;
 @end
 
@@ -439,7 +439,7 @@
 		CommunityItem *newItem = [[CommunityItem alloc] initFromFile:fPath];
 		
 		// ignore return code...
-		[self addCommunityItem:newItem];
+		[self addCommunityItem:newItem andUpdateStatus:NO];
 		
 		[newItem release];
 		loadedCachedData = YES;
@@ -575,7 +575,7 @@
 }
 
 
-- (BOOL)addCommunityItem:(CommunityItem *)newItem
+- (BOOL)addCommunityItem:(CommunityItem *)newItem andUpdateStatus:(BOOL)updateUIStatus
 {
 	NSMutableArray *itemArray = nil;
 	NSMutableDictionary *itemDict = nil;
@@ -626,10 +626,17 @@
 		
 		// we mostly replace items if there are new comments - if that's
 		// the case update the new items counter
-		if ( [[newItem comments] count] != [[obj comments] count] )
+		if ( updateUIStatus )
 		{
-			// XXX - mark item as new?!
-			m_numNewItems += [[newItem comments] count] - [[obj comments] count];
+			if ( [[newItem comments] count] != [[obj comments] count] )
+			{
+				// XXX - mark item as new?!
+				m_numNewItems += [[newItem comments] count] - [[obj comments] count];
+				obj.m_uiStatus = eCommunityItem_New;
+			}
+			
+			// make sure the "new" status follows updates...
+			newItem.m_uiStatus = obj.m_uiStatus;
 		}
 		
 		[itemArray replaceObjectAtIndex:arrayIdx withObject:newItem];
@@ -653,7 +660,11 @@
 		[itemDict setValue:newItem forKey:newItem.m_id];
 		
 		// this is a new item!
-		++m_numNewItems;
+		if ( updateUIStatus )
+		{
+			++m_numNewItems;
+			newItem.m_uiStatus = eCommunityItem_New;
+		}
 	}
 	
 	//NSLog( @"mygov chatter: '%@'...",newItem.m_title );
@@ -721,7 +732,7 @@ end_add_item:
 	newCommunityItemArrived:(CommunityItem *)item
 {
 	// add the item to our in-memory structures
-	if ( ![self addCommunityItem:item] ) return;
+	if ( ![self addCommunityItem:item andUpdateStatus:YES] ) return;
 	
 	[self setStatus:m_currentStatusMessage];
 	

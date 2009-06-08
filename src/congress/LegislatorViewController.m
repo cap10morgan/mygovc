@@ -476,16 +476,6 @@
 	TableRowData *rd = [m_data dataAtIndexPath:indexPath];
 	[cell setRowData:rd];
 	
-	/*
-	LegislatorInfoCell *cell = (LegislatorInfoCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-	if (cell == nil) 
-	{
-		cell = [[[LegislatorInfoCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
-	}
-	
-	// Set up the cell...
-	[m_data setInfoCell:cell forIndex:indexPath];
-	*/
 	return cell;
 }
 

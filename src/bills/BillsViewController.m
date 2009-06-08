@@ -85,12 +85,15 @@ enum
 
 - (void)viewDidLoad 
 {
+	[super viewDidLoad];
+	
 	m_data = [[myGovAppDelegate sharedBillsData] retain];
 	
 	m_initialSearchString = nil;
 	m_initialIndexPath = nil;
 	m_initialBillID = nil;
 	m_alertViewFunction = eAlertType_General;
+	m_outOfScope = NO;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
@@ -107,7 +110,7 @@ enum
 	}
 	
 	// create a search bar which will be used as our table's header view
-	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 50.0f)];
+	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 44.0f)];
 	searchBar.delegate = self;
 	searchBar.prompt = @"";
 	searchBar.placeholder = @"Search for a bill...";
@@ -149,8 +152,6 @@ enum
 											   target:self 
 											   action:@selector(reloadBillData)];
 	
-	
-	[super viewDidLoad];
 }
 
 
@@ -161,6 +162,7 @@ enum
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	
 	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+	[self.tableView setNeedsDisplay];
 }
 
 
@@ -176,7 +178,6 @@ enum
 		}
 		[m_HUD show:YES];
 		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
-		[self.tableView setNeedsDisplay];
 		return;
 	}
 	else
@@ -201,16 +202,20 @@ enum
 		[theOp release];
 	}
 	
-	[self.tableView setNeedsDisplay];
-	
+	if ( m_outOfScope )
+	{
+		m_outOfScope = NO;
+		[self.tableView reloadData];
+	}
 }
 
-/*
+
 - (void)viewWillDisappear:(BOOL)animated 
 {
+	m_outOfScope = YES;
 	[super viewWillDisappear:animated];
 }
-*/
+
 /*
 - (void)viewDidDisappear:(BOOL)animated 
 {
@@ -416,6 +421,8 @@ get_out:
 	
 	if ( nil != m_initialSearchString )
 	{
+		m_outOfScope = NO;
+		
 		UISearchBar *searchBar = (UISearchBar *)(self.tableView.tableHeaderView);
 		[searchBar setText:m_initialSearchString];
 		// this function does all the table data reloading for us :-)
@@ -425,7 +432,7 @@ get_out:
 	
 	if ( nil != m_initialIndexPath )
 	{
-		if ( !isReloading ) [self.tableView reloadData];
+		if ( !isReloading ) { m_outOfScope = NO; [self.tableView reloadData]; }
 		// make sure the new index is within the bounds of our table
 		if ( [self.tableView numberOfSections] > m_initialIndexPath.section &&
 			[self.tableView numberOfRowsInSection:m_initialIndexPath.section] > m_initialIndexPath.row )
@@ -453,7 +460,7 @@ get_out:
 	{
 		[m_HUD show:YES];
 		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
-		[self.tableView setNeedsDisplay];
+		//[self.tableView setNeedsDisplay];
 		
 		[NSThread sleepForTimeInterval:0.2f];
 	}
@@ -881,7 +888,7 @@ deselect_and_return:
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
-	if ( ![m_data isDataAvailable] ) return 1;
+	if ( m_outOfScope || ![m_data isDataAvailable] ) return 1;
 	
 	switch ( m_selectedChamber )
 	{
@@ -901,7 +908,7 @@ deselect_and_return:
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
-	if ( ![m_data isDataAvailable] ) return 0;
+	if ( m_outOfScope || ![m_data isDataAvailable] ) return 0;
 
 	switch ( m_selectedChamber )
 	{
@@ -920,7 +927,7 @@ deselect_and_return:
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if ( ![m_data isDataAvailable] ) return 20.0f;
+	if ( m_outOfScope || ![m_data isDataAvailable] ) return 20.0f;
 	
 	BillContainer *bc = [self billAtIndexPath:indexPath];
 	
@@ -930,7 +937,7 @@ deselect_and_return:
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	if ( ![m_data isDataAvailable] ) return nil;
+	if ( m_outOfScope || ![m_data isDataAvailable] ) return nil;
 	
 	switch ( m_selectedChamber )
 	{
@@ -957,11 +964,13 @@ deselect_and_return:
 		[cell setDetailTarget:self andSelector:@selector(showBillDetail:)];
 	}
 	
-	BillContainer *bc = [self billAtIndexPath:indexPath];
-	[cell setContentFromBill:bc];
-	
 	// let the cell know where it currently is...
 	cell.m_tableRange = (NSRange){indexPath.section, indexPath.row};
+	
+	if ( m_outOfScope ) return cell;
+	
+	BillContainer *bc = [self billAtIndexPath:indexPath];
+	[cell setContentFromBill:bc];
 	
 	return cell;
 }

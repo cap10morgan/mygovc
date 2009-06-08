@@ -67,6 +67,9 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 #define SUMMARY_FONT   [UIFont systemFontOfSize:13.0f]
 #define SUMMARY_COLOR  [UIColor darkGrayColor]
 
+#define NEW_ITEM_BACKGROUND_COLOR [UIColor colorWithRed:1.0f green:0.95f blue:0.6f alpha:0.55f];
+#define OLD_ITEM_BACKGROUND_COLOR [UIColor whiteColor];
+
 
 + (CGFloat)getCellHeightForItem:(CommunityItem *)item
 {
@@ -290,6 +293,14 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	[summaryView setFrame:summaryRect];
 	summaryView.text = m_item.m_summary;
 	
+	if ( eCommunityItem_New == m_item.m_uiStatus )
+	{
+		self.contentView.backgroundColor = NEW_ITEM_BACKGROUND_COLOR;
+	}
+	else
+	{
+		self.contentView.backgroundColor = OLD_ITEM_BACKGROUND_COLOR;
+	}
 }
 
 

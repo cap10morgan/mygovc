@@ -224,17 +224,21 @@ enum
 
 - (void)showCommunityDetail:(id)sender
 {
-	// XXX - do this!
 	UIButton *button = (UIButton *)sender;
 	if ( nil == button ) return;
 	
 	CommunityItemTableCell *tcell = (CommunityItemTableCell *)[button superview];
 	if ( nil == tcell ) return;
 	
+	// mark this item as non-new once the user has viewed it!
+	[tcell m_item].m_uiStatus = eCommunityItem_Old;
+	
 	CommunityDetailViewController *cdView = [[CommunityDetailViewController alloc] init];
 	[cdView setItem:[tcell m_item]];
 	[self.navigationController pushViewController:cdView animated:YES];
 	[cdView release];
+	
+	[self.tableView reloadData];
 }
 
 

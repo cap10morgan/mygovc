@@ -54,6 +54,8 @@ typedef enum
 	ProgressOverlayViewController *m_HUD;
 	int m_alertViewFunction;
 	BOOL m_hasShownNoNetworkAlert;
+	
+	BOOL m_outOfScope;
 }
 
 - (void)dataManagerCallback:(id)message;

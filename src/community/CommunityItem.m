@@ -151,6 +151,7 @@ static NSString *kCCKey_Text = @"message";
 @synthesize m_webURLTitle, m_webURL;
 @synthesize m_eventLocation, m_eventLocDescrip;
 @synthesize m_eventDate;
+@synthesize m_uiStatus;
 
 static NSString *kCIKey_ID = @"id";
 static NSString *kCIKey_Type = @"type";
@@ -443,6 +444,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	m_eventDate = nil;
 	m_eventAttendees = nil;
 	m_localSecondsFromGMT = 0;
+	m_uiStatus = eCommunityItem_Old;
 	
 	// read file data!
 	if ( nil != plistDict )

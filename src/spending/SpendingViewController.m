@@ -484,7 +484,7 @@ typedef enum
 				{
 					// Send Tweet!
 					msg.m_transport = eMT_SendTweet;
-					msg.m_body = [NSString stringWithFormat:@"#mygov %@ has spend %@ in govt. contracts this year!",
+					msg.m_body = [NSString stringWithFormat:@"#mygov %@ has spent %@ in govt. contracts this year!",
 												legName,
 												[psd rankStr]
 								  ];
