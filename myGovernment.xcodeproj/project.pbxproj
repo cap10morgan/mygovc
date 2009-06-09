@@ -17,8 +17,8 @@
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
 		017C22520F721824008CA4ED /* spendingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224F0F721824008CA4ED /* spendingIcon.png */; };
 		017C22550F721E60008CA4ED /* communityIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C22540F721E60008CA4ED /* communityIcon.png */; };
+		019A61080FDE214300E4CB1C /* personIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 019A61070FDE214300E4CB1C /* personIcon.png */; };
 		01ACAEF50FA80DA100B6FF59 /* communityEventIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */; };
-		01ACAEF60FA80DA100B6FF59 /* personIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01ACAEF40FA80DA100B6FF59 /* personIcon.png */; };
 		01ACAF370FA8119C00B6FF59 /* CommunityDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACAF360FA8119C00B6FF59 /* CommunityDetailViewController.m */; };
 		01ACAF3A0FA811B800B6FF59 /* CommunityDetailData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACAF390FA811B800B6FF59 /* CommunityDetailData.m */; };
 		01ACB0670FA8434900B6FF59 /* CDetailHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01ACB0640FA8434900B6FF59 /* CDetailHeaderView.xib */; };
@@ -116,8 +116,8 @@
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
 		017C224F0F721824008CA4ED /* spendingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spendingIcon.png; path = res/spendingIcon.png; sourceTree = "<group>"; };
 		017C22540F721E60008CA4ED /* communityIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityIcon.png; path = res/communityIcon.png; sourceTree = "<group>"; };
+		019A61070FDE214300E4CB1C /* personIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = personIcon.png; path = res/personIcon.png; sourceTree = "<group>"; };
 		01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityEventIcon.png; path = res/communityEventIcon.png; sourceTree = "<group>"; };
-		01ACAEF40FA80DA100B6FF59 /* personIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = personIcon.png; path = res/personIcon.png; sourceTree = "<group>"; };
 		01ACAF350FA8119C00B6FF59 /* CommunityDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDetailViewController.h; sourceTree = "<group>"; };
 		01ACAF360FA8119C00B6FF59 /* CommunityDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityDetailViewController.m; sourceTree = "<group>"; };
 		01ACAF380FA811B800B6FF59 /* CommunityDetailData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDetailData.h; sourceTree = "<group>"; };
@@ -521,13 +521,13 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				019A61070FDE214300E4CB1C /* personIcon.png */,
 				01BFE8120FB7D62500ECC015 /* google_logo_small.png */,
 				01B374760FB7568600DDA991 /* eagleIcon_32x32.png */,
 				01B374770FB7568600DDA991 /* eagleIcon_57x57.png */,
 				012855150FAEA2D400E2B55E /* mygov_login_header.png */,
 				01B61CF70FAA8A37007E10E6 /* refreshIcon.png */,
 				01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */,
-				01ACAEF40FA80DA100B6FF59 /* personIcon.png */,
 				012D5AD10FA6C098006DA53F /* system_avatar.png */,
 				01E4C5820FA0278700E69CC8 /* twitter_logo_header.png */,
 				01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */,
@@ -624,7 +624,6 @@
 				01D7FEC00FA5023B00F78B92 /* LegislatorHeaderView.xib in Resources */,
 				012D5AD20FA6C098006DA53F /* system_avatar.png in Resources */,
 				01ACAEF50FA80DA100B6FF59 /* communityEventIcon.png in Resources */,
-				01ACAEF60FA80DA100B6FF59 /* personIcon.png in Resources */,
 				01ACB0670FA8434900B6FF59 /* CDetailHeaderView.xib in Resources */,
 				01B61CF80FAA8A37007E10E6 /* refreshIcon.png in Resources */,
 				01B61DAD0FAA96ED007E10E6 /* MyGovLoginView.xib in Resources */,
@@ -632,6 +631,7 @@
 				01B374780FB7568600DDA991 /* eagleIcon_32x32.png in Resources */,
 				01B374790FB7568600DDA991 /* eagleIcon_57x57.png in Resources */,
 				01BFE8130FB7D62500ECC015 /* google_logo_small.png in Resources */,
+				019A61080FDE214300E4CB1C /* personIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -734,6 +734,7 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "31531A1A-AB54-4EA7-B8D5-04390347DB66";
+				SDKROOT = iphoneos2.2;
 			};
 			name = Distribution;
 		};
@@ -742,7 +743,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 0.1;
+				CURRENT_PROJECT_VERSION = 1.0.1;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;

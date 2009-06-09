@@ -35,7 +35,7 @@
 
 @interface BillsViewController (private)
 	- (BillContainer *)billAtIndexPath:(NSIndexPath *)indexPath;
-	- (void)scrollToInitialPosition;
+	- (BOOL)scrollToInitialPosition;
 	- (void)showInitialBill:(BillContainer *)bill;
 	- (void)reloadBillData;
 	- (void)dataManagerCallback:(id)sender;
@@ -159,8 +159,6 @@ enum
 {
 	[super viewWillAppear:animated];
 	
-	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
-	
 	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 	[self.tableView setNeedsDisplay];
 }
@@ -168,6 +166,17 @@ enum
 
 - (void)viewDidAppear:(BOOL)animated
 {
+	if ( ![myGovAppDelegate networkIsAvailable:NO]  )
+	{
+		[m_HUD show:NO];
+		[m_data setNotifyTarget:nil withSelector:nil];
+		return;
+	}
+	else
+	{
+		[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	}
+	
 	[super viewDidAppear:animated];
 	
 	if ( ![m_data isDataAvailable] )
@@ -185,9 +194,10 @@ enum
 		[m_HUD show:NO];
 	}
 	
+	BOOL isReloading = NO;
 	if ( nil != m_initialIndexPath || nil != m_initialSearchString )
 	{
-		[self scrollToInitialPosition];
+		isReloading = [self scrollToInitialPosition];
 	}
 	
 	if ( nil != m_initialBillID )
@@ -205,7 +215,7 @@ enum
 	if ( m_outOfScope )
 	{
 		m_outOfScope = NO;
-		[self.tableView reloadData];
+		if ( !isReloading ) [self.tableView reloadData];
 	}
 }
 
@@ -415,7 +425,7 @@ get_out:
 }
 
 
-- (void)scrollToInitialPosition
+- (BOOL)scrollToInitialPosition
 {
 	BOOL isReloading = NO;
 	
@@ -432,7 +442,12 @@ get_out:
 	
 	if ( nil != m_initialIndexPath )
 	{
-		if ( !isReloading ) { m_outOfScope = NO; [self.tableView reloadData]; }
+		if ( !isReloading ) 
+		{ 
+			isReloading = YES; 
+			m_outOfScope = NO; 
+			[self.tableView reloadData]; 
+		}
 		// make sure the new index is within the bounds of our table
 		if ( [self.tableView numberOfSections] > m_initialIndexPath.section &&
 			[self.tableView numberOfRowsInSection:m_initialIndexPath.section] > m_initialIndexPath.row )
@@ -445,6 +460,8 @@ get_out:
 	// clear all the state (no matter what)
 	[m_initialSearchString release]; m_initialSearchString = nil;
 	[m_initialIndexPath release]; m_initialIndexPath = nil;
+	
+	return isReloading;
 }
 
 
@@ -526,15 +543,17 @@ get_out:
 		self.tableView.userInteractionEnabled = YES;
 		[m_HUD show:NO];
 		
+		BOOL isReloading = NO;
 		if ( nil != m_initialIndexPath || nil != m_initialSearchString )
 		{
-			[self scrollToInitialPosition];
+			isReloading = [self scrollToInitialPosition];
 		}
 		else
 		{
 			// scroll to the top of the table
 			if ( [m_data totalBills] > 0 )
 			{
+				isReloading = YES;
 				[self.tableView reloadData];
 				NSUInteger idx[2] = {0,0};
 				[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
@@ -551,7 +570,7 @@ get_out:
 			[theOp release];
 		}
 		
-		[self.tableView reloadData];
+		if ( !isReloading ) [self.tableView reloadData];
 	}
 	else
 	{

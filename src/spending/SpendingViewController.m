@@ -85,6 +85,8 @@ typedef enum
 	m_sortOrder = eSpendingSortDollars;
 	m_actionSheetType = eAST_ContractorSort;
 	
+	m_outOfScope = NO;
+	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
 	[m_HUD setText:@"Waiting for congress data..." andIndicateProgress:YES];
@@ -140,7 +142,7 @@ typedef enum
 
 - (void)viewWillAppear:(BOOL)animated 
 {
-	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	//[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	
     [super viewWillAppear:animated];
 }
@@ -148,6 +150,20 @@ typedef enum
 
 - (void)viewDidAppear:(BOOL)animated 
 {
+	[super viewDidAppear:animated];
+	
+	if ( ![myGovAppDelegate networkIsAvailable:NO]  )
+	{
+		[m_HUD show:NO];
+		[m_data setNotifyTarget:nil withSelector:nil];
+		self.tableView.userInteractionEnabled = YES;
+		goto deselect_and_return;
+	}
+	else
+	{
+		[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	}
+	
 	if ( [m_data isDataAvailable] )
 	{
 		self.tableView.userInteractionEnabled = YES;
@@ -159,20 +175,27 @@ typedef enum
 		self.tableView.userInteractionEnabled = NO;
 	}
 	
+deselect_and_return:
 	// de-select the currently selected row
 	// (so the user can go back to the same district/state/contractor)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 	
-	[super viewDidAppear:animated];
+	// if we were previously out-of-scope, reload the data
+	// to refresh our view
+	if ( m_outOfScope )
+	{
+		m_outOfScope = NO;
+		[self.tableView reloadData];
+	}
 }
 
 
-/*
 - (void)viewWillDisappear:(BOOL)animated 
 {
+	m_outOfScope = YES;
 	[super viewWillDisappear:animated];
 }
-*/
+
 
 /*
 - (void)viewDidDisappear:(BOOL)animated 
@@ -541,6 +564,8 @@ typedef enum
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
+	if ( m_outOfScope ) return 1;
+	
 	if ( m_selectedQueryMethod == eSQMContractor )
 	{
 		return 1; // XXX - get number of categories from SpendingDataManager?
@@ -559,6 +584,8 @@ typedef enum
 
 - (NSArray *)sectionIndexTitlesForTableView: (UITableView *)tableView
 {
+	if ( m_outOfScope ) return nil;
+	
 	if ( [m_data isDataAvailable] )
 	{
 		if ( m_selectedQueryMethod == eSQMContractor )
@@ -585,6 +612,8 @@ typedef enum
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
+	if ( m_outOfScope ) return nil;
+	
 	if ( [m_data isDataAvailable] )
 	{
 		if ( m_selectedQueryMethod == eSQMContractor )
@@ -612,6 +641,8 @@ typedef enum
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
+	if ( m_outOfScope ) return 0;
+	
 	if ( [m_data isDataAvailable] )
 	{
 		NSString *state = [[StateAbbreviations abbrList] objectAtIndex:section];
@@ -651,6 +682,8 @@ typedef enum
 			cell = [[[ContractorSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CtorCellIdendifier detailTarget:self detailSelector:@selector(showContractorDetail:)] autorelease];
 		}
 		
+		if ( m_outOfScope ) return (UITableViewCell *)cell;
+		
 		ContractorInfo *ctrInfo = [m_data contractorData:indexPath.row whenSortedBy:m_sortOrder];
 		[cell setContractor:ctrInfo];
 		tcell = (UITableViewCell *)cell;
@@ -663,6 +696,8 @@ typedef enum
 			cell = [[[PlaceSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:PlaceCellIdentifier detailTarget:self detailSelector:@selector(showPlaceDetail:)] autorelease];
 		}
 	
+		if ( m_outOfScope ) return (UITableViewCell *)cell;
+		
 		PlaceSpendingData *psd;
 		if ( eSQMState == m_selectedQueryMethod )
 		{

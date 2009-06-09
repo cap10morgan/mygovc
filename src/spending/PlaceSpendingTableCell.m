@@ -177,25 +177,32 @@ static const CGFloat S_ROW_HEIGHT = 23.0f;
 									 )];
 		
 		[placeView setText:m_data.m_place];
-		[legView setText:downloadStr];
 		legView.textColor = [UIColor darkGrayColor];
 		
 		[detailButton setHidden:YES];
 		[rankView setHidden:YES];
 		
-		// render a UIActivityView...
-		if ( nil == aiView )
+		if ( ![myGovAppDelegate networkIsAvailable:NO]  )
 		{
-			aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-			aiView.hidesWhenStopped = YES;
-			[aiView setFrame:CGRectMake(0.0f, 0.0f, cellHeight/2.0f, cellHeight/2.0f)];
-			[aiView setCenter:CGPointMake(CGRectGetMaxX(legView.frame) + S_CELL_HOFFSET + cellHeight/2.0f, cellHeight/2.0f)];
-			[aiView setTag:eTAG_ACTIVITY];
-			[self addSubview:aiView];
-			[aiView release];
+			[legView setText:@"No network!"];
 		}
-		[aiView startAnimating];
-		
+		else
+		{
+			[legView setText:downloadStr];
+			
+			// render a UIActivityView...
+			if ( nil == aiView )
+			{
+				aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+				aiView.hidesWhenStopped = YES;
+				[aiView setFrame:CGRectMake(0.0f, 0.0f, cellHeight/2.0f, cellHeight/2.0f)];
+				[aiView setCenter:CGPointMake(CGRectGetMaxX(legView.frame) + S_CELL_HOFFSET + cellHeight/2.0f, cellHeight/2.0f)];
+				[aiView setTag:eTAG_ACTIVITY];
+				[self addSubview:aiView];
+				[aiView release];
+			}
+			[aiView startAnimating];
+		}
 		return;
 	}
 	

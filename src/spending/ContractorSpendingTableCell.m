@@ -20,6 +20,7 @@
  
  $Id: $
  */
+#import "myGovAppDelegate.h"
 
 #import "ContractorSpendingTableCell.h"
 #import "ContractorSpendingData.h"
@@ -132,24 +133,33 @@ static const CGFloat S_DOLLARS_TEXT_WIDTH = 55.0f;
 	
 	if ( nil == contractor ) 
 	{
-		// render a UIActivityView!
-		[ctrView setText:@"Downloading..."];
-		[dollarsView setText:@""];
-		[detailButton setHidden:YES];
-		
-		if ( nil == aiView )
+		if ( ![myGovAppDelegate networkIsAvailable:NO]  )
 		{
-			CGFloat cellHeight = CGRectGetHeight(ctrView.frame);
-			
-			aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-			aiView.hidesWhenStopped = YES;
-			[aiView setFrame:CGRectMake(0.0f, 0.0f, cellHeight/2.0f, cellHeight/2.0f)];
-			[aiView setCenter:CGPointMake(CGRectGetMaxX(ctrView.frame) + S_CELL_HOFFSET + cellHeight/2.0f, cellHeight/2.0f)];
-			[aiView setTag:eTAG_ACTIVITY];
-			[self addSubview:aiView];
-			[aiView release];
+			[ctrView setText:@"No network!"];
+			[dollarsView setText:@""];
+			[detailButton setHidden:YES];
 		}
-		[aiView startAnimating];
+		else
+		{
+			// render a UIActivityView!
+			[ctrView setText:@"Downloading..."];
+			[dollarsView setText:@""];
+			[detailButton setHidden:YES];
+			
+			if ( nil == aiView )
+			{
+				CGFloat cellHeight = CGRectGetHeight(ctrView.frame);
+				
+				aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+				aiView.hidesWhenStopped = YES;
+				[aiView setFrame:CGRectMake(0.0f, 0.0f, cellHeight/2.0f, cellHeight/2.0f)];
+				[aiView setCenter:CGPointMake(CGRectGetMaxX(ctrView.frame) + S_CELL_HOFFSET + cellHeight/2.0f, cellHeight/2.0f)];
+				[aiView setTag:eTAG_ACTIVITY];
+				[self addSubview:aiView];
+				[aiView release];
+			}
+			[aiView startAnimating];
+		}
 		return;
 	}
 	

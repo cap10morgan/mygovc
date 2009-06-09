@@ -48,6 +48,7 @@ typedef enum
 	int m_actionSheetType;
 	
 	ProgressOverlayViewController *m_HUD;
+	BOOL m_outOfScope;
 }
 
 - (NSString *)areaName;

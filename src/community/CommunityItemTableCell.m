@@ -67,7 +67,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 #define SUMMARY_FONT   [UIFont systemFontOfSize:13.0f]
 #define SUMMARY_COLOR  [UIColor darkGrayColor]
 
-#define NEW_ITEM_BACKGROUND_COLOR [UIColor colorWithRed:1.0f green:0.95f blue:0.6f alpha:0.55f];
+#define NEW_ITEM_BACKGROUND_COLOR [UIColor colorWithRed:1.0f green:0.95f blue:0.6f alpha:0.52f];
 #define OLD_ITEM_BACKGROUND_COLOR [UIColor whiteColor];
 
 
@@ -141,7 +141,8 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 		[summaryView release];
 		
 		UIImageView *imgView = [[UIImageView alloc] init];
-		imgView.userInteractionEnabled = NO;
+		//imgView.userInteractionEnabled = YES;
+		imgView.backgroundColor = [UIColor clearColor];
 		[imgView setTag:eTAG_IMAGE];
 		[self addSubview:imgView];
 		[imgView release];
@@ -220,6 +221,16 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	// 
 	CGFloat cellHeight = [CommunityItemTableCell getCellHeightForItem:m_item];
 	
+	// set the background color
+	if ( eCommunityItem_New == m_item.m_uiStatus )
+	{
+		self.contentView.backgroundColor = NEW_ITEM_BACKGROUND_COLOR;
+	}
+	else
+	{
+		self.contentView.backgroundColor = OLD_ITEM_BACKGROUND_COLOR;
+	}
+	
 	// set the detail button geometry: aligned right, middle of the cell
 	UIButton *detailButton = (UIButton *)[self viewWithTag:eTAG_DETAIL];
 	CGRect detailRect = CGRectMake( S_MAX_WIDTH_PORTRAIT - CGRectGetWidth(detailButton.frame) - S_CELL_HOFFSET,
@@ -230,7 +241,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	
 	// image view: aligned left, middle of the cell
 	UIImageView *imgView = (UIImageView *)[self viewWithTag:eTAG_IMAGE];
-	if ( nil == m_item.m_image || m_item.m_image.size.height <= 1 || m_item.m_image.size.width <= 1 )
+	//if ( nil == m_item.m_image || m_item.m_image.size.height <= 1 || m_item.m_image.size.width <= 1 )
 	{
 		// use the system icon
 		if ( eCommunity_Chatter == m_item.m_type )
@@ -292,15 +303,6 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 									 cellHeight - CGRectGetMaxY(titleRect) - S_CELL_VOFFSET );
 	[summaryView setFrame:summaryRect];
 	summaryView.text = m_item.m_summary;
-	
-	if ( eCommunityItem_New == m_item.m_uiStatus )
-	{
-		self.contentView.backgroundColor = NEW_ITEM_BACKGROUND_COLOR;
-	}
-	else
-	{
-		self.contentView.backgroundColor = OLD_ITEM_BACKGROUND_COLOR;
-	}
 }
 
 
