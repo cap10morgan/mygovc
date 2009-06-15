@@ -22,6 +22,7 @@
  */
 
 #import "myGovAppDelegate.h"
+#import "myGovCompileOptions.h"
 #import "BillsViewController.h"
 #import "BillContainer.h"
 #import "BillsDataManager.h"
@@ -95,7 +96,8 @@ enum
 	m_alertViewFunction = eAlertType_General;
 	m_outOfScope = NO;
 	
-	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
+	//m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
+	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.navigationController.view];
 	[m_HUD show:NO];
 	if ( ![m_data isDataAvailable] )
 	{
@@ -238,7 +240,7 @@ enum
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
 	// Return YES for supported orientations
-	return YES;
+	return MYGOV_SHOULD_SUPPORT_ROTATION;
 }
 
 
@@ -356,6 +358,7 @@ enum
 	else if ( [chamber isEqualToString:@"search"] )
 	{
 		m_selectedChamber = eCongressSearchResults;
+		m_segmentCtrl.selectedSegmentIndex = -1;
 		[m_initialSearchString release]; m_initialSearchString = nil;
 		if ( ++parmIdx < [pArray count] ) m_initialSearchString = [[NSString alloc] initWithString:[[pArray objectAtIndex:parmIdx] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]];
 	}
@@ -621,6 +624,8 @@ get_out:
 	switch ( [sender selectedSegmentIndex] )
 	{
 		default:
+			return;
+		
 		case 0:
 			// This is the House!
 			m_selectedChamber = eCongressChamberHouse;
@@ -698,6 +703,7 @@ get_out:
 		
 		if ( [m_data numSearchResults] > 0 )
 		{
+			m_segmentCtrl.selectedSegmentIndex = -1;
 			m_selectedChamber = eCongressSearchResults;
 		}
 		else
@@ -758,6 +764,7 @@ get_out:
 	if ( eCongressSearchResults ==  m_selectedChamber )
 	{
 		// switch back (resets scroll position)
+		m_segmentCtrl.selectedSegmentIndex = 0; // resets to House
 		[self congressSwitch:m_segmentCtrl];
 	}
 	else

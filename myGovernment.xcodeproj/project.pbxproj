@@ -707,6 +707,38 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		018101070FE60F880029E1F3 /* Debug 2.2.1 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = iphoneos2.2.1;
+			};
+			name = "Debug 2.2.1";
+		};
+		018101080FE60F880029E1F3 /* Debug 2.2.1 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1.0.1;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = src/myGov_Prefix.pch;
+				GCC_VERSION = 4.0;
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = myGovernment;
+				SDKROOT = iphoneos2.2.1;
+			};
+			name = "Debug 2.2.1";
+		};
 		018894120FB9FDC400482F2B /* Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -734,7 +766,7 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "31531A1A-AB54-4EA7-B8D5-04390347DB66";
-				SDKROOT = iphoneos2.2;
+				SDKROOT = iphoneos3.0;
 			};
 			name = Distribution;
 		};
@@ -749,9 +781,10 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = src/myGov_Prefix.pch;
-				GCC_VERSION = 4.0;
+				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
+				SDKROOT = iphoneos3.0;
 			};
 			name = Debug;
 		};
@@ -769,6 +802,7 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7944CA24-75AD-4FB9-A2B5-D43C73DB0D96";
+				SDKROOT = iphoneos3.0;
 			};
 			name = Release;
 		};
@@ -782,7 +816,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = iphoneos2.2.1;
+				SDKROOT = iphoneos3.0;
 			};
 			name = Debug;
 		};
@@ -795,7 +829,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = iphoneos2.2.1;
+				SDKROOT = iphoneos3.0;
 			};
 			name = Release;
 		};
@@ -806,6 +840,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
+				018101080FE60F880029E1F3 /* Debug 2.2.1 */,
 				1D6058950D05DD3E006BFB54 /* Release */,
 				018894130FB9FDC400482F2B /* Distribution */,
 			);
@@ -816,6 +851,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
+				018101070FE60F880029E1F3 /* Debug 2.2.1 */,
 				C01FCF5008A954540054247B /* Release */,
 				018894120FB9FDC400482F2B /* Distribution */,
 			);

@@ -74,8 +74,9 @@ static NSArray *s_statesAbbrTableIndexList = NULL;
 		// 50+ index points is too many - cut it in half by simple
 		// NULL-ing out every odd entry title
 		NSMutableArray * tmpArray = [[NSMutableArray alloc] initWithArray:[self abbrList]];
-		NSUInteger numStates = [tmpArray count];
 		
+		/* XXX - run an OS check here?!
+		NSUInteger numStates = [tmpArray count];
 		for ( NSUInteger st = 0; st < numStates; ++st )
 		{
 			if ( ((st+1) % 2) ) // || !((st+1) % 3) )
@@ -83,7 +84,7 @@ static NSArray *s_statesAbbrTableIndexList = NULL;
 				[tmpArray replaceObjectAtIndex:st withObject:[NSString stringWithString:@""] ];
 			}
 		}
-		
+		*/
 		s_statesAbbrTableIndexList = (NSArray *)tmpArray;
 	}
 	

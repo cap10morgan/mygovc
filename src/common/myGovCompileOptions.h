@@ -21,6 +21,6 @@
  $Id: $
  */
 
-#define MYGOV_SHOULD_SUPPORT_ROTATION NO
+#define MYGOV_SHOULD_SUPPORT_ROTATION (UIInterfaceOrientationPortrait == interfaceOrientation)
 
 

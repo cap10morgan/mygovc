@@ -108,7 +108,8 @@ enum
 	
 	m_actionType = eActionReload;
 	
-	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
+	//m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
+	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.navigationController.view];
 	[m_HUD show:NO];
 	if ( ![m_data isDataAvailable] )
 	{
@@ -299,8 +300,9 @@ deselect_and_return:
 	}
 	else if ( NSOrderedSame == [msg compare:@"LOCTN" options:NSCaseInsensitiveSearch range:msgTypeRange] )
 	{
-		m_selectedChamber = eCongressSearchResults;
 		[self setLocationButtonInNavBar];
+		m_segmentCtrl.selectedSegmentIndex = -1; // no selection!
+		m_selectedChamber = eCongressSearchResults;
 		[self.tableView reloadData];
 		NSUInteger idx[2] = {0,0};
 		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
@@ -469,6 +471,7 @@ deselect_and_return:
 	else if ( [chamber isEqualToString:@"search"] )
 	{
 		m_selectedChamber = eCongressSearchResults;
+		m_segmentCtrl.selectedSegmentIndex = -1; // no selection!
 		[m_initialSearchString release]; m_initialSearchString = nil;
 		[m_searchResultsTitle release]; m_searchResultsTitle = nil;
 		if ( ++parmIdx < [pArray count] ) m_initialSearchString = [[NSString alloc] initWithString:[[pArray objectAtIndex:parmIdx] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]];
@@ -578,6 +581,9 @@ show_legislator:
 	switch ( [sender selectedSegmentIndex] )
 	{
 		default:
+			return;
+			break;
+		
 		case 0:
 			// This is the House!
 			m_selectedChamber = eCongressChamberHouse;
@@ -814,6 +820,7 @@ show_legislator:
 			default:
 			case 0:
 				m_selectedChamber = eCongressChamberHouse;
+				m_segmentCtrl.selectedSegmentIndex = 0;
 				break;
 			case 1:
 				m_selectedChamber = eCongressChamberSenate;
@@ -823,6 +830,7 @@ show_legislator:
 	}
 	else
 	{
+		m_segmentCtrl.selectedSegmentIndex = -1; // no selection!
 		m_selectedChamber = eCongressSearchResults;
 		[m_data setSearchString:searchText];
 	}
@@ -835,6 +843,7 @@ show_legislator:
 {
 	[searchBar resignFirstResponder];
 	m_selectedChamber = eCongressSearchResults;
+	m_segmentCtrl.selectedSegmentIndex = -1; // no selection!
 	[self.tableView reloadData];
 }
 
@@ -849,6 +858,7 @@ show_legislator:
 		default:
 		case 0:
 			m_selectedChamber = eCongressChamberHouse;
+			m_segmentCtrl.selectedSegmentIndex = 0;
 			break;
 		case 1:
 			m_selectedChamber = eCongressChamberSenate;

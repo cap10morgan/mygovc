@@ -61,7 +61,7 @@ static MiniBrowserController *s_browser = NULL;
 	if ( NULL == s_browser )
 	{
 		s_browser = [[MiniBrowserController alloc] initWithNibName:@"MiniBrowserView" bundle:nil];
-		s_browser.m_webView.detectsPhoneNumbers = YES;
+		//s_browser.m_webView.detectsPhoneNumbers = YES;
 		s_browser.m_webView.scalesPageToFit = YES;
 		[s_browser.view setNeedsDisplay];
 	}
@@ -138,6 +138,7 @@ static MiniBrowserController *s_browser = NULL;
 	
 	m_loadingLabel = [[UILabel alloc] init];
 	[m_loadingLabel setFrame:lblFrame];
+	//m_loadingLabel.backgroundColor = [UIColor colorWithRed:0.55f green:0.55f blue:0.55f alpha:0.40f];
 	m_loadingLabel.backgroundColor = [UIColor clearColor];
 	m_loadingLabel.highlightedTextColor = [UIColor darkGrayColor];
 	m_loadingLabel.textColor = [UIColor blackColor];
@@ -225,6 +226,8 @@ static MiniBrowserController *s_browser = NULL;
 	}
 	
 	[super viewWillDisappear:animated];
+	
+	[[UIApplication sharedApplication] setStatusBarHidden:NO animated:YES];
 }
 
 
@@ -388,7 +391,7 @@ static MiniBrowserController *s_browser = NULL;
 	m_shouldUseParentsView = NO;
 	
 	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationDuration:0.7f];
+	[UIView setAnimationDuration:0.5f];
 	[UIView setAnimationDelegate:self];
 	[UIView setAnimationDidStopSelector:@selector(animationFinished:finished:context:)];
 	
@@ -396,11 +399,14 @@ static MiniBrowserController *s_browser = NULL;
 	{
 		[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:topView cache:NO];
 		[self.view removeFromSuperview];
+		[[UIApplication sharedApplication] setStatusBarHidden:NO animated:YES];
 	}
 	else
 	{
 		[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:topView cache:NO];
 		[topView addSubview:self.view];
+		[self.view setFrame:CGRectMake(0.0f,0.0f,320.0f,460.0f)];
+		[[UIApplication sharedApplication] setStatusBarHidden:YES animated:YES];
 	}
 	
 	[UIView commitAnimations];

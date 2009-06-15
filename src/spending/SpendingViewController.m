@@ -22,7 +22,7 @@
  */
 
 #import "myGovAppDelegate.h"
-
+#import "myGovCompileOptions.h"
 #import "ComposeMessageViewController.h"
 #import "CongressDataManager.h"
 #import "ContractorSpendingData.h"
@@ -87,7 +87,8 @@ typedef enum
 	
 	m_outOfScope = NO;
 	
-	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
+	//m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
+	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.navigationController.view];
 	[m_HUD show:NO];
 	[m_HUD setText:@"Waiting for congress data..." andIndicateProgress:YES];
 	
@@ -209,7 +210,7 @@ deselect_and_return:
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
     // Return YES for supported orientations
-    return YES;
+    return MYGOV_SHOULD_SUPPORT_ROTATION;
 }
 
 

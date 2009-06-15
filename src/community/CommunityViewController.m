@@ -22,6 +22,7 @@
  */
 
 #import "myGovAppDelegate.h"
+#import "myGovCompileOptions.h"
 #import "CommunityDataManager.h"
 #import "CommunityDetailViewController.h"
 #import "CommunityItem.h"
@@ -218,7 +219,7 @@ enum
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
 	// Return YES for supported orientations
-	return YES;
+	return MYGOV_SHOULD_SUPPORT_ROTATION;
 }
 
 
