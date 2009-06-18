@@ -399,14 +399,24 @@ static MiniBrowserController *s_browser = NULL;
 	{
 		[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:topView cache:NO];
 		[self.view removeFromSuperview];
-		[[UIApplication sharedApplication] setStatusBarHidden:NO animated:YES];
+		if ( [myGovAppDelegate OSVersion] >= 3.0 )
+		{
+			[[UIApplication sharedApplication] setStatusBarHidden:NO animated:YES];
+		}
 	}
 	else
 	{
 		[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:topView cache:NO];
 		[topView addSubview:self.view];
-		[self.view setFrame:CGRectMake(0.0f,0.0f,320.0f,460.0f)];
-		[[UIApplication sharedApplication] setStatusBarHidden:YES animated:YES];
+		if ( [myGovAppDelegate OSVersion] >= 3.0 )
+		{
+			[self.view setFrame:CGRectMake(0.0f,0.0f,320.0f,480.0f)];
+			[[UIApplication sharedApplication] setStatusBarHidden:YES animated:YES];
+		}
+		else
+		{
+			[self.view setFrame:CGRectMake(0.0f,0.0f,320.0f,460.0f)];
+		}
 	}
 	
 	[UIView commitAnimations];

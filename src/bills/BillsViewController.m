@@ -500,7 +500,18 @@ get_out:
 	{
 		// search for bill (at OpenCongress.org!)
 		UISearchBar *searchBar = (UISearchBar *)self.tableView.tableHeaderView;
-		searchBar.text = m_initialBillID;
+		NSRange searchRange; searchRange.length = 3; searchRange.location = 0;
+		if ( [m_initialBillID length] >= searchRange.length )
+		{
+			searchBar.text = [m_initialBillID stringByReplacingOccurrencesOfString:@" " 
+																   withString:@"" 
+																	  options:0 
+																		range:searchRange];
+		}
+		else
+		{
+			searchBar.text = m_initialBillID;
+		}
 		
 		[m_HUD setText:@"Searching Bills..." andIndicateProgress:YES];
 		[m_HUD show:YES];

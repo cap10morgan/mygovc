@@ -21,6 +21,7 @@
  $Id: $
  */
 
+#import "myGovAppDelegate.h"
 #import "StateAbbreviations.h"
 
 @interface StateAbbreviations (private)
@@ -75,16 +76,22 @@ static NSArray *s_statesAbbrTableIndexList = NULL;
 		// NULL-ing out every odd entry title
 		NSMutableArray * tmpArray = [[NSMutableArray alloc] initWithArray:[self abbrList]];
 		
-		/* XXX - run an OS check here?!
-		NSUInteger numStates = [tmpArray count];
-		for ( NSUInteger st = 0; st < numStates; ++st )
+		// NEW! iPhone OS 3.0 has fixed this issue, so I've added a simple
+		// device OS check.
+		//UIDevice *device = [UIDevice currentDevice];
+		//if ( [device.systemVersion integerValue] < 3.0 )
+		if ( [myGovAppDelegate OSVersion] < 3.0 )
 		{
-			if ( ((st+1) % 2) ) // || !((st+1) % 3) )
+			NSUInteger numStates = [tmpArray count];
+			for ( NSUInteger st = 0; st < numStates; ++st )
 			{
-				[tmpArray replaceObjectAtIndex:st withObject:[NSString stringWithString:@""] ];
+				if ( ((st+1) % 2) ) // || !((st+1) % 3) )
+				{
+					[tmpArray replaceObjectAtIndex:st withObject:[NSString stringWithString:@""] ];
+				}
 			}
 		}
-		*/
+		
 		s_statesAbbrTableIndexList = (NSArray *)tmpArray;
 	}
 	

@@ -913,7 +913,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	NSString *userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovReply)];
 	if ( nil == userID ) return nil;
 	
-	NSLog( @"Text Len = %0d ('%@')", [m_fieldMessage.text length], m_fieldMessage.text );
+	//NSLog( @"Text Len = %0d ('%@')", [m_fieldMessage.text length], m_fieldMessage.text );
 	
 	m_fieldMessage.text = [m_fieldMessage.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	if ( [m_fieldMessage.text length] == 0 )

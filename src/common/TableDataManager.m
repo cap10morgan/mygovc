@@ -21,6 +21,7 @@
  $Id: $
  */
 
+#import "myGovAppDelegate.h"
 #import "CustomTableCell.h"
 #import "TableDataManager.h"
 #import "MiniBrowserController.h"
@@ -204,6 +205,8 @@
 
 - (void)rowActionPhoneCall:(NSIndexPath *)indexPath
 {
+	if ( ![myGovAppDelegate canMakePhoneCalls] ) return;
+	
 	TableRowData *rd = [self dataAtIndexPath:indexPath];
 	if ( nil == rd ) return;
 	

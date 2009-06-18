@@ -886,6 +886,14 @@ show_legislator:
 			goto deselect_and_return;
 		}
 		
+		if ( ![myGovAppDelegate canMakePhoneCalls] )
+		{
+			// if I'm on an iPod touch, we don't make phone calls and
+			// all of the action sheet items are shifted by 1 place:
+			// be tricky!
+			buttonIndex++;
+		}
+		
 		// use currently selected legislator to perfom the following action:
 		switch ( buttonIndex )
 		{
@@ -1193,10 +1201,21 @@ show_legislator:
 	
 	// pop up an alert asking the user what action to perform
 	m_actionType = eActionContact;
-	UIActionSheet *contactAlert =
-	[[UIActionSheet alloc] initWithTitle:[legislator shortName]
-							delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-							otherButtonTitles:@"Call",@"Email",@"Twitter Mention",@"Comment!",nil];
+	UIActionSheet *contactAlert = nil;
+	if ( [myGovAppDelegate canMakePhoneCalls] )
+	{
+		contactAlert = [[UIActionSheet alloc] initWithTitle:[legislator shortName] 
+												   delegate:self cancelButtonTitle:@"Cancel" 
+									 destructiveButtonTitle:nil 
+										  otherButtonTitles:@"Call",@"Email",@"Twitter Mention",@"Comment!",nil];
+	}
+	else
+	{
+		contactAlert = [[UIActionSheet alloc] initWithTitle:[legislator shortName] 
+												   delegate:self cancelButtonTitle:@"Cancel" 
+									 destructiveButtonTitle:nil 
+										  otherButtonTitles:@"Email",@"Twitter Mention",@"Comment!",nil];
+	}
 	
 	// use the same style as the nav bar
 	contactAlert.actionSheetStyle = self.navigationController.navigationBar.barStyle;

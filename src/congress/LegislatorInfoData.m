@@ -198,6 +198,8 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 			NSArray *keys = [NSArray arrayWithObjects:CONTACT_ROWKEY];
 			SEL dataSelector[] = { CONTACT_ROWSEL };
 			SEL dataAction[] = { CONTACT_ROWACTION };
+			SEL phoneCallSel = @selector(rowActionPhoneCall:);
+			
 			for ( NSInteger ii = 0; ii < [keys count]; ++ii )
 			{
 				NSString *value = [m_legislator performSelector:dataSelector[ii]];
@@ -209,7 +211,18 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 					rd.line1 = value;
 					rd.line1Font = [UIFont systemFontOfSize:12.0f];
 					
-					rd.action = dataAction[ii];
+					if ( dataAction[ii] == phoneCallSel )
+					{
+						// separate this because Apple got ANAL!
+						if ( [myGovAppDelegate canMakePhoneCalls] )
+							rd.action = dataAction[ii];
+						else
+							rd.action = @selector(rowActionNone:);
+					}
+					else
+					{
+						rd.action = dataAction[ii];
+					}
 					[retVal addObject:rd];
 				}
 			}

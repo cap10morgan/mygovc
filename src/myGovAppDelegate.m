@@ -72,6 +72,39 @@ static int s_threads_using_network = 0;
 }
 
 
++ (BOOL)canMakePhoneCalls
+{
+	static NSString *s_devName = nil;
+	static BOOL s_iPhoneDevice = NO;
+	
+	UIDevice *device = [UIDevice currentDevice];
+	if ( nil == s_devName )
+	{
+		s_devName = [[[NSString alloc] initWithString:device.model] autorelease];
+		NSRange strRange;
+		strRange.length = ([s_devName length] < 6) ? [s_devName length] : 6;
+		strRange.location = 0;
+		s_iPhoneDevice = (NSOrderedSame == [s_devName compare:@"iPhone" options:NSLiteralSearch range:strRange]);
+	}
+	
+	return s_iPhoneDevice;
+}
+
+
++ (CGFloat)OSVersion
+{
+	static CGFloat s_osVer = -1.0;
+	
+	if ( -1.0 == s_osVer )
+	{
+		UIDevice *device = [UIDevice currentDevice];
+		s_osVer = [device.systemVersion floatValue];
+	}
+	
+	return s_osVer;
+}
+
+
 + (BOOL)networkIsAvailable:(BOOL)andWillBeBusy
 {
 	NetworkStatus status = [[Reachability sharedReachability] internetConnectionStatus];

@@ -52,6 +52,10 @@
 + (myGovAppDelegate *)sharedAppDelegate;
 + (NSString *)sharedAppCacheDir;
 
++ (BOOL)canMakePhoneCalls;
+
++ (CGFloat)OSVersion;
+
 + (BOOL)networkIsAvailable:(BOOL)andWillBeBusy;
 + (void)networkNoLongerInUse;
 
