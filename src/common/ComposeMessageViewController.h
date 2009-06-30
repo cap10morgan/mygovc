@@ -114,6 +114,9 @@ typedef enum
 	BOOL m_keyboardVisible;
 	BOOL m_shouldRespondToKbdEvents;
 	id m_parentCtrl;
+	
+	NSTimer *m_timer;
+	BOOL     m_timedOperationComplete;
 }
 
 @property (nonatomic,retain) IBOutlet ComposeMessageView *m_msgView;

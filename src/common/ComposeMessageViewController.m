@@ -81,6 +81,8 @@ static const NSInteger MAX_TWEET_LEN = 140;
 
 
 @interface ComposeMessageViewController (private)
+	- (void)authComplete;
+	- (void)timerMethod:(NSTimer *)timer;
 	- (void)keyboardWasShown:(NSNotification*)aNotification;
 	- (void)keyboardWasHidden:(NSNotification*)aNotification;
 	- (void)layoutUIForMessageType:(MessageTransport)type;
@@ -135,6 +137,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) 
 	{
 		// Custom initialization
+		m_timer = nil;
+		m_timedOperationComplete = NO;
 		m_message = nil;
 		m_twitterLoginView = nil;
 		m_mygovLoginView = nil;
@@ -421,6 +425,36 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 #pragma mark ComposeMessageViewController Private 
 
 
+- (void)authComplete
+{
+	m_timedOperationComplete = YES;
+}
+
+
+- (void)timerMethod:(NSTimer *)timer
+{
+	if ( !m_timedOperationComplete ) return;
+	m_timedOperationComplete = NO;
+	
+	switch ( m_message.m_transport ) 
+	{
+		case eMT_MyGov:
+			[self opSendMyGovComment];
+			break;
+		
+		case eMT_MyGovUserComment:
+			[self opSendMyGovReply];
+			break;
+		
+		default:
+			break;
+	}
+	
+	[timer invalidate];
+	m_timer = nil;
+}
+
+
 - (void)keyboardWasShown:(NSNotification*)aNotification
 {
 	if ( !m_shouldRespondToKbdEvents )
@@ -624,7 +658,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	
 	NSString *userID = [cdm currentlyAuthenticatedUser];
 	
-	if ( nil == userID )
+	if ( nil == userID || [userID length] <= 0 )
 	{
 		if ( [username length] < 1 || [password length] < 1 )
 		{
@@ -838,7 +872,17 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 - (id)opSendMyGovComment
 {
 	NSString *userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovComment)];
-	if ( nil == userID ) return nil;
+	if ( nil == userID ) 
+	{
+		// the timer will check when auth is complete...
+		m_timedOperationComplete = NO;
+		if ( nil == m_timer )
+		{
+			m_timer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(timerMethod:) userInfo:nil repeats:YES];
+			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+		}
+		return nil;
+	}
 	
 	m_fieldMessage.text = [m_fieldMessage.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	if ( [m_fieldMessage.text length] <= 0 )
@@ -856,7 +900,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	}
 	
 	// create a new community item
-	CommunityItem * item = [[[CommunityItem alloc] init] autorelease];
+	CommunityItem * item = [[CommunityItem alloc] init];
 	
 	[item generateUniqueItemID];
 	
@@ -910,11 +954,20 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (id)opSendMyGovReply
 {
-	NSString *userID = [self mygovUserAuthWithCallback:@selector(opSendMyGovReply)];
-	if ( nil == userID ) return nil;
+	NSString *userID = [self mygovUserAuthWithCallback:@selector(authComplete)];
+	if ( nil == userID ) 
+	{
+		// the timer will check when auth is complete...
+		m_timedOperationComplete = NO;
+		if ( nil == m_timer )
+		{
+			m_timer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(timerMethod:) userInfo:nil repeats:YES];
+			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+		}
+		return nil;
+	}
 	
 	//NSLog( @"Text Len = %0d ('%@')", [m_fieldMessage.text length], m_fieldMessage.text );
-	
 	m_fieldMessage.text = [m_fieldMessage.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	if ( [m_fieldMessage.text length] == 0 )
 	{
@@ -994,6 +1047,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	
 	[self.view setUserInteractionEnabled:YES];
 	[m_hud show:NO];
+	[item release];
 	
 	if ( success )
 	{
@@ -1030,6 +1084,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	
 	[self.view setUserInteractionEnabled:YES];
 	[m_hud show:NO];
+	[reply release];
 	
 	if ( success )
 	{

@@ -31,7 +31,7 @@
 
 
 @interface MyGovLoginViewController (private)
-	- (void)performAuthentication;
+	- (void)performAuthentication:(NSTimer *)timer;
 	- (void)animate:(id)parent;
 	- (void)animationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context;
 @end
@@ -193,6 +193,10 @@
 	[self.view setNeedsDisplay];
 	
 	// run the auth in a background thread
+	NSTimer *tmr = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(performAuthentication:) userInfo:nil repeats:NO];
+	[[NSRunLoop mainRunLoop] addTimer:tmr forMode:NSDefaultRunLoopMode];
+	
+	/*
 	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																		selector:@selector(performAuthentication) 
 																		  object:nil];
@@ -201,6 +205,7 @@
 	[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
 	
 	[theOp release];
+	*/
 }
 
 
@@ -231,8 +236,10 @@
 #pragma mark MyGovLoginViewController Private
 
 
-- (void)performAuthentication
+- (void)performAuthentication:(NSTimer *)timer
 {
+	[timer invalidate];
+	
 	CommunityDataManager *cdm = [myGovAppDelegate sharedCommunityData];
 	id<CommunityDataSourceProtocol> dataSource = [cdm dataSource];
 	

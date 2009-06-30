@@ -177,6 +177,7 @@
 		// attempt to login with defaults provided in our settings
 		[m_dataSource validateUsername:nil andPassword:nil withDelegate:self];
 	}
+	
 	return m_currentUserUID;
 }
 
@@ -217,7 +218,7 @@
 	isBusy = YES;
 	
 	NSNumber *max_age_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_community_data_age"];
-	NSInteger max_age = -604800; // default to ~1 week
+	NSInteger max_age = -2592000; // default to ~1 month
 	if ( nil != max_age_str ) max_age = -([max_age_str integerValue]);
 	
 	NSDate *oldestItemDate = [[NSDate date] addTimeInterval:max_age];
@@ -452,7 +453,7 @@
 		// we have no cache - only download items within the 
 		// timeframe specified by the user preference
 		NSNumber *max_age_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_community_data_age"];
-		NSInteger max_age = -604800; // default to ~1 week
+		NSInteger max_age = -2592000; // default to ~1 month
 		if ( nil != max_age_str ) max_age = -([max_age_str integerValue]);
 		
 		self.m_latestItemDate = [[NSDate date] addTimeInterval:max_age];
@@ -581,6 +582,14 @@
 	NSMutableDictionary *itemDict = nil;
 	
 	if ( nil == newItem ) return FALSE;
+	
+	// get rid of email-address usernames (just take everything before the '@')
+	NSRange atSymbol = [newItem.m_creator rangeOfString:@"@"];
+	if ( (atSymbol.location > 0) && (atSymbol.length == 1) )
+	{
+		newItem.m_creator = [[NSString alloc] initWithString:[newItem.m_creator substringToIndex:atSymbol.location]];
+	}
+	
 	switch ( newItem.m_type )
 	{
 		default:
@@ -765,17 +774,20 @@ end_add_item:
 - (void)communityDataSource:(id)dataSource
 		  userAuthenticated:(NSString *)uid
 {
+	if ( nil == uid ) return;
+	NSString *tmp = m_currentUserUID;
+	m_currentUserUID = nil;
+	[tmp release];
+	
 	NSRange atSymbol = [uid rangeOfString:@"@"];
-	NSString *cleanUser;
 	if ( (atSymbol.location > 0) && (atSymbol.length == 1) )
 	{
-		cleanUser = [uid substringToIndex:atSymbol.location];
+		m_currentUserUID = [[NSString alloc] initWithString:[uid substringToIndex:atSymbol.location]];
 	}
 	else
 	{
-		cleanUser = uid;
-	}
-	m_currentUserUID = [[cleanUser retain] autorelease];
+		m_currentUserUID = [[NSString alloc] initWithString:uid];
+	}	
 }
 
 
