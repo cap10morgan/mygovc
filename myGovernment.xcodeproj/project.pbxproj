@@ -38,6 +38,8 @@
 		01BFE8130FB7D62500ECC015 /* google_logo_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 01BFE8120FB7D62500ECC015 /* google_logo_small.png */; };
 		01C075BC0F8EE96E00F5B2A1 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */; };
 		01C075C10F8EE98700F5B2A1 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */; };
+		01C669800FFAF44F00A01F3D /* newContact.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C6697F0FFAF44F00A01F3D /* newContact.png */; };
+		01C669C10FFB061600A01F3D /* SpendingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01C669C00FFB061600A01F3D /* SpendingView.xib */; };
 		01C729D80F9EEBBF00EA3FF9 /* recoveryIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */; };
 		01D4FF110FCB29B10000FAE7 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D4FF100FCB29B10000FAE7 /* Reachability.m */; };
 		01D4FF140FCB2A0D0000FAE7 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D4FF130FCB2A0D0000FAE7 /* SystemConfiguration.framework */; };
@@ -145,6 +147,8 @@
 		01BFE8120FB7D62500ECC015 /* google_logo_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = google_logo_small.png; path = res/google_logo_small.png; sourceTree = "<group>"; };
 		01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		01C6697F0FFAF44F00A01F3D /* newContact.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = newContact.png; path = res/newContact.png; sourceTree = "<group>"; };
+		01C669C00FFB061600A01F3D /* SpendingView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpendingView.xib; sourceTree = "<group>"; };
 		01C729D70F9EEBBF00EA3FF9 /* recoveryIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = recoveryIcon.png; path = res/recoveryIcon.png; sourceTree = "<group>"; };
 		01D4FEDE0FCB24620000FAE7 /* myGovCompileOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myGovCompileOptions.h; sourceTree = "<group>"; };
 		01D4FF0F0FCB29B10000FAE7 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
@@ -361,6 +365,7 @@
 		0102D2DC0F58DB79005AE0EA /* spending */ = {
 			isa = PBXGroup;
 			children = (
+				01C669C00FFB061600A01F3D /* SpendingView.xib */,
 				01D7FE9B0FA5019100F78B92 /* SpendingViewController.h */,
 				01D7FE9C0FA5019100F78B92 /* SpendingViewController.m */,
 				01D7FE950FA5019100F78B92 /* SpendingDataManager.h */,
@@ -521,6 +526,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01C6697F0FFAF44F00A01F3D /* newContact.png */,
 				019A61070FDE214300E4CB1C /* personIcon.png */,
 				01BFE8120FB7D62500ECC015 /* google_logo_small.png */,
 				01B374760FB7568600DDA991 /* eagleIcon_32x32.png */,
@@ -632,6 +638,8 @@
 				01B374790FB7568600DDA991 /* eagleIcon_57x57.png in Resources */,
 				01BFE8130FB7D62500ECC015 /* google_logo_small.png in Resources */,
 				019A61080FDE214300E4CB1C /* personIcon.png in Resources */,
+				01C669800FFAF44F00A01F3D /* newContact.png in Resources */,
+				01C669C10FFB061600A01F3D /* SpendingView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

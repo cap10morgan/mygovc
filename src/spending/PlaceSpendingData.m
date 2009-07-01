@@ -488,7 +488,10 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 		}
 		
 		[xmlParser setDelegate:self];
-		isDataAvailable = [xmlParser parse];
+		// this allows the process to short-circuit (returning false), 
+		// but still provide (possibly incomplete) data
+		BOOL parseSuccess = [xmlParser parse];
+		isDataAvailable = parseSuccess || isDataAvailable;
 		isBusy = NO;
 		
 		if ( nil != m_notifyTarget )
@@ -709,6 +712,9 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	{
 		[m_notifyTarget performSelector:m_notifySelector withObject:self];
 	}
+	
+	// try to use what we have...
+	isDataAvailable = YES;
 }
 
 
@@ -719,6 +725,9 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	{
 		[m_notifyTarget performSelector:m_notifySelector withObject:self];
 	}
+	
+	// try to use what we have...
+	isDataAvailable = YES;
 }
 
 

@@ -51,6 +51,8 @@
 
 @implementation SpendingViewController
 
+//@synthesize tableView;
+
 typedef enum
 {
 	eAST_ContractorSort   = 0,
@@ -71,6 +73,19 @@ typedef enum
 	[m_data release];
 	[m_HUD release];
     [super dealloc];
+}
+
+
+- (id)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle
+{
+	self = [super initWithNibName:nibName bundle:nibBundle];
+    if (self) 
+	{
+		self.title = @"Spending";
+		self.tabBarItem.image = [UIImage imageNamed:@"spendingIcon.png"];
+		self.tabBarItem.title = @"Spending";
+    }
+    return self;
 }
 
 
@@ -669,7 +684,7 @@ deselect_and_return:
 
 
 // Customize the appearance of table view cells.
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
+- (UITableViewCell *)tableView:(UITableView *)tblView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
 {
 	static NSString *PlaceCellIdentifier = @"PlaceSpendingCell";
 	static NSString *CtorCellIdendifier = @"ContractorCell";
@@ -677,7 +692,7 @@ deselect_and_return:
 	UITableViewCell *tcell;
 	if ( eSQMContractor == m_selectedQueryMethod )
 	{
-		ContractorSpendingTableCell *cell = (ContractorSpendingTableCell *)[tableView dequeueReusableCellWithIdentifier:CtorCellIdendifier];
+		ContractorSpendingTableCell *cell = (ContractorSpendingTableCell *)[tblView dequeueReusableCellWithIdentifier:CtorCellIdendifier];
 		if ( cell == nil )
 		{
 			cell = [[[ContractorSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CtorCellIdendifier detailTarget:self detailSelector:@selector(showContractorDetail:)] autorelease];
@@ -691,7 +706,7 @@ deselect_and_return:
 	}
 	else
 	{
-		PlaceSpendingTableCell *cell = (PlaceSpendingTableCell *)[tableView dequeueReusableCellWithIdentifier:PlaceCellIdentifier];
+		PlaceSpendingTableCell *cell = (PlaceSpendingTableCell *)[tblView dequeueReusableCellWithIdentifier:PlaceCellIdentifier];
 		if ( cell == nil ) 
 		{
 			cell = [[[PlaceSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:PlaceCellIdentifier detailTarget:self detailSelector:@selector(showPlaceDetail:)] autorelease];
@@ -720,7 +735,7 @@ deselect_and_return:
 }
 
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tblView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	switch ( m_selectedQueryMethod )
 	{

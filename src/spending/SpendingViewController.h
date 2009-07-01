@@ -39,6 +39,8 @@ typedef enum
 @interface SpendingViewController : UITableViewController <UIActionSheetDelegate>
 {
 @private
+//	IBOutlet UITableView *tableView;
+	
 	SpendingDataManager *m_data;
 	SpendingQueryMethod m_selectedQueryMethod;
 	UISegmentedControl *m_segmentCtrl;
@@ -50,6 +52,8 @@ typedef enum
 	ProgressOverlayViewController *m_HUD;
 	BOOL m_outOfScope;
 }
+
+//@property (nonatomic,retain) UITableView *tableView;
 
 - (NSString *)areaName;
 - (void)handleURLParms:(NSString *)parms;

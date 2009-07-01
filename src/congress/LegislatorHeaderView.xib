@@ -39,7 +39,7 @@
 					<object class="IBUIButton" id="116060101">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{258, 69}, {29, 29}}</string>
+						<string key="NSFrame">{{261, 70}, {23, 23}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
@@ -50,8 +50,6 @@
 							<double key="NSSize">1.500000e+01</double>
 							<int key="NSfFlags">16</int>
 						</object>
-						<int key="IBUIButtonType">5</int>
-						<bool key="IBUIShowsTouchWhenHighlighted">YES</bool>
 						<object class="NSColor" key="IBUIHighlightedTitleColor" id="284481973">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MSAxIDEAA</bytes>
@@ -59,6 +57,14 @@
 						<object class="NSColor" key="IBUINormalTitleColor">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MC4xOTYwNzg0MyAwLjMwOTgwMzkzIDAuNTIxNTY4NjYAA</bytes>
+						</object>
+						<object class="NSColor" key="IBUINormalTitleShadowColor" id="503881631">
+							<int key="NSColorSpace">3</int>
+							<bytes key="NSWhite">MAA</bytes>
+						</object>
+						<object class="NSCustomResource" key="IBUINormalImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">newContact.png</string>
 						</object>
 					</object>
 					<object class="IBUIButton" id="1024331275">
@@ -78,6 +84,7 @@
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MC4xOTYwNzg0MyAwLjMwOTgwMzkzIDAuNTIxNTY4NjYAA</bytes>
 						</object>
+						<reference key="IBUINormalTitleShadowColor" ref="503881631"/>
 					</object>
 					<object class="IBUIImageView" id="483584048">
 						<reference key="NSNextResponder" ref="191373211"/>
@@ -118,7 +125,7 @@
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
-						<string key="IBUIText">Full Bio:</string>
+						<string key="IBUIText">Full Biography:</string>
 						<reference key="IBUITextColor" ref="284481973"/>
 						<object class="NSColor" key="IBUIHighlightedColor">
 							<int key="NSColorSpace">2</int>
@@ -267,8 +274,8 @@
 							<reference ref="41780085"/>
 							<reference ref="130112261"/>
 							<reference ref="839296209"/>
-							<reference ref="116060101"/>
 							<reference ref="867394369"/>
+							<reference ref="116060101"/>
 						</object>
 						<reference key="parent" ref="360949347"/>
 					</object>
@@ -419,5 +426,6 @@
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.LastKnownRelativeProjectPath">../../myGovernment.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
+		<string key="IBCocoaTouchPluginVersion">3.0</string>
 	</data>
 </archive>

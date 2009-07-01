@@ -31,6 +31,7 @@
 #import "MiniBrowserController.h"
 #import "MyGovUserData.h"
 #import "Reachability.h"
+#import "SpendingViewController.h"
 
 @implementation myGovAppDelegate
 
@@ -261,7 +262,7 @@ static int s_threads_using_network = 0;
 	
 	// run through all of the view controllers managed by the tab bar
 	// and setup our dictionary of view controllers which can handle URLs
-	NSArray *tabViews = m_tabBarController.viewControllers;
+	NSMutableArray *tabViews = [[NSMutableArray alloc] initWithArray:m_tabBarController.viewControllers];
 	NSEnumerator *tabsEnum = [tabViews objectEnumerator];
 	id tab;
 	while ( tab = [tabsEnum nextObject] )
@@ -280,6 +281,14 @@ static int s_threads_using_network = 0;
 		}
 		
 	}
+	
+	// Add a custom view controller...
+	/**
+	SpendingViewController *spendingViewCtrl = [[[SpendingViewController alloc] initWithNibName:@"SpendingView" 
+																						 bundle:nil] autorelease];
+	[tabViews addObject:spendingViewCtrl];
+	m_tabBarController.viewControllers = tabViews;
+	**/
 	
     // Add the tab bar controller's current view as a subview of the window
     [m_window addSubview:m_tabBarController.view];
