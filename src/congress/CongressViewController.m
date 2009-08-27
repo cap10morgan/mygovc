@@ -42,7 +42,7 @@
 	- (void)deselectRow:(id)sender;
 	- (void)findLocalLegislators:(id)sender;
 	- (void)scrollToInitialPosition;
-	- (void)showInitialLegislator:(LegislatorContainer *)legislator;
+//	- (void)showInitialLegislator:(LegislatorContainer *)legislator;
 	- (LegislatorContainer *)legislatorFromIndexPath:(NSIndexPath *)idx;
 @end
 
@@ -181,6 +181,21 @@ enum
 	[super viewWillAppear:animated];
 	
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	
+	if ( [m_data isDataAvailable] )
+	{
+		[self scrollToInitialPosition];
+		if ( nil != m_initialLegislatorID )
+		{
+			[self.navigationController popToRootViewControllerAnimated:NO];
+			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:m_initialLegislatorID];
+			LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+			[legViewCtrl setLegislator:legislator];
+			[self.navigationController pushViewController:legViewCtrl animated:NO];
+			[legViewCtrl release];
+			[self.view setNeedsDisplay];
+		}
+	}
 }
 
 
@@ -211,18 +226,6 @@ enum
 	{
 		self.tableView.userInteractionEnabled = YES;
 		[m_HUD show:NO];
-		
-		[self scrollToInitialPosition];
-		
-		if ( nil != m_initialLegislatorID )
-		{
-			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:m_initialLegislatorID];
-			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																		  selector:@selector(showInitialLegislator:) object:legislator];
-			// Add the operation to the internal operation queue managed by the application delegate.
-			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
-			[theOp release];
-		}
 	}
 	else
 	{
@@ -329,13 +332,21 @@ deselect_and_return:
 		// load an initial legislator if we were told to do so!
 		if ( nil != m_initialLegislatorID )
 		{
+			[self.navigationController popToRootViewControllerAnimated:NO];
 			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:m_initialLegislatorID];
+			/*
 			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																		  selector:@selector(showInitialLegislator:) object:legislator];
 			
 			// Add the operation to the internal operation queue managed by the application delegate.
 			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
 			[theOp release];
+			*/
+			LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+			[legViewCtrl setLegislator:legislator];
+			[self.navigationController pushViewController:legViewCtrl animated:NO];
+			[legViewCtrl release];
+			[self.view setNeedsDisplay];
 		}
 	}
 	else
@@ -512,13 +523,13 @@ show_legislator:
 		else
 		{
 			// show the requested legislator!
+			[self.navigationController popToRootViewControllerAnimated:NO];
 			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:bioguideID];
-			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																		  selector:@selector(showInitialLegislator:) object:legislator];
-			
-			// Add the operation to the internal operation queue managed by the application delegate.
-			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
-			[theOp release];
+			LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+			[legViewCtrl setLegislator:legislator];
+			[self.navigationController pushViewController:legViewCtrl animated:NO];
+			[legViewCtrl release];
+			[self.view setNeedsDisplay];
 		}
 	}
 	else
@@ -714,20 +725,20 @@ show_legislator:
 	[m_initialIndexPath release]; m_initialIndexPath = nil;
 }
 
-
+/*
 - (void)showInitialLegislator:(LegislatorContainer *)legislator
 {
 	// we should be running in a thread, so this should give my table
 	// enough time to load itself up before I go and cover it up.
 	// (yeah, it's a bit of a hack...)
-	//[NSThread sleepForTimeInterval:0.33f]; 
+	
 	while ( self.navigationController.visibleViewController != self && 
 		   !self.tableView.userInteractionEnabled
 		   )
 	{
 		[NSThread sleepForTimeInterval:0.2f];
 	}
-	[NSThread sleepForTimeInterval:0.35f];
+	[NSThread sleepForTimeInterval:0.4f];
 	
 	[m_initialLegislatorID release]; m_initialLegislatorID = nil;
 	if ( nil != legislator )
@@ -741,7 +752,7 @@ show_legislator:
 		[legViewCtrl release];
 	}
 }
-
+*/
 
 - (LegislatorContainer *)legislatorFromIndexPath:(NSIndexPath *)idx
 {

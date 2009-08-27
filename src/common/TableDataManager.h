@@ -60,6 +60,7 @@
 @property (nonatomic) SEL action;
 
 - (NSComparisonResult)compareTitle:(TableRowData *)other;
+- (NSComparisonResult)compareLine1:(TableRowData *)other;
 
 @end
 

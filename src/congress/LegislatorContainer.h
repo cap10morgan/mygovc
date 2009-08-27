@@ -79,6 +79,13 @@ typedef enum
 - (NSString *)twitter_url;  // Convert twitter ID to absolute URL
 - (NSString *)youtube_url;	// Congressperson's official Youtube account
 
+- (NSString *)numBillsSponsored;
+- (NSString *)numBillsSponsoredPassed;
+- (NSString *)numBillsCoSponsored;
+- (NSString *)numBillsCoSponsoredPassed;
+- (NSString *)votesWithParty;
+- (NSString *)votesAbstains;
+
 - (NSString *)shortName;
 
 // congressional committee data:

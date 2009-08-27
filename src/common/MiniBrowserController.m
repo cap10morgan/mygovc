@@ -410,7 +410,7 @@ static MiniBrowserController *s_browser = NULL;
 	{
 		[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:topView cache:NO];
 		[topView addSubview:self.view];
-		[self.view setFrame:CGRectMake(0.0f,0.0f,320.0f,460.0f)];
+		[self.view setFrame:CGRectMake(0.0f,20.0f,320.0f,460.0f)];
 		/*
 		if ( [myGovAppDelegate OSVersion] >= 3.0 )
 		{

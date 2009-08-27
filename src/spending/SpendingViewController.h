@@ -36,11 +36,11 @@ typedef enum
 } SpendingQueryMethod;
 
 
-@interface SpendingViewController : UITableViewController <UIActionSheetDelegate>
+@interface SpendingViewController : UIViewController <UITableViewDelegate, UIActionSheetDelegate>
 {
-@private
-//	IBOutlet UITableView *tableView;
+	UITableView *tableView;
 	
+@private
 	SpendingDataManager *m_data;
 	SpendingQueryMethod m_selectedQueryMethod;
 	UISegmentedControl *m_segmentCtrl;
@@ -53,8 +53,9 @@ typedef enum
 	BOOL m_outOfScope;
 }
 
-//@property (nonatomic,retain) UITableView *tableView;
+@property (nonatomic, retain) IBOutlet UITableView *tableView;
 
+- (IBAction)selectSpendingFilter:(id)sender;
 - (NSString *)areaName;
 - (void)handleURLParms:(NSString *)parms;
 

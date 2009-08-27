@@ -81,6 +81,14 @@ static int kMAX_OPS_IN_QUEUE = 10;
 			m_timer = [NSTimer timerWithTimeInterval:0.4 target:self selector:@selector(timerFireMethod:) userInfo:nil repeats:YES];
 			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
 		}
+		else
+		{
+			isDataAvailable = YES;
+			if ( nil != m_notifyTarget )
+			{
+				[m_notifyTarget performSelector:m_notifySelector withObject:self];
+			}
+		}
 	}
 	return self;
 }

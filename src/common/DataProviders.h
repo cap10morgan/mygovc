@@ -70,6 +70,7 @@ typedef enum
 + (NSString *)Govtrack_CommitteeURL:(NSInteger)congressSession;
 + (NSString *)Govtrack_DistrictURLFromLocation:(CLLocation *)latLong;
 + (NSString *)Govtrack_FullBillTextURL:(NSInteger)number withBillType:(BillType)type;
++ (NSString *)Govtrack_DistrictMapURL:(NSString *)stateAbbr forDistrict:(NSInteger)district;
 
 + (NSString *)USASpending_fpdsURL;
 + (NSString *)USASpending_districtURL:(NSString *)district 

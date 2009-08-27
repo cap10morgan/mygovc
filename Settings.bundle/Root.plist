@@ -9,6 +9,20 @@
 	<key>PreferenceSpecifiers</key>
 	<array>
 		<dict>
+            <key>Title</key>
+            <string>Version</string>
+            <key>Type</key>
+            <string>PSGroupSpecifier</string>
+        </dict>
+        <dict>
+            <key>DefaultValue</key>
+            <string>1.1</string>
+            <key>Key</key>
+            <string>mygov_version</string>
+            <key>Type</key>
+            <string>PSTitleValueSpecifier</string>
+        </dict>
+		<dict>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 			<key>Title</key>

@@ -283,12 +283,12 @@ static int s_threads_using_network = 0;
 	}
 	
 	// Add a custom view controller...
-	/**
+	/*
 	SpendingViewController *spendingViewCtrl = [[[SpendingViewController alloc] initWithNibName:@"SpendingView" 
 																						 bundle:nil] autorelease];
 	[tabViews addObject:spendingViewCtrl];
 	m_tabBarController.viewControllers = tabViews;
-	**/
+	*/
 	
     // Add the tab bar controller's current view as a subview of the window
     [m_window addSubview:m_tabBarController.view];

@@ -37,7 +37,7 @@
 @interface BillsViewController (private)
 	- (BillContainer *)billAtIndexPath:(NSIndexPath *)indexPath;
 	- (BOOL)scrollToInitialPosition;
-	- (void)showInitialBill:(BillContainer *)bill;
+	- (void)searchForBillID:(NSString *)billID;
 	- (void)reloadBillData;
 	- (void)dataManagerCallback:(id)sender;
 	- (void)shadowDataCallback:(id)sender;
@@ -162,7 +162,29 @@ enum
 	[super viewWillAppear:animated];
 	
 	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
-	[self.tableView setNeedsDisplay];
+	
+	if ( [m_data isDataAvailable] )
+	{
+		if ( nil != m_initialBillID )
+		{
+			BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
+			if ( nil != bill )
+			{
+				[self.navigationController popToRootViewControllerAnimated:NO];
+				BillInfoViewController *biView = [[BillInfoViewController alloc] init];
+				[biView setBill:bill];
+				[self.navigationController pushViewController:biView animated:YES];
+				[biView release];
+				[self.tableView setNeedsDisplay];
+			}
+			else
+			{
+				// XXX - search for the bill
+				[self searchForBillID:m_initialBillID];
+			}
+			[m_initialBillID release]; m_initialBillID = nil;
+		}
+	}
 }
 
 
@@ -200,18 +222,6 @@ enum
 	if ( nil != m_initialIndexPath || nil != m_initialSearchString )
 	{
 		isReloading = [self scrollToInitialPosition];
-	}
-	
-	if ( nil != m_initialBillID )
-	{
-		//[self scrollToInitialPosition];
-		
-		BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
-		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																			selector:@selector(showInitialBill:) object:bill];
-		// Add the operation to the internal operation queue managed by the application delegate.
-		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
-		[theOp release];
 	}
 	
 	if ( m_outOfScope )
@@ -393,11 +403,21 @@ get_out:
 		if ( nil != m_initialBillID )
 		{
 			BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
-			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																				selector:@selector(showInitialBill:) object:bill];
-			// Add the operation to the internal operation queue managed by the application delegate.
-			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
-			[theOp release];
+			if ( nil != bill )
+			{
+				[self.navigationController popToRootViewControllerAnimated:NO];
+				BillInfoViewController *biView = [[BillInfoViewController alloc] init];
+				[biView setBill:bill];
+				[self.navigationController pushViewController:biView animated:YES];
+				[biView release];
+				[self.tableView setNeedsDisplay];
+			}
+			else
+			{
+				// XXX - search for the bill
+				[self searchForBillID:m_initialBillID];
+			}
+			[m_initialBillID release]; m_initialBillID = nil;
 		}
 	}
 }
@@ -468,67 +488,35 @@ get_out:
 }
 
 
-- (void)showInitialBill:(BillContainer *)bill
+- (void)searchForBillID:(NSString *)billID
 {
-	// we should be running in a thread, so this should give my table
-	// enough time to load itself up before I go and cover it up.
-	// (yeah, it's a bit of a hack...)
-	//[NSThread sleepForTimeInterval:0.33f]; 
-	while ( self.navigationController.visibleViewController != self && 
-		    !self.tableView.userInteractionEnabled
-		  )
+	// search for bill (at OpenCongress.org!)
+	UISearchBar *searchBar = (UISearchBar *)self.tableView.tableHeaderView;
+	NSRange searchRange; searchRange.length = 3; searchRange.location = 0;
+	if ( [billID length] >= searchRange.length )
 	{
-		[m_HUD show:YES];
-		[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
-		//[self.tableView setNeedsDisplay];
-		
-		[NSThread sleepForTimeInterval:0.2f];
-	}
-	[NSThread sleepForTimeInterval:0.35f];
-	
-	if ( nil != bill )
-	{
-		// only 1 bill at a time!
-		[self.navigationController popToRootViewControllerAnimated:NO];
-		
-		BillInfoViewController *biView = [[BillInfoViewController alloc] init];
-		[biView setBill:bill];
-		[self.navigationController pushViewController:biView animated:YES];
-		[biView release];
+		searchBar.text = [m_initialBillID stringByReplacingOccurrencesOfString:@" " 
+																	withString:@"" 
+																	   options:0 
+																		 range:searchRange];
 	}
 	else
 	{
-		// search for bill (at OpenCongress.org!)
-		UISearchBar *searchBar = (UISearchBar *)self.tableView.tableHeaderView;
-		NSRange searchRange; searchRange.length = 3; searchRange.location = 0;
-		if ( [m_initialBillID length] >= searchRange.length )
-		{
-			searchBar.text = [m_initialBillID stringByReplacingOccurrencesOfString:@" " 
-																   withString:@"" 
-																	  options:0 
-																		range:searchRange];
-		}
-		else
-		{
-			searchBar.text = m_initialBillID;
-		}
-		
-		[m_HUD setText:@"Searching Bills..." andIndicateProgress:YES];
-		[m_HUD show:YES];
-		[self.tableView setUserInteractionEnabled:NO];
-		
-		// kick off the search in a thread
-		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																			selector:@selector(searchForBills:) object:searchBar];
-		
-		// Add the operation to the internal operation queue managed by the application delegate.
-		[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
-		
-		[theOp release];
+		searchBar.text = billID;
 	}
 	
-	[m_initialBillID release]; m_initialBillID = nil;
-	[self.tableView setNeedsDisplay];
+	[m_HUD setText:@"Searching Bills..." andIndicateProgress:YES];
+	[m_HUD show:YES];
+	[self.tableView setUserInteractionEnabled:NO];
+	
+	// kick off the search in a thread
+	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																		selector:@selector(searchForBills:) object:searchBar];
+	
+	// Add the operation to the internal operation queue managed by the application delegate.
+	[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
+	
+	[theOp release];
 }
 
 
@@ -577,11 +565,21 @@ get_out:
 		if ( nil != m_initialBillID )
 		{
 			BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
-			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
-																				selector:@selector(showInitialBill:) object:bill];
-			// Add the operation to the internal operation queue managed by the application delegate.
-			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
-			[theOp release];
+			if ( nil != bill )
+			{
+				[self.navigationController popToRootViewControllerAnimated:NO];
+				BillInfoViewController *biView = [[BillInfoViewController alloc] init];
+				[biView setBill:bill];
+				[self.navigationController pushViewController:biView animated:YES];
+				[biView release];
+				[self.tableView setNeedsDisplay];
+			}
+			else
+			{
+				// XXX - search for the bill
+				[self searchForBillID:m_initialBillID];
+			}
+			[m_initialBillID release]; m_initialBillID = nil;
 		}
 		
 		if ( !isReloading ) [self.tableView reloadData];

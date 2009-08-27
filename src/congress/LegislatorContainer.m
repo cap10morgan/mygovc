@@ -58,7 +58,12 @@ static NSString * kField_EventfulID = @"eventful_id";
 static NSString * kField_CongresspediaURL = @"congresspedia_url";
 static NSString * kField_TwitterID = @"twitter_id";
 static NSString * kField_YoutubeURL = @"youtube_url";
-
+static NSString * kField_numBillsSponsored = @"numBillsSponsored";
+static NSString * kField_numBillsSponsoredPassed = @"numBillsSponsoredPassed";
+static NSString * kField_numBillsCoSponsored = @"numBillsCoSponsored";
+static NSString * kField_numBillsCoSponsoredPassed = @"numBillsCoSponsoredPassed";
+static NSString * kField_votesWithParty = @"votesWithParty";
+static NSString * kField_votesAbstains = @"votesAbstains";
 
 + (UIColor *)partyColor:(NSString *)party
 {
@@ -317,6 +322,36 @@ static NSString * kField_YoutubeURL = @"youtube_url";
 - (NSString *)youtube_url
 {
 	return [m_info objectForKey:kField_YoutubeURL];
+}
+
+- (NSString *)numBillsSponsored
+{
+	return [m_info objectForKey:kField_numBillsSponsored];
+}
+
+- (NSString *)numBillsSponsoredPassed
+{
+	return [m_info objectForKey:kField_numBillsSponsoredPassed];
+}
+
+- (NSString *)numBillsCoSponsored
+{
+	return [m_info objectForKey:kField_numBillsCoSponsored];
+}
+
+- (NSString *)numBillsCoSponsoredPassed
+{
+	return [m_info objectForKey:kField_numBillsCoSponsoredPassed];
+}
+
+- (NSString *)votesWithParty
+{
+	return [m_info objectForKey:kField_votesWithParty];
+}
+
+- (NSString *)votesAbstains
+{
+	return [m_info objectForKey:kField_votesAbstains];
 }
 
 

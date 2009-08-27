@@ -64,6 +64,7 @@ static NSString *kGovtrack_dataDir = @"http://www.govtrack.us/data/us/";
 static NSString *kGovtrack_committeeListXMLFmt = @"http://www.govtrack.us/data/us/%d/committees.xml";
 static NSString *kGovtrack_latLongFmt = @"http://www.govtrack.us/perl/district-lookup.cgi?lat=%f&long=%f";
 static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bills.text/%d/%@/%@%d.html";
+static NSString *kGovtrackDistrictMapURL_fmt = @"http://www.govtrack.us/congress/findyourreps.xpd?state=%@&district=%d";
 
 // 
 // USASpending.gov
@@ -324,13 +325,23 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 
 + (NSString *)Govtrack_FullBillTextURL:(NSInteger)number withBillType:(BillType)type
 {
-	NSString *urlStr = [[NSString alloc] initWithFormat:kGovtrackBillTextURL_fmt,
+	NSString *urlStr = [[[NSString alloc] initWithFormat:kGovtrackBillTextURL_fmt,
 											[[myGovAppDelegate sharedCongressData] currentCongressSession],
 											[BillContainer stringFromBillType:type],
 											[BillContainer stringFromBillType:type],
 											number,
 											@"" // XXX - "ih", "eh" "ih.gen", "rfs", etc.
-						];
+						] autorelease];
+	return urlStr;
+}
+
+
++ (NSString *)Govtrack_DistrictMapURL:(NSString *)stateAbbr forDistrict:(NSInteger)district
+{
+	NSString *urlStr = [[[NSString alloc] initWithFormat:kGovtrackDistrictMapURL_fmt, 
+											stateAbbr, 
+											district
+						] autorelease];
 	return urlStr;
 }
 

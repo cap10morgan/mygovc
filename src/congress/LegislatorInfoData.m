@@ -32,19 +32,22 @@
 
 enum
 {
-	eSection_Contact = 0,
-	eSection_InfoStream = 1,
-	eSection_Committe = 2,
-	eSection_Recent = 3,
+	eSection_Contact    = 0,
+	eSection_Stats      = 1,
+	eSection_InfoStream = 2,
+	eSection_Committe   = 3,
+	eSection_Recent     = 4,
 };
 
 #define KEY_CONTACT    @"Contact Information" 
+#define KEY_STATS      @"Legislator Stats"
 #define KEY_COMMITTEE  @"Committee Membership"
 #define KEY_INFOSTREAM @"Legislator Info Stream"
 #define KEY_RECENT     @"Recent Activity"
 
 // The order here _must_ correspond to the order in the enumeration above
 #define DATA_SECTIONS KEY_CONTACT, \
+                      KEY_STATS, \
                       KEY_INFOSTREAM, \
                       KEY_COMMITTEE, \
                       KEY_RECENT, \
@@ -68,6 +71,25 @@ enum
                           @selector(rowActionURL:), \
                           @selector(rowActionURL:), \
                           @selector(rowActionLegislatorMap:)
+
+// 
+// Setup the person-stats section data 
+// 
+#define STATS_ROWKEY @"01_bills sponsored",@"02_bills sponsored (passed)", \
+                     @"03_bills co-sponsored",@"04_bills co-sponsored (passed)", \
+                     @"05_votes with party",@"06_abstains", \
+                     nil
+
+#define STATS_ROWSEL @selector(numBillsSponsored),@selector(numBillsSponsoredPassed), \
+                     @selector(numBillsCoSponsored), @selector(numBillsCoSponsoredPassed), \
+                     @selector(votesWithParty),@selector(votesAbstains)
+
+#define STATS_ROWACTION @selector(rowActionNone:),\
+                        @selector(rowActionNone:), \
+                        @selector(rowActionNone:), \
+                        @selector(rowActionNone:), \
+                        @selector(rowActionNone:), \
+                        @selector(rowActionNone:)
 
 // 
 // Setup the infostream section data 
@@ -109,7 +131,7 @@ static NSString *kNewsItem_Title = @"title";
 
 /*
 	For the future: more person stats from OpenCongress.org
- *
+ */
 static NSString *kName_PersonStats = @"person-stats";
 static NSString *kName_CosponsoredBills = @"cosponsored-bills"; // integer
 static NSString *kName_CosponsoredBillsPassed = @"cosponsored-bills-passed"; // integer
@@ -117,7 +139,7 @@ static NSString *kName_SponsoredBills = @"sponsored-bills"; // integer
 static NSString *kName_SponsoredBillsPassed = @"sponsored-bills-passed"; // integer
 static NSString *kName_AbstainsPct = @"abstains-percentage"; // float
 static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
-*/
+
 
 - (id)init
 {
@@ -129,6 +151,8 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 		m_activityData = nil;
 		
 		m_parsingResponse = NO;
+		m_parsingNewsItem = NO;
+		m_parsingPersonStats = NO;
 		m_storingCharacters = NO;
 		m_currentString = nil;
 		m_currentTitle = nil;
@@ -228,6 +252,36 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 			}
 		}
 			[retVal sortUsingSelector:@selector(compareTitle:)];
+			break;
+		
+		case eSection_Stats:
+		{
+			NSArray *keys = [NSArray arrayWithObjects:STATS_ROWKEY];
+			SEL dataSelector[] = { STATS_ROWSEL };
+			SEL dataAction[] = { STATS_ROWACTION };
+			for ( NSInteger ii = 0; ii < [keys count]; ++ii )
+			{
+				NSString *value = [m_legislator performSelector:dataSelector[ii]];
+				if ( [value length] > 0 )
+				{
+					TableRowData *rd = [[TableRowData alloc] init];
+					NSMutableString *l1Txt = [[NSMutableString alloc] initWithString:[keys objectAtIndex:ii]];
+					NSArray *fldArray = [l1Txt componentsSeparatedByString:@"_"];
+					if ( [fldArray count] > 1 )
+					{
+						[l1Txt setString:[fldArray objectAtIndex:([fldArray count]-1)]];
+					}
+					[l1Txt appendFormat:@": %@",value];
+					rd.line1 = l1Txt;
+					rd.line1Font = [UIFont boldSystemFontOfSize:14.0f];
+					rd.line1Color = [LegislatorContainer partyColor:[m_legislator party]];
+					[l1Txt release];
+					
+					rd.action = dataAction[ii];
+					[retVal addObject:rd];
+				}
+			}
+		}
 			break;
 		
 		case eSection_InfoStream:
@@ -397,7 +451,7 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 	// delay the downloading of recent info so that the
 	// legislator's image download has a chance to start first...
 	// (yes this is a bit of a hack)
-	[NSThread sleepForTimeInterval:1.1f]; 
+	[NSThread sleepForTimeInterval:0.5f]; 
 	//NSLog( @"LegislatorInfoData started OpenCongress download for %@...",[m_legislator shortName] );
 }
 
@@ -447,6 +501,8 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 	if ( [elementName isEqualToString:kName_Response] )
 	{
 		m_parsingResponse = YES;
+		m_parsingNewsItem = NO;
+		m_parsingPersonStats = NO;
 		[m_currentRowData release]; m_currentRowData = nil;
 		
 		[m_currentString release]; 
@@ -457,6 +513,8 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 		NSString *niType = [attributeDict objectForKey:kNewsItem_Attr_Type];
 		if ( [elementName isEqualToString:kName_NewsItem] )
 		{
+			m_parsingNewsItem = YES;
+			m_parsingPersonStats = NO;
 			[m_currentTitle release]; m_currentTitle = nil;
 			[m_currentExcerpt release]; m_currentExcerpt = nil;
 			[m_currentSource release]; m_currentSource = nil;
@@ -478,6 +536,16 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 				m_storingCharacters = YES;
 			}
 		}
+		else if ( [elementName isEqualToString:kName_PersonStats] )
+		{
+			m_parsingNewsItem = NO;
+			m_parsingPersonStats = YES;
+			[m_currentRowData release]; m_currentRowData = nil;
+			
+			[m_currentString release]; 
+			m_currentString = [[NSMutableString alloc] init];
+			m_storingCharacters = YES;
+		}
 		[m_currentString setString:@""];
     }
 	else
@@ -495,38 +563,82 @@ static NSString *kName_VotesWithPartyPct = @"party-votes-percentage"; // float
 		m_parsingResponse = NO;
 		// This is the end of the data!
 	}
-	else if ( m_parsingResponse && (nil != m_currentRowData) )
+	else if ( m_parsingResponse )
 	{
-		if ( [elementName isEqualToString:kNewsItem_URL] )
+		if ( m_parsingNewsItem && (nil != m_currentRowData) )
 		{
-			NSURL *url = [[NSURL alloc] initWithString:m_currentString];
-			m_currentRowData.url = url;
-			[url release];
+			if ( [elementName isEqualToString:kNewsItem_URL] )
+			{
+				NSURL *url = [[NSURL alloc] initWithString:m_currentString];
+				m_currentRowData.url = url;
+				[url release];
+			}
+			else if ( [elementName isEqualToString:kNewsItem_Title] )
+			{
+				m_currentTitle = [[NSString alloc] initWithString:m_currentString];
+			}
+			else if ( [elementName isEqualToString:kNewsItem_Source] )
+			{
+				m_currentSource = [[NSString alloc] initWithString:m_currentString];
+			}
+			else if ( [elementName isEqualToString:kNewsItem_Excerpt] )
+			{
+				m_currentExcerpt = [[NSString alloc] initWithString:m_currentString];
+			}
+			else if ( [elementName isEqualToString:kName_NewsItem]  )
+			{
+				// put together the final 'value'
+				m_currentRowData.line1 = ([m_currentTitle length] > 0) ? m_currentTitle : m_currentSource;
+				m_currentRowData.line1Font = [UIFont boldSystemFontOfSize:14.0f];
+				m_currentRowData.line1Color = [UIColor blackColor];
+				m_currentRowData.line2 = m_currentExcerpt;
+				m_currentRowData.line2Font = [UIFont systemFontOfSize:12.0f];
+				m_currentRowData.action = @selector(rowActionURL:);
+				
+				[m_activityData addObject:m_currentRowData];
+				[m_currentRowData release]; m_currentRowData = nil;
+			}
 		}
-		else if ( [elementName isEqualToString:kNewsItem_Title] )
+		else if ( m_parsingPersonStats )
 		{
-			m_currentTitle = [[NSString alloc] initWithString:m_currentString];
-		}
-		else if ( [elementName isEqualToString:kNewsItem_Source] )
-		{
-			m_currentSource = [[NSString alloc] initWithString:m_currentString];
-		}
-		else if ( [elementName isEqualToString:kNewsItem_Excerpt] )
-		{
-			m_currentExcerpt = [[NSString alloc] initWithString:m_currentString];
-		}
-		else if ( [elementName isEqualToString:kName_NewsItem]  )
-		{
-			// put together the final 'value'
-			m_currentRowData.line1 = ([m_currentTitle length] > 0) ? m_currentTitle : m_currentSource;
-			m_currentRowData.line1Font = [UIFont boldSystemFontOfSize:14.0f];
-			m_currentRowData.line1Color = [UIColor blackColor];
-			m_currentRowData.line2 = m_currentExcerpt;
-			m_currentRowData.line2Font = [UIFont systemFontOfSize:12.0f];
-			m_currentRowData.action = @selector(rowActionURL:);
-			
-			[m_activityData addObject:m_currentRowData];
-			[m_currentRowData release]; m_currentRowData = nil;
+/*
+			@selector(billsSponsored),@selector(billsSponsoredPassed), \
+			@selector(billsCoSponsored), @selector(billsCoSponsoredPassed), \
+			@selector(votesWithParty),@selector(votesAbstains)
+*/			
+			if ( [elementName isEqualToString:kName_AbstainsPct] )
+			{
+				CGFloat pct = [m_currentString floatValue];
+				[m_legislator addKey:@"votesAbstains" withValue:[NSString stringWithFormat:@" %0.2f%% ",pct]];
+			}
+			else if ( [elementName isEqualToString:kName_VotesWithPartyPct] )
+			{
+				CGFloat pct = [m_currentString floatValue];
+				[m_legislator addKey:@"votesWithParty" withValue:[NSString stringWithFormat:@" %0.2f%% ",pct]];
+			}
+			if ( [elementName isEqualToString:kName_SponsoredBills] )
+			{
+				[m_legislator addKey:@"numBillsSponsored" withValue:[NSString stringWithFormat:@" %@ ",m_currentString]];
+			}
+			if ( [elementName isEqualToString:kName_SponsoredBillsPassed] )
+			{
+				[m_legislator addKey:@"numBillsSponsoredPassed" withValue:[NSString stringWithFormat:@" %@ ",m_currentString]];
+			}
+			if ( [elementName isEqualToString:kName_CosponsoredBills] )
+			{
+				[m_legislator addKey:@"numBillsCoSponsored" withValue:[NSString stringWithFormat:@" %@ ",m_currentString]];
+			}
+			if ( [elementName isEqualToString:kName_CosponsoredBillsPassed] )
+			{
+				[m_legislator addKey:@"numBillsCoSponsoredPassed" withValue:[NSString stringWithFormat:@" %@ ",m_currentString]];
+			}
+			else if ( [elementName isEqualToString:kName_PersonStats] )
+			{
+				m_parsingPersonStats = NO;
+				NSArray *newSectionData = [self setupDataSection:eSection_Stats];
+				[m_data replaceObjectAtIndex:eSection_Stats withObject:newSectionData];
+				[newSectionData release];
+			}
 		}
 	}
 	else

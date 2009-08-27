@@ -38,9 +38,9 @@
 
 
 @interface SpendingViewController (private)
+	- (void)viewPrivateInit;
 	- (PlaceSpendingData *)getDataForIndexPath:(NSIndexPath *)indexPath;
 	- (void)dataManagerCallback:(id)msg;
-	- (void)queryMethodSwitch:(id)sender;
 	- (void)sortSpendingData;
 	- (void)findLocalSpenders:(id)sender;
 	- (void)deselectRow:(id)sender;
@@ -51,7 +51,7 @@
 
 @implementation SpendingViewController
 
-//@synthesize tableView;
+@synthesize tableView;
 
 typedef enum
 {
@@ -76,19 +76,6 @@ typedef enum
 }
 
 
-- (id)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle
-{
-	self = [super initWithNibName:nibName bundle:nibBundle];
-    if (self) 
-	{
-		self.title = @"Spending";
-		self.tabBarItem.image = [UIImage imageNamed:@"spendingIcon.png"];
-		self.tabBarItem.title = @"Spending";
-    }
-    return self;
-}
-
-
 - (void)viewDidLoad
 {
 	m_data = [[myGovAppDelegate sharedSpendingData] retain];
@@ -107,8 +94,13 @@ typedef enum
 	[m_HUD show:NO];
 	[m_HUD setText:@"Waiting for congress data..." andIndicateProgress:YES];
 	
+	// Connect the detail button on the top of the view to 
+	// our spending mode handler
+	// XXX - do this!
+	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
+	/*
 	NSArray *buttonNames = [NSArray arrayWithObjects:@"District", @"State", @"Contractor", nil];
 	m_segmentCtrl = [[UISegmentedControl alloc] initWithItems:buttonNames];
 	
@@ -127,6 +119,7 @@ typedef enum
 	// add the buttons to the navigation bar
 	self.navigationItem.titleView = m_segmentCtrl;
 	[m_segmentCtrl release];
+	*/
 	
 	// 
 	// Add a "refresh" button which will wipe out the on-device cache and 
@@ -213,14 +206,6 @@ deselect_and_return:
 }
 
 
-/*
-- (void)viewDidDisappear:(BOOL)animated 
-{
-	[super viewDidDisappear:animated];
-}
-*/
-
-
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
@@ -281,9 +266,10 @@ deselect_and_return:
 	}
 }
 
-
-- (void)queryMethodSwitch: (id)sender
+- (IBAction)selectSpendingFilter:(id)sender
 {
+	int a = 1;
+/*
 	BOOL showOrganizerButton = NO;
 	switch ( [sender selectedSegmentIndex] )
 	{
@@ -327,6 +313,7 @@ deselect_and_return:
 		NSUInteger idx[2] = {0,0};
 		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
 	}
+ */
 }
 
 
@@ -575,7 +562,7 @@ deselect_and_return:
 }
 
 
-#pragma mark Table view methods
+#pragma mark TableView methods
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 

@@ -64,6 +64,11 @@
 	return [title compare:other.title];
 }
 
+- (NSComparisonResult)compareLine1:(TableRowData *)other
+{
+	return [line1 compare:other.line1];
+}
+
 @end
 
 
