@@ -218,8 +218,6 @@ static int s_threads_using_network = 0;
 		m_operationQueue = [[NSOperationQueue alloc] init];
 		[m_operationQueue setMaxConcurrentOperationCount:10];
 		
-		m_urlHandler = [[NSMutableDictionary alloc] initWithCapacity:8];
-		
 		if ( !s_myCongressData )
 		{
 			//NSLog( @"Initializing Congress Data..." );
@@ -251,6 +249,8 @@ static int s_threads_using_network = 0;
 - (void)applicationDidFinishLaunching:(UIApplication *)application 
 {
 	[[NSUserDefaults standardUserDefaults] synchronize];
+	
+	m_urlHandler = [[NSMutableDictionary alloc] initWithCapacity:8];
 	
 	// 
 	// Start loading the congress and bill data

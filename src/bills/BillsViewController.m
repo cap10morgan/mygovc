@@ -557,8 +557,12 @@ get_out:
 			{
 				isReloading = YES;
 				[self.tableView reloadData];
-				NSUInteger idx[2] = {0,0};
-				[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+				if ( [self.tableView numberOfSections] > 0 &&
+					 [self.tableView numberOfRowsInSection:0] > 0 )
+				{
+					NSUInteger idx[2] = {0,0};
+					[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+				}
 			}
 		}
 		
@@ -589,8 +593,17 @@ get_out:
 		// something interesting must have happened,
 		// update the user with some progress
 		self.tableView.userInteractionEnabled = NO;
-		[m_HUD show:YES];
-		[m_HUD setText:msg andIndicateProgress:YES];
+		
+		if ( [msg isEqualToString:@"END"] )
+		{
+			[m_HUD show:NO];
+			// XXX - show an alert/error dialog?
+		}
+		else
+		{
+			[m_HUD show:YES];
+			[m_HUD setText:msg andIndicateProgress:YES];
+		}
 	}
 }
 
@@ -630,6 +643,7 @@ get_out:
 
 - (void)congressSwitch: (id)sender
 {
+	UISearchBar *searchBar = (UISearchBar *)(self.tableView.tableHeaderView);
 	switch ( [sender selectedSegmentIndex] )
 	{
 		default:
@@ -638,18 +652,24 @@ get_out:
 		case 0:
 			// This is the House!
 			m_selectedChamber = eCongressChamberHouse;
+			searchBar.text = @"";
 			break;
 			
 		case 1:
 			// This is the Senate!
 			m_selectedChamber = eCongressChamberSenate;
+			searchBar.text = @"";
 			break;
 	}
 	if ( [m_data isDataAvailable] ) 
 	{
 		[self.tableView reloadData];
-		NSUInteger idx[2] = {0,0};
-		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		if ( [self.tableView numberOfSections] > 0 &&
+			 [self.tableView numberOfRowsInSection:0] > 0 )
+		{
+			NSUInteger idx[2] = {0,0};
+			[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		}
 		self.tableView.userInteractionEnabled = YES;
 	}
 }
