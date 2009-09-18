@@ -80,6 +80,8 @@ enum
 	m_alertViewFunction = eAlertType_General;
 	m_timer = nil;
 	
+	self.tableView.separatorColor = [UIColor blackColor];
+	
 /* Leave this off for now - maybe in the next release...
  
 	// create a search bar which will be used as our table's header view
@@ -294,13 +296,14 @@ enum
 		
 		// if we have a view controller currently showing, send it 
 		// a data-reload notice as well!
+/*
 		id topView = self.navigationController.visibleViewController;
 		if ( topView != self && [topView respondsToSelector:@selector(getTableView)] )
 		{
 			[[topView getTableView] reloadData];
 			[[topView getTableView] setNeedsDisplay];
 		}
-		
+*/		
 		// set the tab bar badge if we have any new items!
 		if ( m_data.m_numNewItems > 0 )
 		{
@@ -623,12 +626,14 @@ deselect_and_return:
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-	// Navigation logic may go here. Create and push another view controller.
-	// AnotherViewController *anotherViewController = [[AnotherViewController alloc] initWithNibName:@"AnotherView" bundle:nil];
-	// [self.navigationController pushViewController:anotherViewController];
-	// [anotherViewController release];
+	// Navigate directly to the detail view for a comment - no more action sheet...
 	CommunityItem *item = [m_data itemForIndexPath:indexPath andType:m_selectedItemType];
+	CommunityDetailViewController *cdView = [[CommunityDetailViewController alloc] init];
+	[cdView setItem:item];
+	[self.navigationController pushViewController:cdView animated:YES];
+	[cdView release];
 	
+	/*
 	// pop up an alert asking the user what action to perform
 	UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:[item m_title]
 													   delegate:self 
@@ -642,7 +647,7 @@ deselect_and_return:
 	//[sheet showInView:self.view];
 	[sheet showFromTabBar:(UITabBar *)[myGovAppDelegate sharedAppDelegate].m_tabBarController.view];
 	[sheet release];
-	
+	*/
 	//[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 }
 

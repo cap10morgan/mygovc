@@ -46,13 +46,15 @@ enum
 
 static const CGFloat S_CELL_HOFFSET = 7.0f;
 static const CGFloat S_CELL_VOFFSET = 5.0f;
+static const CGFloat S_DETAIL_BUTTON_WIDTH = 16.0f;
+static const CGFloat S_DETAIL_BUTTON_HEIGHT = 32.0f;
 static const CGFloat S_TITLE_HEIGHT = 18.0f;
-static const CGFloat S_TITLE_MAX_WIDTH = 175.0f;
+static const CGFloat S_TITLE_MAX_WIDTH = 230.0f;
 static const CGFloat S_MAX_IMG_WIDTH = 64.0f;
 static const CGFloat S_MAX_IMG_HEIGHT = 64.0f;
 
 static const CGFloat S_MIN_HEIGHT = 64.0f + (2.0f * 5.0f);
-static const CGFloat S_MAX_HEIGHT = 100.0f;
+static const CGFloat S_MAX_HEIGHT = 120.0f;
 static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 
 #define TITLE_FONT     [UIFont boldSystemFontOfSize:14.0f]
@@ -62,7 +64,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 #define USERNAME_COLOR [UIColor colorWithRed:0.5f green:0.5f blue:0.3f alpha:1.0f]
 
 #define COMMENTS_FONT  [UIFont systemFontOfSize:14.0f]
-#define COMMENTS_COLOR [UIColor colorWithRed:0.2f green:0.25f blue:0.8f alpha:0.95f]
+#define COMMENTS_COLOR [UIColor colorWithRed:0.2f green:0.45f blue:0.8f alpha:0.95f]
 
 #define SUMMARY_FONT   [UIFont systemFontOfSize:13.0f]
 #define SUMMARY_COLOR  [UIColor darkGrayColor]
@@ -75,10 +77,11 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 {
 	NSString *descrip = item.m_summary;
 	CGSize descripSz = [descrip sizeWithFont:SUMMARY_FONT 
-						   constrainedToSize:CGSizeMake(S_MAX_WIDTH_PORTRAIT - (3.0f*S_CELL_HOFFSET) - 32.0f, S_MAX_HEIGHT - (2.0f*S_TITLE_HEIGHT) - (3.0f*S_CELL_VOFFSET)) 
+						   constrainedToSize:CGSizeMake(S_MAX_WIDTH_PORTRAIT - (4.0f*S_CELL_HOFFSET) - S_DETAIL_BUTTON_WIDTH, S_MAX_HEIGHT - (2.0f*S_TITLE_HEIGHT) - (4.0f*S_CELL_VOFFSET)) 
 							   lineBreakMode:UILineBreakModeWordWrap];
 	
-	CGFloat height = S_TITLE_HEIGHT + S_CELL_VOFFSET + 
+	CGFloat height = S_CELL_VOFFSET + 
+	                 S_TITLE_HEIGHT + S_CELL_VOFFSET + 
 					 S_TITLE_HEIGHT + S_CELL_VOFFSET + 
 					 descripSz.height + S_CELL_VOFFSET;
 /*	
@@ -100,13 +103,16 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	{
 		m_item = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
+		self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		
 		// 
 		// Detail button (next to table index)
 		// 
+		/*
 		UIButton *detail = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
 		[detail setTag:eTAG_DETAIL];
 		[self addSubview:detail];
+		*/
 		
 		UILabel *titleView = [[UILabel alloc] initWithFrame:CGRectZero];
 		titleView.backgroundColor = [UIColor clearColor];
@@ -123,7 +129,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 		commentsView.backgroundColor = [UIColor clearColor];
 		commentsView.textColor = COMMENTS_COLOR;
 		commentsView.font = COMMENTS_FONT;
-		commentsView.textAlignment = UITextAlignmentLeft;
+		commentsView.textAlignment = UITextAlignmentRight;
 		commentsView.adjustsFontSizeToFitWidth = YES;
 		[commentsView setTag:eTAG_COMMENTS];
 		[self addSubview:commentsView];
@@ -139,14 +145,14 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 		[summaryView setTag:eTAG_SUMMARY];
 		[self addSubview:summaryView];
 		[summaryView release];
-		
+/*		
 		UIImageView *imgView = [[UIImageView alloc] init];
 		//imgView.userInteractionEnabled = YES;
 		imgView.backgroundColor = [UIColor clearColor];
 		[imgView setTag:eTAG_IMAGE];
 		[self addSubview:imgView];
 		[imgView release];
-		
+*/		
 		UILabel *unameView = [[UILabel alloc] initWithFrame:CGRectZero];
 		unameView.backgroundColor = [UIColor clearColor];
 		unameView.textColor = USERNAME_COLOR;
@@ -175,10 +181,10 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	[super setSelected:selected animated:animated];
 
 	UILabel *lbl;
-	
+/*	
 	UIButton *detail = (UIButton *)[self viewWithTag:eTAG_DETAIL];
 	detail.highlighted = selected;
-	
+*/	
 	lbl = (UILabel *)[self viewWithTag:eTAG_TITLE];
 	lbl.highlighted = selected;
 	lbl = (UILabel *)[self viewWithTag:eTAG_COMMENTS];
@@ -192,10 +198,12 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 
 - (void)setDetailTarget:(id)target andSelector:(SEL)selector
 {
+/*
 	UIButton *detail = (UIButton *)[self viewWithTag:eTAG_DETAIL];
 	
 	// set delegate for detail button press!
 	[detail addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+*/
 }
 
 
@@ -230,13 +238,15 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	{
 		self.contentView.backgroundColor = OLD_ITEM_BACKGROUND_COLOR;
 	}
+
+	CGRect detailRect = CGRectMake( S_MAX_WIDTH_PORTRAIT - S_DETAIL_BUTTON_WIDTH - S_CELL_HOFFSET,
+								   (cellHeight - S_DETAIL_BUTTON_HEIGHT)/2.0f,
+								   S_DETAIL_BUTTON_WIDTH,
+								   S_DETAIL_BUTTON_HEIGHT );
 	
+/*
 	// set the detail button geometry: aligned right, middle of the cell
 	UIButton *detailButton = (UIButton *)[self viewWithTag:eTAG_DETAIL];
-	CGRect detailRect = CGRectMake( S_MAX_WIDTH_PORTRAIT - CGRectGetWidth(detailButton.frame) - S_CELL_HOFFSET,
-								    (cellHeight - CGRectGetHeight(detailButton.frame))/2.0f,
-								    CGRectGetWidth(detailButton.frame),
-								    CGRectGetHeight(detailButton.frame) );
 	[detailButton setFrame:detailRect];
 	
 	// image view: aligned left, middle of the cell
@@ -263,30 +273,29 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 								 imgSz.width, 
 								 imgSz.height );
 	[imgView setFrame:imgRect];
-	
-	// username view just below the image 
-	CGRect unameRect = CGRectMake( CGRectGetMaxX(imgRect) + S_CELL_HOFFSET, 
+*/	
+	// username view top-aligned
+	CGRect unameRect = CGRectMake( S_CELL_HOFFSET, 
 								   S_CELL_VOFFSET, 
-								   CGRectGetMinX(detailRect) - CGRectGetMaxX(imgRect) - (2.0f*S_CELL_HOFFSET), 
+								   CGRectGetMinX(detailRect) - (2.0f*S_CELL_HOFFSET), 
 								   S_TITLE_HEIGHT);
 	UILabel *unameView = (UILabel *)[self viewWithTag:eTAG_USERNAME];
 	[unameView setFrame:unameRect];
 	unameView.text = [NSString stringWithFormat:@"%@ says:",m_item.m_creator];
 	
-	
-	// title view: top-aligned, left-aligned against photo
+	// title view: top-aligned just below uname, left-aligned against side of frame
 	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
 	
 	CGSize titleSz = [m_item.m_title sizeWithFont:TITLE_FONT 
 								constrainedToSize:CGSizeMake(S_TITLE_MAX_WIDTH, S_TITLE_HEIGHT) 
 									lineBreakMode:UILineBreakModeTailTruncation];
-	CGRect titleRect = CGRectMake( CGRectGetMaxX(imgRect) + S_CELL_HOFFSET,
+	CGRect titleRect = CGRectMake( S_CELL_HOFFSET,
 								   CGRectGetMaxY(unameRect) + S_CELL_VOFFSET,
 								   titleSz.width, S_TITLE_HEIGHT );
 	[titleView setFrame:titleRect];
 	titleView.text = m_item.m_title;
 	
-	// comments view: left-aligned against title view
+	// comments view: right-aligned against title view
 	UILabel *commentView = (UILabel *)[self viewWithTag:eTAG_COMMENTS];
 	CGRect commentsRect = CGRectMake( CGRectGetMaxX(titleRect) + S_CELL_HOFFSET,
 									  CGRectGetMinY(titleRect),

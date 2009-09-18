@@ -27,10 +27,13 @@
 @class CommunityDetailData;
 
 
-@interface CommunityDetailViewController : UITableViewController <UIAlertViewDelegate>
+@interface CommunityDetailViewController : UIViewController <UIAlertViewDelegate, UIScrollViewDelegate, UIWebViewDelegate>
 {
 @private
-	UITableView *m_tableView;
+//	UITableView *m_tableView;
+	UIWebView *m_webView;
+	UILabel *m_itemLabel;
+	
 	CommunityItem *m_item;
 	
 	CommunityDetailData *m_data;
@@ -40,7 +43,7 @@
 
 @property (nonatomic, retain, setter=setItem:) CommunityItem *m_item;
 
-- (UITableView *)getTableView;
+//- (UITableView *)getTableView;
 
 - (void)setItem:(CommunityItem *)item;
 

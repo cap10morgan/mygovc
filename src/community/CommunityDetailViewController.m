@@ -31,11 +31,65 @@
 #import "MyGovUserData.h"
 #import "TableDataManager.h"
 
+#define COMMENT_HTML_HDR  @" \
+<html> \
+	<head> \
+		<title>User Comments!</title> \
+		<meta name=\"viewport\" content=\"300, initial-scale=1.0\"> \
+		<script type=\"text/javascript\"> \
+			function endcommenttouch(e) { \
+				var ypos = window.pageYOffset; \
+				document.location='http://touchend/'+ypos; \
+			} \
+			function init() { \
+				document.addEventListener(\"touchend\", endcommenttouch, true); \
+			} \
+		</script> \
+		<style> \
+		div.comment { \
+			font-size: 1em; \
+			border-left: 5px solid #444; \
+			margin-top: 0.7em; \
+			margin-left: 0.5em; \
+			margin-bottom: 1em; \
+			padding-left: 0.5em; \
+		} \
+		div.header { \
+			border-top: 2px solid #222; \
+			padding-top: 0.2em; \
+			font-size: 1.2em; \
+		} \
+		div.subtitle { \
+			font-size: 0.8em; \
+			margin-top: 0.1em; \
+			margin-left: 0.5em; \
+			margin-right: 0.5em; \
+			padding: 0.1em; \
+			color: #fe6; \
+		} \
+		</style> \
+	</head> \
+	<body style=\"background: #000; color: #fff\"> \
+"
+
+#define COMMENT_HTML_FMT @" \
+		<div class=\"header\">%@</div> \
+		<div class=\"subtitle\">%@</div> \
+		<div class=\"comment\">%@</div> \
+"
+
+#define COMMENT_HTML_END @" \
+	</body> \
+</html> \
+"
+
+
 @interface CommunityDetailViewController (private)
-	- (void)deselectRow:(id)sender;
+	- (void)reloadItemData;
+	- (NSString *)formatItemComments;
 	- (CGFloat)heightForFeedbackText;
 	- (void)addItemComment;
-	- (void)useWantsToAttend;
+	- (void)userWantsToAttend;
 	- (void)attendCurrentEvent;
 	- (void)addCurrentEventToCalendar;
 @end
@@ -77,7 +131,9 @@ enum
 		self.title = @"Community Item"; // this will be updated later...
 		m_item = nil;
 		m_data = nil;
-		m_tableView = nil;
+		//m_tableView = nil;
+		m_webView = nil;
+		m_itemLabel = nil;
 		m_alertSheetUsed = eCDV_AlertShouldAttend;
 	}
 	return self;
@@ -124,30 +180,18 @@ enum
 	UILabel *titleView = [[[UILabel alloc] initWithFrame:CGRectMake(0,0,240,32)] autorelease];
 	titleView.backgroundColor = [UIColor clearColor];
 	titleView.textColor = [UIColor whiteColor];
-	titleView.font = [UIFont boldSystemFontOfSize:18.0f];
+	titleView.font = [UIFont boldSystemFontOfSize:16.0f];
 	titleView.textAlignment = UITextAlignmentCenter;
 	titleView.adjustsFontSizeToFitWidth = YES;
 	titleView.text = self.title;
 	self.navigationItem.titleView = titleView;
 	
-	[self.tableView reloadData];
+	[self reloadItemData];
 }
 
 
 - (void)loadView
 {
-	m_tableView = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame] style:UITableViewStyleGrouped];
-	m_tableView.delegate = self;
-	m_tableView.dataSource = self;
-	
-	self.view = m_tableView;
-	[m_tableView release];
-	
-	//m_tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-	m_tableView.separatorColor = [UIColor blackColor];
-	m_tableView.backgroundColor = [UIColor blackColor];
-	
-	
 	if ( eCommunity_Event == [m_item m_type] )
 	{
 		// 
@@ -157,7 +201,7 @@ enum
 													  initWithTitle:@"I'm Coming!"
 													  style:UIBarButtonItemStyleDone
 													  target:self 
-													  action:@selector(useWantsToAttend)];
+													  action:@selector(userWantsToAttend)];
 	}
 	else
 	{
@@ -166,6 +210,10 @@ enum
 												  target:self 
 												  action:@selector(addItemComment)];
 	}
+
+	UIScrollView *myView = [[UIScrollView alloc] initWithFrame:CGRectMake(0,0,320,565)];
+	myView.userInteractionEnabled = YES;
+	[myView setDelegate:self];
 	
 	// 
 	// The header view loads up the user / event / chatter image
@@ -175,9 +223,31 @@ enum
 	hdrViewCtrl = [[CDetailHeaderViewController alloc] initWithNibName:@"CDetailHeaderView" bundle:nil ];
 	[hdrViewCtrl.view setFrame:hframe];
 	[hdrViewCtrl setItem:m_item];
-	self.tableView.tableHeaderView = hdrViewCtrl.view;
-	self.tableView.tableHeaderView.userInteractionEnabled = YES;
+//	self.tableView.tableHeaderView = hdrViewCtrl.view;
+//	self.tableView.tableHeaderView.userInteractionEnabled = YES;
+	[myView addSubview:hdrViewCtrl.view];
+	[hdrViewCtrl release];
 	
+	m_itemLabel = [[UILabel alloc] initWithFrame:CGRectMake(10,165,300,40)];
+	m_itemLabel.backgroundColor = [UIColor clearColor];
+	m_itemLabel.textColor = [UIColor grayColor];
+	m_itemLabel.font = [UIFont systemFontOfSize:16.0f];
+	m_itemLabel.textAlignment = UITextAlignmentCenter;
+	m_itemLabel.lineBreakMode = UILineBreakModeWordWrap;
+	m_itemLabel.numberOfLines = 0;
+	[myView addSubview:m_itemLabel];
+	
+	m_webView = [[UIWebView alloc] initWithFrame:CGRectMake(10,205,300,400)];
+	m_webView.backgroundColor = [UIColor clearColor];
+	[m_webView setDelegate:self];
+	m_webView.userInteractionEnabled = YES;
+	[myView addSubview:m_webView];
+	
+	myView.backgroundColor = [UIColor blackColor];
+	self.view = myView;
+	[myView release];
+	
+	[self reloadItemData];
 }
 
 
@@ -219,20 +289,109 @@ enum
 }
 
 
-- (UITableView *)getTableView
+#pragma mark UIScrollViewDelegate methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-	return m_tableView;
+	CGPoint ofst = scrollView.contentOffset;
+	if ( ofst.y >= m_webView.frame.origin.y )
+	{
+		[scrollView setContentOffset:CGPointMake(0,m_webView.frame.origin.y)];
+		[scrollView setScrollEnabled:NO];
+	}
+}
+
+#pragma mark UIWebViewDelegate methods
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request 
+									 navigationType:(UIWebViewNavigationType)navigationType
+{
+	if ( [request.URL.host isEqualToString:@"touchend"] )
+	{
+		NSInteger ypos = [[[request.URL relativePath] lastPathComponent] integerValue];
+		if ( ypos <= 0 )
+		{
+			[(UIScrollView *)(self.view) setScrollEnabled:YES];
+			[(UIScrollView *)(self.view) setContentOffset:CGPointMake(0,m_webView.frame.origin.y-2)];
+		}
+		return NO;
+	}
+	return YES;
+}
+
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+	[webView stringByEvaluatingJavaScriptFromString:@"init();"];
 }
 
 
 #pragma mark CommunityDetailViewController Private
 
-
+/*
 - (void)deselectRow:(id)sender
 {
 	// de-select the currently selected row
 	// (so the user can go back to the same legislator)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+}
+*/
+
+
+- (void)reloadItemData
+{
+	if ( nil == m_item ) return;
+
+	CGFloat pos = 165.0f;
+	
+	// adjust frame to fit _all_ of the text :-)
+	CGFloat commentTxtHeight = [self heightForFeedbackText];
+	[m_itemLabel setFrame:CGRectMake( 10.0f, pos, 300.0f, commentTxtHeight )];
+	m_itemLabel.text = m_item.m_text;
+	
+	pos += commentTxtHeight;
+	
+	// resize the comment view and reload it's data
+	[m_webView setFrame:CGRectMake( 10.0f, pos, 300.0f, 400.0f)];
+
+	NSString *htmlStr = [self formatItemComments];
+	[m_webView loadHTMLString:htmlStr 
+					  baseURL:nil ];
+	/*
+	[m_webView loadRequest:[[NSURLRequest alloc] initWithURL:[[NSURL alloc] initWithString:@"http://www.google.com/"]]];
+	 */
+	pos += 400.0f;
+	m_webView.userInteractionEnabled=YES;
+	
+	[(UIScrollView *)(self.view) setContentSize:CGSizeMake(320.0f,pos)];
+	
+	[self.view setNeedsDisplay];
+}
+
+
+- (NSString *)formatItemComments
+{
+	NSMutableString *html = [[[NSMutableString alloc] initWithString:COMMENT_HTML_HDR] autorelease];
+	
+	NSDateFormatter *dateFmt = [[[NSDateFormatter alloc] init] autorelease];
+	[dateFmt setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	
+	// Add all the comments!
+	NSArray *commentArray = [m_item comments];
+	NSEnumerator *cmntEnum = [commentArray objectEnumerator];
+	CommunityComment *cmnt;
+	while ( cmnt = [cmntEnum nextObject] )
+	{
+		
+		NSString *dateStr = (cmnt.m_date ? [dateFmt stringFromDate:cmnt.m_date] : @"some unspecified date/time!");
+		MyGovUser *user = [[myGovAppDelegate sharedUserData] userFromUsername:cmnt.m_creator];
+		
+		NSString *subtitle = [NSString stringWithFormat:@"Posted by <b>%@</b> on %@",[user m_username],dateStr];
+		[html appendFormat:COMMENT_HTML_FMT, cmnt.m_title, subtitle, cmnt.m_text];
+	}
+	
+	[html appendString:COMMENT_HTML_END];
+	return html;
 }
 
 
@@ -241,8 +400,8 @@ enum
 	NSString *txt = m_item.m_text;
 	
 	CGSize txtSz = [txt sizeWithFont:[UIFont systemFontOfSize:16.0f] 
-					constrainedToSize:CGSizeMake(300.0f,280.0f) 
-						lineBreakMode:UILineBreakModeWordWrap];
+				   constrainedToSize:CGSizeMake(300.0f,800.0f)
+					   lineBreakMode:UILineBreakModeWordWrap];
 	
 	return txtSz.height + 14.0f; // with some padding...
 }
@@ -266,11 +425,12 @@ enum
 	ComposeMessageViewController *cmvc = [ComposeMessageViewController sharedComposer];
 	[cmvc display:msg fromParent:self];
 	
-	[self.tableView reloadData];
+	//[self.tableView reloadData];
+	[self reloadItemData];
 }
 
 
-- (void)useWantsToAttend
+- (void)userWantsToAttend
 {
 	
 	UIAlertView *alert = [[UIAlertView alloc] 
@@ -348,7 +508,7 @@ enum
 
 #pragma mark Table view methods
 
-
+/**
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {
 	return [m_data numberOfSections];
@@ -458,7 +618,7 @@ enum
 	
 	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 }
-
+*/
 
 @end
 
