@@ -45,10 +45,10 @@ enum
 };
 
 static const CGFloat S_CELL_HOFFSET = 7.0f;
-static const CGFloat S_CELL_VOFFSET = 5.0f;
+static const CGFloat S_CELL_VOFFSET = 4.0f;
 static const CGFloat S_DETAIL_BUTTON_WIDTH = 16.0f;
 static const CGFloat S_DETAIL_BUTTON_HEIGHT = 32.0f;
-static const CGFloat S_TITLE_HEIGHT = 18.0f;
+static const CGFloat S_TITLE_HEIGHT = 16.0f;
 static const CGFloat S_TITLE_MAX_WIDTH = 230.0f;
 static const CGFloat S_MAX_IMG_WIDTH = 64.0f;
 static const CGFloat S_MAX_IMG_HEIGHT = 64.0f;
@@ -298,7 +298,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	// comments view: right-aligned against title view
 	UILabel *commentView = (UILabel *)[self viewWithTag:eTAG_COMMENTS];
 	CGRect commentsRect = CGRectMake( CGRectGetMaxX(titleRect) + S_CELL_HOFFSET,
-									  CGRectGetMinY(titleRect),
+									  CGRectGetMinY(titleRect) - S_CELL_VOFFSET,
 									  CGRectGetMinX(detailRect) - CGRectGetMaxX(titleRect) - (2.0f*S_CELL_HOFFSET),
 									  S_TITLE_HEIGHT );
 	[commentView setFrame:commentsRect];
