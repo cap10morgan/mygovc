@@ -38,10 +38,11 @@
 		<meta name=\"viewport\" content=\"300, initial-scale=1.0\"> \
 		<script type=\"text/javascript\"> \
 			function endcommenttouch(e) { \
+				e.preventDefault(); \
 				var ypos = window.pageYOffset; \
 				document.location='http://touchend/'+ypos; \
 			} \
-			function init() { \
+			function hookTouchEvents() { \
 				document.addEventListener(\"touchend\", endcommenttouch, true); \
 			} \
 		</script> \
@@ -237,10 +238,18 @@ enum
 	m_itemLabel.numberOfLines = 0;
 	[myView addSubview:m_itemLabel];
 	
-	m_webView = [[UIWebView alloc] initWithFrame:CGRectMake(10,205,300,400)];
+	m_webView = [[UIWebView alloc] initWithFrame:CGRectMake(10,205,300,380)];
 	m_webView.backgroundColor = [UIColor clearColor];
 	[m_webView setDelegate:self];
 	m_webView.userInteractionEnabled = YES;
+	
+	// HACK alert: try to prevent rubberbanding in the UIWebView
+	id maybeAScrollView = [[m_webView subviews] objectAtIndex:0];
+	if ( [maybeAScrollView respondsToSelector:@selector(setAllowsRubberBanding:)] )
+	{
+		[maybeAScrollView performSelector:@selector(setAllowsRubberBanding:) withObject:(id)(NO)];
+	}
+	
 	[myView addSubview:m_webView];
 	
 	myView.backgroundColor = [UIColor blackColor];
@@ -309,10 +318,11 @@ enum
 	if ( [request.URL.host isEqualToString:@"touchend"] )
 	{
 		NSInteger ypos = [[[request.URL relativePath] lastPathComponent] integerValue];
-		if ( ypos <= 0 )
+		if ( ypos <= 7 )
 		{
-			[(UIScrollView *)(self.view) setScrollEnabled:YES];
-			[(UIScrollView *)(self.view) setContentOffset:CGPointMake(0,m_webView.frame.origin.y-2)];
+			UIScrollView *sv = (UIScrollView *)(self.view);
+			[sv setScrollEnabled:YES];
+			[sv setContentOffset:CGPointMake(0,m_webView.frame.origin.y-2-ypos)];
 		}
 		return NO;
 	}
@@ -322,7 +332,7 @@ enum
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-	[webView stringByEvaluatingJavaScriptFromString:@"init();"];
+	[webView stringByEvaluatingJavaScriptFromString:@"hookTouchEvents();"];
 }
 
 
@@ -352,7 +362,7 @@ enum
 	pos += commentTxtHeight;
 	
 	// resize the comment view and reload it's data
-	[m_webView setFrame:CGRectMake( 10.0f, pos, 300.0f, 400.0f)];
+	[m_webView setFrame:CGRectMake( 10.0f, pos, 300.0f, 380.0f)];
 
 	NSString *htmlStr = [self formatItemComments];
 	[m_webView loadHTMLString:htmlStr 
@@ -360,7 +370,7 @@ enum
 	/*
 	[m_webView loadRequest:[[NSURLRequest alloc] initWithURL:[[NSURL alloc] initWithString:@"http://www.google.com/"]]];
 	 */
-	pos += 400.0f;
+	pos += 380.0f;
 	m_webView.userInteractionEnabled=YES;
 	
 	[(UIScrollView *)(self.view) setContentSize:CGSizeMake(320.0f,pos)];
