@@ -89,6 +89,12 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 			 andPassword:(NSString *)password
 			withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
+	if ( ![myGovAppDelegate networkIsAvailable:YES] )
+	{
+		NSLog(@"No network to validate username!");
+		return FALSE;
+	}
+	
 	if ( nil == username )
 	{
 		username = [[NSUserDefaults standardUserDefaults] objectForKey:@"gae_username"];
@@ -124,6 +130,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 					//       a bit of HACK, but it works for now...
 					[delegateOrNil communityDataSource:self userAuthenticated:username];
 				}
+				[myGovAppDelegate networkNoLongerInUse];
 				return TRUE;
 			}
 		}
@@ -141,9 +148,11 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 			}
 			
 		}
+		[myGovAppDelegate networkNoLongerInUse];
 		return success;
 	}
 	
+	[myGovAppDelegate networkNoLongerInUse];
 	return FALSE;
 }
 
@@ -160,6 +169,11 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 			   notOlderThan:(NSDate *)startDate 
 			   withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
+	if ( ![myGovAppDelegate networkIsAvailable:YES] )
+	{
+		return FALSE;
+	}
+	
 	NSString *gaeURLBase = [DataProviders GAE_DownloadURLFor:type];
 	
 	NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init]  autorelease];
@@ -178,6 +192,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
 	
 	[theRequest release];
+	[myGovAppDelegate networkNoLongerInUse];
 	
 	if ( nil == retVal ) return FALSE;
 	
@@ -252,6 +267,11 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	
 	if ( nil == item ) return FALSE;
 	
+	if ( ![myGovAppDelegate networkIsAvailable:YES] )
+	{
+		return FALSE;
+	}
+	
 	NSString *gaeURLStr = [DataProviders GAE_CommunityItemCommentsURLFor:item];
 	NSURL *gaeURL = [NSURL URLWithString:gaeURLStr];
 	
@@ -264,6 +284,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	NSData *retVal = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&err];
 	
 	[theRequest release];
+	[myGovAppDelegate networkNoLongerInUse];
 	
 	if ( nil == retVal ) return FALSE;
 	
@@ -322,6 +343,12 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 - (BOOL)submitCommunityItem:(CommunityItem *)item 
 			   withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
+	if ( ![myGovAppDelegate networkIsAvailable:YES] )
+	{
+		NSLog(@"No network for community item submission!");
+		return FALSE;
+	}
+	
 	// create an NSURLRequest object from the community item
 	// to perform a POST-style HTTP request
 	NSURL *gaeURL = [NSURL URLWithString:[DataProviders GAE_CommunityItemPOSTURLFor:item.m_type]];
@@ -341,12 +368,18 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	NSString *response = [[[NSString alloc] initWithData:retVal encoding:NSMacOSRomanStringEncoding] autorelease];
 	
 	[theRequest release];
+	[myGovAppDelegate networkNoLongerInUse];
 	
-	// check string response to indicate success / failure
-	if ( nil == response || ([response length] <= 0) )
+	if ( nil == response || ([response length] <= 0) || (nil != err) )
 	{
+		if ( nil != err )
+		{
+			NSLog(@"Community Item submission error: [%@:%d:%@]", [err domain], [err code], [err localizedDescription]);
+		}
 		return FALSE;
 	}
+	
+	// XXX - check response for validity!!!
 	
 	return TRUE; //[self validResponse:response];
 }
@@ -355,6 +388,12 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 - (BOOL)submitCommunityComment:(CommunityComment *)comment 
 				  withDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil
 {
+	if ( ![myGovAppDelegate networkIsAvailable:YES] )
+	{
+		NSLog(@"No network for community comment submission!");
+		return FALSE;
+	}
+	
 	// create an NSURLRequest object from the community item
 	// to perform a POST-style HTTP request
 	NSURL *gaeURL = [NSURL URLWithString:[DataProviders GAE_CommunityReplyPOSTURLFor:comment.m_communityItemID]];
@@ -374,10 +413,15 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	NSString *response = [[[NSString alloc] initWithData:retVal encoding:NSMacOSRomanStringEncoding] autorelease];
 	
 	[theRequest release];
+	[myGovAppDelegate networkNoLongerInUse];
 	
 	// check string response to indicate success / failure
-	if ( nil == response || ([response length] <= 0) )
+	if ( nil == response || ([response length] <= 0) || (nil != err) )
 	{
+		if ( nil != err )
+		{
+			NSLog(@"Community Comment submission error: [%@:%d:%@]", [err domain], [err code], [err localizedDescription]);
+		}
 		return FALSE;
 	}
 	
@@ -442,6 +486,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	if ( [token objectForKey:@"Error"] ) 
 	{
         //handle error
+		NSLog(@"Received 'Error' from GAE: login failure!");
 		return FALSE;
 	}
 	
@@ -463,16 +508,26 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	 NSURLResponse are accepted in accordance with the current cookie 
 	 acceptance policy." – Brian Hammond
 	 */
-	NSURL* cookieUrl = [NSURL URLWithString:[NSString stringWithFormat:@"https://mygov-mobile.appspot.com/_ah/login?continue=http://mygov-mobile.appspot.com/&auth=%@", [token objectForKey:@"Auth"]]];
-    //NSLog( [cookieUrl description] );
-    NSHTTPURLResponse* cookieResponse;
-    NSError* cookieError;
-    NSMutableURLRequest *cookieRequest = [[[NSMutableURLRequest alloc] initWithURL:cookieUrl] autorelease];
-	
-    [cookieRequest setHTTPMethod:@"GET"];
-	
-    NSData* cookieData = [NSURLConnection sendSynchronousRequest:cookieRequest returningResponse:&cookieResponse error:&cookieError];
-	if ( nil == cookieData ) return FALSE;
+	NSData *cookieData = nil;
+	int attempts = 0;
+	while ( nil == cookieData )
+	{
+		if ( ++attempts > 2 )
+		{
+			NSLog(@"Could not receive cookie from GAE for Auth: login failure!");
+			return FALSE;
+		}
+		
+		NSURL* cookieUrl = [NSURL URLWithString:[NSString stringWithFormat:@"https://mygov-mobile.appspot.com/_ah/login?continue=http://mygov-mobile.appspot.com/&auth=%@", [token objectForKey:@"Auth"]]];
+		//NSLog( [cookieUrl description] );
+		NSHTTPURLResponse* cookieResponse;
+		NSError* cookieError;
+		NSMutableURLRequest *cookieRequest = [[[NSMutableURLRequest alloc] initWithURL:cookieUrl] autorelease];
+		
+		[cookieRequest setHTTPMethod:@"GET"];
+		
+		cookieData = [NSURLConnection sendSynchronousRequest:cookieRequest returningResponse:&cookieResponse error:&cookieError];
+	}
 	
 	return TRUE;
 }
@@ -491,6 +546,8 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	{
 		if ( ![[myGovAppDelegate sharedUserData] usernameExistsInCache:username] )
 		{
+			// XXX - if (no avatar | avatar old): try to get a Gravatar!
+			
 			// XXX - query for more info?!
 			
 			// create a new MyGovUser object and pass it up to our delegate
@@ -514,7 +571,8 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	if ( [urlHalfs count] < 2 ) 
 	{
 		// no "POST" data - just return
-		return [[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:url]] autorelease];
+		NSURLRequest *theRequest = [[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:url]] autorelease];
+		return theRequest;
 	}
 	
 	NSString *urlBase = [urlHalfs objectAtIndex:0]; (void)urlBase;

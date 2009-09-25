@@ -28,6 +28,7 @@
 #import "CommunityItem.h"
 #import "ComposeMessageViewController.h"
 #import "CustomTableCell.h"
+#import "MiniBrowserController.h"
 #import "MyGovUserData.h"
 #import "TableDataManager.h"
 
@@ -117,8 +118,10 @@ enum
 
 - (void)dealloc 
 {
+	[m_hdrViewCtrl release];
+	[m_itemLabel release];
+	[m_webView release];
 	[m_item release];
-	
 	[m_data release];
 	
 	[super dealloc];
@@ -220,14 +223,11 @@ enum
 	// The header view loads up the user / event / chatter image
 	// and holds a title, and URL links
 	CGRect hframe = CGRectMake(0,0,320,165);
-	CDetailHeaderViewController *hdrViewCtrl;
-	hdrViewCtrl = [[CDetailHeaderViewController alloc] initWithNibName:@"CDetailHeaderView" bundle:nil ];
-	[hdrViewCtrl.view setFrame:hframe];
-	[hdrViewCtrl setItem:m_item];
-//	self.tableView.tableHeaderView = hdrViewCtrl.view;
-//	self.tableView.tableHeaderView.userInteractionEnabled = YES;
-	[myView addSubview:hdrViewCtrl.view];
-	[hdrViewCtrl release];
+	m_hdrViewCtrl = [[CDetailHeaderViewController alloc] initWithNibName:@"CDetailHeaderView" bundle:nil ];
+	[m_hdrViewCtrl.view setFrame:hframe];
+	[m_hdrViewCtrl.view setUserInteractionEnabled:YES];
+	[m_hdrViewCtrl setItem:m_item];
+	[myView addSubview:m_hdrViewCtrl.view];
 	
 	m_itemLabel = [[UILabel alloc] initWithFrame:CGRectMake(10,165,300,40)];
 	m_itemLabel.backgroundColor = [UIColor clearColor];
@@ -239,7 +239,8 @@ enum
 	[myView addSubview:m_itemLabel];
 	
 	m_webView = [[UIWebView alloc] initWithFrame:CGRectMake(10,205,300,380)];
-	m_webView.backgroundColor = [UIColor clearColor];
+	m_webView.backgroundColor = [UIColor blackColor];
+	m_webView.dataDetectorTypes = UIDataDetectorTypeAll;
 	[m_webView setDelegate:self];
 	m_webView.userInteractionEnabled = YES;
 	
@@ -326,7 +327,24 @@ enum
 		}
 		return NO;
 	}
-	return YES;
+	else if ( [request.URL.absoluteString isEqualToString:@"about:blank"] )
+	{
+		return YES;
+	}
+	else if ( ([request.URL.absoluteString length] >= 7) && 
+			  (NSOrderedSame == [request.URL.absoluteString compare:@"mailto:" options:NSCaseInsensitiveSearch range:(NSRange){0,7}]) 
+			 )
+	{
+		// XXX - handle mailto links!
+		return NO;
+	}
+	else 
+	{
+		// intercept link clicking and open our MiniBrowser!
+		MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:request.URL];
+		[mbc display:[[myGovAppDelegate sharedAppDelegate] topViewController]];
+		return NO;
+	}
 }
 
 
@@ -387,7 +405,7 @@ enum
 	[dateFmt setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	
 	// Add all the comments!
-	NSArray *commentArray = [m_item comments];
+	NSArray *commentArray = [[m_item comments] sortedArrayUsingSelector:@selector(compareCommentByDate:)];
 	NSEnumerator *cmntEnum = [commentArray objectEnumerator];
 	CommunityComment *cmnt;
 	while ( cmnt = [cmntEnum nextObject] )

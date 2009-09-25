@@ -51,8 +51,8 @@
 @property (nonatomic, retain) UIButton *m_myGovURLButton;
 @property (nonatomic, retain) UIButton *m_webURLButton;
 
-- (IBAction)openMyGovURL:(id)sender;
-- (IBAction)openWebURL:(id)sender;
+- (void)openMyGovURL;
+- (void)openWebURL;
 
 - (void)setItem:(CommunityItem *)item;
 

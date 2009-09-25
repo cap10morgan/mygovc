@@ -25,12 +25,12 @@
 
 @class CommunityItem;
 @class CommunityDetailData;
-
+@class CDetailHeaderViewController;
 
 @interface CommunityDetailViewController : UIViewController <UIAlertViewDelegate, UIScrollViewDelegate, UIWebViewDelegate>
 {
 @private
-//	UITableView *m_tableView;
+	CDetailHeaderViewController *m_hdrViewCtrl;
 	UIWebView *m_webView;
 	UILabel *m_itemLabel;
 	

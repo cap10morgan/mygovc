@@ -533,7 +533,9 @@
 	NSMutableDictionary *itemDict = [[NSMutableDictionary alloc] initWithDictionary:m_chatterIDDict];
 	[itemDict addEntriesFromDictionary:m_eventIDDict];
 	
-	NSEnumerator *iEnum = [itemDict objectEnumerator];
+	// This will sort the items so that more recent items get updated first!
+	NSArray *sortedItems = [[itemDict allValues] sortedArrayUsingSelector:@selector(compareItemByDate:)];
+	NSEnumerator *iEnum = [sortedItems objectEnumerator];
 	CommunityItem *theItem = nil;
 	while ( theItem = [iEnum nextObject] )
 	{

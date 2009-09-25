@@ -186,6 +186,7 @@
 {
 	if ( nil != m_xmlParser )
 	{
+		[myGovAppDelegate networkNoLongerInUse];
 		[m_xmlParser abortParsing];
 	}
 	m_finished = YES;

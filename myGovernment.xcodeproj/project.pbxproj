@@ -750,9 +750,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jeremy Andrus";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.0.1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -761,7 +761,7 @@
 				GCC_VERSION = 4.2;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "5F2F3053-A140-46FD-8774-9ACD54D2ACD3";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos3.1;
 			};
 			name = Debug;

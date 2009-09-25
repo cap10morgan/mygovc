@@ -49,6 +49,15 @@
 	[super dealloc];
 }
 
+- (id)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle
+{
+	if ( self = [super initWithNibName:nibName bundle:nibBundle] )
+	{
+		m_item = nil;
+		m_largeImg = nil;
+	}
+	return self;
+}
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad 
@@ -63,6 +72,9 @@
 	
 	m_mygovURLTitle.font = [UIFont systemFontOfSize:14.0f];
 	m_webURLTitle.font = [UIFont systemFontOfSize:14.0f];
+	
+	[m_myGovURLButton addTarget:self action:@selector(openMyGovURL) forControlEvents:UIControlEventTouchUpInside];
+	[m_webURLButton addTarget:self action:@selector(openWebURL) forControlEvents:UIControlEventTouchUpInside];
 }
 
 
@@ -77,7 +89,7 @@
 #pragma mark CDetailHeaderViewController interface 
 
 
-- (IBAction) openMyGovURL:(id)sender
+- (void)openMyGovURL
 {
 	if ( nil == m_item ) return;
 	/*
@@ -90,7 +102,7 @@
 }
 
 
-- (IBAction)openWebURL:(id)sender
+- (void)openWebURL
 {
 	if ( nil == m_item ) return;
 	
