@@ -82,7 +82,8 @@ static const NSInteger MAX_TWEET_LEN = 140;
 
 @interface ComposeMessageViewController (private)
 	- (void)authComplete;
-	- (void)timerMethod:(NSTimer *)timer;
+	- (void)userAuthTimerMethod:(NSTimer *)timer;
+	- (void)contentSubmissionTimerMethod:(NSTimer *)timer;
 	- (void)keyboardWasShown:(NSNotification*)aNotification;
 	- (void)keyboardWasHidden:(NSNotification*)aNotification;
 	- (void)layoutUIForMessageType:(MessageTransport)type;
@@ -137,8 +138,13 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) 
 	{
 		// Custom initialization
-		m_timer = nil;
-		m_timedOperationComplete = NO;
+		m_contentSubmissionTimer = nil;
+		m_contentSubmissionComplete = NO;
+		m_contentSubmissionSuccess = NO;
+		
+		m_userAuthTimer = nil;
+		m_userAuthComplete = NO;
+		
 		m_message = nil;
 		m_twitterLoginView = nil;
 		m_mygovLoginView = nil;
@@ -427,14 +433,21 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 
 - (void)authComplete
 {
-	m_timedOperationComplete = YES;
+	m_userAuthComplete = YES;
 }
 
 
-- (void)timerMethod:(NSTimer *)timer
+- (void)userAuthTimerMethod:(NSTimer *)timer
 {
-	if ( !m_timedOperationComplete ) return;
-	m_timedOperationComplete = NO;
+	if ( timer != m_userAuthTimer ) 
+	{
+		NSLog(@"userAuthTimerMethod: wrong timer?!");
+		return;
+	}
+	if ( !m_userAuthComplete ) return;
+	m_userAuthComplete = NO;
+	
+	[m_hud show:NO];
 	
 	switch ( m_message.m_transport ) 
 	{
@@ -451,7 +464,62 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	}
 	
 	[timer invalidate];
-	m_timer = nil;
+	m_userAuthTimer = nil;
+}
+
+
+- (void)contentSubmissionTimerMethod:(NSTimer *)timer
+{
+	if ( timer != m_contentSubmissionTimer )
+	{
+		NSLog(@"contentSubmissionTimerMethod: wrong timer?!");
+		return;
+	}
+	if ( !m_contentSubmissionComplete ) return;
+	
+	m_contentSubmissionComplete = NO;
+	
+	[timer invalidate];
+	m_contentSubmissionTimer = nil;
+	
+	[self.view setUserInteractionEnabled:YES];
+	[m_hud show:NO];
+	
+	CommunityDataManager *cdm = [myGovAppDelegate sharedCommunityData];
+	
+	if ( m_contentSubmissionSuccess )
+	{
+		// re-load the community data to grab the data
+		[cdm loadData];
+		[self dismissModalViewControllerAnimated:YES];
+	}
+	else
+	{
+		// ask the use what to do - there must have been a network error!
+		NSString *msg = nil;
+		switch ( m_message.m_transport ) 
+		{
+			case eMT_MyGov:
+				m_alertType = eAlertType_ChatterError;
+				msg = @"An error occurred while sending your comment.";
+				break;
+			case eMT_MyGovUserComment:
+				m_alertType = eAlertType_ReplyError;
+				msg = @"An error occurred while sending your reply.";
+				break;
+			default:
+				m_alertType = eAlertType_General;
+				msg = @"Unknown message type";
+				break;
+		}
+		UIAlertView *alert = [[UIAlertView alloc] 
+							  initWithTitle:@"Chatter Error"
+							  message:msg
+							  delegate:self
+							  cancelButtonTitle:@"Cancel"
+							  otherButtonTitles:@"Retry",nil];
+		[alert show];
+	}
 }
 
 
@@ -669,17 +737,6 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			
 			[m_mygovLoginView setNotifyTarget:self withSelector:callback];
 			[m_mygovLoginView displayIn:self];
-			/*
-			// Grab the web-based URL and throw it up in the MiniBrowser
-			NSURLRequest *loginURLRequest = [cdm dataSourceLoginURLRequest];
-			
-			MiniBrowserController *mbc = [MiniBrowserController sharedBrowser];
-			m_shouldRespondToKbdEvents = NO;
-			mbc.m_shouldUseParentsView = YES;
-			[mbc LoadRequest:loginURLRequest];
-			[mbc display:self];
-			[mbc setAuthCallback:callback];
-			*/
 			return nil;
 		}
 		else
@@ -799,7 +856,6 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	[twitterEngine sendUpdate:tweet];
 	//[twitterEngine sendDirectMessage:tweet to:twitterID];
 	
-	
 	[twitterEngine release];
 	return nil;
 }
@@ -875,11 +931,11 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	if ( nil == userID ) 
 	{
 		// the timer will check when auth is complete...
-		m_timedOperationComplete = NO;
-		if ( nil == m_timer )
+		m_userAuthComplete = NO;
+		if ( nil == m_userAuthTimer )
 		{
-			m_timer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(timerMethod:) userInfo:nil repeats:YES];
-			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+			m_userAuthTimer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(userAuthTimerMethod:) userInfo:nil repeats:YES];
+			[[NSRunLoop mainRunLoop] addTimer:m_userAuthTimer forMode:NSDefaultRunLoopMode];
 		}
 		return nil;
 	}
@@ -936,8 +992,30 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	[self.view setUserInteractionEnabled:NO];
 	[self.view setNeedsDisplay];
 	
+	if ( nil != m_contentSubmissionTimer )
+	{
+		NSLog(@"opSendMyGovContent: how is there another content submission?!");
+		// pop up an alert saying it failed!
+		m_alertType = eAlertType_General;
+		UIAlertView *alert = [[UIAlertView alloc] 
+							  initWithTitle:@"Message Error"
+							  message:@"Someone else is using the content submission timer?!\nTry again in just a second..."
+							  delegate:self
+							  cancelButtonTitle:@"OK"
+							  otherButtonTitles:nil];
+		[alert show];
+		return nil;
+	}
+	
+	// Start this timer from the mainRunLoop context to avoid weird WebKit errors...
+	m_contentSubmissionSuccess = NO;
+	m_contentSubmissionComplete = NO;
+	m_contentSubmissionTimer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(contentSubmissionTimerMethod:) userInfo:nil repeats:YES];
+	[[NSRunLoop mainRunLoop] addTimer:m_contentSubmissionTimer forMode:NSDefaultRunLoopMode];
+	
 	// send the out the new comment via a worker thread
 	// (as per the CommunityDataSourceProtocol contract)
+	// use the contentSubmissionTimer to keep track of completion/success
 	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																		selector:@selector(sendCommunityItemViaDataSource:) 
 																		  object:item];
@@ -947,7 +1025,8 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	
 	[theOp release];
 	
-	// don't return from the modal dialog until things settle down a bt
+	// don't return from the modal dialog until the timer routine sees that 
+	// the network operation has completed
 	return nil;
 }
 
@@ -958,11 +1037,11 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	if ( nil == userID ) 
 	{
 		// the timer will check when auth is complete...
-		m_timedOperationComplete = NO;
-		if ( nil == m_timer )
+		m_userAuthComplete = NO;
+		if ( nil == m_userAuthTimer )
 		{
-			m_timer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(timerMethod:) userInfo:nil repeats:YES];
-			[[NSRunLoop mainRunLoop] addTimer:m_timer forMode:NSDefaultRunLoopMode];
+			m_userAuthTimer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(userAuthTimerMethod:) userInfo:nil repeats:YES];
+			[[NSRunLoop mainRunLoop] addTimer:m_userAuthTimer forMode:NSDefaultRunLoopMode];
 		}
 		return nil;
 	}
@@ -996,8 +1075,15 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	[self.view setUserInteractionEnabled:NO];
 	[self.view setNeedsDisplay];
 	
+	// Start this timer from the mainRunLoop context to avoid weird WebKit errors...
+	m_contentSubmissionSuccess = NO;
+	m_contentSubmissionComplete = NO;
+	m_contentSubmissionTimer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(contentSubmissionTimerMethod:) userInfo:nil repeats:YES];
+	[[NSRunLoop mainRunLoop] addTimer:m_contentSubmissionTimer forMode:NSDefaultRunLoopMode];
+	
 	// send the out the new comment via a worker thread
 	// (as per the CommunityDataSourceProtocol contract)
+	// use the contentSubmissionTimer to keep track of completion/success
 	NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																		selector:@selector(sendCommunityReplyViaDataSource:) 
 																		  object:reply];
@@ -1043,8 +1129,10 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	id<CommunityDataSourceProtocol> dataSource = [cdm dataSource];
 	
 	// this is the blocking call to the network submission...
-	BOOL success = [dataSource submitCommunityItem:item withDelegate:nil];
-	
+	m_contentSubmissionSuccess = [dataSource submitCommunityItem:item withDelegate:nil];
+	m_contentSubmissionComplete = YES;
+	[item release];
+/*
 	[self.view setUserInteractionEnabled:YES];
 	[m_hud show:NO];
 	[item release];
@@ -1071,6 +1159,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 									otherButtonTitles:@"Retry",nil];
 		[alert show];
 	}
+ */
 }
 
 
@@ -1080,36 +1169,9 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	id<CommunityDataSourceProtocol> dataSource = [cdm dataSource];
 	
 	// this is the blocking call to the network submission...
-	BOOL success = [dataSource submitCommunityComment:reply withDelegate:nil];
-	
-	[self.view setUserInteractionEnabled:YES];
-	[m_hud show:NO];
+	m_contentSubmissionSuccess = [dataSource submitCommunityComment:reply withDelegate:nil];
+	m_contentSubmissionComplete = YES;
 	[reply release];
-	
-	if ( success )
-	{
-		/*
-		// add the comment to our in-memory structure :-)
-		CommunityItem *ci = [[myGovAppDelegate sharedCommunityData] itemWithId:reply.m_communityItemID];
-		[ci addComment:reply];
-		[cdm communityDataSource:dataSource newCommunityItemArrived:ci];
-		*/
-		[cdm loadData];
-		
-		[self dismissModalViewControllerAnimated:YES];
-	}
-	else
-	{
-		// ask the use what to do - couldn't send a message!
-		m_alertType = eAlertType_ReplyError;
-		UIAlertView *alert = [[UIAlertView alloc] 
-							  initWithTitle:@"Reply Error"
-							  message:[NSString stringWithString:@"An error occurred while sending your comment."]
-							  delegate:self
-							  cancelButtonTitle:@"Cancel"
-							  otherButtonTitles:@"Retry",nil];
-		[alert show];
-	}
 }
 
 
@@ -1144,7 +1206,10 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			{
 				case 1:
 					// retry
-					[self opSendMyGovComment];
+					//[self opSendMyGovComment];
+					// don't call a function, just return to the dialog
+					// so the user can reformat their message and use
+					// the send button again.
 					break;
 					
 				case 0:
@@ -1159,7 +1224,10 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			{
 				case 1:
 					// retry
-					[self opSendMyGovReply];
+					//[self opSendMyGovReply];
+					// don't call a function, just return to the dialog
+					// so the user can reformat their message and use
+					// the send button again.
 					break;
 					
 				case 0:

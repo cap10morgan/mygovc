@@ -36,6 +36,8 @@
 			andUseDelegate:(id<CommunityDataSourceDelegate>)delegateOrNil;
 
 	- (NSURLRequest *)shapeLoginURL:(NSString *)url;
+	
+	- (BOOL)validResponse:(NSString *)response;
 @end
 
 
@@ -379,9 +381,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 		return FALSE;
 	}
 	
-	// XXX - check response for validity!!!
-	
-	return TRUE; //[self validResponse:response];
+	return [self validResponse:response];
 }
 
 
@@ -425,7 +425,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 		return FALSE;
 	}
 	
-	return TRUE; //[self validResponse:response];
+	return [self validResponse:response];
 }
 
 
@@ -590,6 +590,25 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	
 	NSURLRequest *theRequest = [[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:url]] autorelease];
 	return theRequest;
+}
+
+
+- (BOOL)validResponse:(NSString *)response
+{
+	NSRange errRange = [response rangeOfString:@"Error:"];
+	if ( errRange.location != NSNotFound && errRange.length != 0 )
+	{
+		// I found the Error: string, make sure by looking for 
+		// 'Traceback' which is sent when a python error occurs
+		errRange = [response rangeOfString:@"Traceback"];
+		if ( errRange.location != NSNotFound && errRange.length != 0 )
+		{
+			NSLog(@"Network response error: GAE error!");
+			return FALSE;
+		}
+	}
+	
+	return TRUE;
 }
 
 

@@ -52,6 +52,8 @@
 + (myGovAppDelegate *)sharedAppDelegate;
 + (NSString *)sharedAppCacheDir;
 
++ (NSString *)md5:(NSString *)str;
+
 + (BOOL)canMakePhoneCalls;
 
 + (CGFloat)OSVersion;

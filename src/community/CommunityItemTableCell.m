@@ -50,8 +50,8 @@ static const CGFloat S_DETAIL_BUTTON_WIDTH = 16.0f;
 static const CGFloat S_DETAIL_BUTTON_HEIGHT = 32.0f;
 static const CGFloat S_TITLE_HEIGHT = 16.0f;
 static const CGFloat S_TITLE_MAX_WIDTH = 230.0f;
-static const CGFloat S_MAX_IMG_WIDTH = 64.0f;
-static const CGFloat S_MAX_IMG_HEIGHT = 64.0f;
+static const CGFloat S_MAX_IMG_WIDTH = 32.0f;
+static const CGFloat S_MAX_IMG_HEIGHT = 32.0f;
 
 static const CGFloat S_MIN_HEIGHT = 64.0f + (2.0f * 5.0f);
 static const CGFloat S_MAX_HEIGHT = 120.0f;
@@ -274,9 +274,12 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 								 imgSz.height );
 	[imgView setFrame:imgRect];
 */	
+	CGFloat contentStartX = S_CELL_HOFFSET + S_MAX_IMG_WIDTH + S_CELL_HOFFSET;
+	CGFloat contentStartY = S_CELL_VOFFSET;
+	
 	// username view top-aligned
-	CGRect unameRect = CGRectMake( S_CELL_HOFFSET, 
-								   S_CELL_VOFFSET, 
+	CGRect unameRect = CGRectMake( contentStartX, 
+								   contentStartY, 
 								   CGRectGetMinX(detailRect) - (2.0f*S_CELL_HOFFSET), 
 								   S_TITLE_HEIGHT);
 	UILabel *unameView = (UILabel *)[self viewWithTag:eTAG_USERNAME];
@@ -289,7 +292,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	CGSize titleSz = [m_item.m_title sizeWithFont:TITLE_FONT 
 								constrainedToSize:CGSizeMake(S_TITLE_MAX_WIDTH, S_TITLE_HEIGHT) 
 									lineBreakMode:UILineBreakModeTailTruncation];
-	CGRect titleRect = CGRectMake( S_CELL_HOFFSET,
+	CGRect titleRect = CGRectMake( contentStartX,
 								   CGRectGetMaxY(unameRect) + S_CELL_VOFFSET,
 								   titleSz.width, S_TITLE_HEIGHT );
 	[titleView setFrame:titleRect];

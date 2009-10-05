@@ -115,8 +115,12 @@ typedef enum
 	BOOL m_shouldRespondToKbdEvents;
 	id m_parentCtrl;
 	
-	NSTimer *m_timer;
-	BOOL     m_timedOperationComplete;
+	NSTimer *m_contentSubmissionTimer;
+	BOOL     m_contentSubmissionComplete;
+	BOOL     m_contentSubmissionSuccess;
+	
+	NSTimer *m_userAuthTimer;
+	BOOL     m_userAuthComplete;
 }
 
 @property (nonatomic,retain) IBOutlet ComposeMessageView *m_msgView;
