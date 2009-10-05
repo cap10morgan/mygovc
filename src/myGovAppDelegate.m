@@ -74,7 +74,7 @@ static int s_threads_using_network = 0;
 }
 
 
-+ (NSString *) md5:(NSString *)str 
++ (NSString *) md5hash:(NSString *)str 
 {
 	const char *cStr = [str UTF8String];
 	unsigned char result[16];

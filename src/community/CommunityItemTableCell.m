@@ -20,10 +20,10 @@
  
  $Id: $
  */
-
+#import "myGovAppDelegate.h"
 #import "CommunityItem.h"
 #import "CommunityItemTableCell.h"
-
+#import "MyGovUserData.h"
 
 @interface CommunityItemTableCell (private)
 	- (void)updateLayout;
@@ -49,9 +49,9 @@ static const CGFloat S_CELL_VOFFSET = 4.0f;
 static const CGFloat S_DETAIL_BUTTON_WIDTH = 16.0f;
 static const CGFloat S_DETAIL_BUTTON_HEIGHT = 32.0f;
 static const CGFloat S_TITLE_HEIGHT = 16.0f;
-static const CGFloat S_TITLE_MAX_WIDTH = 230.0f;
-static const CGFloat S_MAX_IMG_WIDTH = 32.0f;
-static const CGFloat S_MAX_IMG_HEIGHT = 32.0f;
+static const CGFloat S_TITLE_MAX_WIDTH = 204.0f;
+static const CGFloat S_MAX_IMG_WIDTH = 38.0f;
+static const CGFloat S_MAX_IMG_HEIGHT = 38.0f;
 
 static const CGFloat S_MIN_HEIGHT = 64.0f + (2.0f * 5.0f);
 static const CGFloat S_MAX_HEIGHT = 120.0f;
@@ -61,15 +61,15 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 #define TITLE_COLOR    [UIColor blackColor]
 
 #define USERNAME_FONT  [UIFont boldSystemFontOfSize:12.0f]
-#define USERNAME_COLOR [UIColor colorWithRed:0.5f green:0.5f blue:0.3f alpha:1.0f]
+#define USERNAME_COLOR [UIColor colorWithRed:0.32f green:0.32f blue:1.0f alpha:1.0f]
 
 #define COMMENTS_FONT  [UIFont systemFontOfSize:14.0f]
-#define COMMENTS_COLOR [UIColor colorWithRed:0.2f green:0.45f blue:0.8f alpha:0.95f]
+#define COMMENTS_COLOR [UIColor colorWithRed:0.32f green:0.32f blue:1.0f alpha:0.85f]
 
 #define SUMMARY_FONT   [UIFont systemFontOfSize:13.0f]
 #define SUMMARY_COLOR  [UIColor darkGrayColor]
 
-#define NEW_ITEM_BACKGROUND_COLOR [UIColor colorWithRed:1.0f green:0.95f blue:0.6f alpha:0.52f];
+#define NEW_ITEM_BACKGROUND_COLOR [UIColor colorWithRed:1.0f green:1.0f blue:0.8f alpha:0.9f];
 #define OLD_ITEM_BACKGROUND_COLOR [UIColor whiteColor];
 
 
@@ -80,16 +80,17 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 						   constrainedToSize:CGSizeMake(S_MAX_WIDTH_PORTRAIT - (4.0f*S_CELL_HOFFSET) - S_DETAIL_BUTTON_WIDTH, S_MAX_HEIGHT - (2.0f*S_TITLE_HEIGHT) - (4.0f*S_CELL_VOFFSET)) 
 							   lineBreakMode:UILineBreakModeWordWrap];
 	
-	CGFloat height = S_CELL_VOFFSET + 
-	                 S_TITLE_HEIGHT + S_CELL_VOFFSET + 
-					 S_TITLE_HEIGHT + S_CELL_VOFFSET + 
-					 descripSz.height + S_CELL_VOFFSET;
-/*	
-	CGFloat imgHeight = S_MAX_IMG_HEIGHT + S_CELL_VOFFSET +
+	CGFloat txtHeight = S_CELL_VOFFSET + 
+						S_TITLE_HEIGHT + S_CELL_VOFFSET + 
+						S_TITLE_HEIGHT + S_CELL_VOFFSET + 
+						descripSz.height + S_CELL_VOFFSET;
+	
+	CGFloat imgHeight = S_CELL_VOFFSET + 
+						S_MAX_IMG_HEIGHT + S_CELL_VOFFSET +
 						S_TITLE_HEIGHT + S_CELL_VOFFSET;
 	
 	CGFloat height = (txtHeight > imgHeight) ? txtHeight : imgHeight;
-*/	
+	
 	if ( height > S_MIN_HEIGHT ) return height;
 	
 	return S_MIN_HEIGHT;
@@ -103,16 +104,14 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	{
 		m_item = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
-		self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		//self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		
 		// 
 		// Detail button (next to table index)
 		// 
-		/*
 		UIButton *detail = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
 		[detail setTag:eTAG_DETAIL];
 		[self addSubview:detail];
-		*/
 		
 		UILabel *titleView = [[UILabel alloc] initWithFrame:CGRectZero];
 		titleView.backgroundColor = [UIColor clearColor];
@@ -145,14 +144,14 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 		[summaryView setTag:eTAG_SUMMARY];
 		[self addSubview:summaryView];
 		[summaryView release];
-/*		
+		
 		UIImageView *imgView = [[UIImageView alloc] init];
 		//imgView.userInteractionEnabled = YES;
 		imgView.backgroundColor = [UIColor clearColor];
 		[imgView setTag:eTAG_IMAGE];
 		[self addSubview:imgView];
 		[imgView release];
-*/		
+		
 		UILabel *unameView = [[UILabel alloc] initWithFrame:CGRectZero];
 		unameView.backgroundColor = [UIColor clearColor];
 		unameView.textColor = USERNAME_COLOR;
@@ -181,10 +180,13 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	[super setSelected:selected animated:animated];
 
 	UILabel *lbl;
-/*	
+	
 	UIButton *detail = (UIButton *)[self viewWithTag:eTAG_DETAIL];
 	detail.highlighted = selected;
-*/	
+	
+	UIImageView *imgView = (UIImageView *)[self viewWithTag:eTAG_IMAGE];
+	imgView.highlighted = selected;
+	
 	lbl = (UILabel *)[self viewWithTag:eTAG_TITLE];
 	lbl.highlighted = selected;
 	lbl = (UILabel *)[self viewWithTag:eTAG_COMMENTS];
@@ -198,12 +200,10 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 
 - (void)setDetailTarget:(id)target andSelector:(SEL)selector
 {
-/*
 	UIButton *detail = (UIButton *)[self viewWithTag:eTAG_DETAIL];
 	
 	// set delegate for detail button press!
 	[detail addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
-*/
 }
 
 
@@ -244,15 +244,35 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 								   S_DETAIL_BUTTON_WIDTH,
 								   S_DETAIL_BUTTON_HEIGHT );
 	
-/*
 	// set the detail button geometry: aligned right, middle of the cell
 	UIButton *detailButton = (UIButton *)[self viewWithTag:eTAG_DETAIL];
 	[detailButton setFrame:detailRect];
 	
 	// image view: aligned left, middle of the cell
 	UIImageView *imgView = (UIImageView *)[self viewWithTag:eTAG_IMAGE];
-	//if ( nil == m_item.m_image || m_item.m_image.size.height <= 1 || m_item.m_image.size.width <= 1 )
+	if ( nil != m_item.m_image && (m_item.m_image.size.height > 1 && m_item.m_image.size.width > 1) )
 	{
+		imgView.image = m_item.m_image;
+	}
+	else 
+	{
+		// check for a user image
+		MyGovUser *creator = [[myGovAppDelegate sharedUserData] userFromUsername:m_item.m_creator];
+		if ( nil != [creator m_avatar] )
+		{
+			imgView.image = creator.m_avatar;
+		}
+		else 
+		{
+			// default icon
+			imgView.image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"personIcon.png"]];
+		}
+
+	}
+/*
+	if ( nil == m_item.m_image || m_item.m_image.size.height <= 1 || m_item.m_image.size.width <= 1 )
+	{
+		
 		// use the system icon
 		if ( eCommunity_Chatter == m_item.m_type )
 		{
@@ -263,9 +283,9 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 			m_item.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"communityEventIcon.png"]];
 		}
 	}
+*/	
 	
-	imgView.image = m_item.m_image;
-	CGSize imgSz = m_item.m_image.size;
+	CGSize imgSz = imgView.image.size;
 	if ( imgSz.height > S_MAX_IMG_HEIGHT ) imgSz.height = S_MAX_IMG_HEIGHT;
 	if ( imgSz.width > S_MAX_IMG_WIDTH ) imgSz.width = S_MAX_IMG_WIDTH;
 	CGRect imgRect = CGRectMake( S_CELL_HOFFSET,
@@ -273,7 +293,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 								 imgSz.width, 
 								 imgSz.height );
 	[imgView setFrame:imgRect];
-*/	
+	
 	CGFloat contentStartX = S_CELL_HOFFSET + S_MAX_IMG_WIDTH + S_CELL_HOFFSET;
 	CGFloat contentStartY = S_CELL_VOFFSET;
 	
@@ -289,19 +309,38 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	// title view: top-aligned just below uname, left-aligned against side of frame
 	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
 	
-	CGSize titleSz = [m_item.m_title sizeWithFont:TITLE_FONT 
-								constrainedToSize:CGSizeMake(S_TITLE_MAX_WIDTH, S_TITLE_HEIGHT) 
-									lineBreakMode:UILineBreakModeTailTruncation];
-	CGRect titleRect = CGRectMake( contentStartX,
-								   CGRectGetMaxY(unameRect) + S_CELL_VOFFSET,
-								   titleSz.width, S_TITLE_HEIGHT );
+	CGSize titleSz;
+	CGRect titleRect;
+	CGFloat commentsViewVOffset;
+	NSString *cleanTitle = [m_item.m_title stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	if ( [cleanTitle length] > 0 )
+	{
+		titleSz = [m_item.m_title sizeWithFont:TITLE_FONT 
+									constrainedToSize:CGSizeMake(S_TITLE_MAX_WIDTH, S_TITLE_HEIGHT) 
+										lineBreakMode:UILineBreakModeTailTruncation];
+		titleRect = CGRectMake( contentStartX,
+									   CGRectGetMaxY(unameRect) + S_CELL_VOFFSET,
+									   titleSz.width, S_TITLE_HEIGHT );
+		commentsViewVOffset = S_CELL_VOFFSET;
+	}
+	else 
+	{
+		//titleSz = CGSizeMake(S_TITLE_MAX_WIDTH,2);
+		//titleRect = CGRectMake(contentStartX, CGRectGetMaxY(unameRect) + S_CELL_VOFFSET, S_TITLE_MAX_WIDTH, 2);
+		titleSz = unameRect.size;
+		titleRect.origin = unameRect.origin;
+		titleRect.size.width = S_TITLE_MAX_WIDTH;
+		titleRect.size.height = 2;
+		commentsViewVOffset = -4;
+	}
+	
 	[titleView setFrame:titleRect];
-	titleView.text = m_item.m_title;
+	titleView.text = cleanTitle;
 	
 	// comments view: right-aligned against title view
 	UILabel *commentView = (UILabel *)[self viewWithTag:eTAG_COMMENTS];
 	CGRect commentsRect = CGRectMake( CGRectGetMaxX(titleRect) + S_CELL_HOFFSET,
-									  CGRectGetMinY(titleRect) - S_CELL_VOFFSET,
+									  CGRectGetMinY(titleRect) - commentsViewVOffset,
 									  CGRectGetMinX(detailRect) - CGRectGetMaxX(titleRect) - (2.0f*S_CELL_HOFFSET),
 									  S_TITLE_HEIGHT );
 	[commentView setFrame:commentsRect];

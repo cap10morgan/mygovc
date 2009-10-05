@@ -52,7 +52,7 @@
 + (myGovAppDelegate *)sharedAppDelegate;
 + (NSString *)sharedAppCacheDir;
 
-+ (NSString *)md5:(NSString *)str;
++ (NSString *)md5hash:(NSString *)str;
 
 + (BOOL)canMakePhoneCalls;
 

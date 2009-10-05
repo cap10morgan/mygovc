@@ -103,7 +103,8 @@ static NSString *kMGUKey_Avatar = @"avatar";
 	[plistDict setValue:m_firstname forKey:kMGUKey_FirstName];
 	[plistDict setValue:m_middlename forKey:kMGUKey_MiddleName];
 	[plistDict setValue:m_lastname forKey:kMGUKey_LastName];
-	[plistDict setValue:UIImageJPEGRepresentation(m_avatar, 1.0) forKey:kMGUKey_Avatar];
+	NSData *imgData = UIImagePNGRepresentation(m_avatar);
+	[plistDict setValue:imgData forKey:kMGUKey_Avatar];
 	
 	return (NSDictionary *)plistDict;
 }

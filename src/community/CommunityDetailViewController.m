@@ -48,16 +48,21 @@
 			} \
 		</script> \
 		<style> \
+		a { \
+			color: #cfc; \
+			text-decoration: none; \
+			font-weight: bold; \
+		} \
 		div.comment { \
 			font-size: 1em; \
-			border-left: 5px solid #444; \
+			border-left: 5px solid #889; \
 			margin-top: 0.7em; \
 			margin-left: 0.5em; \
 			margin-bottom: 1em; \
 			padding-left: 0.5em; \
 		} \
 		div.header { \
-			border-top: 2px solid #222; \
+			border-top: 2px solid #444; \
 			padding-top: 0.2em; \
 			font-size: 1.2em; \
 		} \
@@ -67,7 +72,7 @@
 			margin-left: 0.5em; \
 			margin-right: 0.5em; \
 			padding: 0.1em; \
-			color: #fe6; \
+			color: #ff4; \
 		} \
 		</style> \
 	</head> \
@@ -148,6 +153,7 @@ enum
 {
 	[m_item release];
 	m_item = [item retain];
+	m_item.m_uiStatus = eCommunityItem_Old;
 	
 	if ( nil == m_data )
 	{
@@ -231,7 +237,7 @@ enum
 	
 	m_itemLabel = [[UILabel alloc] initWithFrame:CGRectMake(10,165,300,40)];
 	m_itemLabel.backgroundColor = [UIColor clearColor];
-	m_itemLabel.textColor = [UIColor grayColor];
+	m_itemLabel.textColor = [UIColor colorWithRed:0.56f green:0.56f blue:1.0f alpha:1.0f];
 	m_itemLabel.font = [UIFont systemFontOfSize:16.0f];
 	m_itemLabel.textAlignment = UITextAlignmentCenter;
 	m_itemLabel.lineBreakMode = UILineBreakModeWordWrap;

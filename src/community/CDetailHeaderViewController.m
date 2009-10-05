@@ -139,6 +139,14 @@
 	{
 		m_img.image = m_item.m_image;
 	}
+	else
+	{
+		MyGovUser *creator = [[myGovAppDelegate sharedUserData] userFromUsername:m_item.m_creator];
+		if ( nil != [creator m_avatar] )
+		{
+			m_img.image = creator.m_avatar;
+		}
+	}
 	
 	[m_myGovURLButton setHidden:NO];
 	if ( nil == m_item.m_mygovURL )

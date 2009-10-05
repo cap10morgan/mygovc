@@ -628,6 +628,8 @@ deselect_and_return:
 {
 	// Navigate directly to the detail view for a comment - no more action sheet...
 	CommunityItem *item = [m_data itemForIndexPath:indexPath andType:m_selectedItemType];
+	if ( nil == item ) return;
+	
 	CommunityDetailViewController *cdView = [[CommunityDetailViewController alloc] init];
 	[cdView setItem:item];
 	[self.navigationController pushViewController:cdView animated:YES];

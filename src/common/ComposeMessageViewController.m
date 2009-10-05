@@ -551,6 +551,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	m_keyboardVisible = YES;
 	
 	[(UIScrollView *)(self.view) flashScrollIndicators];
+	[(UIScrollView *)(self.view) setScrollEnabled:FALSE]; // disallow scrolling in the parent view
 }
 
 
@@ -573,6 +574,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 	self.view.frame = viewFrame;
 
 	m_keyboardVisible = NO;
+	[(UIScrollView *)(self.view) setScrollEnabled:YES]; // re-allow scrolling in the parent view
 }
 
 

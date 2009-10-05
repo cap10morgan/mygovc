@@ -28,6 +28,29 @@
 #import "GoogleAppsDataSource.h"
 #import "MyGovUserData.h"
 
+@interface TempUserHolder : NSObject
+{
+	MyGovUser *m_user;
+	id m_delegateOrNil;
+}
+@property (nonatomic,retain) MyGovUser *m_user;
+@property (nonatomic,retain) id m_delegateOrNil;
+@end
+
+@implementation TempUserHolder
+@synthesize m_user, m_delegateOrNil;
+- (id) init
+{
+	if ( self = [super init] )
+	{
+		m_user = nil;
+		m_delegateOrNil = nil;
+	}
+	return self;
+}
+@end
+
+
 @interface GoogleAppsDataSource (private)
 	- (BOOL)doUserAuthFor:(NSString *)username 
 			 withPassword:(NSString *)password;
@@ -38,6 +61,8 @@
 	- (NSURLRequest *)shapeLoginURL:(NSString *)url;
 	
 	- (BOOL)validResponse:(NSString *)response;
+	
+	- (void)downloadGravatar:(TempUserHolder *)user;
 @end
 
 
@@ -53,6 +78,11 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	if ( self = [super init] )
 	{
 		m_loginURLRequest = nil;
+		
+		m_gravatarDownloadQueue = [[NSOperationQueue alloc] init];
+		[m_gravatarDownloadQueue setMaxConcurrentOperationCount:1];
+		
+		m_gravatarDownloads = [[NSMutableDictionary alloc] initWithCapacity:30];
 		
 		// 
 		// Delete any AUTH cookie for mygov:
@@ -544,18 +574,41 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	NSString *username;
 	while ( username = [idEnum nextObject] )
 	{
+		MyGovUser *user = [[MyGovUser alloc] init];
+		user.m_username = username;
+		
 		if ( ![[myGovAppDelegate sharedUserData] usernameExistsInCache:username] )
 		{
-			// XXX - if (no avatar | avatar old): try to get a Gravatar!
-			
-			// XXX - query for more info?!
-			
-			// create a new MyGovUser object and pass it up to our delegate
-			MyGovUser *user = [[MyGovUser alloc] init];
-			user.m_username = username;
-			
+			// add some initial data into the cache
 			[delegateOrNil communityDataSource:self userDataArrived:user];
 		}
+		
+		// XXX - if (no avatar | avatar old): try to get a Gravatar!
+		
+		// XXX - query for more info?!
+		
+		// start a download if we've never seen the username
+		// this time around...
+		if ( nil == [m_gravatarDownloads objectForKey:username] )
+		{
+			// NOTE: we never actual de-reference the returned object
+			// because it may be an invalid pointer. We just use it
+			// as an indicator :-)
+			TempUserHolder *tmpUser = [[[TempUserHolder alloc] init] autorelease];
+			tmpUser.m_user = user;
+			tmpUser.m_delegateOrNil = delegateOrNil;
+			
+			// kick off a download operation
+			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
+																				selector:@selector(downloadGravatar:) object:tmpUser];
+			[m_gravatarDownloads setObject:theOp forKey:username];
+			[m_gravatarDownloadQueue addOperation:theOp];
+			
+			[theOp release];
+		}
+		
+		// release our reference to the user object
+		[user release];
 	}
 	
 	return;
@@ -609,6 +662,47 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	}
 	
 	return TRUE;
+}
+
+
+- (void)downloadGravatar:(TempUserHolder *)tmpUser
+{
+	// Run as a thread
+	
+	if ( nil == tmpUser.m_user.m_username ) return;
+	
+	// get the user email address
+	NSString *emailAddr;
+	NSRange atSymbolRange = [tmpUser.m_user.m_username rangeOfString:@"@"];
+	if ( NSNotFound != atSymbolRange.location )
+	{
+		// some gmail accounts use other email addresses: use it :-)
+		emailAddr = [[[NSString alloc] initWithString:[tmpUser.m_user.m_username lowercaseString]] autorelease];
+	}
+	else 
+	{
+		// add '@gmail.com' to the email
+		emailAddr = [[[NSString alloc] initWithFormat:@"%@@gmail.com",[tmpUser.m_user.m_username lowercaseString]] autorelease];
+	}
+	
+	// get an MD5 hash of the email
+	NSString *md5hash = [[myGovAppDelegate md5hash:emailAddr] lowercaseString];
+	
+	// Grab a 100x100 image
+	
+	// 100x100 URL:
+	NSString *urlStr = [NSString stringWithFormat:@"http://www.gravatar.com/avatar/%@.jpg?s=100&d=http%%3A%%2F%%2Fwww.iphonefloss.com%%2Fsites%%2Fdefault%%2Ffiles%%2Fsystem_avatar.png",md5hash];
+	NSURL *url = [NSURL URLWithString:urlStr];
+	
+	// it's as easy as this:
+	MyGovUser *user = [[[MyGovUser alloc] init] autorelease];
+	NSData *imgData = [NSData dataWithContentsOfURL:url];
+	UIImage *img = [[[UIImage alloc] initWithData:imgData] autorelease];
+	
+	user.m_avatar = img;
+	user.m_username = tmpUser.m_user.m_username;
+	
+	[tmpUser.m_delegateOrNil communityDataSource:self userDataArrived:user];
 }
 
 

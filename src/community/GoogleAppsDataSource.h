@@ -27,6 +27,10 @@
 @interface GoogleAppsDataSource : NSObject <CommunityDataSourceProtocol>
 {
 	NSURLRequest *m_loginURLRequest;
+	
+@private
+	NSOperationQueue *m_gravatarDownloadQueue;
+	NSMutableDictionary *m_gravatarDownloads;
 }
 
 @end
