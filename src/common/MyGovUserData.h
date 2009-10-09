@@ -68,4 +68,7 @@
 
 - (BOOL)usernameExistsInCache:(NSString *)username;
 
++ (NSString *)dataCachePath;
++ (NSString *)userAvatarPath:(NSString *)username;
+
 @end

@@ -376,7 +376,7 @@ enum
 						  message:@"Do you want to remove cached comments?"
 						  delegate:self
 						  cancelButtonTitle:@"No"
-						  otherButtonTitles:@"Yes",nil];
+						  otherButtonTitles:@"Yes",@"Cancel",nil];
 	[alert show];
 	
 	[self setActivityViewInNavBar];
@@ -428,6 +428,7 @@ enum
 	// de-select the currently selected row
 	// (so the user can go back to the same row)
 	[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+	[self.tableView reloadData];
 }
 
 
@@ -482,6 +483,9 @@ enum
 		case eAlertType_ReloadQuestion:
 			switch ( buttonIndex )
 			{
+				case 2: // CANCEL
+					break;
+				
 				case 1: // YES: Please remove local cache
 					[m_data purgeAllItemsFromCacheAndMemory];
 					// fall-through to begin the data re-load!
@@ -634,23 +638,6 @@ deselect_and_return:
 	[cdView setItem:item];
 	[self.navigationController pushViewController:cdView animated:YES];
 	[cdView release];
-	
-	/*
-	// pop up an alert asking the user what action to perform
-	UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:[item m_title]
-													   delegate:self 
-											  cancelButtonTitle:@"Cancel" 
-										 destructiveButtonTitle:nil
-											  otherButtonTitles:@"Reply!",nil,nil];
-	
-	// use the same style as the nav bar
-	sheet.actionSheetStyle = self.navigationController.navigationBar.barStyle;
-	
-	//[sheet showInView:self.view];
-	[sheet showFromTabBar:(UITabBar *)[myGovAppDelegate sharedAppDelegate].m_tabBarController.view];
-	[sheet release];
-	*/
-	//[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
 }
 
 

@@ -65,7 +65,7 @@
 								</object>
 								<object class="NSColor" key="IBUITextColor">
 									<int key="NSColorSpace">3</int>
-									<bytes key="NSWhite">MC4yNTkxMjQwODc2IDAuOTkAA</bytes>
+									<bytes key="NSWhite">MC4zNDY3MTUzMjg1IDAuOTkAA</bytes>
 								</object>
 								<nil key="IBUIHighlightedColor"/>
 								<object class="NSColor" key="IBUIShadowColor">
@@ -117,7 +117,7 @@
 						<reference key="NSSuperview" ref="515410676"/>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>
-							<bytes key="NSWhite">MC41NzI5OTI3MDA3AA</bytes>
+							<bytes key="NSWhite">MC43NDgxNzUxODI1AA</bytes>
 						</object>
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>

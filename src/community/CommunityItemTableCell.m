@@ -250,12 +250,14 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	
 	// image view: aligned left, middle of the cell
 	UIImageView *imgView = (UIImageView *)[self viewWithTag:eTAG_IMAGE];
+/*
 	if ( nil != m_item.m_image && (m_item.m_image.size.height > 1 && m_item.m_image.size.width > 1) )
 	{
 		imgView.image = m_item.m_image;
 	}
 	else 
 	{
+ */
 		// check for a user image
 		MyGovUser *creator = [[myGovAppDelegate sharedUserData] userFromUsername:m_item.m_creator];
 		if ( nil != [creator m_avatar] )
@@ -268,7 +270,9 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 			imgView.image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"personIcon.png"]];
 		}
 
+/*
 	}
+ */
 /*
 	if ( nil == m_item.m_image || m_item.m_image.size.height <= 1 || m_item.m_image.size.width <= 1 )
 	{

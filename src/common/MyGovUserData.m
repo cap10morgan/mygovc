@@ -43,7 +43,7 @@ static NSString *kMGUKey_LastUpdated = @"last_update";
 static NSString *kMGUKey_FirstName = @"fname";
 static NSString *kMGUKey_MiddleName = @"mname";
 static NSString *kMGUKey_LastName = @"lname";
-static NSString *kMGUKey_Avatar = @"avatar";
+//static NSString *kMGUKey_Avatar = @"avatar";
 
 + (MyGovUser *)systemUser
 {
@@ -87,7 +87,9 @@ static NSString *kMGUKey_Avatar = @"avatar";
 			self.m_firstname = [plistDict objectForKey:kMGUKey_FirstName];
 			self.m_middlename = [plistDict objectForKey:kMGUKey_MiddleName];
 			self.m_lastname = [plistDict objectForKey:kMGUKey_LastName];
-			self.m_avatar = [UIImage imageWithData:[plistDict objectForKey:kMGUKey_Avatar]];
+			
+			//self.m_avatar = [UIImage imageWithData:[plistDict objectForKey:kMGUKey_Avatar]];
+			self.m_avatar = [UIImage imageWithContentsOfFile:[MyGovUserData userAvatarPath:self.m_username]];
 		}
 	}
 	return self;
@@ -103,8 +105,9 @@ static NSString *kMGUKey_Avatar = @"avatar";
 	[plistDict setValue:m_firstname forKey:kMGUKey_FirstName];
 	[plistDict setValue:m_middlename forKey:kMGUKey_MiddleName];
 	[plistDict setValue:m_lastname forKey:kMGUKey_LastName];
-	NSData *imgData = UIImagePNGRepresentation(m_avatar);
-	[plistDict setValue:imgData forKey:kMGUKey_Avatar];
+	
+	//NSData *imgData = UIImagePNGRepresentation(m_avatar);
+	//[plistDict setValue:imgData forKey:kMGUKey_Avatar];
 	
 	return (NSDictionary *)plistDict;
 }
@@ -117,10 +120,6 @@ static NSString *kMGUKey_Avatar = @"avatar";
 
 @end
 
-
-@interface MyGovUserData (private)
-	- (NSString *)dataCachePath;
-@end
 
 
 @implementation MyGovUserData
@@ -152,9 +151,27 @@ static NSString *kMGUKey_Avatar = @"avatar";
 	[m_userData setObject:nu forKey:nu.m_username];
 	
 	// store the new data to a local file
-	NSString *fPath = [[self dataCachePath] stringByAppendingPathComponent:[nu getCacheFileName]];
+	NSString *fPath = [[MyGovUserData dataCachePath] stringByAppendingPathComponent:[nu getCacheFileName]];
 	NSDictionary *userData = [nu writeToPlistDict];
 	[userData writeToFile:fPath atomically:YES];
+	
+	// write the user avatar to disk (if present)
+	if ( nil != nu.m_avatar )
+	{
+		NSData *avatarData = UIImagePNGRepresentation(nu.m_avatar);
+		if ( nil != avatarData )
+		{
+			NSString *avatarPath = [MyGovUserData userAvatarPath:nu.m_username];
+			NSString *avatarDir = [avatarPath stringByDeletingLastPathComponent];
+			
+			// make sure the directory exists!
+			[[NSFileManager defaultManager] createDirectoryAtPath:avatarDir withIntermediateDirectories:YES attributes:nil error:NULL];
+			
+			// write the image
+			[[NSFileManager defaultManager] createFileAtPath:avatarPath contents:avatarData attributes:nil];
+		}
+		
+	}
 }
 
 
@@ -164,7 +181,7 @@ static NSString *kMGUKey_Avatar = @"avatar";
 	if ( nil == user )
 	{
 		// not in memory - try disk
-		NSString *fPath = [[self dataCachePath] stringByAppendingPathComponent:username];
+		NSString *fPath = [[MyGovUserData dataCachePath] stringByAppendingPathComponent:username];
 		if ( [[NSFileManager defaultManager] fileExistsAtPath:fPath] )
 		{
 			NSDictionary *userData = [NSDictionary dictionaryWithContentsOfFile:fPath];
@@ -202,14 +219,18 @@ static NSString *kMGUKey_Avatar = @"avatar";
 }
 
 
-#pragma mark MyGovUserData Private
-
-
-- (NSString *)dataCachePath
++ (NSString *)dataCachePath
 {
 	NSString *cachePath = [CommunityDataManager dataCachePath];
 	cachePath = [cachePath stringByAppendingPathComponent:@"usercache"];
 	return cachePath;
+}
+
++ (NSString *)userAvatarPath:(NSString *)username
+{
+	NSString *avatarPath = [MyGovUserData dataCachePath];
+	avatarPath = [avatarPath stringByAppendingFormat:@"/avatar/%@.png",username];
+	return avatarPath;
 }
 
 
