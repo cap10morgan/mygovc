@@ -82,6 +82,20 @@ static NSString * kField_votesAbstains = @"votesAbstains";
 }
 
 
++ (LegislatorContainer *)dummyLegislator
+{
+	static LegislatorContainer *s_dummyLegislator = nil;
+	if ( nil == s_dummyLegislator )
+	{
+		s_dummyLegislator = [[LegislatorContainer alloc] init];
+		[s_dummyLegislator addKey:kField_FirstName withValue:@"Unknown"];
+		[s_dummyLegislator addKey:kField_LastName withValue:@"Legislator"];
+		[s_dummyLegislator addKey:kField_Website withValue:@"http://iphonefloss.com/"];
+	}
+	return s_dummyLegislator;
+}
+
+
 - (id)init
 {
 	if ( self = [super init] )

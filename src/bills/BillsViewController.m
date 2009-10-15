@@ -553,7 +553,7 @@ get_out:
 		else
 		{
 			// scroll to the top of the table
-			if ( [m_data totalBills] > 0 )
+			if ( [m_data totalBills] > 0 && ![m_data isBusy] )
 			{
 				isReloading = YES;
 				[self.tableView reloadData];
@@ -574,9 +574,9 @@ get_out:
 				[self.navigationController popToRootViewControllerAnimated:NO];
 				BillInfoViewController *biView = [[BillInfoViewController alloc] init];
 				[biView setBill:bill];
-				[self.navigationController pushViewController:biView animated:YES];
+				[self.navigationController pushViewController:biView animated:NO];
 				[biView release];
-				[self.tableView setNeedsDisplay];
+				[self.view setNeedsDisplay];
 			}
 			else
 			{
@@ -587,6 +587,7 @@ get_out:
 		}
 		
 		if ( !isReloading ) [self.tableView reloadData];
+		[self.view setNeedsDisplay];
 	}
 	else
 	{
@@ -608,7 +609,7 @@ get_out:
 }
 
 
-- (void)shadowDataCallback:(id)sender
+- (void)shadowDataCallback:(id)msg
 {
 	if ( nil == m_shadowData ) return; // how did that happen?
 	
@@ -638,6 +639,25 @@ get_out:
 		[self.tableView reloadData];
 		self.tableView.userInteractionEnabled = YES;
 	}
+	else 
+	{
+		UILabel *lbl = (UILabel *)[self.navigationItem.rightBarButtonItem.customView viewWithTag:999];
+		NSString *txt = msg;
+		NSRange lparenPos = [txt rangeOfString:@"("];
+		NSRange slashPos = [txt rangeOfString:@"/"];
+		NSRange rparenPos = [txt rangeOfString:@")"];
+		if ( lparenPos.location > 0 && 
+			 slashPos.location > lparenPos.location && 
+			 rparenPos.location > slashPos.location )
+		{
+			NSRange pageRange;
+			pageRange.location = lparenPos.location + 1;
+			pageRange.length = rparenPos.location - lparenPos.location - 1;
+			NSString *page = [txt substringWithRange:pageRange];
+			[lbl setText:page];
+		}
+	}
+
 }
 
 
@@ -695,11 +715,22 @@ get_out:
 - (void)setActivityViewInNavBar
 {
 	UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 44.0f, 32.0f)];
+	
 	UIActivityIndicatorView *aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
 	//aiView.hidesWhenStopped = YES;
 	[aiView setFrame:CGRectMake(12.0f, 6.0f, 20.0f, 20.0f)];
 	[view addSubview:aiView];
 	[aiView startAnimating];
+	
+	UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 44.0f, 32.0f)];
+	[lbl setTextAlignment:UITextAlignmentCenter];
+	[lbl setFont:[UIFont boldSystemFontOfSize:18.0f]];
+	[lbl setAdjustsFontSizeToFitWidth:YES];
+	[lbl setTextColor:[UIColor colorWithRed:0.85f green:0.85f blue:0.20f alpha:1.0f]];
+	[lbl setBackgroundColor:[UIColor clearColor]];
+	[lbl setText:@"..."];
+	[lbl setTag:999];
+	[view addSubview:lbl];
 	
 	UIBarButtonItem *actBarButton = [[UIBarButtonItem alloc] 
 									 initWithBarButtonSystemItem:UIBarButtonSystemItemStop
@@ -712,6 +743,7 @@ get_out:
 	[self.navigationController.navigationBar setNeedsDisplay];
 	
 	[view release];
+	[lbl release];
 	[aiView release];
 	[actBarButton release];
 }
@@ -757,7 +789,12 @@ get_out:
 
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
-{}
+{
+	if ( [searchText length] < 1 )
+	{
+		[searchBar resignFirstResponder];
+	}
+}
 
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
@@ -802,6 +839,12 @@ get_out:
 	}
 }
 
+/*
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
+{
+	
+}
+*/
 
 #pragma mark UIActionSheetDelegate methods
 

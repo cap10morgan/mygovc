@@ -230,7 +230,7 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 
 - (NSDictionary *)getBillDictionaryForCache
 {
-	NSMutableDictionary *billDict = [[[NSMutableDictionary alloc] init] autorelease];
+	NSMutableDictionary *billDict = [[NSMutableDictionary alloc] init];
 	
 	[billDict setValue:[NSNumber numberWithInt:m_id] forKey:kCache_IDKey];
 	[billDict setValue:[NSNumber numberWithInt:[m_bornOn timeIntervalSinceReferenceDate]] forKey:kCache_BornOnKey];
@@ -242,9 +242,9 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 	[billDict setValue:[[m_sponsors objectAtIndex:0] bioguide_id] forKey:kCache_SponsorKey];
 	
 	// co-sponsors
-	NSMutableArray *coSponsorArray = [[NSMutableArray alloc] init];
+	NSMutableArray *coSponsorArray = [[NSMutableArray alloc] initWithCapacity:5];
 	NSEnumerator *e = [m_cosponsors objectEnumerator];
-	id lc;
+	LegislatorContainer *lc;
 	while ( lc = [e nextObject] )
 	{
 		[coSponsorArray addObject:[lc bioguide_id]];
@@ -257,12 +257,12 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 	[coSponsorArray release];
 	
 	// actions
-	NSMutableArray *actions = [[NSMutableArray alloc] init];
+	NSMutableArray *actions = [[NSMutableArray alloc] initWithCapacity:5];
 	e = [m_history objectEnumerator];
-	id ba;
+	BillAction *ba;
 	while ( ba = [e nextObject] )
 	{
-		NSMutableDictionary *actionDict = [[NSMutableDictionary alloc] init];
+		NSMutableDictionary *actionDict = [[NSMutableDictionary alloc] initWithCapacity:7];
 		[actionDict setValue:[NSNumber numberWithInt:[ba m_id]] forKey:kCache_Action_IDKey];
 		[actionDict setValue:[ba m_type] forKey:kCache_Action_TypeKey];
 		[actionDict setValue:[NSNumber numberWithInt:[[ba m_date] timeIntervalSinceReferenceDate]] forKey:kCache_Action_DateKey];
@@ -344,6 +344,12 @@ static NSString *kCache_Action_VoteResultKey = @"ActionVoteResult";
 	{
 		[m_sponsors addObject:lc];
 	}
+	else 
+	{
+		NSLog(@"Unknown bioguideID (%@): adding dummy sponsor to bill...",bioguideID);
+		[m_sponsors addObject:[LegislatorContainer dummyLegislator]];
+	}
+
 }
 
 

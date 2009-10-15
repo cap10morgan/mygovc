@@ -43,6 +43,7 @@ typedef enum
 }
 
 + (UIColor *)partyColor:(NSString *)party;
++ (LegislatorContainer *)dummyLegislator;
 
 - (id)initFromFile:(NSString *)path;
 - (void)writeRecordToFile:(NSString *)path;

@@ -83,7 +83,7 @@ static const CGFloat S_ROW_HEIGHT = 25.0f;
 
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier
 {
-	if (self = [super initWithFrame:frame reuseIdentifier:reuseIdentifier]) 
+	if (self = [super initWithFrame:CGRectZero reuseIdentifier:reuseIdentifier]) 
 	{
 		m_bill = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;

@@ -143,22 +143,20 @@ static NSInteger s_maxBillPages = 0;
 
 - (void)loadData
 {
-	NSString *cachePath = [BillsDataManager billDataCacheFile];
-	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
+	//NSString *cachePath = [BillsDataManager billDataCacheFile];
+	NSString *dataPath = [BillsDataManager dataCachePath]; //[[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
 	
 	BOOL shouldReDownload = NO;
 	
 	// check to see if we should re-load the data!
 	NSNumber *reloadFreq = [[NSUserDefaults standardUserDefaults] objectForKey:@"mygov_autoreload_bills"];
 	NSInteger updateInterval = [reloadFreq integerValue];
-	//if ( [shouldReload isEqualToString:@"YES"] )
 	if ( updateInterval > 0 )
 	{
 		// the user wants us to auto-update:
-		// do so once every day
-		
+		// do so once every 'specified interval'
 		NSString *lastUpdatePath = [dataPath stringByAppendingPathComponent:@"lastUpdate"];
-		NSString *lastUpdateStr = [NSString stringWithContentsOfFile:lastUpdatePath];
+		NSString *lastUpdateStr = [NSString stringWithContentsOfFile:lastUpdatePath encoding:NSUTF8StringEncoding error:NULL];
 		CGFloat lastUpdate = [lastUpdateStr floatValue];
 		CGFloat now = (CGFloat)[[NSDate date] timeIntervalSinceReferenceDate];
 		if ( (now - lastUpdate) > updateInterval ) // this will still be true if the file wasn't found :-)
@@ -168,9 +166,8 @@ static NSInteger s_maxBillPages = 0;
 		}
 	}
 	
-	// Read cached data in 
+	// Read cached data in: this also starts a download if cache is invalid!
 	{
-		// data is available - read disk data into memory (via a worker thread)
 		NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
 																			selector:@selector(readBillDataFromCache:) 
 																			  object:self];
@@ -181,7 +178,7 @@ static NSInteger s_maxBillPages = 0;
 		[theOp release];
 	}
 	
-	if ( shouldReDownload || ![[NSFileManager defaultManager] fileExistsAtPath:cachePath] )
+	if ( shouldReDownload ) // || ![[NSFileManager defaultManager] fileExistsAtPath:cachePath] )
 	{
 		// we need to start a data download!
 		m_billDownloadPage = 1;
@@ -195,6 +192,8 @@ static NSInteger s_maxBillPages = 0;
 	if ( removeCache )
 	{
 		[self clearData];
+		[[NSFileManager defaultManager] removeItemAtPath:[BillsDataManager dataCachePath] error:NULL];
+		
 		m_downloadReallyRecentStuff = NO;
 	}
 	else
@@ -517,7 +516,7 @@ static NSInteger s_maxBillPages = 0;
 
 - (void)writeBillDataToCache:(id)sender
 {	
-	NSString *dataPath = [[BillsDataManager dataCachePath] stringByAppendingPathComponent:@"data"];
+	NSString *dataPath = [BillsDataManager dataCachePath];
 	
 	while ( isReadingCache || isDownloading )
 	{
@@ -527,50 +526,106 @@ static NSInteger s_maxBillPages = 0;
 	// make sure the directoy exists!
 	[[NSFileManager defaultManager] createDirectoryAtPath:dataPath withIntermediateDirectories:YES attributes:nil error:NULL];
 	
-	NSString *billDataPath = [BillsDataManager billDataCacheFile]; 
-	//NSLog( @"BillsDataManager: writing bill cache to: %@",billDataPath );
+	// temporary array to store bill dictionary entries
+	NSMutableArray *billData = [[NSMutableArray alloc] initWithCapacity:[m_houseBills count]];
+	BOOL wroteAtLeastOneCacheFile = FALSE;
 	
-	NSMutableArray *billData = [[NSMutableArray alloc] initWithCapacity:([m_houseBills count] + [m_senateBills count])];
-	
-	// gather house bill data
-	NSEnumerator *e = [m_houseBills objectEnumerator];
-	id monthArray;
-	while ( monthArray = [e nextObject] )
 	{
-		NSEnumerator *me = [monthArray objectEnumerator];
-		id bc;
-		while ( bc = [me nextObject] )
+		// 
+		// save house bills
+		// 
+		NSArray *sections = [m_houseSections sortedArrayUsingSelector:@selector(compare:)];
+		NSEnumerator *monthEnum = [sections objectEnumerator];
+		NSString *monthKey;
+		while ( monthKey = [monthEnum nextObject] )
 		{
-			NSDictionary *billDict = [bc getBillDictionaryForCache];
-			[billData addObject:billDict];
+			NSArray *monthBills = [m_houseBills objectForKey:monthKey];
+			NSEnumerator *me = [monthBills objectEnumerator];
+			BillContainer *bc; // bill container
+			while ( bc = [me nextObject] )
+			{
+				NSDictionary *billDict = nil;
+				@try 
+				{
+					billDict = [bc getBillDictionaryForCache];
+					[billData addObject:billDict];	
+				}
+				@catch (NSException * e) 
+				{
+					NSLog(@"Bill[%@] exception: %@",[bc getShortTitle],[e reason]);
+				}
+				@finally 
+				{
+					[billDict release];
+				}
+			}
+			
+			// if there is more than 1 bill in this month, save the data
+			if ( [billData count] > 0 )
+			{
+				// store the file
+				NSString *cacheFilePath = [dataPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_h.cache",monthKey]];
+				BOOL success = [billData writeToFile:cacheFilePath atomically:YES];
+				wroteAtLeastOneCacheFile = success || wroteAtLeastOneCacheFile;
+			}
+			// clear data for the next month 
+			[billData removeAllObjects];
+		}
+		
+		// 
+		// save senate bills
+		// 
+		sections = [m_senateSections sortedArrayUsingSelector:@selector(compare:)];
+		monthEnum = [sections objectEnumerator];
+		while ( monthKey = [monthEnum nextObject] )
+		{
+			NSArray *monthBills = [m_senateBills objectForKey:monthKey];
+			NSEnumerator *me = [monthBills objectEnumerator];
+			id bc; // bill container
+			while ( bc = [me nextObject] )
+			{
+				NSDictionary *billDict = nil;
+				@try 
+				{
+					billDict = [bc getBillDictionaryForCache];
+					[billData addObject:billDict];	
+				}
+				@catch (NSException * e) 
+				{
+					NSLog(@"Bill[%@] exception: %@",[bc getShortTitle],[e reason]);
+				}
+				@finally 
+				{
+					[billDict release];
+				}
+			}
+			
+			// if there is more than 1 bill in this month, save the data
+			if ( [billData count] > 0 )
+			{
+				// store the file
+				NSString *cacheFilePath = [dataPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_s.cache",monthKey]];
+				BOOL success = [billData writeToFile:cacheFilePath atomically:YES];
+				wroteAtLeastOneCacheFile = success || wroteAtLeastOneCacheFile;
+			}
+			// clear data for the next month 
+			[billData removeAllObjects];
 		}
 	}
 	
-	// Gather senate bill data
-	e = [m_senateBills objectEnumerator];
-	while ( monthArray = [e nextObject] )
-	{
-		NSEnumerator *me = [monthArray objectEnumerator];
-		id bc;
-		while ( bc = [me nextObject] )
-		{
-			NSDictionary *billDict = [bc getBillDictionaryForCache];
-			[billData addObject:billDict];
-		}
-	}
+	[billData release];
 	
-	BOOL success = [billData writeToFile:billDataPath atomically:YES];
-	if ( !success )
+	// write out the current date to a file to indicate the last time
+	// we updated this database
+	if ( wroteAtLeastOneCacheFile )
 	{
-		//NSLog( @"BillsDataManager: error writing bill data to cache!" );
-	}
-	else
-	{
-		// write out the current date to a file to indicate the last time
-		// we updated this database
 		NSString *lastUpdatePath = [dataPath stringByAppendingPathComponent:@"lastUpdate"];
 		NSString *lastUpdate = [NSString stringWithFormat:@"%0f",[[NSDate date] timeIntervalSinceReferenceDate]];
-		success = [lastUpdate writeToFile:lastUpdatePath atomically:YES encoding:NSMacOSRomanStringEncoding error:NULL];
+		BOOL success = [lastUpdate writeToFile:lastUpdatePath atomically:YES encoding:NSMacOSRomanStringEncoding error:NULL];
+		if ( !success )
+		{
+			NSLog( @"Successfully wrote cache, but couldnt' write 'lastUpdate' file (may re-download bill data)" );
+		}
 	}
 	
 	// not busy any more!
@@ -589,19 +644,38 @@ static NSInteger s_maxBillPages = 0;
 	// wait until the congressional data loads!
 	while ( ![[myGovAppDelegate sharedCongressData] isDataAvailable] )
 	{
-		[NSThread sleepForTimeInterval:0.1f];
+		[NSThread sleepForTimeInterval:0.2f];
 	}
 	
 	isReadingCache = YES;
 	[self setStatus:@"Reading Cached Bills..."];
 	
-	NSString *billDataPath = [BillsDataManager billDataCacheFile];
-	NSLog( @"BillsDataManager: reading bill cache..." );
+	// Read in bill caches by month 
+	NSString *billDataPath = [BillsDataManager dataCachePath];
+	NSMutableArray *cacheFiles = [[[NSMutableArray alloc] initWithCapacity:12] autorelease];
+	NSString *file;
 	
-	NSArray *billData = [NSArray arrayWithContentsOfFile:billDataPath];
-	if ( nil == billData )
+	NSDirectoryEnumerator *dirEnum = [[NSFileManager defaultManager] enumeratorAtPath:billDataPath];
+	while ( file = [dirEnum nextObject] ) 
 	{
-		//NSLog( @"BillsDataManager: error reading cached data from file: starting re-download of data!" );
+		NSString *fullPath = [billDataPath stringByAppendingPathComponent:file];
+		if ( [[file pathExtension] isEqualToString: @"cache"] ) 
+		{
+			if ( [[file lastPathComponent] isEqualToString:@"bills.cache"] )
+			{
+				// remove old-style cache file
+				[[NSFileManager defaultManager] removeItemAtPath:fullPath error:NULL];
+			}
+			else 
+			{
+				[cacheFiles addObject:fullPath];	
+			}
+		}
+	}
+	
+	// if there are no ".cache" files in the cache path - start a data download
+	if ( [cacheFiles count] < 1 )
+	{
 		if ( !isDownloading )
 		{
 			isBusy = NO;
@@ -614,22 +688,38 @@ static NSInteger s_maxBillPages = 0;
 		return;
 	}
 	
-	// remove any current data 
-	//[self clearData];
-	
+	// open each cache file and read in the bill data 
 	NSInteger billsAdded = 0;
-	NSEnumerator *e = [billData objectEnumerator];
-	id billDict;
-	while ( billDict = [e nextObject] )
+	NSEnumerator *cacheEnum = [cacheFiles objectEnumerator];
+	while ( file = [cacheEnum nextObject] )
 	{
-		BillContainer *bc = [[BillContainer alloc] initWithDictionary:billDict];
-		if ( nil != bc )
+		NSArray *billData = [NSArray arrayWithContentsOfFile:file];
+		if ( nil == billData )
 		{
-			[self addNewBill:bc checkForDuplicates:NO];
-			[bc release];
-			++billsAdded;
+			// remove this invalid cache file!
+			NSLog(@"Removing invalid bill cache file: %@",[file lastPathComponent]);
+			[[NSFileManager defaultManager] removeItemAtPath:file error:NULL];
 		}
-	}
+		else 
+		{
+			[self setStatus:[NSString stringWithFormat:@"Loading %@...",[file lastPathComponent]]];
+			
+			NSEnumerator *e = [billData objectEnumerator];
+			id billDict;
+			while ( billDict = [e nextObject] )
+			{
+				BillContainer *bc = [[BillContainer alloc] initWithDictionary:billDict];
+				if ( nil != bc )
+				{
+					[self addNewBill:bc checkForDuplicates:YES];
+					[bc release];
+					++billsAdded;
+				}
+			} // while ( billDict )
+			
+			if ( billsAdded > 0 ) isDataAvailable = YES;
+		} // billData != nil
+	} // while ( file = [cacheEnum nextObject] )
 	
 	isBusy = (isDownloading ? YES : NO);
 	isDataAvailable = (billsAdded > 0) ? YES : NO;
@@ -760,7 +850,7 @@ static NSInteger s_maxBillPages = 0;
 		[timer invalidate];
 		m_timer = nil;
 		
-		[self setStatus:@"Loading bill data..."];
+		[self setStatus:@"Downloading bill data..."];
 		
 		m_billDownloadPage = 1;
 		[self beginBillSummaryDownload];
@@ -774,7 +864,7 @@ static NSInteger s_maxBillPages = 0;
 - (void)xmlParseOpStarted:(XMLParserOperation *)parseOp
 {
 	[self setStatus:[NSString stringWithFormat:@"Downloading Bill Data (%0d/%0d)...",(m_billDownloadPage-1),s_maxBillPages-1]];
-	NSLog( @"BillsDataManager started XML download for page %0d of %0d...", m_billDownloadPage-1, s_maxBillPages-1 );
+	//NSLog( @"BillsDataManager started XML download for page %0d of %0d...", m_billDownloadPage-1, s_maxBillPages-1 );
 }
 
 

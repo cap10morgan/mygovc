@@ -605,11 +605,19 @@ show_legislator:
 			m_selectedChamber = eCongressChamberSenate;
 			break;
 	}
+	
+	// clear the search text to dismiss the keyboard
+	[(UISearchBar *)(self.tableView.tableHeaderView) setText:@""];
+	
+	// reload data if available
 	if ( [m_data isDataAvailable] ) 
 	{
 		[self.tableView reloadData];
 		NSUInteger idx[2] = {0,0};
-		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		if ( [self.tableView numberOfSections] > 0 && [self.tableView numberOfRowsInSection:0] > 0 )
+		{
+			[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+		}
 		self.tableView.userInteractionEnabled = YES;
 	}
 }
