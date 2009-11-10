@@ -107,6 +107,7 @@ static const CGFloat CONTENT_WIDTH = 300.0f;
 static const CGFloat COMMENT_TXT_HEIGHT = 40.0f;
 static const CGFloat COMMENT_TXT_MAXHEIGHT = 800.0f;
 static const CGFloat COMMENT_WEBVIEW_HEIGHT = 360.0f;
+static const CGFloat EMPTY_WEBVIEW_HEIGHT = 25.0f;
 
 #define COMMENT_TXT_FONT [UIFont systemFontOfSize:16.0f]
 #define COMMENT_TXT_COLOR [UIColor colorWithRed:0.56f green:0.56f blue:1.0f alpha:1.0f]
@@ -273,8 +274,8 @@ enum
 	m_webView = [[UIWebView alloc] initWithFrame:CGRectMake(CONTENT_STARTX,
 															HEADER_HEIGHT + COMMENT_TXT_HEIGHT,
 															CONTENT_WIDTH,
-															COMMENT_WEBVIEW_HEIGHT)];
-	m_webView.backgroundColor = [UIColor blackColor];
+															EMPTY_WEBVIEW_HEIGHT)];
+	m_webView.backgroundColor = [UIColor clearColor];
 	m_webView.dataDetectorTypes = UIDataDetectorTypeAll;
 	[m_webView setDelegate:self];
 	m_webView.userInteractionEnabled = YES;
@@ -343,6 +344,9 @@ enum
 	{
 		[scrollView setContentOffset:CGPointMake(0,m_webView.frame.origin.y)];
 		[scrollView setScrollEnabled:NO];
+		// XXX - call javascript function to scroll webview by 
+		//       difference: (ofst.y - m_webView.frame.origin.y) for 
+		//       more smooth scrolling...
 	}
 }
 
@@ -354,8 +358,9 @@ enum
 	if ( [request.URL.host isEqualToString:@"touchend"] )
 	{
 		NSInteger ypos = [[[request.URL relativePath] lastPathComponent] integerValue];
-		if ( ypos <= 7 )
+		if ( ypos <= 5 )
 		{
+			ypos = abs(ypos);
 			UIScrollView *sv = (UIScrollView *)(self.view);
 			[sv setScrollEnabled:YES];
 			[sv setContentOffset:CGPointMake(0,m_webView.frame.origin.y-2-ypos)];
@@ -405,7 +410,7 @@ enum
 {
 	if ( nil == m_item ) return;
 
-	CGFloat pos = 165.0f;
+	CGFloat pos = HEADER_HEIGHT;
 	
 	// adjust frame to fit _all_ of the text :-)
 	CGFloat commentTxtHeight = [self heightForFeedbackText];
@@ -421,7 +426,11 @@ enum
 	[m_webView loadHTMLString:htmlStr 
 					  baseURL:nil ];
 	
-	pos += COMMENT_WEBVIEW_HEIGHT;
+	// only adjust the content size for scrolling if there is at least 1 comment!
+	if ( [[m_item comments] count] > 0 )
+	{
+		pos += COMMENT_WEBVIEW_HEIGHT;
+	}
 	m_webView.userInteractionEnabled=YES;
 	
 	[(UIScrollView *)(self.view) setContentSize:CGSizeMake(HEADER_WIDTH,pos)];

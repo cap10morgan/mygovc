@@ -96,7 +96,6 @@ enum
 	m_alertViewFunction = eAlertType_General;
 	m_outOfScope = NO;
 	
-	//m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.navigationController.view];
 	[m_HUD show:NO];
 	if ( ![m_data isDataAvailable] )
@@ -218,17 +217,16 @@ enum
 		[m_HUD show:NO];
 	}
 	
-	BOOL isReloading = NO;
 	if ( nil != m_initialIndexPath || nil != m_initialSearchString )
 	{
-		isReloading = [self scrollToInitialPosition];
+		[self scrollToInitialPosition];
 	}
 	
 	if ( m_outOfScope )
 	{
 		m_outOfScope = NO;
-		if ( !isReloading ) [self.tableView reloadData];
 	}
+	[self.tableView reloadData];
 }
 
 
@@ -395,9 +393,10 @@ get_out:
 	
 	if ( [m_data isDataAvailable] )
 	{
+		BOOL isReloading = NO;
 		if ( nil != m_initialIndexPath || nil != m_initialSearchString )
 		{
-			[self scrollToInitialPosition];
+			isReloading = [self scrollToInitialPosition];
 		}
 		
 		if ( nil != m_initialBillID )
@@ -410,6 +409,7 @@ get_out:
 				[biView setBill:bill];
 				[self.navigationController pushViewController:biView animated:YES];
 				[biView release];
+				[self.tableView reloadData];
 				[self.tableView setNeedsDisplay];
 			}
 			else
@@ -418,6 +418,7 @@ get_out:
 				[self searchForBillID:m_initialBillID];
 			}
 			[m_initialBillID release]; m_initialBillID = nil;
+			if ( !isReloading ) [self.tableView reloadData];
 		}
 	}
 }
@@ -470,6 +471,7 @@ get_out:
 			isReloading = YES; 
 			m_outOfScope = NO; 
 			[self.tableView reloadData]; 
+			[self.tableView setNeedsDisplay];
 		}
 		// make sure the new index is within the bounds of our table
 		if ( [self.tableView numberOfSections] > m_initialIndexPath.section &&
@@ -478,6 +480,11 @@ get_out:
 			// scroll there!
 			[self.tableView scrollToRowAtIndexPath:m_initialIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
 		}
+		else 
+		{
+			isReloading = NO;
+		}
+
 	}
 	
 	// clear all the state (no matter what)
@@ -543,20 +550,22 @@ get_out:
 	if ( [m_data isDataAvailable] )
 	{
 		self.tableView.userInteractionEnabled = YES;
+		[m_HUD setText:@"" andIndicateProgress:NO];
 		[m_HUD show:NO];
 		
-		BOOL isReloading = NO;
+		[self.tableView reloadData];
+		
+		BOOL shouldScroll = YES;
 		if ( nil != m_initialIndexPath || nil != m_initialSearchString )
 		{
-			isReloading = [self scrollToInitialPosition];
+			shouldScroll = ![self scrollToInitialPosition];
 		}
-		else
+		
+		if ( shouldScroll )
 		{
 			// scroll to the top of the table
 			if ( [m_data totalBills] > 0 && ![m_data isBusy] )
 			{
-				isReloading = YES;
-				[self.tableView reloadData];
 				if ( [self.tableView numberOfSections] > 0 &&
 					 [self.tableView numberOfRowsInSection:0] > 0 )
 				{
@@ -576,7 +585,6 @@ get_out:
 				[biView setBill:bill];
 				[self.navigationController pushViewController:biView animated:NO];
 				[biView release];
-				[self.view setNeedsDisplay];
 			}
 			else
 			{
@@ -585,9 +593,6 @@ get_out:
 			}
 			[m_initialBillID release]; m_initialBillID = nil;
 		}
-		
-		if ( !isReloading ) [self.tableView reloadData];
-		[self.view setNeedsDisplay];
 	}
 	else
 	{
@@ -598,6 +603,7 @@ get_out:
 		if ( [msg isEqualToString:@"END"] )
 		{
 			[m_HUD show:NO];
+			self.tableView.userInteractionEnabled = YES;
 			// XXX - show an alert/error dialog?
 		}
 		else

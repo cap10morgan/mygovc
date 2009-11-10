@@ -73,9 +73,12 @@ enum
 	m_data = [[myGovAppDelegate sharedCommunityData] retain];
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	
+	m_HUD = nil; // XXX - replace this view a UITableHeaderView that indicates status!
+	/*
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.tableView];
 	[m_HUD show:NO];
 	[m_HUD setText:[m_data currentStatusMessage] andIndicateProgress:YES];
+	*/
 	
 	m_alertViewFunction = eAlertType_General;
 	m_timer = nil;
