@@ -770,6 +770,7 @@ end_add_item:
 {
 	MyGovUserData *userData = [myGovAppDelegate sharedUserData];
 	[userData setUserInCache:user];
+	[self setStatus:@""];
 }
 
 
@@ -799,6 +800,7 @@ end_add_item:
 	if ( nil == m_searchData ) m_searchData = [[NSMutableArray alloc] initWithCapacity:2];
 	[m_searchData addObject:item];
 	[m_searchData sortUsingSelector:@selector(compareItemByDate:)];
+	[self setStatus:@""];
 }
 
 

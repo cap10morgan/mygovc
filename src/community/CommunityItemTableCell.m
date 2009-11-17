@@ -250,44 +250,18 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	
 	// image view: aligned left, middle of the cell
 	UIImageView *imgView = (UIImageView *)[self viewWithTag:eTAG_IMAGE];
-/*
-	if ( nil != m_item.m_image && (m_item.m_image.size.height > 1 && m_item.m_image.size.width > 1) )
+	
+	// check for a user image
+	MyGovUser *creator = [[myGovAppDelegate sharedUserData] userFromUsername:m_item.m_creator];
+	if ( nil != [creator m_avatar] )
 	{
-		imgView.image = m_item.m_image;
+		imgView.image = creator.m_avatar;
 	}
 	else 
 	{
- */
-		// check for a user image
-		MyGovUser *creator = [[myGovAppDelegate sharedUserData] userFromUsername:m_item.m_creator];
-		if ( nil != [creator m_avatar] )
-		{
-			imgView.image = creator.m_avatar;
-		}
-		else 
-		{
-			// default icon
-			imgView.image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"personIcon.png"]];
-		}
-
-/*
+		// default icon
+		imgView.image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"personIcon.png"]];
 	}
- */
-/*
-	if ( nil == m_item.m_image || m_item.m_image.size.height <= 1 || m_item.m_image.size.width <= 1 )
-	{
-		
-		// use the system icon
-		if ( eCommunity_Chatter == m_item.m_type )
-		{
-			m_item.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"personIcon.png"]];
-		}
-		else if ( eCommunity_Event == m_item.m_type )
-		{
-			m_item.m_image = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"communityEventIcon.png"]];
-		}
-	}
-*/	
 	
 	CGSize imgSz = imgView.image.size;
 	if ( imgSz.height > S_MAX_IMG_HEIGHT ) imgSz.height = S_MAX_IMG_HEIGHT;

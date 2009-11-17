@@ -56,9 +56,16 @@ static NSString *kMGUKey_LastName = @"lname";
 		s_systemUser.m_firstname = @"My";
 		s_systemUser.m_lastname = @"Government";
 		s_systemUser.m_username = @"anonymous";
-		s_systemUser.m_avatar = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"system_avatar.png"]];
+		s_systemUser.m_avatar = [UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"personIcon.png"]];
 	}
 	return s_systemUser;
+}
+
+
+- (void)dealloc
+{
+	[m_avatar release];
+	[super dealloc];
 }
 
 
@@ -170,7 +177,6 @@ static NSString *kMGUKey_LastName = @"lname";
 			// write the image
 			[[NSFileManager defaultManager] createFileAtPath:avatarPath contents:avatarData attributes:nil];
 		}
-		
 	}
 }
 

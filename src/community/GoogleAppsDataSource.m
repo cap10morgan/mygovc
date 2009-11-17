@@ -80,7 +80,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 		m_loginURLRequest = nil;
 		
 		m_gravatarDownloadQueue = [[NSOperationQueue alloc] init];
-		[m_gravatarDownloadQueue setMaxConcurrentOperationCount:1];
+		[m_gravatarDownloadQueue setMaxConcurrentOperationCount:3];
 		
 		m_gravatarDownloads = [[NSMutableDictionary alloc] initWithCapacity:30];
 		
@@ -481,6 +481,12 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 - (BOOL)doUserAuthFor:(NSString *)username 
 		 withPassword:(NSString *)password
 {
+	if ( ![myGovAppDelegate networkIsAvailable:YES] )
+	{
+		NSLog(@"No network for community item submission!");
+		return FALSE;
+	}
+	
 	// 
 	// Code originally taken from:
 	// http://stackoverflow.com/questions/471898/google-app-engine-with-clientlogin-interface-for-objective-c
@@ -517,6 +523,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	{
         //handle error
 		NSLog(@"Received 'Error' from GAE: login failure!");
+		[myGovAppDelegate networkNoLongerInUse];
 		return FALSE;
 	}
 	
@@ -545,6 +552,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 		if ( ++attempts > 2 )
 		{
 			NSLog(@"Could not receive cookie from GAE for Auth: login failure!");
+			[myGovAppDelegate networkNoLongerInUse];
 			return FALSE;
 		}
 		
@@ -559,6 +567,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 		cookieData = [NSURLConnection sendSynchronousRequest:cookieRequest returningResponse:&cookieResponse error:&cookieError];
 	}
 	
+	[myGovAppDelegate networkNoLongerInUse];
 	return TRUE;
 }
 
@@ -671,6 +680,11 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	
 	if ( nil == tmpUser.m_user.m_username ) return;
 	
+	if ( ![myGovAppDelegate networkIsAvailable:YES] )
+	{
+		return;
+	}
+	
 	// get the user email address
 	NSString *emailAddr;
 	NSRange atSymbolRange = [tmpUser.m_user.m_username rangeOfString:@"@"];
@@ -691,13 +705,30 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 	// Grab a 100x100 image
 	
 	// 100x100 URL:
-	NSString *urlStr = [NSString stringWithFormat:@"http://www.gravatar.com/avatar/%@.jpg?s=100&d=http%%3A%%2F%%2Fwww.iphonefloss.com%%2Fsites%%2Fdefault%%2Ffiles%%2Fsystem_avatar.png",md5hash];
+	//NSString *urlStr = [NSString stringWithFormat:@"http://www.gravatar.com/avatar/%@.jpg?s=100&d=http%%3A%%2F%%2Fwww.iphonefloss.com%%2Fsites%%2Fdefault%%2Ffiles%%2Fsystem_avatar.png",md5hash];
+	static int fmt = 0;
+	NSString *urlFmt;
+	switch ( fmt )
+	{
+		case 0:
+			urlFmt = @"http://www.gravatar.com/avatar/%@.jpg?s=100&d=identicon";
+			break;
+		case 1:
+			urlFmt = @"http://www.gravatar.com/avatar/%@.jpg?s=100&d=wavatar";
+			break;
+		case 2:
+			urlFmt = @"http://www.gravatar.com/avatar/%@.jpg?s=100&d=monsterid";
+			break;
+	}
+	NSString *urlStr = [NSString stringWithFormat:urlFmt,md5hash];
 	NSURL *url = [NSURL URLWithString:urlStr];
 	
 	// it's as easy as this:
 	MyGovUser *user = [[[MyGovUser alloc] init] autorelease];
 	NSData *imgData = [NSData dataWithContentsOfURL:url];
 	UIImage *img = [[[UIImage alloc] initWithData:imgData] autorelease];
+	
+	[myGovAppDelegate networkNoLongerInUse];
 	
 	user.m_avatar = img;
 	user.m_username = tmpUser.m_user.m_username;

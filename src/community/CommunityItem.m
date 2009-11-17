@@ -255,10 +255,10 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 	
 	[plistDict setValue:[NSNumber numberWithInt:(int)m_type] 
 				 forKey:kCIKey_Type];
-	
+/*	
 	[plistDict setValue:UIImageJPEGRepresentation(m_image,1.0) 
 				 forKey:kCIKey_Image];
-	
+*/	
 	[plistDict setValue:[m_title stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]
 				 forKey:kCIKey_Title];
 	
@@ -429,7 +429,7 @@ static NSString *kCIKey_EventAttendees = @"event_attendees";
 {
 	m_id = nil;
 	m_type = eCommunity_Chatter; // default type
-	m_image = nil;
+//	m_image = nil;
 	m_title = nil;
 	m_date = nil;
 	m_creator = nil;

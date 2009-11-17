@@ -45,6 +45,7 @@
 	ProgressOverlayViewController *m_HUD;
 	int m_alertViewFunction;
 	
+	NSTimer *m_dataCallbackTimer;
 	BOOL m_outOfScope;
 }
 

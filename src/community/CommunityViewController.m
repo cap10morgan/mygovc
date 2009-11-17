@@ -487,6 +487,7 @@ enum
 			switch ( buttonIndex )
 			{
 				case 2: // CANCEL
+					[self setReloadButtonInNavBar];
 					break;
 				
 				case 1: // YES: Please remove local cache

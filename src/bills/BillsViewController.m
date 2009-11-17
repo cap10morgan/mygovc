@@ -95,6 +95,7 @@ enum
 	m_initialBillID = nil;
 	m_alertViewFunction = eAlertType_General;
 	m_outOfScope = NO;
+	m_dataCallbackTimer = nil;
 	
 	m_HUD = [[ProgressOverlayViewController alloc] initWithWindow:self.navigationController.view];
 	[m_HUD show:NO];
@@ -411,13 +412,14 @@ get_out:
 				[biView release];
 				[self.tableView reloadData];
 				[self.tableView setNeedsDisplay];
+				
+				[m_initialBillID release]; m_initialBillID = nil;
 			}
 			else
 			{
 				// XXX - search for the bill
 				[self searchForBillID:m_initialBillID];
 			}
-			[m_initialBillID release]; m_initialBillID = nil;
 			if ( !isReloading ) [self.tableView reloadData];
 		}
 	}
@@ -475,7 +477,7 @@ get_out:
 		}
 		// make sure the new index is within the bounds of our table
 		if ( [self.tableView numberOfSections] > m_initialIndexPath.section &&
-			[self.tableView numberOfRowsInSection:m_initialIndexPath.section] > m_initialIndexPath.row )
+			 [self.tableView numberOfRowsInSection:m_initialIndexPath.section] > m_initialIndexPath.row )
 		{
 			// scroll there!
 			[self.tableView scrollToRowAtIndexPath:m_initialIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
@@ -532,10 +534,10 @@ get_out:
 	m_alertViewFunction = eAlertType_ReloadQuestion;
 	UIAlertView *alert = [[UIAlertView alloc] 
 						  initWithTitle:@"Reload Bill Data"
-						  message:@"Remove cached bill data?\nAnswering NO will download more recent bill data."
+						  message:@"Remove cached bill data?\n(Answering NO will download more recent bill data.)"
 						  delegate:self
 						  cancelButtonTitle:@"No"
-						  otherButtonTitles:@"Yes",nil];
+						  otherButtonTitles:@"Yes",@"Cancel",nil];
 	[alert show];
 	
 	// set an activity button in the navbar to indicate progress
@@ -545,10 +547,79 @@ get_out:
 }
 
 
+- (void)reloadTimerCallback:(NSTimer *)timer
+{
+	// stop the timer
+	[timer invalidate];
+	
+	// shut off the HUD
+	[m_HUD show:NO];
+	self.tableView.userInteractionEnabled = YES;
+	
+	// reload the table data
+	[self.tableView reloadData];
+	[self.tableView setNeedsDisplay];
+	
+	if ( [m_data isDataAvailable] && [m_data totalBills] > 0 && ![m_data isBusy] )
+	{
+		// Check to see if the user has scrolled the view
+		NSArray *visibleRowsIdx = [self.tableView indexPathsForVisibleRows];
+		if ( nil != visibleRowsIdx )
+		{
+			NSUInteger *idx = nil;
+			[[visibleRowsIdx objectAtIndex:0] getIndexes:idx];
+			if ( nil != idx && idx[0] != 0 && idx[1] != 0 )
+			{
+				// the user has scrolled the display:
+				// get out of this function and remove any reference to
+				// initial position or initial bill...
+				[m_initialSearchString release]; m_initialSearchString = nil;
+				[m_initialIndexPath release]; m_initialIndexPath = nil;
+				[m_initialBillID release]; m_initialBillID = nil;
+			}
+		}
+		
+		// if not, go ahead and scroll to any initial position
+		if ( nil != m_initialIndexPath || nil != m_initialSearchString )
+		{
+			[self scrollToInitialPosition];
+		}
+		
+		// also load any bill detail view 
+		if ( nil != m_initialBillID )
+		{
+			BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
+			if ( nil != bill )
+			{
+				[self.navigationController popToRootViewControllerAnimated:NO];
+				BillInfoViewController *biView = [[BillInfoViewController alloc] init];
+				[biView setBill:bill];
+				[self.navigationController pushViewController:biView animated:NO];
+				[biView release];
+			}
+			else
+			{
+				// XXX - search for the bill
+				[self searchForBillID:m_initialBillID];
+			}
+			[m_initialBillID release]; m_initialBillID = nil;
+		}
+	}
+}
+
+
 - (void)dataManagerCallback:(id)msg
 {
 	if ( [m_data isDataAvailable] )
 	{
+		// start an NSTimer which will hopefully call the GUI functions
+		// from the proper context...
+		if ( nil == m_dataCallbackTimer )
+		{
+			m_dataCallbackTimer = [NSTimer timerWithTimeInterval:0.3f target:self selector:@selector(reloadTimerCallback:) userInfo:nil repeats:NO];
+			[[NSRunLoop mainRunLoop] addTimer:m_dataCallbackTimer forMode:NSDefaultRunLoopMode];
+		}
+		/*
 		self.tableView.userInteractionEnabled = YES;
 		[m_HUD setText:@"" andIndicateProgress:NO];
 		[m_HUD show:NO];
@@ -593,6 +664,7 @@ get_out:
 			}
 			[m_initialBillID release]; m_initialBillID = nil;
 		}
+		*/
 	}
 	else
 	{
@@ -956,6 +1028,12 @@ deselect_and_return:
 			
 		case eAlertType_ReloadQuestion:
 			[m_shadowData release]; m_shadowData = nil;
+			
+			if ( buttonIndex == 2 ) // User cancel!!
+			{
+				[self setRefreshButtonInNavBar];
+				break;
+			}
 			// we want this to happen in the background, 
 			// so here's what we'll do:
 			// 

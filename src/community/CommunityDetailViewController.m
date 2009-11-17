@@ -55,7 +55,10 @@
 		} \
 		img.avatar { \
 			border: 0px; \
-			float: right; \
+			margin-right: 7px; \
+			margin-bottom: 2px; \
+			margin-left: 4px; \
+			float: left; \
 			width: 38px; \
 			height: 38px \
 		} \
@@ -266,7 +269,7 @@ enum
 	m_itemLabel.backgroundColor = [UIColor clearColor];
 	m_itemLabel.textColor = COMMENT_TXT_COLOR;
 	m_itemLabel.font = COMMENT_TXT_FONT;
-	m_itemLabel.textAlignment = UITextAlignmentCenter;
+	m_itemLabel.textAlignment = UITextAlignmentLeft;
 	m_itemLabel.lineBreakMode = UILineBreakModeWordWrap;
 	m_itemLabel.numberOfLines = 0;
 	[myView addSubview:m_itemLabel];
