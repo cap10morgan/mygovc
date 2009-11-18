@@ -73,7 +73,7 @@ typedef enum
 	NSString         *m_id;
 	CommunityItemType m_type;
 	
-//	UIImage   *m_image;
+	UIImage   *m_image;
 	NSString  *m_title;
 	NSDate    *m_date;
 	NSString  *m_creator; // GoogleUserID

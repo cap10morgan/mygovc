@@ -55,7 +55,6 @@
 	- (void)syncInMemoryDataWithServer;
 	- (void)purgeCacheItemsOlderThan:(NSDate *)date;
 	- (BOOL)addCommunityItem:(CommunityItem *)newItem andUpdateStatus:(BOOL)updateUIStatus;
-	- (void)removeCommunityItem:(CommunityItem *)item;
 @end
 
 

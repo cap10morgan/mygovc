@@ -536,8 +536,8 @@ get_out:
 						  initWithTitle:@"Reload Bill Data"
 						  message:@"Remove cached bill data?\n(Answering NO will download more recent bill data.)"
 						  delegate:self
-						  cancelButtonTitle:@"No"
-						  otherButtonTitles:@"Yes",@"Cancel",nil];
+						  cancelButtonTitle:@"Cancel"
+						  otherButtonTitles:@"Yes",@"No",nil];
 	[alert show];
 	
 	// set an activity button in the navbar to indicate progress
@@ -564,7 +564,7 @@ get_out:
 	{
 		// Check to see if the user has scrolled the view
 		NSArray *visibleRowsIdx = [self.tableView indexPathsForVisibleRows];
-		if ( nil != visibleRowsIdx )
+		if ( nil != visibleRowsIdx && [visibleRowsIdx count] > 0 )
 		{
 			NSUInteger *idx = nil;
 			[[visibleRowsIdx objectAtIndex:0] getIndexes:idx];
@@ -1029,7 +1029,7 @@ deselect_and_return:
 		case eAlertType_ReloadQuestion:
 			[m_shadowData release]; m_shadowData = nil;
 			
-			if ( buttonIndex == 2 ) // User cancel!!
+			if ( buttonIndex == 0 ) // User cancel!!
 			{
 				[self setRefreshButtonInNavBar];
 				break;
@@ -1054,7 +1054,7 @@ deselect_and_return:
 					break;
 					
 				default:
-				case 0: // NO: don't remove local cache
+				case 2: // NO: don't remove local cache
 					[m_shadowData loadDataByDownload:NO];
 					break;
 			}

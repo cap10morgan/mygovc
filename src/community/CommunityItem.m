@@ -145,7 +145,8 @@ static NSString *kCCKey_Text = @"message";
 @implementation CommunityItem
 
 @synthesize m_id, m_type;
-@synthesize m_image, m_title, m_date;
+@synthesize m_image;
+@synthesize m_title, m_date;
 @synthesize m_creator, m_summary, m_text;
 @synthesize m_mygovURLTitle, m_mygovURL;
 @synthesize m_webURLTitle, m_webURL;

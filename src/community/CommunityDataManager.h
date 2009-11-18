@@ -97,4 +97,7 @@
 - (CGFloat)heightForDataAtIndexPath:(NSIndexPath *)indexPath forType:(CommunityItemType)type;
 - (CommunityItem *)itemForIndexPath:(NSIndexPath *)indexPath andType:(CommunityItemType)type;
 
+// be careful with this one!
+- (void)removeCommunityItem:(CommunityItem *)item;
+
 @end

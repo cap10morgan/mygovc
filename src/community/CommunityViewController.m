@@ -36,17 +36,21 @@
 @interface CommunityViewController (private)
 	- (void)dataManagerCallback:(NSString *)msg;
 	- (void)communityItemTypeSwitch:(id)sender;
+	- (void)chooseCommunityAction;
 	- (void)reloadCommunityItems;
 	- (void)composeNewCommunityItem;
 	- (void)deselectRow:(id)sender;
+	- (void)setEditDoneButtonInNavBar;
 	- (void)setReloadButtonInNavBar;
 	- (void)setActivityViewInNavBar;
+	- (void)finishEditing;
 @end
 
 enum
 {
 	eAlertType_General = 0,
 	eAlertType_ReloadQuestion = 1,
+	eAlertType_ChooseCommunityAction = 2,
 };
 
 
@@ -144,7 +148,7 @@ enum
 	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] 
 											  initWithBarButtonSystemItem:UIBarButtonSystemItemCompose 
 											  target:self 
-											  action:@selector(composeNewCommunityItem)];
+											  action:@selector(chooseCommunityAction)];
 	
 	// 
 	// Add a "refresh" button which will wipe out the on-device cache and 
@@ -295,8 +299,10 @@ enum
 		[self.tableView setUserInteractionEnabled:YES];
 		[self.tableView reloadData];
 		
-		[self setReloadButtonInNavBar];
-		
+		if ( ![self isEditing] )
+		{
+			[self setReloadButtonInNavBar];
+		}
 		// if we have a view controller currently showing, send it 
 		// a data-reload notice as well!
 /*
@@ -369,6 +375,19 @@ enum
 }
 
 
+- (void)chooseCommunityAction
+{
+	m_alertViewFunction = eAlertType_ChooseCommunityAction;
+	UIAlertView *alert = [[UIAlertView alloc] 
+						  initWithTitle:@"myGovernment"
+						  message:@"Would you like to:"
+						  delegate:self
+						  cancelButtonTitle:@"Cancel"
+						  otherButtonTitles:@"Write a comment!",@"Remove Posts",nil];
+	[alert show];
+}
+
+
 - (void)reloadCommunityItems
 {
 	// ask the user if they want to kill
@@ -378,8 +397,8 @@ enum
 						  initWithTitle:@"Reload Community Chatter"
 						  message:@"Do you want to remove cached comments?"
 						  delegate:self
-						  cancelButtonTitle:@"No"
-						  otherButtonTitles:@"Yes",@"Cancel",nil];
+						  cancelButtonTitle:@"Cancel"
+						  otherButtonTitles:@"Yes",@"No",nil];
 	[alert show];
 	
 	[self setActivityViewInNavBar];
@@ -435,6 +454,14 @@ enum
 }
 
 
+- (void)setEditDoneButtonInNavBar
+{
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
+											  initWithBarButtonSystemItem:UIBarButtonSystemItemDone 
+																   target:self 
+											                       action:@selector(finishEditing)];
+}
+
 
 - (void)setReloadButtonInNavBar
 {
@@ -471,6 +498,13 @@ enum
 }
 
 
+- (void)finishEditing
+{
+	[self.tableView setEditing:NO animated:YES];
+	[self setReloadButtonInNavBar];
+	[self.tableView reloadData];
+}
+
 
 #pragma mark UIAlertViewDelegate Methods
 
@@ -486,7 +520,8 @@ enum
 		case eAlertType_ReloadQuestion:
 			switch ( buttonIndex )
 			{
-				case 2: // CANCEL
+				default:
+				case 0: // CANCEL
 					[self setReloadButtonInNavBar];
 					break;
 				
@@ -494,9 +529,25 @@ enum
 					[m_data purgeAllItemsFromCacheAndMemory];
 					// fall-through to begin the data re-load!
 					
-				default:
-				case 0: // NO: don't remove local cache
+				case 2: // NO: don't remove local cache
 					[m_data loadData];
+					break;
+			}
+			break;
+		
+		case eAlertType_ChooseCommunityAction:
+			switch ( buttonIndex )
+			{
+				default:
+				case 0:
+					break;
+				case 1: // Compose a new message
+					[self composeNewCommunityItem];
+					break;
+				case 2: // Edit community posts
+					[self.tableView setEditing:YES animated:YES];
+					[self.tableView reloadData];
+					[self setEditDoneButtonInNavBar];
 					break;
 			}
 			break;
@@ -645,12 +696,32 @@ deselect_and_return:
 }
 
 
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	// the only editing style I support is DELETE
+	return UITableViewCellEditingStyleDelete;
+}
+
 
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath 
 {
 	// Return NO if you do not want the specified item to be editable.
-	return NO;
+	return YES;
+}
+
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle 
+											forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if ( UITableViewCellEditingStyleDelete == editingStyle )
+	{
+		[m_data removeCommunityItem:[m_data itemForIndexPath:indexPath andType:m_selectedItemType]];
+		
+		NSArray *idxPathArray = [NSArray arrayWithObjects:indexPath,nil];
+		
+		[self.tableView deleteRowsAtIndexPaths:idxPathArray withRowAnimation:UITableViewRowAnimationFade];
+	}
 }
 
 

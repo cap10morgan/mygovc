@@ -36,6 +36,8 @@
 #import "SpendingViewController.h"
 #import "StateAbbreviations.h"
 
+// comment this out when the new Spending control is ready :-)
+#define USE_OLD_SPENDING_CHOICES
 
 @interface SpendingViewController (private)
 	- (void)viewPrivateInit;
@@ -47,6 +49,7 @@
 	- (void)showPlaceDetail:(id)sender;
 	- (void)showContractorDetail:(id)sender;
 	- (void)reloadSpendingData;
+	- (void)queryMethodSwitch:(id)sender;
 @end
 
 @implementation SpendingViewController
@@ -100,7 +103,7 @@ typedef enum
 	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
-	/*
+#ifdef USE_OLD_SPENDING_CHOICES
 	NSArray *buttonNames = [NSArray arrayWithObjects:@"District", @"State", @"Contractor", nil];
 	m_segmentCtrl = [[UISegmentedControl alloc] initWithItems:buttonNames];
 	
@@ -119,7 +122,10 @@ typedef enum
 	// add the buttons to the navigation bar
 	self.navigationItem.titleView = m_segmentCtrl;
 	[m_segmentCtrl release];
-	*/
+	
+	// re-adjust the tableView to cover the new method :-)
+	[self.tableView setFrame:CGRectMake(0,0,CGRectGetWidth(self.tableView.frame),CGRectGetHeight(self.tableView.frame)+31)];
+#endif
 	
 	// 
 	// Add a "refresh" button which will wipe out the on-device cache and 
@@ -269,7 +275,11 @@ deselect_and_return:
 - (IBAction)selectSpendingFilter:(id)sender
 {
 	int a = 1;
-/*
+}
+
+#ifdef USE_OLD_SPENDING_CHOICES
+- (void)queryMethodSwitch:(id)sender
+{
 	BOOL showOrganizerButton = NO;
 	switch ( [sender selectedSegmentIndex] )
 	{
@@ -313,8 +323,8 @@ deselect_and_return:
 		NSUInteger idx[2] = {0,0};
 		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
 	}
- */
 }
+#endif // USE_OLD_SPENDING_CHOICES
 
 
 - (void)sortSpendingData

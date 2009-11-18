@@ -42,8 +42,10 @@ enum
 	eTAG_SUMMARY    = 996,
 	eTAG_IMAGE      = 995,
 	eTAG_USERNAME   = 994,
+	eTAG_OVERLAYVIEW = 888,
 };
 
+static       CGFloat S_CELL_INITIAL_HOFFSET = 7.0f;
 static const CGFloat S_CELL_HOFFSET = 7.0f;
 static const CGFloat S_CELL_VOFFSET = 4.0f;
 static const CGFloat S_DETAIL_BUTTON_WIDTH = 16.0f;
@@ -77,7 +79,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 {
 	NSString *descrip = item.m_summary;
 	CGSize descripSz = [descrip sizeWithFont:SUMMARY_FONT 
-						   constrainedToSize:CGSizeMake(S_MAX_WIDTH_PORTRAIT - (4.0f*S_CELL_HOFFSET) - S_DETAIL_BUTTON_WIDTH, S_MAX_HEIGHT - (2.0f*S_TITLE_HEIGHT) - (4.0f*S_CELL_VOFFSET)) 
+						   constrainedToSize:CGSizeMake(S_MAX_WIDTH_PORTRAIT - (3.0f*S_CELL_HOFFSET) - S_CELL_INITIAL_HOFFSET - S_DETAIL_BUTTON_WIDTH, S_MAX_HEIGHT - (2.0f*S_TITLE_HEIGHT) - (4.0f*S_CELL_VOFFSET)) 
 							   lineBreakMode:UILineBreakModeWordWrap];
 	
 	CGFloat txtHeight = S_CELL_VOFFSET + 
@@ -104,6 +106,7 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	{
 		m_item = nil;
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
+		self.shouldIndentWhileEditing = NO;
 		//self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		
 		// 
@@ -198,6 +201,51 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 }
 
 
+- (void)setEditing:(BOOL)isEditing animated:(BOOL)animated
+{
+	[super setEditing:isEditing animated:animated];
+	
+	if ( isEditing )
+	{
+		S_CELL_INITIAL_HOFFSET = 44.0f;
+	}
+	else 
+	{
+		S_CELL_INITIAL_HOFFSET = 7.0f;
+	}
+
+}
+
+
+- (void)willTransitionToState:(UITableViewCellStateMask)state
+{
+	[super willTransitionToState:state];
+	
+	UIView *overlayView = (UIView *)[self viewWithTag:eTAG_OVERLAYVIEW];
+	
+	if ( state & UITableViewCellStateShowingDeleteConfirmationMask )
+	{
+		if ( nil != overlayView )
+		{
+			CGRect viewRect = self.contentView.frame;
+			UIView *overlayView = [[UIView alloc] initWithFrame:CGRectMake(0.0f,0.0f,CGRectGetWidth(viewRect),CGRectGetHeight(viewRect))];
+			overlayView.backgroundColor = [UIColor colorWithRed:0.25f green:0.25f blue:0.25f alpha:0.7f]; 
+			[overlayView setTag:eTAG_OVERLAYVIEW];
+			[self addSubview:overlayView];
+			[overlayView release];
+		}
+	}
+	else 
+	{
+		if ( nil != overlayView )
+		{
+			[overlayView removeFromSuperview];
+		}
+	}
+
+}
+
+
 - (void)setDetailTarget:(id)target andSelector:(SEL)selector
 {
 	UIButton *detail = (UIButton *)[self viewWithTag:eTAG_DETAIL];
@@ -224,6 +272,16 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 
 - (void)updateLayout
 {
+	if ( ![self isEditing] )
+	{
+		UIView *overlayView = (UIView *)[self viewWithTag:eTAG_OVERLAYVIEW];
+		if ( nil != overlayView )
+		{
+			// get rid of this!
+			[overlayView removeFromSuperview];
+		}
+	}
+	
 	// 
 	// Do something dumb for now... 
 	// 
@@ -266,13 +324,13 @@ static const CGFloat S_MAX_WIDTH_PORTRAIT = 320.0f;
 	CGSize imgSz = imgView.image.size;
 	if ( imgSz.height > S_MAX_IMG_HEIGHT ) imgSz.height = S_MAX_IMG_HEIGHT;
 	if ( imgSz.width > S_MAX_IMG_WIDTH ) imgSz.width = S_MAX_IMG_WIDTH;
-	CGRect imgRect = CGRectMake( S_CELL_HOFFSET,
+	CGRect imgRect = CGRectMake( S_CELL_INITIAL_HOFFSET,
 								 S_CELL_VOFFSET,
 								 imgSz.width, 
 								 imgSz.height );
 	[imgView setFrame:imgRect];
 	
-	CGFloat contentStartX = S_CELL_HOFFSET + S_MAX_IMG_WIDTH + S_CELL_HOFFSET;
+	CGFloat contentStartX = S_CELL_INITIAL_HOFFSET + S_MAX_IMG_WIDTH + S_CELL_HOFFSET;
 	CGFloat contentStartY = S_CELL_VOFFSET;
 	
 	// username view top-aligned
