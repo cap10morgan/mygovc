@@ -289,7 +289,10 @@ enum
 									cancelButtonTitle:nil
 									otherButtonTitles:@"OK",nil];
 		[alert show];
-		[self setReloadButtonInNavBar];
+		if ( ![self isEditing] )
+		{
+			[self setReloadButtonInNavBar];
+		}
 	}
 	else if ( [m_data isDataAvailable] ||
 			  ([msg length] >= endTypeRange.length && NSOrderedSame == [msg compare:@"END" options:NSCaseInsensitiveSearch range:endTypeRange])
@@ -297,22 +300,28 @@ enum
 	{
 		[m_HUD show:NO];
 		[self.tableView setUserInteractionEnabled:YES];
-		[self.tableView reloadData];
 		
 		if ( ![self isEditing] )
 		{
+			[self.tableView reloadData];
 			[self setReloadButtonInNavBar];
 		}
 		// if we have a view controller currently showing, send it 
 		// a data-reload notice as well!
-/*
-		id topView = self.navigationController.visibleViewController;
-		if ( topView != self && [topView respondsToSelector:@selector(getTableView)] )
+		// (only do this if the status message is an ITEM: update)
+		if ( [self.navigationController.visibleViewController isKindOfClass:[CommunityDetailViewController class]] )
 		{
-			[[topView getTableView] reloadData];
-			[[topView getTableView] setNeedsDisplay];
+			if ( [msg length] > 6 && NSOrderedSame == [msg compare:@"ITEM:" options:NSCaseInsensitiveSearch range:(NSRange){0,5}] )
+			{
+				NSString *itemIdStr = [msg substringFromIndex:5];
+				CommunityDetailViewController * cdetails = (CommunityDetailViewController *)(self.navigationController.visibleViewController);
+				if ( [cdetails.m_item.m_id isEqualToString:itemIdStr] )
+				{
+					[cdetails updateItem];
+				}
+			}
 		}
-*/		
+		
 		// set the tab bar badge if we have any new items!
 		if ( m_data.m_numNewItems > 0 )
 		{
@@ -326,8 +335,6 @@ enum
 		[m_HUD show:YES];
 		[self.tableView setUserInteractionEnabled:NO];
 	}
-	
-	[self.tableView setNeedsDisplay];
 }
 
 
@@ -377,14 +384,17 @@ enum
 
 - (void)chooseCommunityAction
 {
+	[self composeNewCommunityItem];
+/* Save this for another release when I can think through it a little better...
 	m_alertViewFunction = eAlertType_ChooseCommunityAction;
 	UIAlertView *alert = [[UIAlertView alloc] 
-						  initWithTitle:@"myGovernment"
+						  initWithTitle:@"myGovernment Community"
 						  message:@"Would you like to:"
 						  delegate:self
 						  cancelButtonTitle:@"Cancel"
 						  otherButtonTitles:@"Write a comment!",@"Remove Posts",nil];
 	[alert show];
+*/
 }
 
 

@@ -279,6 +279,31 @@ static NSString *kTitleValue_Senator = @"Sen";
 }
 
 
+- (void)setSearchZip:(NSString *)zip
+{
+	[m_searchArray release]; m_searchArray = nil;
+	
+	NSString *searchStr = [DataProviders Govtrack_DistrictURLFromZip:zip];
+	
+	if ( nil != m_xmlParser )
+	{
+		// abort any previous attempt at parsing/downloading
+		[m_xmlParser abort];
+	}
+	else
+	{
+		m_xmlParser = [[XMLParserOperation alloc] initWithOpDelegate:self];
+	}
+	m_xmlParser.m_opDelegate = nil;
+	
+	CongressLocationParser *clxp = [[CongressLocationParser alloc] initWithCongressData:self];
+	[clxp setNotifyTarget:m_notifyTarget andSelector:m_notifySelector];
+	
+	[m_xmlParser parseXML:[NSURL URLWithString:searchStr] withParserDelegate:clxp];
+	[clxp release];
+}
+
+
 - (NSArray *)searchResultsArray
 {
 	return (NSArray *)m_searchArray;

@@ -23,6 +23,7 @@
 
 #import "myGovAppDelegate.h"
 #import "CDetailHeaderViewController.h"
+#import "CommunityDataManager.h"
 #import "CommunityDetailData.h"
 #import "CommunityDetailViewController.h"
 #import "CommunityItem.h"
@@ -45,6 +46,12 @@
 			} \
 			function hookTouchEvents() { \
 				document.addEventListener(\"touchend\", endcommenttouch, true); \
+			} \
+			function scrollToBottom() { \
+				window.scrollTop = window.scrollHeight; \
+			} \
+			function scrollCommentsTo(x,y) { \
+				window.scrollTo(x,y); \
 			} \
 		</script> \
 		<style> \
@@ -152,7 +159,6 @@ enum
 	[m_itemLabel release];
 	[m_webView release];
 	[m_item release];
-	[m_data release];
 	
 	[super dealloc];
 }
@@ -164,8 +170,6 @@ enum
 	{
 		self.title = @"Community Item"; // this will be updated later...
 		m_item = nil;
-		m_data = nil;
-		//m_tableView = nil;
 		m_webView = nil;
 		m_itemLabel = nil;
 		m_alertSheetUsed = eCDV_AlertShouldAttend;
@@ -179,12 +183,6 @@ enum
 	[m_item release];
 	m_item = [item retain];
 	m_item.m_uiStatus = eCommunityItem_Old;
-	
-	if ( nil == m_data )
-	{
-		m_data = [[CommunityDetailData alloc] init];
-	}
-	[m_data setItem:m_item];
 	
 	switch ( m_item.m_type )
 	{
@@ -222,6 +220,20 @@ enum
 	self.navigationItem.titleView = titleView;
 	
 	[self reloadItemData];
+}
+
+
+- (void)updateItem
+{
+	// grab a (possibly) new/update CommunityItem from
+	// the shared data manager and update our GUI
+	CommunityItem *newItem = [[myGovAppDelegate sharedCommunityData] itemWithId:[m_item m_id]];
+	if ( nil != newItem )
+	{
+		[self setItem:newItem];
+		// javascript scroll to bottom of UIWebView!
+		[m_webView stringByEvaluatingJavaScriptFromString:@"scrollToBottom();"];
+	}
 }
 
 
@@ -343,13 +355,17 @@ enum
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
 	CGPoint ofst = scrollView.contentOffset;
-	if ( ofst.y >= m_webView.frame.origin.y )
+	if ( ofst.y > m_webView.frame.origin.y )
 	{
-		[scrollView setContentOffset:CGPointMake(0,m_webView.frame.origin.y)];
 		[scrollView setScrollEnabled:NO];
+		
 		// XXX - call javascript function to scroll webview by 
 		//       difference: (ofst.y - m_webView.frame.origin.y) for 
 		//       more smooth scrolling...
+		NSString *scrollJavaScript = [NSString stringWithFormat:@"scrollCommentsTo(0,%d);",(ofst.y - m_webView.frame.origin.y)];
+		[m_webView stringByEvaluatingJavaScriptFromString:scrollJavaScript];
+		
+		[scrollView setContentOffset:CGPointMake(0,m_webView.frame.origin.y) animated:YES];
 	}
 }
 
@@ -361,12 +377,11 @@ enum
 	if ( [request.URL.host isEqualToString:@"touchend"] )
 	{
 		NSInteger ypos = [[[request.URL relativePath] lastPathComponent] integerValue];
-		if ( ypos <= 5 )
+		if ( ypos <= 0 )
 		{
-			ypos = abs(ypos);
 			UIScrollView *sv = (UIScrollView *)(self.view);
 			[sv setScrollEnabled:YES];
-			[sv setContentOffset:CGPointMake(0,m_webView.frame.origin.y-2-ypos)];
+			[sv setContentOffset:CGPointMake(0,m_webView.frame.origin.y-15) animated:YES];
 		}
 		return NO;
 	}

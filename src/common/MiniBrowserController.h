@@ -66,6 +66,7 @@
 - (IBAction)backButtonPressed:(id)button;
 - (IBAction)fwdButtonPressed:(id)button;
 - (IBAction)refreshButtonPressed:(id)button;
+- (IBAction)openInSafariPressed:(id)button;
 
 - (void)loadURL:(NSURL *)url;
 - (void)LoadRequest:(NSURLRequest *)urlRequest;

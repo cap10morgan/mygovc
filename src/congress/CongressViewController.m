@@ -40,7 +40,9 @@
 	- (void)congressSwitch: (id)sender;
 	- (void)reloadCongressData;
 	- (void)deselectRow:(id)sender;
-	- (void)findLocalLegislators:(id)sender;
+	- (void)locateLegislator:(id)sender;
+	- (void)findLegislatorByZip:(NSString *)zip;
+	- (void)findLocalLegislators;
 	- (void)scrollToInitialPosition;
 //	- (void)showInitialLegislator:(LegislatorContainer *)legislator;
 	- (LegislatorContainer *)legislatorFromIndexPath:(NSIndexPath *)idx;
@@ -56,6 +58,7 @@ enum
 {
 	eAlertType_General = 0,
 	eAlertType_TweetAnyways = 1,
+	eAlertType_FindLegislator = 2,
 };
 
 
@@ -554,7 +557,7 @@ show_legislator:
 									  initWithImage:locImg 
 									  style:UIBarButtonItemStylePlain 
 									  target:self 
-									  action:@selector(findLocalLegislators:)];
+									  action:@selector(locateLegislator:)];
 	self.navigationItem.leftBarButtonItem = locBarButton;
 	[locBarButton release];
 }
@@ -654,7 +657,39 @@ show_legislator:
 }
 
 
--(void)findLocalLegislators:(id)sender
+- (void)locateLegislator:(id)sender
+{
+	// Ask the user to use the current location, or enter a ZIP!
+	m_alertViewFunction = eAlertType_FindLegislator;
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Find a Legislator" 
+													message:@"" 
+												   delegate:self 
+										  cancelButtonTitle:@"Cancel" 
+										  otherButtonTitles:@"Use ZIP",@"Use Current Location",nil];
+	[alert addTextFieldWithValue:@"" label:@"Enter ZIP (+4)"];
+	
+	UITextField *tf = [alert textFieldAtIndex:0];
+	tf.clearButtonMode = UITextFieldViewModeWhileEditing;
+	tf.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+	tf.keyboardAppearance = UIKeyboardAppearanceAlert;
+	tf.autocorrectionType = UITextAutocorrectionTypeNo;
+	tf.autocapitalizationType = UITextAutocapitalizationTypeNone;
+	
+	[alert show];
+}
+
+
+- (void)findLegislatorByZip:(NSString *)zip
+{
+	[self setActivityViewInNavBar];
+	[m_searchResultsTitle release];
+	m_searchResultsTitle = [[NSString alloc] initWithFormat:@"Legislators for %@",zip];
+	
+	[m_data setSearchZip:zip];
+}
+
+
+-(void)findLocalLegislators
 {
 	// XXX - lookup legislators in current district using location services
 	// plus govtrack district data
@@ -1049,6 +1084,31 @@ show_legislator:
 	{
 		default:
 		case eAlertType_General:
+			break;
+		
+		case eAlertType_FindLegislator:
+			switch ( buttonIndex )
+			{
+				default:
+				case 0:
+					break; // cancel!
+				case 1:
+				{
+					// use the ZIP that was just input!
+					UITextField *tf = [alertView textFieldAtIndex:0];
+					NSString *zipStr = tf.text;
+					if ( nil != zipStr && [zipStr length] == 5 )
+					{
+						[self findLegislatorByZip:zipStr];
+					}
+				}	
+					break;
+					
+				case 2:
+					// Use current location
+					[self findLocalLegislators];
+					break;
+			}
 			break;
 			
 		case eAlertType_TweetAnyways:

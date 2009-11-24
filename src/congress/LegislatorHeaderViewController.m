@@ -103,6 +103,21 @@
 }
 
 
+- (IBAction) showLegislatorDistrict:(id)sender
+{
+	if ( nil == m_legislator ) return;
+	if ( nil == m_navController ) return;
+	
+	NSString *state = [m_legislator state];
+	NSInteger district = [[m_legislator district] intValue];
+	
+	NSURL *districtURL = [NSURL URLWithString:[DataProviders Govtrack_DistrictMapURL:state forDistrict:district]];
+	
+	MiniBrowserController *mbc = [MiniBrowserController sharedBrowserWithURL:districtURL];
+	[mbc display:m_navController];
+}
+
+
 - (void)setNavController:(id)controller
 {
 	[m_navController release];

@@ -94,7 +94,7 @@ static NSString *kCCKey_Text = @"message";
 			}
 			
 			self.m_communityItemID = [plistDict objectForKey:kCCKey_CommunityItemID];
-			self.m_title = [plistDict objectForKey:kCCKey_Title];
+			self.m_title = [[plistDict objectForKey:kCCKey_Title] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
 			self.m_text = [[plistDict objectForKey:kCCKey_Text] stringByReplacingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding];
 		}
 	}

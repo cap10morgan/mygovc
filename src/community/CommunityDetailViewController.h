@@ -24,7 +24,7 @@
 #import <UIKit/UIKit.h>
 
 @class CommunityItem;
-@class CommunityDetailData;
+//@class CommunityDetailData;
 @class CDetailHeaderViewController;
 
 @interface CommunityDetailViewController : UIViewController <UIAlertViewDelegate, UIScrollViewDelegate, UIWebViewDelegate>
@@ -36,7 +36,7 @@
 	
 	CommunityItem *m_item;
 	
-	CommunityDetailData *m_data;
+//	CommunityDetailData *m_data;
 	
 	NSInteger m_alertSheetUsed;
 }
@@ -47,5 +47,6 @@
 
 - (void)setItem:(CommunityItem *)item;
 
+- (void)updateItem;
 
 @end

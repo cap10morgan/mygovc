@@ -91,6 +91,7 @@ typedef enum
 // legislator search!
 - (void)setSearchString:(NSString *)string;
 - (void)setSearchLocation:(CLLocation *)loc;
+- (void)setSearchZip:(NSString *)zip;
 - (NSArray *)searchResultsArray;
 - (NSString *)currentSearchString;
 

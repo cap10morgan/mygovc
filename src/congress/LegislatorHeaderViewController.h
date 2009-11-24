@@ -44,6 +44,7 @@
 
 - (IBAction) addLegislatorToContacts:(id)sender;
 - (IBAction) getLegislatorBio:(id)sender;
+- (IBAction) showLegislatorDistrict:(id)sender;
 
 - (void)setNavController:(id)controller;
 - (void)setLegislator:(LegislatorContainer *)legislator;

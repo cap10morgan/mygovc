@@ -63,8 +63,9 @@ static NSString *kSunlight_getListXML = @"http://services.sunlightlabs.com/api/l
 static NSString *kGovtrack_dataDir = @"http://www.govtrack.us/data/us/";
 static NSString *kGovtrack_committeeListXMLFmt = @"http://www.govtrack.us/data/us/%d/committees.xml";
 static NSString *kGovtrack_latLongFmt = @"http://www.govtrack.us/perl/district-lookup.cgi?lat=%f&long=%f";
+static NSString *kGovtrack_districtZipFmt = @"http://www.govtrack.us/perl/district-lookup.cgi?zipcode=%@";
+static NSString *kGovtrackDistrictMapURL_fmt = @"http://www.govtrack.us/embed/mapframe.xpd?state=%@&district=%d";
 static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bills.text/%d/%@/%@%d.html";
-static NSString *kGovtrackDistrictMapURL_fmt = @"http://www.govtrack.us/congress/findyourreps.xpd?state=%@&district=%d";
 
 // 
 // USASpending.gov
@@ -319,6 +320,13 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 											latLong.coordinate.latitude,
 											latLong.coordinate.longitude
 						] autorelease];
+	return urlStr;
+}
+
+
++ (NSString *)Govtrack_DistrictURLFromZip:(NSString *)zipStr
+{
+	NSString *urlStr = [[[NSString alloc] initWithFormat:kGovtrack_districtZipFmt,zipStr] autorelease];
 	return urlStr;
 }
 

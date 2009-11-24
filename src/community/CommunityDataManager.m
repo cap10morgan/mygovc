@@ -744,7 +744,7 @@ end_add_item:
 	// add the item to our in-memory structures
 	if ( ![self addCommunityItem:item andUpdateStatus:YES] ) return;
 	
-	[self setStatus:m_currentStatusMessage];
+	[self setStatus:[NSString stringWithFormat:@"ITEM:%@",item.m_id]];
 	
 	// don't cache self-generated objects 
 	// (we'll just re-download them next time we startup or reload)
@@ -799,7 +799,7 @@ end_add_item:
 	if ( nil == m_searchData ) m_searchData = [[NSMutableArray alloc] initWithCapacity:2];
 	[m_searchData addObject:item];
 	[m_searchData sortUsingSelector:@selector(compareItemByDate:)];
-	[self setStatus:@""];
+	[self setStatus:[NSString stringWithFormat:@"ITEM:%s",item.m_id]];
 }
 
 

@@ -288,6 +288,13 @@ static MiniBrowserController *s_browser = NULL;
 	}
 }
 
+- (IBAction)openInSafariPressed:(id)button
+{
+	[self stopLoading];
+	
+	[[UIApplication sharedApplication] openURL:m_webView.request.URL];
+}
+
 
 - (void)loadURL:(NSURL *)url
 {

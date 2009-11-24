@@ -80,7 +80,7 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 		m_loginURLRequest = nil;
 		
 		m_gravatarDownloadQueue = [[NSOperationQueue alloc] init];
-		[m_gravatarDownloadQueue setMaxConcurrentOperationCount:3];
+		[m_gravatarDownloadQueue setMaxConcurrentOperationCount:1];
 		
 		m_gravatarDownloads = [[NSMutableDictionary alloc] initWithCapacity:30];
 		
