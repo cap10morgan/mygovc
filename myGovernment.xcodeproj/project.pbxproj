@@ -12,12 +12,12 @@
 		0126775E0F7F25CA00CF9C46 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */; };
 		012855160FAEA2D400E2B55E /* mygov_login_header.png in Resources */ = {isa = PBXBuildFile; fileRef = 012855150FAEA2D400E2B55E /* mygov_login_header.png */; };
 		012D5AD20FA6C098006DA53F /* system_avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 012D5AD10FA6C098006DA53F /* system_avatar.png */; };
+		01526E3C10BCCC7C00445CF2 /* safariButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01526E3B10BCCC7C00445CF2 /* safariButton.png */; };
 		0178E3AF0F944AFF00B96BD1 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0178E3AE0F944AFF00B96BD1 /* Settings.bundle */; };
 		017C22500F721824008CA4ED /* billsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224D0F721824008CA4ED /* billsIcon.png */; };
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
 		017C22520F721824008CA4ED /* spendingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224F0F721824008CA4ED /* spendingIcon.png */; };
 		017C22550F721E60008CA4ED /* communityIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C22540F721E60008CA4ED /* communityIcon.png */; };
-		019A61080FDE214300E4CB1C /* personIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 019A61070FDE214300E4CB1C /* personIcon.png */; };
 		01ACAEF50FA80DA100B6FF59 /* communityEventIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */; };
 		01ACAF370FA8119C00B6FF59 /* CommunityDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACAF360FA8119C00B6FF59 /* CommunityDetailViewController.m */; };
 		01ACAF3A0FA811B800B6FF59 /* CommunityDetailData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACAF390FA811B800B6FF59 /* CommunityDetailData.m */; };
@@ -113,12 +113,12 @@
 		0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		012855150FAEA2D400E2B55E /* mygov_login_header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = mygov_login_header.png; path = res/mygov_login_header.png; sourceTree = "<group>"; };
 		012D5AD10FA6C098006DA53F /* system_avatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = system_avatar.png; path = res/system_avatar.png; sourceTree = "<group>"; };
+		01526E3B10BCCC7C00445CF2 /* safariButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = safariButton.png; path = res/safariButton.png; sourceTree = "<group>"; };
 		0178E3AE0F944AFF00B96BD1 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		017C224D0F721824008CA4ED /* billsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = billsIcon.png; path = res/billsIcon.png; sourceTree = "<group>"; };
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
 		017C224F0F721824008CA4ED /* spendingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spendingIcon.png; path = res/spendingIcon.png; sourceTree = "<group>"; };
 		017C22540F721E60008CA4ED /* communityIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityIcon.png; path = res/communityIcon.png; sourceTree = "<group>"; };
-		019A61070FDE214300E4CB1C /* personIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = personIcon.png; path = res/personIcon.png; sourceTree = "<group>"; };
 		01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityEventIcon.png; path = res/communityEventIcon.png; sourceTree = "<group>"; };
 		01ACAF350FA8119C00B6FF59 /* CommunityDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDetailViewController.h; sourceTree = "<group>"; };
 		01ACAF360FA8119C00B6FF59 /* CommunityDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityDetailViewController.m; sourceTree = "<group>"; };
@@ -526,8 +526,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01526E3B10BCCC7C00445CF2 /* safariButton.png */,
 				01C6697F0FFAF44F00A01F3D /* newContact.png */,
-				019A61070FDE214300E4CB1C /* personIcon.png */,
 				01BFE8120FB7D62500ECC015 /* google_logo_small.png */,
 				01B374760FB7568600DDA991 /* eagleIcon_32x32.png */,
 				01B374770FB7568600DDA991 /* eagleIcon_57x57.png */,
@@ -637,9 +637,9 @@
 				01B374780FB7568600DDA991 /* eagleIcon_32x32.png in Resources */,
 				01B374790FB7568600DDA991 /* eagleIcon_57x57.png in Resources */,
 				01BFE8130FB7D62500ECC015 /* google_logo_small.png in Resources */,
-				019A61080FDE214300E4CB1C /* personIcon.png in Resources */,
 				01C669800FFAF44F00A01F3D /* newContact.png in Resources */,
 				01C669C10FFB061600A01F3D /* SpendingView.xib in Resources */,
+				01526E3C10BCCC7C00445CF2 /* safariButton.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -724,7 +724,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = iphoneos2.2.1;
+				SDKROOT = iphoneos3.0;
 			};
 			name = Distribution;
 		};
@@ -732,17 +732,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Jeremy Andrus";
 				COPY_PHASE_STRIP = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = src/myGov_Prefix.pch;
 				GCC_THREADSAFE_STATICS = YES;
-				GCC_VERSION = 4.0;
+				GCC_VERSION = 4.2;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "31531A1A-AB54-4EA7-B8D5-04390347DB66";
-				SDKROOT = iphoneos2.2.1;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "276B3239-EFEE-484C-A157-6DBEADE1C544";
+				SDKROOT = iphoneos3.0;
 			};
 			name = Distribution;
 		};
@@ -762,7 +763,7 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos3.1;
+				SDKROOT = iphoneos3.0;
 			};
 			name = Debug;
 		};
@@ -770,18 +771,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jeremy Andrus";
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = src/myGov_Prefix.pch;
 				GCC_THREADSAFE_STATICS = NO;
-				GCC_VERSION = 4.0;
+				GCC_VERSION = 4.2;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7944CA24-75AD-4FB9-A2B5-D43C73DB0D96";
-				SDKROOT = iphoneos2.2.1;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos3.0;
 			};
 			name = Release;
 		};
@@ -807,6 +808,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				SDKROOT = iphoneos3.0;
 			};

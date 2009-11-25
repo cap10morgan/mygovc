@@ -23,16 +23,18 @@
 
 #import "LegislatorNameCell.h"
 #import "LegislatorContainer.h"
-
+#import "myGovAppDelegate.h"
 
 @implementation LegislatorNameCell
 
 @synthesize m_tableRange, m_legislator;
 
-static const CGFloat S_TABLE_TITLE_WIDTH = 30.0f;
 static const CGFloat S_INFO_OFFSET = 10.0f;
 static const CGFloat S_PARTY_INDICATOR_WIDTH = 30.0f;
 static const CGFloat S_CELL_HPADDING = 7.0f;
+
+static const CGFloat S_TABLE_TITLE_WIDTH_PORTRAIT = 30.0f;
+static const CGFloat S_TABLE_TITLE_WIDTH_LANDSCAPE = 90.0f;
 
 #define NAME_FONT  [UIFont boldSystemFontOfSize:18.0f]
 #define NAME_COLOR [UIColor blackColor]
@@ -62,17 +64,31 @@ enum
 		CGFloat frameH = self.contentView.bounds.size.height - (frameY * 2.0f);
 		
 		UIButton *detail = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-		//detail.showsTouchWhenHighlighted = YES;
-		CGRect detailRect = CGRectMake( frameW - S_TABLE_TITLE_WIDTH - CGRectGetWidth(detail.frame),
-									   frameY + (frameH - CGRectGetHeight(detail.frame))/2.0f,
-									   CGRectGetWidth(detail.frame),
-									   CGRectGetHeight(detail.frame) );
+		detail.showsTouchWhenHighlighted = YES;
+		
+		CGRect detailRect;
+		CGFloat titleWidth = S_TABLE_TITLE_WIDTH_PORTRAIT;
+		/*
+		if ( [myGovAppDelegate isDeviceInPortrait] )
+		{
+			titleWidth = S_TABLE_TITLE_WIDTH_PORTRAIT;
+		}
+		else 
+		{
+			titleWidth = S_TABLE_TITLE_WIDTH_LANDSCAPE;
+		}
+		*/
+		detailRect = CGRectMake( frameW - titleWidth - CGRectGetWidth(detail.frame),
+								frameY + (frameH - CGRectGetHeight(detail.frame))/2.0f,
+								CGRectGetWidth(detail.frame),
+								CGRectGetHeight(detail.frame) );
+		
 		[detail setFrame:detailRect];
 		[detail setTag:eTAG_DETAIL];
 		
 		CGRect nameRect = CGRectMake(frameX, 
 									 frameY, 
-									 frameW - S_TABLE_TITLE_WIDTH - S_PARTY_INDICATOR_WIDTH - CGRectGetWidth(detailRect) - 5.0f, 
+									 frameW - titleWidth - S_PARTY_INDICATOR_WIDTH - CGRectGetWidth(detailRect) - 5.0f, 
 									 frameH/1.5);
 		UILabel *nameView = [[UILabel alloc] initWithFrame:nameRect];
 		nameView.backgroundColor = [UIColor clearColor];

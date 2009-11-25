@@ -152,6 +152,13 @@ static int s_threads_using_network = 0;
 	}
 }
 
++ (BOOL)isDeviceInPortrait
+{
+	return (   (UIDeviceOrientationPortrait == [UIDevice currentDevice].orientation) 
+			|| (UIDeviceOrientationPortraitUpsideDown == [UIDevice currentDevice].orientation) 
+			|| (UIDeviceOrientationUnknown == [UIDevice currentDevice].orientation) 
+			);
+}
 
 + (MyGovUserData *)sharedUserData
 {

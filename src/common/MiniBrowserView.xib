@@ -75,8 +75,11 @@
 							</object>
 							<object class="IBUIBarButtonItem" id="921260951">
 								<int key="IBUITag">998</int>
+								<object class="NSCustomResource" key="IBUIImage">
+									<string key="NSClassName">NSImage</string>
+									<string key="NSResourceName">refreshIcon.png</string>
+								</object>
 								<reference key="IBUIToolbar" ref="85708569"/>
-								<int key="IBUISystemItemIdentifier">13</int>
 							</object>
 							<object class="IBUIBarButtonItem" id="1020470680">
 								<reference key="IBUIToolbar" ref="85708569"/>
@@ -98,7 +101,7 @@
 								<int key="IBUITag">996</int>
 								<object class="NSCustomResource" key="IBUIImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">location_overlay.png</string>
+									<string key="NSResourceName">safariButton.png</string>
 								</object>
 								<reference key="IBUIToolbar" ref="85708569"/>
 							</object>

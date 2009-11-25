@@ -61,6 +61,8 @@
 + (BOOL)networkIsAvailable:(BOOL)andWillBeBusy;
 + (void)networkNoLongerInUse;
 
++ (BOOL)isDeviceInPortrait;
+
 + (MyGovUserData *)sharedUserData;
 
 + (CommunityDataManager *)sharedCommunityData;
