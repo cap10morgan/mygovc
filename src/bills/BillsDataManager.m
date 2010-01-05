@@ -415,6 +415,7 @@ static NSInteger s_maxBillPages = 0;
 {
 	if ( isDownloading ) return;
 	
+	isDownloading = YES;
 	isBusy = YES;
 	
 	// make sure we have congress data before downloading bill data - 
@@ -434,7 +435,6 @@ static NSInteger s_maxBillPages = 0;
 		return;
 	}
 	
-	isDownloading = YES;
 	[self setStatus:@"Preparing Bill Download..."];
 	
 	// This yields _so_ much noise it's not worth it:
@@ -448,6 +448,10 @@ static NSInteger s_maxBillPages = 0;
 	{
 		NSInteger currentMonth = [dateComps month];
 		s_maxBillPages = currentMonth + 1;
+		
+		/* elections are held in even years, so if we're in an odd year: 
+		   add 1 page for each of the previous year's months :-) */
+		if ( !([dateComps year] & 0x1) ) s_maxBillPages += 12; 
 	}
 	
 	// Use [DataProviders OpenCongress_BillsURLIntroducedSinceDate:];
@@ -470,7 +474,7 @@ static NSInteger s_maxBillPages = 0;
 		
 		xmlURL = [DataProviders OpenCongress_BillsURLIntroducedSinceDate:startDate onPage:1];
 	}
-	else if ( m_billDownloadPage >= s_maxBillPages )
+	else if ( m_downloadReallyRecentStuff && m_billDownloadPage >= s_maxBillPages )
 	{
 		// download _really_ recent stuff!
 		static const CGFloat S_A_WEEK_OF_SECONDS = 604800.0f;
@@ -883,10 +887,8 @@ static NSInteger s_maxBillPages = 0;
 	// we received the maximum number of bills - there might be more!
 	// (don't go above a maximum numbe of pages)
 	if ( m_downloadReallyRecentStuff ||
-		 (
-		   (m_billDownloadPage < s_maxBillPages) &&
-		   (m_billsDownloaded >= [DataProviders OpenCongress_MaxBillsReturned])  
-		 )
+		 (m_billDownloadPage <= s_maxBillPages) ||
+		 (m_billDownloadPage < (s_maxBillPages+2) && (m_billsDownloaded >= [DataProviders OpenCongress_MaxBillsReturned]))
 	   ) 
 	{
 		// start another download !
