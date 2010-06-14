@@ -80,7 +80,8 @@ static NSString *kName_State = @"state";
 		if ( nil != m_notifyTarget )
 		{
 			NSString *message = [NSString stringWithString:@"Parsing data..."];
-			[m_notifyTarget performSelector:m_notifySelector withObject:message];
+			if ( [m_notifyTarget respondsToSelector:m_notifySelector] )
+				[m_notifyTarget performSelector:m_notifySelector withObject:message];
 		}
 	}
     else if ( [elementName isEqualToString:kName_Legislator] ) 
@@ -149,7 +150,8 @@ static NSString *kName_State = @"state";
 	m_currentString = [[NSString alloc] initWithString:@"ERROR XML parsing error"];
 	if ( nil != m_notifyTarget )
 	{
-		[m_notifyTarget performSelector:m_notifySelector withObject:m_currentString];
+		if ( [m_notifyTarget respondsToSelector:m_notifySelector] )
+			[m_notifyTarget performSelector:m_notifySelector withObject:m_currentString];
 	}
 }
 
@@ -163,7 +165,8 @@ static NSString *kName_State = @"state";
 	m_currentString = [[NSString alloc] initWithString:@"ERROR XML validation error"];
 	if ( nil != m_notifyTarget )
 	{
-		[m_notifyTarget performSelector:m_notifySelector withObject:m_currentString];
+		if ( [m_notifyTarget respondsToSelector:m_notifySelector] )
+			[m_notifyTarget performSelector:m_notifySelector withObject:m_currentString];
 	}
 }
 

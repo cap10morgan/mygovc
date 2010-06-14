@@ -21,6 +21,16 @@
  $Id: $
  */
 
-#define MYGOV_SHOULD_SUPPORT_ROTATION (UIInterfaceOrientationPortrait == interfaceOrientation)
+#define MYGOV_SHOULD_SUPPORT_ROTATION(_ROTATION) \
+		switch (_ROTATION) \
+		{ \
+			case UIInterfaceOrientationPortrait: \
+			case UIInterfaceOrientationPortraitUpsideDown: \
+			case UIInterfaceOrientationLandscapeLeft: \
+			case UIInterfaceOrientationLandscapeRight: \
+				return YES; \
+			default: \
+				return NO; \
+		}
 
 

@@ -32,6 +32,7 @@
 	
 	IBOutlet UILabel *m_name;
 	IBOutlet UILabel *m_partyInfo;
+	IBOutlet UIButton *m_districtInfoButton;
 	IBOutlet UIImageView *m_img;
 @private
 	UIImage *m_largeImg;
@@ -40,6 +41,7 @@
 
 @property (nonatomic, retain) UILabel *m_name;
 @property (nonatomic, retain) UILabel *m_partyInfo;
+@property (nonatomic, retain) UIButton *m_districtInfoButton;
 @property (nonatomic, retain) UIImageView *m_img;
 
 - (IBAction) addLegislatorToContacts:(id)sender;

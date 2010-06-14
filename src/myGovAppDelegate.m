@@ -74,6 +74,17 @@ static int s_threads_using_network = 0;
 }
 
 
++ (UIViewController *)rootViewController
+{
+	id window = [UIApplication sharedApplication].keyWindow;
+	if ( nil == window ) return nil;
+	if ( [window respondsToSelector:@selector(rootViewController)] )
+		return [window rootViewController];
+	
+	return [myGovAppDelegate sharedAppDelegate].m_tabBarController;
+}
+
+
 + (NSString *) md5hash:(NSString *)str 
 {
 	const char *cStr = [str UTF8String];

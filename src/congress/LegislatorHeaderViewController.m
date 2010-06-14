@@ -26,7 +26,7 @@
 #import "DataProviders.h"
 #import "LegislatorContainer.h"
 #import "LegislatorHeaderViewController.h"
-#import "LegislatorViewController.h"
+#import "LegislatorDetailViewController.h"
 #import "MiniBrowserController.h"
 #import "StateAbbreviations.h"
 
@@ -40,6 +40,7 @@
 
 @synthesize m_name;
 @synthesize m_partyInfo;
+@synthesize m_districtInfoButton;
 @synthesize m_img;
 
 
@@ -71,10 +72,9 @@
 
 
 // Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
-	// Return YES for supported orientations
-	return (interfaceOrientation == UIInterfaceOrientationPortrait);
+	MYGOV_SHOULD_SUPPORT_ROTATION(toInterfaceOrientation);
 }
 
 
@@ -130,42 +130,30 @@
 	[m_legislator release];
 	m_legislator = [legislator retain];
 	
+	// for image downloading notification
 	[m_legislator setCallbackObject:self];
 	
-	// set legislator name 
-	/*
-	NSString *nickname = [m_legislator nickname];
-	NSString *fname = [m_legislator firstname];
-	NSString *mname = ([nickname length] > 0 ? @"" : [m_legislator middlename]);
-	NSString *lname = [m_legislator lastname];
-	NSString *nm = [[NSString alloc] initWithFormat:@"%@. %@ %@%@%@",
-									[m_legislator title],
-									([nickname length] > 0 ? nickname : fname),
-									(mname ? mname : @""),
-									(mname ? @" " : @""),lname
-					];
-	*/
 	m_name.text = [m_legislator shortName];
-	//[nm release];
 	
 	// set legislator party info
 	NSString *party = [m_legislator party];
 	NSString *state = [StateAbbreviations nameFromAbbr:[m_legislator state]];
 	NSString *district = [[NSString alloc] initWithFormat:@" %@",([[m_legislator district] isEqualToString:@"0"] ? @"At-Large" : [m_legislator district])];
-	NSString *partyTxt = [[NSString alloc] initWithFormat:@"(%@) %@%@",party,state,([[m_legislator title] isEqualToString:@"Rep"] ? district : @"")];
+	NSString *partyTxt;
+	if ( [[m_legislator title] isEqualToString:@"Rep"] )
+	{
+		partyTxt = [[NSString alloc] initWithFormat:@"(%@) %@%@",party,state,district];
+		[m_districtInfoButton setHidden:FALSE];
+	}
+	else 
+	{
+		partyTxt = [[NSString alloc] initWithFormat:@"(%@) %@",party,state];
+		[m_districtInfoButton setHidden:TRUE];
+	}
+
 	m_partyInfo.text = partyTxt;
-	if ( [party isEqualToString:@"R"] )
-	{
-		m_partyInfo.textColor = [UIColor redColor];
-	}
-	else if ( [party isEqualToString:@"D"] )
-	{
-		m_partyInfo.textColor = [UIColor blueColor];
-	}
-	else
-	{
-		m_partyInfo.textColor = [UIColor whiteColor];
-	}
+	m_partyInfo.textColor = [LegislatorContainer partyColor:party];
+	
 	[district release];
 	[partyTxt release];
 	
@@ -173,6 +161,8 @@
 	UIImage *img = [m_legislator getImage:eLegislatorImage_Medium andBlock:NO withCallbackOrNil:@selector(imageDownloadComplete:)];
 	if ( nil == img )
 	{
+		// XXX - notify the user of the background network activity
+		
 		// overlay a UIActivityIndicatorView on the image to
 		// tell the user we're working on it!
 		UIActivityIndicatorView *aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -198,6 +188,8 @@
 
 - (void)imageDownloadComplete:(UIImage *)img
 {
+	[myGovAppDelegate networkNoLongerInUse];
+	
 	UIActivityIndicatorView *aiView = (UIActivityIndicatorView *)[m_img viewWithTag:999];
 	if ( nil != aiView )
 	{
@@ -225,7 +217,7 @@
 	if ( sender != self ) return;
 	
 	// wait until the previous image has completely downloaded
-	static const int MAX_SLEEPS = 300;
+	static const int MAX_SLEEPS = 500;
 	static const CGFloat SLEEP_INTERVAL = 0.1f;
 	int numSleeps = 0;
 	while ( [m_legislator isDownloadingImage] && (numSleeps <= MAX_SLEEPS) )
@@ -236,12 +228,16 @@
 	
 	// start a large image download (for contact adding)
 	[m_largeImg release];
+	[myGovAppDelegate networkIsAvailable:YES];
 	m_largeImg = [m_legislator getImage:eLegislatorImage_Large andBlock:NO withCallbackOrNil:@selector(largeImageDownloadComplete:)];
+	
+	if ( nil != m_largeImg ) [myGovAppDelegate networkNoLongerInUse];
 }
 
 
 - (void)largeImageDownloadComplete:(UIImage *)img
 {
+	[myGovAppDelegate networkNoLongerInUse];
 	if ( nil != img ) m_largeImg = [img retain];
 }
 

@@ -24,6 +24,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import "CongressDataManager.h"
+#import "LegislatorNameCell.h"
 
 @class ProgressOverlayViewController;
 
@@ -34,8 +35,10 @@ typedef enum
 } CongressActionType;
 
 
-@interface CongressViewController : UITableViewController <UIActionSheetDelegate, UIAlertViewDelegate, UISearchBarDelegate, CLLocationManagerDelegate>
-{	
+@interface CongressViewController : UITableViewController < UIActionSheetDelegate, UIAlertViewDelegate, UISearchBarDelegate, CLLocationManagerDelegate >
+{
+	LegislatorNameCell *tmpCell;
+	
 @private
 	CongressDataManager *m_data;
 	CongressChamber m_selectedChamber;
@@ -57,6 +60,8 @@ typedef enum
 	
 	BOOL m_outOfScope;
 }
+
+@property (nonatomic, assign) IBOutlet LegislatorNameCell *tmpCell;
 
 - (void)dataManagerCallback:(id)message;
 - (void)showLegislatorDetail:(id)sender;

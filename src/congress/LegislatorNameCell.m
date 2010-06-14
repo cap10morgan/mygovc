@@ -27,131 +27,8 @@
 
 @implementation LegislatorNameCell
 
+@synthesize m_nameView, m_partyView, m_infoView, m_detailButton;
 @synthesize m_tableRange, m_legislator;
-
-static const CGFloat S_INFO_OFFSET = 10.0f;
-static const CGFloat S_PARTY_INDICATOR_WIDTH = 30.0f;
-static const CGFloat S_CELL_HPADDING = 7.0f;
-
-static const CGFloat S_TABLE_TITLE_WIDTH_PORTRAIT = 30.0f;
-static const CGFloat S_TABLE_TITLE_WIDTH_LANDSCAPE = 90.0f;
-
-#define NAME_FONT  [UIFont boldSystemFontOfSize:18.0f]
-#define NAME_COLOR [UIColor blackColor]
-#define NAME_SHADOW_COLOR [UIColor clearColor]
-#define INFO_FONT  [UIFont systemFontOfSize:14.0f]
-#define INFO_COLOR [UIColor darkGrayColor]
-#define PARTY_FONT [UIFont systemFontOfSize:14.0f]
-
-enum
-{
-	eTAG_DETAIL = 999,
-	eTAG_NAME   = 998,
-	eTAG_PARTY  = 997,
-	eTAG_INFO   = 996,
-};
-
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier detailTarget:(id)tgt detailSelector:(SEL)sel
-{
-	if (self = [super initWithFrame:frame reuseIdentifier:reuseIdentifier]) 
-	{
-		m_legislator = nil;
-		self.selectionStyle = UITableViewCellSelectionStyleGray;
-		
-		CGFloat frameX = S_CELL_HPADDING;
-		CGFloat frameY = 0.0f;
-		CGFloat frameW = self.contentView.bounds.size.width - (frameX * 2.0f);
-		CGFloat frameH = self.contentView.bounds.size.height - (frameY * 2.0f);
-		
-		UIButton *detail = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-		detail.showsTouchWhenHighlighted = YES;
-		
-		CGRect detailRect;
-		CGFloat titleWidth = S_TABLE_TITLE_WIDTH_PORTRAIT;
-		/*
-		if ( [myGovAppDelegate isDeviceInPortrait] )
-		{
-			titleWidth = S_TABLE_TITLE_WIDTH_PORTRAIT;
-		}
-		else 
-		{
-			titleWidth = S_TABLE_TITLE_WIDTH_LANDSCAPE;
-		}
-		*/
-		detailRect = CGRectMake( frameW - titleWidth - CGRectGetWidth(detail.frame),
-								frameY + (frameH - CGRectGetHeight(detail.frame))/2.0f,
-								CGRectGetWidth(detail.frame),
-								CGRectGetHeight(detail.frame) );
-		
-		[detail setFrame:detailRect];
-		[detail setTag:eTAG_DETAIL];
-		
-		CGRect nameRect = CGRectMake(frameX, 
-									 frameY, 
-									 frameW - titleWidth - S_PARTY_INDICATOR_WIDTH - CGRectGetWidth(detailRect) - 5.0f, 
-									 frameH/1.5);
-		UILabel *nameView = [[UILabel alloc] initWithFrame:nameRect];
-		nameView.backgroundColor = [UIColor clearColor];
-		nameView.textColor = NAME_COLOR;
-		nameView.shadowColor = NAME_SHADOW_COLOR;
-		nameView.shadowOffset = CGSizeMake(0,-1);
-		nameView.font = NAME_FONT;
-		nameView.textAlignment = UITextAlignmentLeft;
-		nameView.adjustsFontSizeToFitWidth = YES;
-		[nameView setTag:eTAG_NAME];
-		
-		/*
-		CGRect partyRect = CGRectMake(CGRectGetMinX(detailRect) - S_PARTY_INDICATOR_WIDTH,
-									  frameY, 
-									  S_PARTY_INDICATOR_WIDTH, 
-									  frameH/1.5);
-		 */
-		CGRect partyRect = CGRectMake( frameX + S_INFO_OFFSET, 
-									   frameY + CGRectGetHeight(nameRect),
-									   S_PARTY_INDICATOR_WIDTH,
-									   frameH - CGRectGetHeight(nameRect) );
-		UILabel *partyView = [[UILabel alloc] initWithFrame:partyRect];
-		partyView.backgroundColor = [UIColor clearColor];
-		partyView.textColor = [UIColor darkGrayColor];
-		partyView.font = PARTY_FONT;
-		partyView.textAlignment = UITextAlignmentRight;
-		partyView.adjustsFontSizeToFitWidth = YES;
-		[partyView setTag:eTAG_PARTY];
-		
-		/*
-		CGRect infoRect = CGRectMake( frameX + S_INFO_OFFSET, 
-									  frameY + CGRectGetHeight(nameRect),
-									  frameW - S_INFO_OFFSET - S_PARTY_INDICATOR_WIDTH,
-									  frameH - CGRectGetHeight(nameRect) );
-		 */
-		CGRect infoRect = CGRectMake( CGRectGetMaxX(partyRect) + S_CELL_HPADDING, 
-									  frameY + CGRectGetHeight(nameRect),
-									  CGRectGetMinX(detailRect) - S_PARTY_INDICATOR_WIDTH - S_INFO_OFFSET - S_CELL_HPADDING,
-									  frameH - CGRectGetHeight(nameRect) );
-		UILabel *infoView = [[UILabel alloc] initWithFrame:infoRect];
-		infoView.backgroundColor = [UIColor clearColor];
-		infoView.textColor = INFO_COLOR;
-		infoView.font = INFO_FONT;
-		infoView.textAlignment = UITextAlignmentLeft;
-		infoView.adjustsFontSizeToFitWidth = YES;
-		[infoView setTag:eTAG_INFO];
-		
-		
-		// set delegate for detail button press!
-		[detail addTarget:tgt action:sel forControlEvents:UIControlEventTouchUpInside];
-		
-		// add views to cell view
-		[self addSubview:nameView];
-		[self addSubview:partyView];
-		[self addSubview:infoView];
-		[self addSubview:detail];
-		
-		[nameView release];
-		[partyView release];
-		[infoView release];
-	}
-	return self;
-}
 
 
 - (void)dealloc
@@ -161,19 +38,22 @@ enum
 }
 
 
+- (void)setDetailTarget:(id)tgt withSelector:(SEL)sel
+{
+	// set delegate for detail button press!
+	[m_detailButton addTarget:tgt action:sel forControlEvents:UIControlEventTouchUpInside];
+}
+
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated 
 {
     [super setSelected:selected animated:animated];
 	
     // Configure the view for the selected state
-	UILabel *nameView = (UILabel *)[self viewWithTag:eTAG_NAME];
-	nameView.highlighted = selected;
-	
-	UILabel *partyView = (UILabel *)[self viewWithTag:eTAG_PARTY];
-	partyView.highlighted = selected;
-	
-	UILabel *infoView = (UILabel *)[self viewWithTag:eTAG_INFO];
-	infoView.highlighted = selected;
+	m_nameView.highlighted = selected;
+	m_partyView.highlighted = selected;
+	m_infoView.highlighted = selected;
+	m_detailButton.highlighted = selected;
 }
 
 
@@ -210,36 +90,11 @@ enum
 		info = [[NSString alloc] initWithFormat:@"%@.",[legislator title]];
 	}
 	
-	UILabel *nameView = (UILabel *)[self viewWithTag:eTAG_NAME];
-	[nameView setText:name];
-	
-	UILabel *partyView = (UILabel *)[self viewWithTag:eTAG_PARTY];
-	[partyView setText:party];
-	//[partyView setTextColor:([party isEqualToString:@"D"] ? [UIColor blueColor] : [UIColor redColor])];
-	
-	UILabel *infoView = (UILabel *)[self viewWithTag:eTAG_INFO];
-	[infoView setText:info];
-	
-	// set a background color based on party :-)
-	if ( [party isEqualToString:@"(D)"] )
-	{
-		partyView.textColor = [UIColor blueColor];
-	}
-	else if ( [party isEqualToString:@"(R)"] )
-	{
-		partyView.textColor = [UIColor redColor];
-	}
-	else
-	{
-		partyView.textColor = [UIColor darkGrayColor];
-	}
-	
-	[name release];
-	[party release];
-	[info release];
+	[m_nameView setText:name];
+	[m_partyView setText:party];
+	[m_partyView setTextColor:[LegislatorContainer partyColor:[legislator party]]];
+	[m_infoView setText:info];
 }
 
 
-
 @end
-

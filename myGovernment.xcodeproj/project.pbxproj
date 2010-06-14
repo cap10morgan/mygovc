@@ -19,6 +19,10 @@
 		017C22510F721824008CA4ED /* congressIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224E0F721824008CA4ED /* congressIcon.png */; };
 		017C22520F721824008CA4ED /* spendingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C224F0F721824008CA4ED /* spendingIcon.png */; };
 		017C22550F721E60008CA4ED /* communityIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 017C22540F721E60008CA4ED /* communityIcon.png */; };
+		01849D8011C5C08C000CB52F /* LegislatorNameCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01849D7F11C5C08C000CB52F /* LegislatorNameCell.xib */; };
+		01849D8811C5CC93000CB52F /* CongressViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01849D8711C5CC93000CB52F /* CongressViewController.xib */; };
+		01849E3611C5F0E5000CB52F /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01849E3511C5F0E5000CB52F /* MessageUI.framework */; };
+		01849E7E11C5F6D6000CB52F /* CustomTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01849E7D11C5F6D6000CB52F /* CustomTableCell.xib */; };
 		01ACAEF50FA80DA100B6FF59 /* communityEventIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */; };
 		01ACAF370FA8119C00B6FF59 /* CommunityDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACAF360FA8119C00B6FF59 /* CommunityDetailViewController.m */; };
 		01ACAF3A0FA811B800B6FF59 /* CommunityDetailData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01ACAF390FA811B800B6FF59 /* CommunityDetailData.m */; };
@@ -87,7 +91,7 @@
 		01D7FEC10FA5023B00F78B92 /* LegislatorHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEB30FA5023A00F78B92 /* LegislatorHeaderViewController.m */; };
 		01D7FEC20FA5023B00F78B92 /* LegislatorInfoData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEB50FA5023A00F78B92 /* LegislatorInfoData.m */; };
 		01D7FEC30FA5023B00F78B92 /* LegislatorNameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEB70FA5023A00F78B92 /* LegislatorNameCell.m */; };
-		01D7FEC40FA5023B00F78B92 /* LegislatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEB90FA5023A00F78B92 /* LegislatorViewController.m */; };
+		01D7FEC40FA5023B00F78B92 /* LegislatorDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEB90FA5023A00F78B92 /* LegislatorDetailViewController.m */; };
 		01D7FEC70FA5027F00F78B92 /* MGTwitterEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FEC60FA5027F00F78B92 /* MGTwitterEngine.m */; };
 		01D7FECC0FA502A600F78B92 /* MGTwitterHTTPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FECB0FA502A600F78B92 /* MGTwitterHTTPURLConnection.m */; };
 		01D7FED50FA502F400F78B92 /* MGTwitterMessagesParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FED00FA502F400F78B92 /* MGTwitterMessagesParser.m */; };
@@ -121,6 +125,10 @@
 		017C224E0F721824008CA4ED /* congressIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = congressIcon.png; path = res/congressIcon.png; sourceTree = "<group>"; };
 		017C224F0F721824008CA4ED /* spendingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spendingIcon.png; path = res/spendingIcon.png; sourceTree = "<group>"; };
 		017C22540F721E60008CA4ED /* communityIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityIcon.png; path = res/communityIcon.png; sourceTree = "<group>"; };
+		01849D7F11C5C08C000CB52F /* LegislatorNameCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LegislatorNameCell.xib; sourceTree = "<group>"; };
+		01849D8711C5CC93000CB52F /* CongressViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CongressViewController.xib; sourceTree = "<group>"; };
+		01849E3511C5F0E5000CB52F /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = iphoneos3.0/System/Library/Frameworks/MessageUI.framework; sourceTree = "<group>"; };
+		01849E7D11C5F6D6000CB52F /* CustomTableCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomTableCell.xib; sourceTree = "<group>"; };
 		01ACAEF30FA80DA100B6FF59 /* communityEventIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = communityEventIcon.png; path = res/communityEventIcon.png; sourceTree = "<group>"; };
 		01ACAF350FA8119C00B6FF59 /* CommunityDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunityDetailViewController.h; sourceTree = "<group>"; };
 		01ACAF360FA8119C00B6FF59 /* CommunityDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommunityDetailViewController.m; sourceTree = "<group>"; };
@@ -235,8 +243,8 @@
 		01D7FEB50FA5023A00F78B92 /* LegislatorInfoData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegislatorInfoData.m; sourceTree = "<group>"; };
 		01D7FEB60FA5023A00F78B92 /* LegislatorNameCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegislatorNameCell.h; sourceTree = "<group>"; };
 		01D7FEB70FA5023A00F78B92 /* LegislatorNameCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegislatorNameCell.m; sourceTree = "<group>"; };
-		01D7FEB80FA5023A00F78B92 /* LegislatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegislatorViewController.h; sourceTree = "<group>"; };
-		01D7FEB90FA5023A00F78B92 /* LegislatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegislatorViewController.m; sourceTree = "<group>"; };
+		01D7FEB80FA5023A00F78B92 /* LegislatorDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegislatorDetailViewController.h; sourceTree = "<group>"; };
+		01D7FEB90FA5023A00F78B92 /* LegislatorDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegislatorDetailViewController.m; sourceTree = "<group>"; };
 		01D7FEC50FA5027F00F78B92 /* MGTwitterEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterEngine.h; sourceTree = "<group>"; };
 		01D7FEC60FA5027F00F78B92 /* MGTwitterEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTwitterEngine.m; sourceTree = "<group>"; };
 		01D7FEC80FA502A600F78B92 /* MGTwitterEngineDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTwitterEngineDelegate.h; sourceTree = "<group>"; };
@@ -287,6 +295,7 @@
 				01C075BC0F8EE96E00F5B2A1 /* AddressBook.framework in Frameworks */,
 				01C075C10F8EE98700F5B2A1 /* AddressBookUI.framework in Frameworks */,
 				01D4FF140FCB2A0D0000FAE7 /* SystemConfiguration.framework in Frameworks */,
+				01849E3611C5F0E5000CB52F /* MessageUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,8 +319,10 @@
 		0102D2DA0F58DB6B005AE0EA /* congress */ = {
 			isa = PBXGroup;
 			children = (
+				01849D8711C5CC93000CB52F /* CongressViewController.xib */,
 				01D7FEAD0FA5023A00F78B92 /* CongressViewController.h */,
 				01D7FEAE0FA5023A00F78B92 /* CongressViewController.m */,
+				01849D7F11C5C08C000CB52F /* LegislatorNameCell.xib */,
 				01D7FEB60FA5023A00F78B92 /* LegislatorNameCell.h */,
 				01D7FEB70FA5023A00F78B92 /* LegislatorNameCell.m */,
 				01D7FEA70FA5023A00F78B92 /* CongressDataManager.h */,
@@ -329,8 +340,8 @@
 				01D7FEB30FA5023A00F78B92 /* LegislatorHeaderViewController.m */,
 				01D7FEB40FA5023A00F78B92 /* LegislatorInfoData.h */,
 				01D7FEB50FA5023A00F78B92 /* LegislatorInfoData.m */,
-				01D7FEB80FA5023A00F78B92 /* LegislatorViewController.h */,
-				01D7FEB90FA5023A00F78B92 /* LegislatorViewController.m */,
+				01D7FEB80FA5023A00F78B92 /* LegislatorDetailViewController.h */,
+				01D7FEB90FA5023A00F78B92 /* LegislatorDetailViewController.m */,
 			);
 			path = congress;
 			sourceTree = "<group>";
@@ -445,6 +456,7 @@
 				01D7FE4B0FA500DA00F78B92 /* ComposeMessageView.xib */,
 				01D7FE4C0FA500DA00F78B92 /* ComposeMessageViewController.h */,
 				01D7FE4D0FA500DA00F78B92 /* ComposeMessageViewController.m */,
+				01849E7D11C5F6D6000CB52F /* CustomTableCell.xib */,
 				01D7FE4E0FA500DA00F78B92 /* CustomTableCell.h */,
 				01D7FE4F0FA500DA00F78B92 /* CustomTableCell.m */,
 				01D7FE500FA500DA00F78B92 /* DataProviders.h */,
@@ -559,6 +571,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				01849E3511C5F0E5000CB52F /* MessageUI.framework */,
 				01D4FF130FCB2A0D0000FAE7 /* SystemConfiguration.framework */,
 				01C075C00F8EE98700F5B2A1 /* AddressBookUI.framework */,
 				01C075BB0F8EE96E00F5B2A1 /* AddressBook.framework */,
@@ -644,6 +657,9 @@
 				01C669C10FFB061600A01F3D /* SpendingView.xib in Resources */,
 				01526E3C10BCCC7C00445CF2 /* safariButton.png in Resources */,
 				01526F0B10BCE39800445CF2 /* personIcon.png in Resources */,
+				01849D8011C5C08C000CB52F /* LegislatorNameCell.xib in Resources */,
+				01849D8811C5CC93000CB52F /* CongressViewController.xib in Resources */,
+				01849E7E11C5F6D6000CB52F /* CustomTableCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -693,7 +709,7 @@
 				01D7FEC10FA5023B00F78B92 /* LegislatorHeaderViewController.m in Sources */,
 				01D7FEC20FA5023B00F78B92 /* LegislatorInfoData.m in Sources */,
 				01D7FEC30FA5023B00F78B92 /* LegislatorNameCell.m in Sources */,
-				01D7FEC40FA5023B00F78B92 /* LegislatorViewController.m in Sources */,
+				01D7FEC40FA5023B00F78B92 /* LegislatorDetailViewController.m in Sources */,
 				01D7FEC70FA5027F00F78B92 /* MGTwitterEngine.m in Sources */,
 				01D7FECC0FA502A600F78B92 /* MGTwitterHTTPURLConnection.m in Sources */,
 				01D7FED50FA502F400F78B92 /* MGTwitterMessagesParser.m in Sources */,
@@ -755,7 +771,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jeremy Andrus (QP39L7CZ2L)";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1.1;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -766,8 +782,7 @@
 				GCC_VERSION = 4.2;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos3.0;
+				SDKROOT = iphonesimulator3.2;
 			};
 			name = Debug;
 		};

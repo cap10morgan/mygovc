@@ -23,6 +23,7 @@
 
 #import <UIKit/UIKit.h>
 #import "MGTwitterEngine.h"
+#import "myGovCompileOptions.h"
 
 @class MyGovUserData;
 @class CommunityDataManager;
@@ -32,26 +33,26 @@
 
 @interface myGovAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, MGTwitterEngineDelegate> 
 {
-    UIWindow *m_window;
-    UITabBarController *m_tabBarController;
-	UITabBar *m_tabBar;
+	IBOutlet UIWindow *m_window;
+	IBOutlet UITabBarController *m_tabBarController;
+	IBOutlet UITabBar *m_tabBar;
 	
 @private
 	NSOperationQueue *m_operationQueue;
 	NSMutableDictionary *m_urlHandler;
-	
+
 	id m_twitterNotifyTarget; // sends a "twitterOpFinished:(BOOL)successfully" messsage 
 }
 
-@property (nonatomic, retain) IBOutlet UIWindow *m_window;
-@property (nonatomic, retain) IBOutlet UITabBarController *m_tabBarController;
-@property (nonatomic, retain) IBOutlet UITabBar *m_tabBar;
+@property (retain) UIWindow *m_window;
+@property (retain) UITabBarController *m_tabBarController;
+@property (retain) UITabBar *m_tabBar;
 
-@property (nonatomic, retain) NSOperationQueue *m_operationQueue;
+@property (retain) NSOperationQueue *m_operationQueue;
 
 + (myGovAppDelegate *)sharedAppDelegate;
 + (NSString *)sharedAppCacheDir;
-
++ (UIViewController *)rootViewController;
 + (NSString *)md5hash:(NSString *)str;
 
 + (BOOL)canMakePhoneCalls;

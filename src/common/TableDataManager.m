@@ -22,6 +22,7 @@
  */
 
 #import "myGovAppDelegate.h"
+
 #import "CustomTableCell.h"
 #import "TableDataManager.h"
 #import "MiniBrowserController.h"
@@ -196,6 +197,7 @@
 	TableRowData *rd = [self dataAtIndexPath:indexPath];
 	if ( nil == rd ) return;
 	
+/*
 	NSString *subject = [NSString stringWithString:@"Message from a concerned citizen"];
 	NSString *emailStr = [[NSString alloc] initWithFormat:@"mailto:%@?subject=%@",
 							  [rd.line1 stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding], 
@@ -205,6 +207,18 @@
 	[[UIApplication sharedApplication] openURL:emailURL];
 	[emailStr release];
 	[emailURL release];
+ */
+	if ( ![MFMailComposeViewController canSendMail] ) return;
+	
+	MFMailComposeViewController *mailVC = [[MFMailComposeViewController alloc] init];
+	[mailVC setSubject:@"Message from a concerned citizen"];
+	[mailVC setToRecipients:[NSArray arrayWithObject:rd.line1]];
+	[mailVC setMessageBody:@"Dear Sir/Madam,\n" isHTML:NO];
+	mailVC.mailComposeDelegate = self;
+	
+	// show the mail composition controller
+	[[myGovAppDelegate rootViewController] presentModalViewController:mailVC animated:YES];
+	[mailVC release];
 }
 
 
@@ -278,6 +292,28 @@
 	[[UIApplication sharedApplication] openURL:url];
 }
 
+#pragma mark MFMailComposeViewControllerDelegate Protocol
+
+- (void)mailComposeController:(MFMailComposeViewController*)controller 
+		  didFinishWithResult:(MFMailComposeResult)result 
+						error:(NSError*)error
+{
+	(void)error;
+	[[myGovAppDelegate rootViewController] dismissModalViewControllerAnimated:YES];
+	
+	switch (result)
+	{
+		default:
+		case MFMailComposeResultCancelled:
+		case MFMailComposeResultSaved:
+		case MFMailComposeResultSent:
+			break;
+		
+		case MFMailComposeResultFailed:
+			// XXX - pop up an alert or something?
+			break;
+	}
+}
 
 @end
 

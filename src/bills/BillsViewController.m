@@ -246,11 +246,11 @@ enum
 
 
 // Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
-	// Return YES for supported orientations
-	return MYGOV_SHOULD_SUPPORT_ROTATION;
+	MYGOV_SHOULD_SUPPORT_ROTATION(toInterfaceOrientation);
 }
+
 
 
 - (void)showBillDetail:(id)sender

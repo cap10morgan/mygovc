@@ -28,7 +28,7 @@
 #import "CongressViewController.h"
 #import "LegislatorContainer.h"
 #import "LegislatorNameCell.h"
-#import "LegislatorViewController.h"
+#import "LegislatorDetailViewController.h"
 #import "MiniBrowserController.h"
 #import "ProgressOverlayViewController.h"
 #import "StateAbbreviations.h"
@@ -65,6 +65,8 @@ enum
 
 @implementation CongressViewController
 
+@synthesize tmpCell;
+
 - (void)didReceiveMemoryWarning 
 {
     [super didReceiveMemoryWarning]; // Releases the view if it doesn't have a superview
@@ -87,10 +89,12 @@ enum
 
 - (void)viewDidLoad
 {
+	[super viewDidLoad];
+	
 	self.title = @"Congress";
 	
-	self.tableView.autoresizesSubviews = YES;
-	self.tableView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
+	//self.tableView.autoresizesSubviews = YES;
+	//self.tableView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
 	self.tableView.rowHeight = 50.0f;
 	
 	m_data = [[myGovAppDelegate sharedCongressData] retain];
@@ -127,12 +131,12 @@ enum
 	m_segmentCtrl = [[UISegmentedControl alloc] initWithItems:buttonNames];
 	
 	// default styles
+	m_segmentCtrl.autoresizesSubviews = YES;
 	m_segmentCtrl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	m_segmentCtrl.segmentedControlStyle = UISegmentedControlStyleBar;
 	m_segmentCtrl.selectedSegmentIndex = 0; // Default to the "House"
 	m_selectedChamber = eCongressChamberHouse;
 	m_segmentCtrl.frame = CGRectMake(0,0,200,30);
-	// saturation of 0.0 means black/white
 	m_segmentCtrl.tintColor = [UIColor darkGrayColor];
 	
 	// add ourself as the target
@@ -158,24 +162,17 @@ enum
 	[self setLocationButtonInNavBar];
 	
 	// create a search bar which will be used as our table's header view
-//	UIView *sbarView = [[UIView alloc] initWithFrame:CGRectMake(0.0f,0.0f,320.0f, 44.0f)];
-//	sbarView.backgroundColor = [UIColor colorWithRed:0.05f green:0.05f blue:0.05f alpha:0.96f];
-	
-	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 44.0f)];
+	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, CGRectGetWidth([self.tableView frame]), 44.0f)];
 	searchBar.delegate = self;
 	searchBar.prompt = @"";
-	searchBar.placeholder = @"Search for legislator...";
+	searchBar.placeholder = @"Search for legislator/committee...";
 	searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
 	searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
 	searchBar.barStyle = UIBarStyleBlackOpaque;
 	searchBar.showsCancelButton = YES;
 	
-//	[sbarView addSubview:searchBar];
-//	self.tableView.tableHeaderView = sbarView;
 	self.tableView.tableHeaderView = searchBar;
 	self.tableView.tableHeaderView.userInteractionEnabled = YES;
-	
-	[super viewDidLoad];
 }
 
 
@@ -192,7 +189,7 @@ enum
 		{
 			[self.navigationController popToRootViewControllerAnimated:NO];
 			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:m_initialLegislatorID];
-			LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+			LegislatorDetailViewController *legViewCtrl = [[LegislatorDetailViewController alloc] init];
 			[legViewCtrl setLegislator:legislator];
 			[self.navigationController pushViewController:legViewCtrl animated:NO];
 			[legViewCtrl release];
@@ -267,10 +264,9 @@ deselect_and_return:
 
 
 // Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
-    // Return YES for supported orientations
-    return MYGOV_SHOULD_SUPPORT_ROTATION;
+	MYGOV_SHOULD_SUPPORT_ROTATION(toInterfaceOrientation);
 }
 
 
@@ -345,7 +341,7 @@ deselect_and_return:
 			[[[myGovAppDelegate sharedAppDelegate] m_operationQueue] addOperation:theOp];
 			[theOp release];
 			*/
-			LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+			LegislatorDetailViewController *legViewCtrl = [[LegislatorDetailViewController alloc] init];
 			[legViewCtrl setLegislator:legislator];
 			[self.navigationController pushViewController:legViewCtrl animated:NO];
 			[legViewCtrl release];
@@ -370,12 +366,12 @@ deselect_and_return:
 	UIButton *button = (UIButton *)sender;
 	if ( nil == button ) return;
 	
-	LegislatorNameCell *sdr = (LegislatorNameCell *)[button superview];
-	if ( nil == sdr ) return;
+	LegislatorNameCell *sdr = (LegislatorNameCell *)[[button superview] superview];
+	if ( ![sdr respondsToSelector:@selector(m_legislator)] ) return;
 	
 	m_outOfScope = YES;
 	
-	LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+	LegislatorDetailViewController *legViewCtrl = [[LegislatorDetailViewController alloc] init];
 	[legViewCtrl setLegislator:[sdr m_legislator]];
 	[self.navigationController pushViewController:legViewCtrl animated:YES];
 	[legViewCtrl release];
@@ -528,7 +524,7 @@ show_legislator:
 			// show the requested legislator!
 			[self.navigationController popToRootViewControllerAnimated:NO];
 			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:bioguideID];
-			LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+			LegislatorDetailViewController *legViewCtrl = [[LegislatorDetailViewController alloc] init];
 			[legViewCtrl setLegislator:legislator];
 			[self.navigationController pushViewController:legViewCtrl animated:NO];
 			[legViewCtrl release];
@@ -789,7 +785,7 @@ show_legislator:
 		// only 1 legislator at a time!
 		[self.navigationController popToRootViewControllerAnimated:NO];
 		
-		LegislatorViewController *legViewCtrl = [[LegislatorViewController alloc] init];
+		LegislatorDetailViewController *legViewCtrl = [[LegislatorDetailViewController alloc] init];
 		[legViewCtrl setLegislator:legislator];
 		[self.navigationController pushViewController:legViewCtrl animated:YES];
 		[legViewCtrl release];
@@ -1217,7 +1213,6 @@ show_legislator:
 	
 	if ( [m_data isDataAvailable] )
 	{
-		//NSString *state = [[m_data states] objectAtIndex:section];
 		NSString *state = [[StateAbbreviations abbrList] objectAtIndex:section];
 		switch (m_selectedChamber) 
 		{
@@ -1245,10 +1240,14 @@ show_legislator:
 	LegislatorNameCell *cell = (LegislatorNameCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if ( cell == nil ) 
 	{
-		cell = [[[LegislatorNameCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier detailTarget:self detailSelector:@selector(showLegislatorDetail:)] autorelease];
+		//cell = [[[LegislatorNameCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier detailTarget:self detailSelector:@selector(showLegislatorDetail:)] autorelease];
+		[[NSBundle mainBundle] loadNibNamed:@"LegislatorNameCell" owner:self options:nil];
+        cell = tmpCell;
+        self.tmpCell = nil;
 	}
 	
 	cell.m_tableRange = (NSRange){indexPath.section, indexPath.row};
+	[cell setDetailTarget:self withSelector:@selector(showLegislatorDetail:)];
 	
 	if ( m_outOfScope ) return cell;
 	if ( ![m_data isDataAvailable] ) return cell;

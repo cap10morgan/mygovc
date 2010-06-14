@@ -27,16 +27,25 @@
 
 @interface LegislatorNameCell : UITableViewCell 
 {
+	IBOutlet UILabel *m_nameView;
+	IBOutlet UILabel *m_partyView;
+	IBOutlet UILabel *m_infoView;
+	IBOutlet UIButton *m_detailButton;
+	
 @private
 	NSRange m_tableRange;
 	LegislatorContainer *m_legislator;
 }
 
+@property (retain) UILabel *m_nameView;
+@property (retain) UILabel *m_partyView;
+@property (retain) UILabel *m_infoView;
+@property (retain) UIButton *m_detailButton;
+
 @property (nonatomic) NSRange m_tableRange;
 @property (readonly) LegislatorContainer *m_legislator;
 
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier detailTarget:(id)tgt detailSelector:(SEL)sel;
+- (void)setDetailTarget:(id)tgt withSelector:(SEL)sel;
 - (void)setInfoFromLegislator:(LegislatorContainer *)legislator;
-
 
 @end
