@@ -27,10 +27,23 @@
 
 @interface BillSummaryTableCell : UITableViewCell 
 {
+	IBOutlet UILabel  *m_billNumView;
+	IBOutlet UILabel  *m_sponsorView;
+	IBOutlet UILabel  *m_descripView;
+	IBOutlet UILabel  *m_statusView;
+	IBOutlet UILabel  *m_voteView;
+	IBOutlet UIButton *m_detailButton;
 @private
 	BillContainer *m_bill;
 	NSRange m_tableRange;
 }
+
+@property (nonatomic,retain) UILabel  *m_billNumView;
+@property (nonatomic,retain) UILabel  *m_sponsorView;
+@property (nonatomic,retain) UILabel  *m_descripView;
+@property (nonatomic,retain) UILabel  *m_statusView;
+@property (nonatomic,retain) UILabel  *m_voteView;
+@property (nonatomic,retain) UIButton *m_detailButton;
 
 @property (readonly) BillContainer *m_bill;
 @property (nonatomic) NSRange m_tableRange;

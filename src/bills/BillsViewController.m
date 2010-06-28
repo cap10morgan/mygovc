@@ -59,6 +59,8 @@ enum
 
 @implementation BillsViewController
 
+@synthesize m_tmpCell;
+
 enum
 {
 	eTAG_ACTIVITY = 999,
@@ -258,7 +260,7 @@ enum
 	UIButton *button = (UIButton *)sender;
 	if ( nil == button ) return;
 	
-	BillSummaryTableCell *tcell = (BillSummaryTableCell *)[button superview];
+	BillSummaryTableCell *tcell = (BillSummaryTableCell *)[[button superview] superview];
 	if ( nil == tcell ) return;
 	
 	BillInfoViewController *biView = [[BillInfoViewController alloc] init];
@@ -1137,12 +1139,15 @@ deselect_and_return:
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
 {    
-	static NSString *CellIdentifier = @"BillCell";
+	static NSString *CellIdentifier = @"BillSummaryTableCell";
     
 	BillSummaryTableCell *cell = (BillSummaryTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if ( nil == cell )
 	{
-		cell = [[[BillSummaryTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		//cell = [[[BillSummaryTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		[[NSBundle mainBundle] loadNibNamed:@"BillSummaryTableCell" owner:self options:nil];
+		cell = m_tmpCell;
+		self.m_tmpCell = nil;
 		[cell setDetailTarget:self andSelector:@selector(showBillDetail:)];
 	}
 	

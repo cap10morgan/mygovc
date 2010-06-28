@@ -1,5 +1,5 @@
 /*
- File: CustomTableCell.h
+ File: LocateAlertView.h
  Project: myGovernment
  Org: iPhoneFLOSS
  
@@ -20,23 +20,25 @@
  
  $Id: $
  */
-
 #import <UIKit/UIKit.h>
-@class TableRowData;
 
-@interface CustomTableCell : UITableViewCell 
+@interface LocateAlertView : UIAlertView 
 {
-@private
-	UILabel *m_title;
-	UILabel *m_line1;
-	UILabel *m_line2;
-	TableRowData *m_rd;
+	IBOutlet UITextField *m_zip;
+	IBOutlet UIButton    *m_useZipButton;
+	IBOutlet UIButton    *m_useLocationButton;
+	IBOutlet UIButton    *m_cancelButton;
 }
 
-+ (CGFloat) cellHeightForRow:(TableRowData *)rd;
+@property (nonatomic,retain) UITextField *m_zip;
+@property (nonatomic,retain) UIButton    *m_useZipButton;
+@property (nonatomic,retain) UIButton    *m_useLocationButton;
+@property (nonatomic,retain) UIButton    *m_cancelButton;
 
-- (void)setRowData:(TableRowData *)rd;
-- (void)updateCell;
+- (IBAction) useZipButtonPressed;
+- (IBAction) useLocationButtonPressed;
+- (IBAction) cancelButtonPressed;
+
+- (void)show:(UIView *)parent;
 
 @end
-

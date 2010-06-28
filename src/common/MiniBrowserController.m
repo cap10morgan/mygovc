@@ -227,7 +227,8 @@ static MiniBrowserController *s_browser = NULL;
 	
 	[super viewWillDisappear:animated];
 	
-	[[UIApplication sharedApplication] setStatusBarHidden:NO animated:YES];
+	//[[UIApplication sharedApplication] setStatusBarHidden:NO animated:YES];
+	[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
 }
 
 
@@ -235,7 +236,7 @@ static MiniBrowserController *s_browser = NULL;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
 	// Return YES for supported orientations
-	return YES;
+	MYGOV_SHOULD_SUPPORT_ROTATION(interfaceOrientation);
 }
 
 
@@ -404,31 +405,32 @@ static MiniBrowserController *s_browser = NULL;
 	
 	if ( [self.view superview] )
 	{
-		[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:topView cache:NO];
-		[self.view removeFromSuperview];
-		/*
-		if ( [myGovAppDelegate OSVersion] >= 3.0 )
+		if ( [UIDevice currentDevice].orientation == UIDeviceOrientationPortrait || 
+			[UIDevice currentDevice].orientation == UIDeviceOrientationPortraitUpsideDown )
 		{
-			[[UIApplication sharedApplication] setStatusBarHidden:NO animated:YES];
-		}
-		*/
-	}
-	else
-	{
-		[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:topView cache:NO];
-		[topView addSubview:self.view];
-		[self.view setFrame:CGRectMake(0.0f,20.0f,320.0f,460.0f)];
-		/*
-		if ( [myGovAppDelegate OSVersion] >= 3.0 )
-		{
-			[self.view setFrame:CGRectMake(0.0f,0.0f,320.0f,480.0f)];
-			[[UIApplication sharedApplication] setStatusBarHidden:YES animated:YES];
+			[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:topView cache:NO];
 		}
 		else
 		{
-			[self.view setFrame:CGRectMake(0.0f,0.0f,320.0f,460.0f)];
+			[UIView setAnimationTransition:UIViewAnimationTransitionCurlDown forView:topView cache:NO];
 		}
-		*/
+		[self.view removeFromSuperview];
+		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+	}
+	else
+	{
+		if ( [UIDevice currentDevice].orientation == UIDeviceOrientationPortrait || 
+			 [UIDevice currentDevice].orientation == UIDeviceOrientationPortraitUpsideDown )
+		{
+			[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:topView cache:NO];
+		}
+		else 
+		{
+			[UIView setAnimationTransition:UIViewAnimationTransitionCurlUp forView:topView cache:NO];
+		}
+		[topView addSubview:self.view];
+		[self.view setFrame:[self.view convertRect:topView.frame fromView:nil]];
+		[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 	}
 	
 	[UIView commitAnimations];

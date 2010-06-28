@@ -33,8 +33,8 @@ static const CGFloat CELL_VPADDING = 8.0f;
 static const CGFloat TITLE_WIDTH = 65.0f;
 static const CGFloat CELL_DISCLOSURE_WIDTH = 18.0f;
 
-static const CGFloat CELL_MAX_WIDTH_PORTRAIT = 306.0f;
-static const CGFloat CELL_MAX_WIDTH_LANDSCAPE = 466.0f;
+static CGFloat CELL_MAX_WIDTH_PORTRAIT = -1; //306.0f;
+static CGFloat CELL_MAX_WIDTH_LANDSCAPE = -1; //466.0f;
 static const CGFloat CELL_MAX_HEIGHT = 480.0f;
 static const CGFloat CELL_MIN_HEIGHT = 30.0f;
 
@@ -46,13 +46,6 @@ static const CGFloat CELL_MIN_HEIGHT = 30.0f;
 
 #define LINE2_COLOR LINE1_COLOR
 #define LINE2_FONT  LINE1_FONT
-
-enum
-{
-	eTAG_TITLE = 888,
-	eTAG_LINE1 = 887,
-	eTAG_LINE2 = 886,
-};
 
 
 + (CGFloat)line1HeightForRow:(TableRowData *)rd withOrientation:(UIDeviceOrientation)orientation
@@ -85,8 +78,7 @@ enum
 		{
 			// put title on the left side, the height is then determined
 			// by the line1 data fitting into the right-hand-side
-			//CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
-			CGFloat maxWidth = CELL_MAX_WIDTH_PORTRAIT;
+			CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
 			maxWidth -= (TITLE_WIDTH + (4.0f*CELL_HPADDING) + CELL_DISCLOSURE_WIDTH);
 			line1Sz = [rd.line1 sizeWithFont:(rd.line1Font == nil ? LINE1_FONT : rd.line1Font)
 					   constrainedToSize:CGSizeMake(maxWidth,CELL_MAX_HEIGHT) 
@@ -95,8 +87,7 @@ enum
 		else
 		{
 			// full-width of the cell for line1
-			//CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
-			CGFloat maxWidth = CELL_MAX_WIDTH_PORTRAIT;
+			CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
 			maxWidth -= ((2.0f*CELL_HPADDING) + CELL_DISCLOSURE_WIDTH);
 			line1Sz = [rd.line1 sizeWithFont:(rd.line1Font == nil ? LINE1_FONT : rd.line1Font)
 					   constrainedToSize:CGSizeMake(maxWidth,CELL_MAX_HEIGHT) 
@@ -106,8 +97,7 @@ enum
 	else if ( [titleTxt length] > 0 )
 	{
 		// use the title for the entire line!
-		//CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
-		CGFloat maxWidth = CELL_MAX_WIDTH_PORTRAIT;
+		CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
 		maxWidth -= ((2.0f*CELL_HPADDING) + CELL_DISCLOSURE_WIDTH);
 		line1Sz = [rd.title sizeWithFont:(rd.titleFont == nil ? TITLE_FONT : rd.titleFont)
 				   constrainedToSize:CGSizeMake(maxWidth,CELL_MAX_HEIGHT) 
@@ -131,8 +121,7 @@ enum
 	if ( [rd.line2 length] > 0 )
 	{
 		// use the entire cell width
-		//CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
-		CGFloat maxWidth = CELL_MAX_WIDTH_PORTRAIT;
+		CGFloat maxWidth = (UIDeviceOrientationPortrait == orientation) ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE;
 		maxWidth -= ((2.0f*CELL_HPADDING) + CELL_DISCLOSURE_WIDTH);
 		line2Sz = [rd.line2 sizeWithFont:(rd.line2Font == nil ? LINE2_FONT : rd.line2Font)
 		                    constrainedToSize:CGSizeMake(maxWidth,CELL_MAX_HEIGHT/2.0f) 
@@ -152,6 +141,29 @@ enum
 	UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
 	if ( UIDeviceOrientationUnknown == orientation ) orientation = UIDeviceOrientationPortrait;
 	
+	if ( -1 == CELL_MAX_WIDTH_PORTRAIT )
+	{
+		if ( UIDeviceOrientationPortrait == orientation || UIDeviceOrientationPortraitUpsideDown == orientation )
+		{
+			CELL_MAX_WIDTH_PORTRAIT = CGRectGetWidth([UIScreen mainScreen].bounds) - (2.0f * CELL_HPADDING);
+		}
+		else
+		{
+			CELL_MAX_WIDTH_PORTRAIT = CGRectGetHeight([UIScreen mainScreen].bounds) - (2.0f * CELL_HPADDING);
+		}
+	}
+	if ( -1 == CELL_MAX_WIDTH_LANDSCAPE )
+	{
+		if ( UIDeviceOrientationPortrait == orientation || UIDeviceOrientationPortraitUpsideDown == orientation )
+		{
+			CELL_MAX_WIDTH_LANDSCAPE = CGRectGetHeight([UIScreen mainScreen].bounds) - (2.0f * CELL_HPADDING);
+		}
+		else
+		{
+			CELL_MAX_WIDTH_LANDSCAPE = CGRectGetWidth([UIScreen mainScreen].bounds) - (2.0f * CELL_HPADDING);
+		}
+	}
+	
 	CGFloat line1Height = [CustomTableCell line1HeightForRow:rd withOrientation:orientation];
 	CGFloat line2Height = [CustomTableCell line2HeightForRow:rd withOrientation:orientation];
 	
@@ -170,46 +182,44 @@ enum
 }
 
 
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier 
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier 
 {
-	if (self = [super initWithFrame:frame reuseIdentifier:reuseIdentifier]) 
+	if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) 
 	{
 		self.selectionStyle = UITableViewCellSelectionStyleGray;
+		m_rd = nil;
 		
-		UILabel *titleView = [[UILabel alloc] initWithFrame:CGRectZero];
-		titleView.backgroundColor = [UIColor clearColor];
-		titleView.highlightedTextColor = [UIColor blackColor];
-		titleView.textColor = TITLE_COLOR;
-		titleView.font = TITLE_FONT;
-		titleView.textAlignment = UITextAlignmentLeft;
-		titleView.adjustsFontSizeToFitWidth = YES;
-		titleView.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
-		[titleView setTag:eTAG_TITLE];
-		[self addSubview:titleView];
+		m_title = [[UILabel alloc] initWithFrame:CGRectZero];
+		m_title.backgroundColor = [UIColor clearColor];
+		m_title.highlightedTextColor = [UIColor blackColor];
+		m_title.textColor = TITLE_COLOR;
+		m_title.font = TITLE_FONT;
+		m_title.textAlignment = UITextAlignmentLeft;
+		m_title.adjustsFontSizeToFitWidth = YES;
+		m_title.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
+		[self addSubview:m_title];
 		
-		UILabel *line1View = [[UILabel alloc] initWithFrame:CGRectZero];
-		line1View.backgroundColor = [UIColor clearColor];
-		line1View.highlightedTextColor = [UIColor blackColor];
-		line1View.textColor = LINE1_COLOR;
-		line1View.font = LINE1_FONT;
-		line1View.textAlignment = UITextAlignmentLeft;
-		line1View.lineBreakMode = UILineBreakModeMiddleTruncation;
-		line1View.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
-		line1View.numberOfLines = 0;
-		[line1View setTag:eTAG_LINE1];
-		[self addSubview:line1View];
+		m_line1 = [[UILabel alloc] initWithFrame:CGRectZero];
+		m_line1.backgroundColor = [UIColor clearColor];
+		m_line1.highlightedTextColor = [UIColor blackColor];
+		m_line1.textColor = LINE1_COLOR;
+		m_line1.font = LINE1_FONT;
+		m_line1.textAlignment = UITextAlignmentLeft;
+		m_line1.lineBreakMode = UILineBreakModeMiddleTruncation;
+		m_line1.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
+		m_line1.numberOfLines = 0;
+		[self addSubview:m_line1];
 		
-		UILabel *line2View = [[UILabel alloc] initWithFrame:CGRectZero];
-		line2View.backgroundColor = [UIColor clearColor];
-		line2View.highlightedTextColor = [UIColor blackColor];
-		line2View.textColor = LINE2_COLOR;
-		line2View.font = LINE2_FONT;
-		line2View.textAlignment = UITextAlignmentLeft;
-		line2View.lineBreakMode = UILineBreakModeMiddleTruncation;
-		line2View.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
-		line2View.numberOfLines = 0;
-		[line2View setTag:eTAG_LINE2];
-		[self addSubview:line2View];
+		m_line2 = [[UILabel alloc] initWithFrame:CGRectZero];
+		m_line2.backgroundColor = [UIColor clearColor];
+		m_line2.highlightedTextColor = [UIColor blackColor];
+		m_line2.textColor = LINE2_COLOR;
+		m_line2.font = LINE2_FONT;
+		m_line2.textAlignment = UITextAlignmentLeft;
+		m_line2.lineBreakMode = UILineBreakModeMiddleTruncation;
+		m_line2.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
+		m_line2.numberOfLines = 0;
+		[self addSubview:m_line2];
 	}
 	return self;
 }
@@ -217,6 +227,10 @@ enum
 
 - (void)dealloc 
 {
+	[m_title release];
+	[m_line1 release];
+	[m_line2 release];
+	[m_rd release];
 	[super dealloc];
 }
 
@@ -226,35 +240,61 @@ enum
 	[super setSelected:selected animated:animated];
 	
 	// Configure the view for the selected state
-	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
-	titleView.highlighted = selected;
-	
-	UILabel *lineView;
-	lineView = (UILabel *)[self viewWithTag:eTAG_LINE1];
-	lineView.highlighted = selected;
-	lineView = (UILabel *)[self viewWithTag:eTAG_LINE2];
-	lineView.highlighted = selected;
+	m_title.highlighted = selected;
+	m_line1.highlighted = selected;
+	m_line2.highlighted = selected;
 }
 
 
 - (void)setRowData:(TableRowData *)rd
 {
-	UILabel *titleView = (UILabel *)[self viewWithTag:eTAG_TITLE];
-	UILabel *line1View = (UILabel *)[self viewWithTag:eTAG_LINE1];
-	UILabel *line2View = (UILabel *)[self viewWithTag:eTAG_LINE2];
-	
 	if ( nil == rd )
 	{
-		[titleView setText:@""];
-		[line1View setText:@""];
-		[line2View setText:@""];
+		[m_title setText:@""];
+		[m_line1 setText:@""];
+		[m_line2 setText:@""];
 		self.accessoryType = UITableViewCellAccessoryNone;
 		return;
 	}
 	
+	m_rd = [rd retain];
+	
+	[self updateCell];
+}
+
+
+- (void)updateCell
+{
+	UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+	if ( UIDeviceOrientationUnknown == orientation ) orientation = UIDeviceOrientationPortrait;
+	
+	if ( -1 == CELL_MAX_WIDTH_PORTRAIT )
+	{
+		if ( UIDeviceOrientationPortrait == orientation || UIDeviceOrientationPortraitUpsideDown == orientation )
+		{
+			CELL_MAX_WIDTH_PORTRAIT = CGRectGetWidth([UIScreen mainScreen].bounds) - (2.0f * CELL_HPADDING);
+		}
+		else
+		{
+			CELL_MAX_WIDTH_PORTRAIT = CGRectGetHeight([UIScreen mainScreen].bounds) - (2.0f * CELL_HPADDING);
+		}
+	}
+	if ( -1 == CELL_MAX_WIDTH_LANDSCAPE )
+	{
+		if ( UIDeviceOrientationPortrait == orientation || UIDeviceOrientationPortraitUpsideDown == orientation )
+		{
+			CELL_MAX_WIDTH_LANDSCAPE = CGRectGetHeight([UIScreen mainScreen].bounds) - (2.0f * CELL_HPADDING);
+		}
+		else
+		{
+			CELL_MAX_WIDTH_LANDSCAPE = CGRectGetWidth([UIScreen mainScreen].bounds) - (2.0f * CELL_HPADDING);
+		}
+	}
+	
+	
 	// accessory type
 	SEL none = @selector(rowActionNone:);
-	if ( rd.action == none )
+	if ( m_rd.action == none )
 	{
 		self.accessoryType = UITableViewCellAccessoryNone;
 	}
@@ -265,34 +305,32 @@ enum
 	
 	// setup the title text
 	NSString *titleTxt = @"";
-	if ( [rd.title length] > 0 )
+	if ( [m_rd.title length] > 0 )
 	{
 		// strip out any leading "{XX}_"
-		NSArray *fldArray = [rd.title componentsSeparatedByString:@"_"];
+		NSArray *fldArray = [m_rd.title componentsSeparatedByString:@"_"];
 		if ( [fldArray count] > 1 )
 		{
 			titleTxt = [fldArray objectAtIndex:([fldArray count]-1)];
 		}
 		else
 		{
-			titleTxt = rd.title;
+			titleTxt = m_rd.title;
 		}
 	}
 	
-	UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
-	if ( UIDeviceOrientationUnknown == orientation ) orientation = UIDeviceOrientationPortrait;
-	
-	CGFloat line1Height = [CustomTableCell line1HeightForRow:rd withOrientation:orientation];
-	CGFloat line2Height = [CustomTableCell line2HeightForRow:rd withOrientation:orientation];
+	CGFloat line1Height = [CustomTableCell line1HeightForRow:m_rd withOrientation:orientation];
+	CGFloat line2Height = [CustomTableCell line2HeightForRow:m_rd withOrientation:orientation];
 	
 	CGFloat cellMinX = CELL_XSTART;
+	CGFloat cellWidth = CGRectGetWidth(self.contentView.frame) - (2.0f*CELL_HPADDING);
 	//CGFloat cellWidth = (UIDeviceOrientationPortrait == orientation ? CELL_MAX_WIDTH_PORTRAIT : CELL_MAX_WIDTH_LANDSCAPE);
-	CGFloat cellWidth = CELL_MAX_WIDTH_PORTRAIT;
-	cellWidth -= (CELL_DISCLOSURE_WIDTH + (3.0f*CELL_HPADDING));
+	//CGFloat cellWidth = CELL_MAX_WIDTH_PORTRAIT;
+	//cellWidth -= (CELL_DISCLOSURE_WIDTH + (3.0f*CELL_HPADDING));
 	
 	CGRect titleFrame = CGRectMake(cellMinX,
 								   CELL_VPADDING,
-								   ([rd.line1 length] > 0 ? TITLE_WIDTH : cellWidth),
+								   ([m_rd.line1 length] > 0 ? TITLE_WIDTH : cellWidth),
 								   line1Height);
 	
 	// Line1 : if we're not passed a title, use the whole cell!
@@ -311,7 +349,7 @@ enum
 	}
 	
 	CGRect line2Frame;
-	if ( [rd.line2 length] > 0 )
+	if ( [m_rd.line2 length] > 0 )
 	{
 		line2Frame = CGRectMake(cellMinX,
 								CELL_VPADDING + line1Height + CELL_VPADDING,
@@ -322,28 +360,28 @@ enum
 	{
 		line2Frame = CGRectZero;
 	}
-	
+
 	// set UILabel fonts
-	titleView.font = (nil == rd.titleFont ? TITLE_FONT : rd.titleFont);
-	titleView.textColor = (nil == rd.titleColor ? TITLE_COLOR : rd.titleColor);
-	titleView.textAlignment = rd.titleAlignment;
+	m_title.font = (nil == m_rd.titleFont ? TITLE_FONT : m_rd.titleFont);
+	m_title.textColor = (nil == m_rd.titleColor ? TITLE_COLOR : m_rd.titleColor);
+	m_title.textAlignment = m_rd.titleAlignment;
 	
-	line1View.font = (nil == rd.line1Font ? LINE1_FONT : rd.line1Font);
-	line1View.textColor = (nil == rd.line1Color ? LINE1_COLOR : rd.line1Color);
-	line1View.textAlignment = rd.line1Alignment;
+	m_line1.font = (nil == m_rd.line1Font ? LINE1_FONT : m_rd.line1Font);
+	m_line1.textColor = (nil == m_rd.line1Color ? LINE1_COLOR : m_rd.line1Color);
+	m_line1.textAlignment = m_rd.line1Alignment;
 	
-	line2View.font = (nil == rd.line2Font ? LINE2_FONT : rd.line2Font);
-	line2View.textColor = (nil == rd.line2Color ? LINE2_COLOR : rd.line2Color);
-	line2View.textAlignment = rd.line2Alignment;
+	m_line2.font = (nil == m_rd.line2Font ? LINE2_FONT : m_rd.line2Font);
+	m_line2.textColor = (nil == m_rd.line2Color ? LINE2_COLOR : m_rd.line2Color);
+	m_line2.textAlignment = m_rd.line2Alignment;
+
+	[m_title setFrame:titleFrame];
+	[m_title setText:titleTxt];
 	
-	[titleView setFrame:titleFrame];
-	[titleView setText:titleTxt];
+	[m_line1 setFrame:line1Frame];
+	[m_line1 setText:m_rd.line1];
 	
-	[line1View setFrame:line1Frame];
-	[line1View setText:rd.line1];
-	
-	[line2View setFrame:line2Frame];
-	[line2View setText:rd.line2];
+	[m_line2 setFrame:line2Frame];
+	[m_line2 setText:m_rd.line2];
 }
 
 

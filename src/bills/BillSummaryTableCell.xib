@@ -49,17 +49,17 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBUILabel" id="650079503">
 								<reference key="NSNextResponder" ref="806442696"/>
-								<int key="NSvFlags">290</int>
-								<string key="NSFrame">{{69, 27}, {220, 18}}</string>
+								<int key="NSvFlags">291</int>
+								<string key="NSFrame">{{123, 7}, {191, 21}}</string>
 								<reference key="NSSuperview" ref="806442696"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">District / State Info</string>
-								<object class="NSFont" key="IBUIFont">
+								<string key="IBUIText">Legislative Sponsor</string>
+								<object class="NSFont" key="IBUIFont" id="641095668">
 									<string key="NSName">Helvetica</string>
-									<double key="NSSize">14</double>
+									<double key="NSSize">16</double>
 									<int key="NSfFlags">16</int>
 								</object>
 								<object class="NSColor" key="IBUITextColor" id="351740215">
@@ -71,19 +71,37 @@
 									<bytes key="NSWhite">MQA</bytes>
 								</object>
 								<int key="IBUIBaselineAdjustment">1</int>
-								<float key="IBUIMinimumFontSize">14</float>
+								<float key="IBUIMinimumFontSize">12</float>
 							</object>
-							<object class="IBUILabel" id="957872297">
+							<object class="IBUILabel" id="305218289">
 								<reference key="NSNextResponder" ref="806442696"/>
-								<int key="NSvFlags">288</int>
-								<string key="NSFrame">{{31, 29}, {30, 15}}</string>
+								<int key="NSvFlags">306</int>
+								<string key="NSFrame">{{10, 31}, {274, 101}}</string>
 								<reference key="NSSuperview" ref="806442696"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">(P)</string>
-								<object class="NSFont" key="IBUIFont">
+								<string key="IBUIText">Bill Summary Text</string>
+								<reference key="IBUIFont" ref="641095668"/>
+								<reference key="IBUITextColor" ref="351740215"/>
+								<reference key="IBUIHighlightedColor" ref="538412073"/>
+								<int key="IBUIBaselineAdjustment">1</int>
+								<float key="IBUIMinimumFontSize">14</float>
+								<int key="IBUINumberOfLines">0</int>
+								<int key="IBUILineBreakMode">0</int>
+							</object>
+							<object class="IBUILabel" id="957872297">
+								<reference key="NSNextResponder" ref="806442696"/>
+								<int key="NSvFlags">268</int>
+								<string key="NSFrame">{{25, 140}, {53, 18}}</string>
+								<reference key="NSSuperview" ref="806442696"/>
+								<bool key="IBUIOpaque">NO</bool>
+								<bool key="IBUIClipsSubviews">YES</bool>
+								<bool key="IBUIUserInteractionEnabled">NO</bool>
+								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+								<string key="IBUIText">Status:</string>
+								<object class="NSFont" key="IBUIFont" id="106560096">
 									<string key="NSName">Helvetica-Bold</string>
 									<double key="NSSize">14</double>
 									<int key="NSfFlags">16</int>
@@ -96,16 +114,58 @@
 								<int key="IBUIBaselineAdjustment">1</int>
 								<float key="IBUIMinimumFontSize">14</float>
 							</object>
-							<object class="IBUILabel" id="1058917816">
+							<object class="IBUILabel" id="823333354">
 								<reference key="NSNextResponder" ref="806442696"/>
-								<int key="NSvFlags">290</int>
-								<string key="NSFrame">{{10, 7}, {274, 21}}</string>
+								<int key="NSvFlags">270</int>
+								<string key="NSFrame">{{80, 140}, {113, 18}}</string>
 								<reference key="NSSuperview" ref="806442696"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">Legislator Name</string>
+								<string key="IBUIText">Introduced</string>
+								<object class="NSFont" key="IBUIFont">
+									<string key="NSName">Helvetica-Oblique</string>
+									<double key="NSSize">14</double>
+									<int key="NSfFlags">16</int>
+								</object>
+								<object class="NSColor" key="IBUITextColor">
+									<int key="NSColorSpace">2</int>
+									<bytes key="NSRGB">MC4yMjc0NTEgMC4yMjc0NTEgMC4yMjc0NTEAA</bytes>
+								</object>
+								<reference key="IBUIHighlightedColor" ref="538412073"/>
+								<int key="IBUIBaselineAdjustment">1</int>
+								<float key="IBUIMinimumFontSize">12</float>
+							</object>
+							<object class="IBUILabel" id="470455315">
+								<reference key="NSNextResponder" ref="806442696"/>
+								<int key="NSvFlags">270</int>
+								<string key="NSFrame">{{193, 140}, {121, 18}}</string>
+								<reference key="NSSuperview" ref="806442696"/>
+								<bool key="IBUIOpaque">NO</bool>
+								<bool key="IBUIClipsSubviews">YES</bool>
+								<bool key="IBUIUserInteractionEnabled">NO</bool>
+								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+								<string key="IBUIText">Passed</string>
+								<reference key="IBUIFont" ref="106560096"/>
+								<object class="NSColor" key="IBUITextColor">
+									<int key="NSColorSpace">2</int>
+									<bytes key="NSRGB">MC4yMjc0NTEgMC4yMjc0NTEgMC4yMjc0NTEAA</bytes>
+								</object>
+								<reference key="IBUIHighlightedColor" ref="538412073"/>
+								<int key="IBUIBaselineAdjustment">1</int>
+								<float key="IBUIMinimumFontSize">12</float>
+							</object>
+							<object class="IBUILabel" id="1058917816">
+								<reference key="NSNextResponder" ref="806442696"/>
+								<int key="NSvFlags">294</int>
+								<string key="NSFrame">{{10, 7}, {111, 21}}</string>
+								<reference key="NSSuperview" ref="806442696"/>
+								<bool key="IBUIOpaque">NO</bool>
+								<bool key="IBUIClipsSubviews">YES</bool>
+								<bool key="IBUIUserInteractionEnabled">NO</bool>
+								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+								<string key="IBUIText">H.R. 1234</string>
 								<object class="NSFont" key="IBUIFont">
 									<string key="NSName">Helvetica-Bold</string>
 									<double key="NSSize">18</double>
@@ -121,12 +181,12 @@
 									<bytes key="NSWhite">MCAwAA</bytes>
 								</object>
 								<int key="IBUIBaselineAdjustment">1</int>
-								<float key="IBUIMinimumFontSize">18</float>
+								<float key="IBUIMinimumFontSize">14</float>
 							</object>
 							<object class="IBUIButton" id="22751934">
 								<reference key="NSNextResponder" ref="806442696"/>
-								<int key="NSvFlags">289</int>
-								<string key="NSFrame">{{289, 9}, {29, 31}}</string>
+								<int key="NSvFlags">297</int>
+								<string key="NSFrame">{{289, 68}, {29, 31}}</string>
 								<reference key="NSSuperview" ref="806442696"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -147,7 +207,7 @@
 								<reference key="IBUINormalTitleShadowColor" ref="351740215"/>
 							</object>
 						</object>
-						<string key="NSFrameSize">{320, 50}</string>
+						<string key="NSFrameSize">{320, 166}</string>
 						<reference key="NSSuperview" ref="76075731"/>
 						<reference key="IBUIBackgroundColor" ref="32167987"/>
 						<bool key="IBUIOpaque">NO</bool>
@@ -157,7 +217,7 @@
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 					</object>
 				</object>
-				<string key="NSFrameSize">{320, 50}</string>
+				<string key="NSFrameSize">{320, 166}</string>
 				<reference key="NSSuperview"/>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">1</int>
@@ -168,7 +228,7 @@
 				<int key="IBUISeparatorStyle">1</int>
 				<int key="IBUISelectionStyle">2</int>
 				<reference key="IBUIContentView" ref="806442696"/>
-				<string key="IBUIReuseIdentifier">LegislatorNameCell</string>
+				<string key="IBUIReuseIdentifier">BillSummaryTableCell</string>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -176,27 +236,19 @@
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">m_nameView</string>
+						<string key="label">m_billNumView</string>
 						<reference key="source" ref="76075731"/>
 						<reference key="destination" ref="1058917816"/>
 					</object>
-					<int key="connectionID">25</int>
+					<int key="connectionID">35</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">m_partyView</string>
+						<string key="label">m_descripView</string>
 						<reference key="source" ref="76075731"/>
-						<reference key="destination" ref="957872297"/>
+						<reference key="destination" ref="305218289"/>
 					</object>
-					<int key="connectionID">29</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">m_infoView</string>
-						<reference key="source" ref="76075731"/>
-						<reference key="destination" ref="650079503"/>
-					</object>
-					<int key="connectionID">30</int>
+					<int key="connectionID">36</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
@@ -204,7 +256,31 @@
 						<reference key="source" ref="76075731"/>
 						<reference key="destination" ref="22751934"/>
 					</object>
-					<int key="connectionID">31</int>
+					<int key="connectionID">37</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">m_sponsorView</string>
+						<reference key="source" ref="76075731"/>
+						<reference key="destination" ref="650079503"/>
+					</object>
+					<int key="connectionID">38</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">m_statusView</string>
+						<reference key="source" ref="76075731"/>
+						<reference key="destination" ref="823333354"/>
+					</object>
+					<int key="connectionID">39</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">m_voteView</string>
+						<reference key="source" ref="76075731"/>
+						<reference key="destination" ref="470455315"/>
+					</object>
+					<int key="connectionID">40</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
@@ -212,7 +288,7 @@
 						<reference key="source" ref="841351856"/>
 						<reference key="destination" ref="76075731"/>
 					</object>
-					<int key="connectionID">32</int>
+					<int key="connectionID">41</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -241,9 +317,12 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="1058917816"/>
+							<reference ref="305218289"/>
+							<reference ref="650079503"/>
 							<reference ref="957872297"/>
 							<reference ref="22751934"/>
-							<reference ref="650079503"/>
+							<reference ref="470455315"/>
+							<reference ref="823333354"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -258,13 +337,28 @@
 						<reference key="parent" ref="76075731"/>
 					</object>
 					<object class="IBObjectRecord">
+						<int key="objectID">28</int>
+						<reference key="object" ref="22751934"/>
+						<reference key="parent" ref="76075731"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">32</int>
+						<reference key="object" ref="305218289"/>
+						<reference key="parent" ref="76075731"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">33</int>
+						<reference key="object" ref="823333354"/>
+						<reference key="parent" ref="76075731"/>
+					</object>
+					<object class="IBObjectRecord">
 						<int key="objectID">27</int>
 						<reference key="object" ref="957872297"/>
 						<reference key="parent" ref="76075731"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">28</int>
-						<reference key="object" ref="22751934"/>
+						<int key="objectID">34</int>
+						<reference key="object" ref="470455315"/>
 						<reference key="parent" ref="76075731"/>
 					</object>
 				</object>
@@ -280,15 +374,21 @@
 					<string>2.IBPluginDependency</string>
 					<string>27.IBPluginDependency</string>
 					<string>28.IBPluginDependency</string>
+					<string>32.IBPluginDependency</string>
+					<string>33.IBPluginDependency</string>
+					<string>34.IBPluginDependency</string>
 					<string>5.IBPluginDependency</string>
 					<string>6.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>CongressViewController</string>
+					<string>BillsViewController</string>
 					<string>UIResponder</string>
-					<string>LegislatorNameCell</string>
-					<string>{{299, 716}, {320, 50}}</string>
+					<string>BillSummaryTableCell</string>
+					<string>{{299, 600}, {320, 166}}</string>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -312,76 +412,29 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">32</int>
+			<int key="maxID">41</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">CongressViewController</string>
-					<string key="superclassName">UITableViewController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">showLegislatorDetail:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">showLegislatorDetail:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">showLegislatorDetail:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>m_locateAlertView</string>
-							<string>m_tmpCell</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>LocateAlertView</string>
-							<string>LegislatorNameCell</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>m_locateAlertView</string>
-							<string>m_tmpCell</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">m_locateAlertView</string>
-								<string key="candidateClassName">LocateAlertView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">m_tmpCell</string>
-								<string key="candidateClassName">LegislatorNameCell</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">src/congress/CongressViewController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">LegislatorNameCell</string>
+					<string key="className">BillSummaryTableCell</string>
 					<string key="superclassName">UITableViewCell</string>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>m_billNumView</string>
+							<string>m_descripView</string>
 							<string>m_detailButton</string>
-							<string>m_infoView</string>
-							<string>m_nameView</string>
-							<string>m_partyView</string>
+							<string>m_sponsorView</string>
+							<string>m_statusView</string>
+							<string>m_voteView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>UILabel</string>
+							<string>UILabel</string>
 							<string>UIButton</string>
 							<string>UILabel</string>
 							<string>UILabel</string>
@@ -392,127 +445,74 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>m_billNumView</string>
+							<string>m_descripView</string>
 							<string>m_detailButton</string>
-							<string>m_infoView</string>
-							<string>m_nameView</string>
-							<string>m_partyView</string>
+							<string>m_sponsorView</string>
+							<string>m_statusView</string>
+							<string>m_voteView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">m_billNumView</string>
+								<string key="candidateClassName">UILabel</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">m_descripView</string>
+								<string key="candidateClassName">UILabel</string>
+							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">m_detailButton</string>
 								<string key="candidateClassName">UIButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">m_infoView</string>
+								<string key="name">m_sponsorView</string>
 								<string key="candidateClassName">UILabel</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">m_nameView</string>
+								<string key="name">m_statusView</string>
 								<string key="candidateClassName">UILabel</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">m_partyView</string>
+								<string key="name">m_voteView</string>
 								<string key="candidateClassName">UILabel</string>
 							</object>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">src/congress/LegislatorNameCell.h</string>
+						<string key="minorKey">src/bills/BillSummaryTableCell.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">LocateAlertView</string>
-					<string key="superclassName">UIAlertView</string>
+					<string key="className">BillsViewController</string>
+					<string key="superclassName">UITableViewController</string>
 					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>cancelButtonPressed</string>
-							<string>useLocationButtonPressed</string>
-							<string>useZipButtonPressed</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
+						<string key="NS.key.0">showBillDetail:</string>
+						<string key="NS.object.0">id</string>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>cancelButtonPressed</string>
-							<string>useLocationButtonPressed</string>
-							<string>useZipButtonPressed</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">cancelButtonPressed</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">useLocationButtonPressed</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">useZipButtonPressed</string>
-								<string key="candidateClassName">id</string>
-							</object>
+						<string key="NS.key.0">showBillDetail:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">showBillDetail:</string>
+							<string key="candidateClassName">id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>m_cancelButton</string>
-							<string>m_useLocationButton</string>
-							<string>m_useZipButton</string>
-							<string>m_zip</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>UIButton</string>
-							<string>UIButton</string>
-							<string>UIButton</string>
-							<string>UITextField</string>
-						</object>
+						<string key="NS.key.0">m_tmpCell</string>
+						<string key="NS.object.0">BillSummaryTableCell</string>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>m_cancelButton</string>
-							<string>m_useLocationButton</string>
-							<string>m_useZipButton</string>
-							<string>m_zip</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">m_cancelButton</string>
-								<string key="candidateClassName">UIButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">m_useLocationButton</string>
-								<string key="candidateClassName">UIButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">m_useZipButton</string>
-								<string key="candidateClassName">UIButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">m_zip</string>
-								<string key="candidateClassName">UITextField</string>
-							</object>
+						<string key="NS.key.0">m_tmpCell</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">m_tmpCell</string>
+							<string key="candidateClassName">BillSummaryTableCell</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">src/congress/LocateAlertView.h</string>
+						<string key="minorKey">src/bills/BillsViewController.h</string>
 					</object>
 				</object>
 			</object>

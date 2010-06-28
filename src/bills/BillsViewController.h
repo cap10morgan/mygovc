@@ -26,10 +26,12 @@
 
 @class BillsDataManager;
 @class ProgressOverlayViewController;
-
+@class BillSummaryTableCell;
 
 @interface BillsViewController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, UIAlertViewDelegate>
 {
+	IBOutlet BillSummaryTableCell *m_tmpCell;
+	
 @private
 	BillsDataManager *m_data;
 	BillsDataManager *m_shadowData;
@@ -48,6 +50,8 @@
 	NSTimer *m_dataCallbackTimer;
 	BOOL m_outOfScope;
 }
+
+@property (nonatomic,assign) BillSummaryTableCell *m_tmpCell;
 
 - (NSString *)areaName;
 - (void)handleURLParms:(NSString *)parms;

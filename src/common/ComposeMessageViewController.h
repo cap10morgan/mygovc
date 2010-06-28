@@ -83,8 +83,9 @@ typedef enum
 
 @interface ComposeMessageViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIAlertViewDelegate>
 {
-	IBOutlet ComposeMessageView *m_msgView;
+	IBOutlet UIScrollView    *m_scrollView;
 	
+	IBOutlet UIToolbar       *m_toolBar;
 	IBOutlet UIBarButtonItem *m_titleButton;
 	IBOutlet UILabel         *m_labelTo;
 	IBOutlet UITextField     *m_fieldTo;
@@ -110,10 +111,12 @@ typedef enum
 	
 	int m_alertType;
 	
-	id   m_activeTextField;
-	BOOL m_keyboardVisible;
-	BOOL m_shouldRespondToKbdEvents;
-	id m_parentCtrl;
+	id      m_activeTextField;
+	CGFloat m_textFieldHeightMod;
+	BOOL   m_keyboardVisible;
+	CGSize m_keyboardSize;
+	BOOL   m_shouldRespondToKbdEvents;
+	id     m_parentCtrl;
 	
 	NSTimer *m_contentSubmissionTimer;
 	BOOL     m_contentSubmissionComplete;
@@ -123,7 +126,8 @@ typedef enum
 	BOOL     m_userAuthComplete;
 }
 
-@property (nonatomic,retain) IBOutlet ComposeMessageView *m_msgView;
+@property (nonatomic,retain) IBOutlet UIScrollView    *m_scrollView;
+@property (nonatomic,retain) IBOutlet UIToolbar       *m_toolBar;
 @property (nonatomic,retain) IBOutlet UIBarButtonItem *m_titleButton;
 @property (nonatomic,retain) IBOutlet UILabel         *m_labelTo;
 @property (nonatomic,retain) IBOutlet UITextField     *m_fieldTo;

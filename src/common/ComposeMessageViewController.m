@@ -101,7 +101,8 @@ static const NSInteger MAX_TWEET_LEN = 140;
 
 @implementation ComposeMessageViewController
 
-@synthesize m_msgView;
+@synthesize m_scrollView;
+@synthesize m_toolBar;
 @synthesize m_titleButton, m_labelTo, m_fieldTo, m_labelSubject, m_fieldSubject;
 @synthesize m_labelMessage, m_fieldMessage, m_buttonMessage, m_infoButton;
 @synthesize m_labelURL, m_fieldURL, m_labelURLTitle, m_fieldURLTitle;
@@ -119,6 +120,7 @@ enum
 static ComposeMessageViewController *s_composer = NULL;
 
 static CGFloat S_CELL_VOFFSET = 10.0f;
+static CGFloat S_SCROLL_CONTENT_HEIGHT = 430.0f;
 
 + (ComposeMessageViewController *)sharedComposer
 {
@@ -177,11 +179,14 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 {
 	[super viewDidLoad];
 	
+	m_textFieldHeightMod = 0;
+	
 	// set the content size of the scroll view to be the size of the window
-	[(UIScrollView *)(self.view) setContentSize:CGSizeMake(CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame))];
+	[m_scrollView setContentSize:CGSizeMake(CGRectGetWidth(self.view.frame), S_SCROLL_CONTENT_HEIGHT)];
 	
 	// set ourselves up to receive touch events from the container UIView object...
-	m_msgView.m_parentController = self;
+	//m_msgView.m_parentController = self;
+	[(ComposeMessageView *)(self.view) setM_parentController:self];
 	
 	m_hud = [[ProgressOverlayViewController alloc] initWithWindow:self.view];
 }
@@ -232,6 +237,19 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
     [super touchesBegan:touches withEvent:event];
 }
 
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+	// set the content size of the scroll view...
+	if ( m_keyboardVisible )
+	{
+		[m_scrollView setContentSize:CGSizeMake(CGRectGetWidth(self.view.frame), m_scrollView.contentSize.height)];
+	}
+	else 
+	{
+		[m_scrollView setContentSize:CGSizeMake(CGRectGetWidth(self.view.frame), S_SCROLL_CONTENT_HEIGHT)];
+	}
+}
 
 
 // Override to allow orientations other than the default portrait orientation.
@@ -421,7 +439,7 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 			m_labelMessage.text = [NSString stringWithFormat:@"Tweet (%0d)",spaceAfterInsert];
 			return YES;
 		}
-			
+		
 		default:
 			return TRUE;
 	}
@@ -530,28 +548,52 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		return;
 	}
 	
+	CGRect textFieldRect = [m_activeTextField frame];
+	CGFloat maxFieldHeight = CGRectGetHeight([self.view convertRect:[UIScreen mainScreen].applicationFrame fromView:nil])
+								- CGRectGetMaxY(m_toolBar.frame);
+	
 	if ( !m_keyboardVisible )
 	{
 		NSDictionary* info = [aNotification userInfo];
 		
 		// Get the size of the keyboard.
-		NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
-		CGSize keyboardSize = [aValue CGRectValue].size;
+		NSValue* aValue = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
+		m_keyboardSize = [self.view convertRect:[aValue CGRectValue] fromView:nil].size;
 		
-		// Resize the scroll view (which is the root view of the window)
-		CGRect viewFrame = [self.view frame];
-		viewFrame.size.height -= keyboardSize.height;
-		self.view.frame = viewFrame;
+		CGSize currentSz = m_scrollView.contentSize;
+		currentSz.height += m_keyboardSize.height;
+		
+		CGFloat maxTxtInputHeight = maxFieldHeight - m_keyboardSize.height;
+		if ( CGRectGetHeight(textFieldRect) > maxTxtInputHeight )
+		{
+			m_textFieldHeightMod = CGRectGetHeight(textFieldRect) - maxTxtInputHeight;
+			[m_activeTextField setFrame:CGRectMake(CGRectGetMinX(textFieldRect),
+												   CGRectGetMinY(textFieldRect), 
+												   CGRectGetWidth(textFieldRect), 
+												   maxTxtInputHeight
+												   )];
+		}
+		
+		// increase the content size of the scrollview by the height of the keyboard
+		[m_scrollView setContentSize:currentSz];
 	}
-	
-	// Scroll the active text field into view.
-	CGRect textFieldRect = [m_activeTextField frame];
-	[(UIScrollView *)(self.view) scrollRectToVisible:textFieldRect animated:YES];
 	
 	m_keyboardVisible = YES;
 	
-	[(UIScrollView *)(self.view) flashScrollIndicators];
-	[(UIScrollView *)(self.view) setScrollEnabled:FALSE]; // disallow scrolling in the parent view
+	// Scroll the active text field into view.
+	
+	CGFloat fieldHeight = CGRectGetHeight(textFieldRect) + m_keyboardSize.height;
+	if ( fieldHeight > maxFieldHeight ) fieldHeight = maxFieldHeight - 5;
+	
+	textFieldRect = CGRectMake(CGRectGetMinX(textFieldRect), 
+							   CGRectGetMinY(textFieldRect), 
+							   CGRectGetWidth(textFieldRect),
+							   fieldHeight
+							   );
+	[m_scrollView scrollRectToVisible:textFieldRect animated:YES];
+	
+	[m_scrollView flashScrollIndicators];
+	[m_scrollView setScrollEnabled:FALSE]; // disallow scrolling in the parent view
 }
 
 
@@ -562,19 +604,21 @@ static CGFloat S_CELL_VOFFSET = 10.0f;
 		return;
 	}
 	
-	NSDictionary* info = [aNotification userInfo];
-
-	// Get the size of the keyboard.
-	NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
-	CGSize keyboardSize = [aValue CGRectValue].size;
-
-	// Reset the height of the scroll view to its original value
-	CGRect viewFrame = [self.view frame];
-	viewFrame.size.height += keyboardSize.height;
-	self.view.frame = viewFrame;
-
+	if ( m_textFieldHeightMod > 0 )
+	{
+		CGRect textFieldRect = [m_activeTextField frame];
+		[m_activeTextField setFrame:CGRectMake(CGRectGetMinX(textFieldRect),
+												CGRectGetMinY(textFieldRect), 
+												CGRectGetWidth(textFieldRect), 
+												CGRectGetHeight(textFieldRect) + m_textFieldHeightMod
+											   )];
+	}
+	m_textFieldHeightMod = 0;
+	
+	[m_scrollView setContentSize:CGSizeMake(CGRectGetWidth(self.view.frame), S_SCROLL_CONTENT_HEIGHT)];
+	
 	m_keyboardVisible = NO;
-	[(UIScrollView *)(self.view) setScrollEnabled:YES]; // re-allow scrolling in the parent view
+	[m_scrollView setScrollEnabled:YES]; // re-allow scrolling in the parent view
 }
 
 

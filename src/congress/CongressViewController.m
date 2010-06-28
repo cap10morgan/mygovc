@@ -29,6 +29,7 @@
 #import "LegislatorContainer.h"
 #import "LegislatorNameCell.h"
 #import "LegislatorDetailViewController.h"
+#import "LocateAlertView.h"
 #import "MiniBrowserController.h"
 #import "ProgressOverlayViewController.h"
 #import "StateAbbreviations.h"
@@ -65,7 +66,7 @@ enum
 
 @implementation CongressViewController
 
-@synthesize tmpCell;
+@synthesize m_tmpCell, m_locateAlertView;
 
 - (void)didReceiveMemoryWarning 
 {
@@ -657,6 +658,9 @@ show_legislator:
 {
 	// Ask the user to use the current location, or enter a ZIP!
 	m_alertViewFunction = eAlertType_FindLegislator;
+	[[NSBundle mainBundle] loadNibNamed:@"LocateAlertView" owner:self options:nil];
+	[m_locateAlertView setDelegate:self];
+/*
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Find a Legislator" 
 													message:@"" 
 												   delegate:self 
@@ -670,8 +674,8 @@ show_legislator:
 	tf.keyboardAppearance = UIKeyboardAppearanceAlert;
 	tf.autocorrectionType = UITextAutocorrectionTypeNo;
 	tf.autocapitalizationType = UITextAutocapitalizationTypeNone;
-	
-	[alert show];
+*/
+	[m_locateAlertView show:self.view];
 }
 
 
@@ -1091,7 +1095,7 @@ show_legislator:
 				case 1:
 				{
 					// use the ZIP that was just input!
-					UITextField *tf = [alertView textFieldAtIndex:0];
+					UITextField *tf = m_locateAlertView.m_zip; //[(LocateAlertView *)[alertView superview] m_zip];//[alertView textFieldAtIndex:0];
 					NSString *zipStr = tf.text;
 					if ( nil != zipStr && [zipStr length] == 5 )
 					{
@@ -1235,15 +1239,15 @@ show_legislator:
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-	static NSString *CellIdentifier = @"CongressCell";
+	static NSString *CellIdentifier = @"LegislatorNameCell";
 
 	LegislatorNameCell *cell = (LegislatorNameCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if ( cell == nil ) 
 	{
 		//cell = [[[LegislatorNameCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier detailTarget:self detailSelector:@selector(showLegislatorDetail:)] autorelease];
 		[[NSBundle mainBundle] loadNibNamed:@"LegislatorNameCell" owner:self options:nil];
-        cell = tmpCell;
-        self.tmpCell = nil;
+        cell = m_tmpCell;
+        self.m_tmpCell = nil;
 	}
 	
 	cell.m_tableRange = (NSRange){indexPath.section, indexPath.row};

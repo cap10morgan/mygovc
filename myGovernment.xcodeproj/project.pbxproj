@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		0102D2EE0F58DECD005AE0EA /* eagleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0102D2ED0F58DECD005AE0EA /* eagleIcon.png */; };
 		011592C40F6A36D2008BECCD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 011592C30F6A36D2008BECCD /* Default.png */; };
+		01178E2911D84C470068673A /* BillSummaryTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01178E2811D84C470068673A /* BillSummaryTableCell.xib */; };
+		01178E7911D85B160068673A /* LocateAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01178E7811D85B160068673A /* LocateAlertView.xib */; };
+		01178E8011D85C320068673A /* LocateAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 01178E7F11D85C320068673A /* LocateAlertView.m */; };
 		0126775E0F7F25CA00CF9C46 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */; };
 		012855160FAEA2D400E2B55E /* mygov_login_header.png in Resources */ = {isa = PBXBuildFile; fileRef = 012855150FAEA2D400E2B55E /* mygov_login_header.png */; };
 		012D5AD20FA6C098006DA53F /* system_avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 012D5AD10FA6C098006DA53F /* system_avatar.png */; };
@@ -115,6 +118,10 @@
 		0102D2CE0F58D7C7005AE0EA /* myGov_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = myGov_Prefix.pch; path = src/myGov_Prefix.pch; sourceTree = "<group>"; };
 		0102D2ED0F58DECD005AE0EA /* eagleIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = eagleIcon.png; path = res/eagleIcon.png; sourceTree = "<group>"; };
 		011592C30F6A36D2008BECCD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		01178E2811D84C470068673A /* BillSummaryTableCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BillSummaryTableCell.xib; sourceTree = "<group>"; };
+		01178E7811D85B160068673A /* LocateAlertView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocateAlertView.xib; sourceTree = "<group>"; };
+		01178E7E11D85C320068673A /* LocateAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocateAlertView.h; sourceTree = "<group>"; };
+		01178E7F11D85C320068673A /* LocateAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocateAlertView.m; sourceTree = "<group>"; };
 		0126775D0F7F25CA00CF9C46 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		012855150FAEA2D400E2B55E /* mygov_login_header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = mygov_login_header.png; path = res/mygov_login_header.png; sourceTree = "<group>"; };
 		012D5AD10FA6C098006DA53F /* system_avatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = system_avatar.png; path = res/system_avatar.png; sourceTree = "<group>"; };
@@ -342,6 +349,9 @@
 				01D7FEB50FA5023A00F78B92 /* LegislatorInfoData.m */,
 				01D7FEB80FA5023A00F78B92 /* LegislatorDetailViewController.h */,
 				01D7FEB90FA5023A00F78B92 /* LegislatorDetailViewController.m */,
+				01178E7811D85B160068673A /* LocateAlertView.xib */,
+				01178E7E11D85C320068673A /* LocateAlertView.h */,
+				01178E7F11D85C320068673A /* LocateAlertView.m */,
 			);
 			path = congress;
 			sourceTree = "<group>";
@@ -414,12 +424,13 @@
 			children = (
 				01D7FE7F0FA5013200F78B92 /* BillsViewController.h */,
 				01D7FE800FA5013200F78B92 /* BillsViewController.m */,
+				01178E2811D84C470068673A /* BillSummaryTableCell.xib */,
+				01D7FE7B0FA5013200F78B92 /* BillSummaryTableCell.h */,
+				01D7FE7C0FA5013200F78B92 /* BillSummaryTableCell.m */,
 				01D7FE790FA5013200F78B92 /* BillsDataManager.h */,
 				01D7FE7A0FA5013200F78B92 /* BillsDataManager.m */,
 				01D7FE730FA5013200F78B92 /* BillContainer.h */,
 				01D7FE740FA5013200F78B92 /* BillContainer.m */,
-				01D7FE7B0FA5013200F78B92 /* BillSummaryTableCell.h */,
-				01D7FE7C0FA5013200F78B92 /* BillSummaryTableCell.m */,
 				01D7FE7D0FA5013200F78B92 /* BillSummaryXMLParser.h */,
 				01D7FE7E0FA5013200F78B92 /* BillSummaryXMLParser.m */,
 				01D7FE770FA5013200F78B92 /* BillInfoViewController.h */,
@@ -660,6 +671,8 @@
 				01849D8011C5C08C000CB52F /* LegislatorNameCell.xib in Resources */,
 				01849D8811C5CC93000CB52F /* CongressViewController.xib in Resources */,
 				01849E7E11C5F6D6000CB52F /* CustomTableCell.xib in Resources */,
+				01178E2911D84C470068673A /* BillSummaryTableCell.xib in Resources */,
+				01178E7911D85B160068673A /* LocateAlertView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -729,6 +742,7 @@
 				01E6EC0F0FA8C224001BEAD3 /* CholorDataSource.m in Sources */,
 				01B61DB00FAA9701007E10E6 /* MyGovLoginViewController.m in Sources */,
 				01D4FF110FCB29B10000FAE7 /* Reachability.m in Sources */,
+				01178E8011D85C320068673A /* LocateAlertView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -763,7 +777,7 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "276B3239-EFEE-484C-A157-6DBEADE1C544";
-				SDKROOT = iphoneos3.0;
+				SDKROOT = iphoneos3.2;
 			};
 			name = Distribution;
 		};
@@ -782,7 +796,7 @@
 				GCC_VERSION = 4.2;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
-				SDKROOT = iphonesimulator3.2;
+				SDKROOT = iphoneos3.2;
 			};
 			name = Debug;
 		};
@@ -801,7 +815,7 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = myGovernment;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos3.0;
+				SDKROOT = iphoneos3.2;
 			};
 			name = Release;
 		};

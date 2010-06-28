@@ -366,6 +366,12 @@
 }
 
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+	[self.tableView reloadData];
+}
+
+
 #pragma mark LegislatorDetailViewController Private
 
 
@@ -468,7 +474,7 @@
 	CustomTableCell *cell = (CustomTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if ( nil == cell )
 	{
-		cell = [[[CustomTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		cell = [[[CustomTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
 	}
 	
 	TableRowData *rd = [m_data dataAtIndexPath:indexPath];

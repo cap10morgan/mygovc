@@ -20,7 +20,7 @@
  
  $Id: $
  */
-
+#import "myGovCompileOptions.h"
 #import "ComposeMessageViewController.h"
 #import "ContractorSpendingData.h"
 #import "CustomTableCell.h"
@@ -188,7 +188,12 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
 	// Return YES for supported orientations
-	return YES;
+	MYGOV_SHOULD_SUPPORT_ROTATION(interfaceOrientation);
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+	[self.tableView reloadData];
 }
 
 
@@ -292,7 +297,7 @@
 	CustomTableCell *cell = (CustomTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if ( nil == cell )
 	{
-		cell = [[[CustomTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		cell = [[[CustomTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
 	}
 	
 	TableRowData *rd = [m_data dataAtIndexPath:indexPath];

@@ -556,15 +556,24 @@ static NSString *kGAE_AuthCookie = @"ACSID";
 			return FALSE;
 		}
 		
-		NSURL* cookieUrl = [NSURL URLWithString:[NSString stringWithFormat:@"https://mygov-mobile.appspot.com/_ah/login?continue=http://mygov-mobile.appspot.com/&auth=%@", [token objectForKey:@"Auth"]]];
+		NSURL* cookieUrl = [NSURL URLWithString:[NSString stringWithFormat:@"http://mygov-mobile.appspot.com/_ah/login?auth=%@", [token objectForKey:@"Auth"]]];
 		//NSLog( [cookieUrl description] );
 		NSHTTPURLResponse* cookieResponse;
-		NSError* cookieError;
+		NSError* cookieError = nil;
 		NSMutableURLRequest *cookieRequest = [[[NSMutableURLRequest alloc] initWithURL:cookieUrl] autorelease];
 		
+		[cookieRequest setValue:[NSString stringWithFormat:@"GoogleLogin auth=%@", [token objectForKey:@"Auth"]] forHTTPHeaderField:@"Authorization"];
 		[cookieRequest setHTTPMethod:@"GET"];
 		
 		cookieData = [NSURLConnection sendSynchronousRequest:cookieRequest returningResponse:&cookieResponse error:&cookieError];
+		NSString *response = [[[NSString alloc] initWithData:cookieData encoding:NSMacOSRomanStringEncoding] autorelease];
+		
+		if ( nil != cookieError )
+		{
+			[myGovAppDelegate networkNoLongerInUse];
+			NSLog(@"Error receiving cookie from GAE: response=%@",response);
+			return FALSE;
+		}
 	}
 	
 	[myGovAppDelegate networkNoLongerInUse];
