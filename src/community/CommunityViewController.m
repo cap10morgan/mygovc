@@ -36,9 +36,6 @@
 @interface CommunityViewController (private)
 	- (void)dataManagerCallback:(NSString *)msg;
 	- (void)communityItemTypeSwitch:(id)sender;
-	- (void)chooseCommunityAction;
-	- (void)reloadCommunityItems;
-	- (void)composeNewCommunityItem;
 	- (void)deselectRow:(id)sender;
 	- (void)setEditDoneButtonInNavBar;
 	- (void)setReloadButtonInNavBar;
@@ -74,6 +71,8 @@ enum
 
 - (void)viewDidLoad 
 {
+	[super viewDidLoad];
+	
 	m_data = [[myGovAppDelegate sharedCommunityData] retain];
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
 	
@@ -88,6 +87,7 @@ enum
 	m_timer = nil;
 	
 	self.tableView.separatorColor = [UIColor blackColor];
+	m_selectedItemType = eCommunity_Chatter;
 	
 /* Leave this off for now - maybe in the next release...
  
@@ -107,60 +107,6 @@ enum
 	
 	// Create a new segment control and place it in 
 	// the NavigationController's title area
-	
-	//NSArray *buttonNames = [NSArray arrayWithObjects:@"Chatter", @"Events", nil];
-	NSArray *buttonNames = [NSArray arrayWithObjects:@"Chatter", nil];
-	m_segmentCtrl = [[UISegmentedControl alloc] initWithItems:buttonNames];
-	
-	// default styles
-	m_segmentCtrl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	m_segmentCtrl.segmentedControlStyle = UISegmentedControlStyleBar;
-	m_segmentCtrl.selectedSegmentIndex = 0; // Default to the "Chatter"
-	m_selectedItemType = eCommunity_Chatter;
-	m_segmentCtrl.frame = CGRectMake(0,0,200,30);
-	// saturation of 0.0 means black/white
-	m_segmentCtrl.tintColor = [UIColor darkGrayColor];
-	
-	// add ourself as the target
-	[m_segmentCtrl addTarget:self action:@selector(communityItemTypeSwitch:) forControlEvents:UIControlEventValueChanged];
-	
-	// add the buttons to the navigation bar
-	//self.navigationItem.titleView = m_segmentCtrl;
-	//[m_segmentCtrl release];
-	
-	UILabel *lblView = [[UILabel alloc] initWithFrame:CGRectMake(0.0f,0.0f,200.0f,44.0f)];
-	lblView.font = [UIFont boldSystemFontOfSize:16.0f];
-	lblView.textColor = [UIColor whiteColor];
-	lblView.backgroundColor = [UIColor clearColor];
-	lblView.text = @"Chatter";
-	lblView.textAlignment = UITextAlignmentCenter;
-	self.navigationItem.titleView = lblView;
-	[lblView release];
-	
-	[m_segmentCtrl autorelease];
-	
-	
-	// 
-	// Add a "new" button which will add either a 
-	// new piece of chatter, or a new event depending on the 
-	// currently selected view!
-	// 
-	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] 
-											  initWithBarButtonSystemItem:UIBarButtonSystemItemCompose 
-											  target:self 
-											  action:@selector(chooseCommunityAction)];
-	
-	// 
-	// Add a "refresh" button which will wipe out the on-device cache and 
-	// re-download congressional bill data 
-	// 
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
-											  initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
-											  target:self 
-											  action:@selector(reloadCommunityItems)];
-	
-	
-	[super viewDidLoad];
 }
 
 
@@ -381,9 +327,8 @@ enum
 }
 
 
-- (void)chooseCommunityAction
+- (IBAction)chooseCommunityAction
 {
-	[self composeNewCommunityItem];
 /* Save this for another release when I can think through it a little better...
 	m_alertViewFunction = eAlertType_ChooseCommunityAction;
 	UIAlertView *alert = [[UIAlertView alloc] 
@@ -397,7 +342,7 @@ enum
 }
 
 
-- (void)reloadCommunityItems
+- (IBAction)reloadCommunityItems
 {
 	// ask the user if they want to kill
 	// their local data store!
@@ -414,7 +359,7 @@ enum
 }
 
 
-- (void)composeNewCommunityItem
+- (IBAction)composeNewCommunityItem
 {
 	switch ( m_selectedItemType )
 	{

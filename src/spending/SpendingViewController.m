@@ -37,7 +37,7 @@
 #import "StateAbbreviations.h"
 
 // comment this out when the new Spending control is ready :-)
-#define USE_OLD_SPENDING_CHOICES
+//#define USE_OLD_SPENDING_CHOICES
 
 @interface SpendingViewController (private)
 	- (void)viewPrivateInit;
@@ -48,7 +48,6 @@
 	- (void)deselectRow:(id)sender;
 	- (void)showPlaceDetail:(id)sender;
 	- (void)showContractorDetail:(id)sender;
-	- (void)reloadSpendingData;
 	- (void)queryMethodSwitch:(id)sender;
 @end
 
@@ -81,6 +80,8 @@ typedef enum
 
 - (void)viewDidLoad
 {
+	[super viewDidLoad];
+	
 	m_data = [[myGovAppDelegate sharedSpendingData] retain];
 	
 	self.title = @"Spending";
@@ -131,11 +132,12 @@ typedef enum
 	// Add a "refresh" button which will wipe out the on-device cache and 
 	// re-download spending data
 	// 
+/*
 	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] 
 											   initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
 											   target:self 
 											   action:@selector(reloadSpendingData)] autorelease];
-	
+*/	
 	// 
 	// Add a "location" button which will be used to find senators/representatives
 	// which represent a users current district
@@ -150,8 +152,6 @@ typedef enum
 	self.navigationItem.leftBarButtonItem = locBarButton;
 	self.navigationItem.leftBarButtonItem.width = self.navigationItem.rightBarButtonItem.width;
 	*/
-	
-	[super viewDidLoad];
 }
 
 
@@ -274,7 +274,7 @@ deselect_and_return:
 
 - (IBAction)selectSpendingFilter:(id)sender
 {
-	int a = 1;
+	//int a = 1;
 }
 
 #ifdef USE_OLD_SPENDING_CHOICES
@@ -410,7 +410,7 @@ deselect_and_return:
 }
 
 
-- (void)reloadSpendingData
+- (IBAction)reloadSpendingData
 {
 	[m_data cancelAllDownloads];
 	[m_data flushInMemoryCache];

@@ -38,8 +38,6 @@
 @interface CongressViewController (private)
 	- (void)setLocationButtonInNavBar;
 	- (void)setActivityViewInNavBar;
-	- (void)congressSwitch: (id)sender;
-	- (void)reloadCongressData;
 	- (void)deselectRow:(id)sender;
 	- (void)locateLegislator:(id)sender;
 	- (void)findLegislatorByZip:(NSString *)zip;
@@ -66,7 +64,7 @@ enum
 
 @implementation CongressViewController
 
-@synthesize m_tmpCell, m_locateAlertView;
+@synthesize m_tmpCell;
 
 - (void)didReceiveMemoryWarning 
 {
@@ -125,36 +123,7 @@ enum
 	}
 	
 	m_alertViewFunction = eAlertType_General;
-	
-	// Create a new segment control and place it in 
-	// the NavigationController's title area
-	NSArray *buttonNames = [NSArray arrayWithObjects:@"House", @"Senate", nil];
-	m_segmentCtrl = [[UISegmentedControl alloc] initWithItems:buttonNames];
-	
-	// default styles
-	m_segmentCtrl.autoresizesSubviews = YES;
-	m_segmentCtrl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	m_segmentCtrl.segmentedControlStyle = UISegmentedControlStyleBar;
-	m_segmentCtrl.selectedSegmentIndex = 0; // Default to the "House"
 	m_selectedChamber = eCongressChamberHouse;
-	m_segmentCtrl.frame = CGRectMake(0,0,200,30);
-	m_segmentCtrl.tintColor = [UIColor darkGrayColor];
-	
-	// add ourself as the target
-	[m_segmentCtrl addTarget:self action:@selector(congressSwitch:) forControlEvents:UIControlEventValueChanged];
-	
-	// add the buttons to the navigation bar
-	self.navigationItem.titleView = m_segmentCtrl;
-	[m_segmentCtrl release];
-	
-	// 
-	// Add a "refresh" button which will wipe out the on-device cache and 
-	// re-download congress data
-	// 
-	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] 
-											   initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
-											   target:self 
-											   action:@selector(reloadCongressData)] autorelease];
 	
 	// 
 	// Add a "location" button which will be used to find senators/representatives
@@ -587,7 +556,7 @@ show_legislator:
 
 
 // Switch the table data source between House and Senate
-- (void)congressSwitch: (id)sender
+- (IBAction)congressSwitch: (id)sender
 {
 	switch ( [sender selectedSegmentIndex] )
 	{
@@ -625,7 +594,7 @@ show_legislator:
 
 // wipe our device cache and re-download all congress personnel data
 // (see UIActionSheetDelegate method for actual work)
-- (void) reloadCongressData
+- (IBAction) reloadCongressData
 {
 	// don't start another re-load while one is apparently already in progress!
 	if ( [m_data isBusy] ) return;
@@ -658,24 +627,13 @@ show_legislator:
 {
 	// Ask the user to use the current location, or enter a ZIP!
 	m_alertViewFunction = eAlertType_FindLegislator;
-	[[NSBundle mainBundle] loadNibNamed:@"LocateAlertView" owner:self options:nil];
-	[m_locateAlertView setDelegate:self];
-/*
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Find a Legislator" 
-													message:@"" 
+	LocateAlertView *alert = [[LocateAlertView alloc] initWithTitle:@"Find a Legislator"
+													message:@""
 												   delegate:self 
 										  cancelButtonTitle:@"Cancel" 
 										  otherButtonTitles:@"Use ZIP",@"Use Current Location",nil];
-	[alert addTextFieldWithValue:@"" label:@"Enter ZIP (+4)"];
-	
-	UITextField *tf = [alert textFieldAtIndex:0];
-	tf.clearButtonMode = UITextFieldViewModeWhileEditing;
-	tf.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
-	tf.keyboardAppearance = UIKeyboardAppearanceAlert;
-	tf.autocorrectionType = UITextAutocorrectionTypeNo;
-	tf.autocapitalizationType = UITextAutocapitalizationTypeNone;
-*/
-	[m_locateAlertView show:self.view];
+	[alert prepare];
+	[alert show];
 }
 
 
@@ -836,7 +794,11 @@ show_legislator:
 	{
 		// try to smooth this a little - wait until the distance between
 		// two subsequent readings is less than ~0.25km
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 30200)
+		if ( [newLocation distanceFromLocation:oldLocation] < 250.0f )
+#else
 		if ( [newLocation getDistanceFrom:oldLocation] < 250.0f )
+#endif
 		{
 			[m_locationManager stopUpdatingLocation]; // save power!
 			[m_data setSearchLocation:newLocation];
@@ -1095,7 +1057,7 @@ show_legislator:
 				case 1:
 				{
 					// use the ZIP that was just input!
-					UITextField *tf = m_locateAlertView.m_zip; //[(LocateAlertView *)[alertView superview] m_zip];//[alertView textFieldAtIndex:0];
+					UITextField *tf = [(LocateAlertView *)alertView m_zip];//[alertView textFieldAtIndex:0];
 					NSString *zipStr = tf.text;
 					if ( nil != zipStr && [zipStr length] == 5 )
 					{

@@ -414,20 +414,20 @@ static int s_threads_using_network = 0;
 	if ( !url ) return NO;
 	
 	BOOL handled = NO;
-	NSString *urlStr = [url absoluteString];
-	NSArray *urlArray = [urlStr componentsSeparatedByString:@"/"];
+	NSString *urlStr = [[[NSString alloc] initWithString:[url absoluteString]] autorelease];
+	NSArray *urlArray = [[[NSArray alloc] initWithArray:[urlStr componentsSeparatedByString:@"/"]] autorelease];
 	NSString *area = nil;
 	NSString *areaParms = nil;
 	
 	if ( [urlArray count] > 2 )
 	{
-		area = [urlArray objectAtIndex:2];
+		area = [[[NSString alloc] initWithString:[urlArray objectAtIndex:2]] autorelease];
 		if ( [urlArray count] > 3 && [[urlArray objectAtIndex:3] length] > 0 )
 		{
 			// get any parameters
 			NSRange areaRange = [urlStr rangeOfString:area];
 			NSInteger parmIdx = areaRange.location + areaRange.length + 1;
-			areaParms = [urlStr substringFromIndex:parmIdx];
+			areaParms = [[[NSString alloc] initWithString:[urlStr substringFromIndex:parmIdx]] autorelease];
 		}
 	}
 	

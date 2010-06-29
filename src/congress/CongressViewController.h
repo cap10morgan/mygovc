@@ -39,13 +39,12 @@ typedef enum
 @interface CongressViewController : UITableViewController < UIActionSheetDelegate, UIAlertViewDelegate, UISearchBarDelegate, CLLocationManagerDelegate >
 {
 	IBOutlet LegislatorNameCell *m_tmpCell;
-	IBOutlet LocateAlertView    *m_locateAlertView;
+	IBOutlet UISegmentedControl *m_segmentCtrl;
 	
 @private
 	CongressDataManager *m_data;
 	CongressChamber m_selectedChamber;
 	CongressActionType m_actionType;
-	UISegmentedControl *m_segmentCtrl;
 	
 	NSIndexPath *m_initialIndexPath;
 	NSString *m_initialLegislatorID;
@@ -64,10 +63,12 @@ typedef enum
 }
 
 @property (nonatomic, assign) LegislatorNameCell *m_tmpCell;
-@property (nonatomic, assign) LocateAlertView *m_locateAlertView;
 
 - (void)dataManagerCallback:(id)message;
 - (void)showLegislatorDetail:(id)sender;
+
+- (IBAction)reloadCongressData;
+- (IBAction)congressSwitch:(id)sender;
 
 - (NSString *)areaName;
 - (NSString *)getURLStateParms;

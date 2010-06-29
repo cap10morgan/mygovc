@@ -59,5 +59,6 @@ typedef enum
 - (NSString *)areaName;
 - (void)handleURLParms:(NSString *)parms;
 
+- (IBAction)reloadSpendingData;
 
 @end

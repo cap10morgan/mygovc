@@ -557,7 +557,11 @@ static CGFloat S_SCROLL_CONTENT_HEIGHT = 430.0f;
 		NSDictionary* info = [aNotification userInfo];
 		
 		// Get the size of the keyboard.
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 30200)
 		NSValue* aValue = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
+#else
+		NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
+#endif
 		m_keyboardSize = [self.view convertRect:[aValue CGRectValue] fromView:nil].size;
 		
 		CGSize currentSz = m_scrollView.contentSize;

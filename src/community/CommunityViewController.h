@@ -49,4 +49,7 @@
 - (NSString *)getURLStateParms;
 - (void)handleURLParms:(NSString *)parms;
 
+- (IBAction)reloadCommunityItems;
+- (IBAction)composeNewCommunityItem;
+
 @end

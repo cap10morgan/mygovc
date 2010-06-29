@@ -24,21 +24,12 @@
 
 @interface LocateAlertView : UIAlertView 
 {
-	IBOutlet UITextField *m_zip;
-	IBOutlet UIButton    *m_useZipButton;
-	IBOutlet UIButton    *m_useLocationButton;
-	IBOutlet UIButton    *m_cancelButton;
+	UITextField *m_zip;
+	int          m_tfHeight;
+	int          m_tfExtraHeight;
 }
+@property (nonatomic,readonly) UITextField *m_zip;
 
-@property (nonatomic,retain) UITextField *m_zip;
-@property (nonatomic,retain) UIButton    *m_useZipButton;
-@property (nonatomic,retain) UIButton    *m_useLocationButton;
-@property (nonatomic,retain) UIButton    *m_cancelButton;
-
-- (IBAction) useZipButtonPressed;
-- (IBAction) useLocationButtonPressed;
-- (IBAction) cancelButtonPressed;
-
-- (void)show:(UIView *)parent;
+- (void) prepare;
 
 @end

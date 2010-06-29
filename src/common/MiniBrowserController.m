@@ -24,6 +24,9 @@
 #import "myGovAppDelegate.h"
 #import "MiniBrowserController.h"
 
+// I haven't gotten this to work quite right yet...
+//#define HIDE_STATUS_BAR
+
 @interface MiniBrowserController (private)
 	- (void)animate;
 	- (void)animationFinished:(NSString *)animationID finished:(BOOL)finished context:(void *)context;
@@ -227,8 +230,9 @@ static MiniBrowserController *s_browser = NULL;
 	
 	[super viewWillDisappear:animated];
 	
-	//[[UIApplication sharedApplication] setStatusBarHidden:NO animated:YES];
+#ifdef HIDE_STATUS_BAR
 	[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+#endif
 }
 
 
@@ -414,8 +418,16 @@ static MiniBrowserController *s_browser = NULL;
 		{
 			[UIView setAnimationTransition:UIViewAnimationTransitionCurlDown forView:topView cache:NO];
 		}
+		
 		[self.view removeFromSuperview];
+#ifdef HIDE_STATUS_BAR
 		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+		
+		CGRect fullFrame = self.view.frame;
+		fullFrame.origin.y += [[UIApplication sharedApplication] statusBarFrame].size.height;
+		fullFrame.size.height -= [[UIApplication sharedApplication] statusBarFrame].size.height;
+		[[self.view superview] setFrame:[[self.view superview] convertRect:fullFrame fromView:nil] ];
+#endif
 	}
 	else
 	{
@@ -428,9 +440,22 @@ static MiniBrowserController *s_browser = NULL;
 		{
 			[UIView setAnimationTransition:UIViewAnimationTransitionCurlUp forView:topView cache:NO];
 		}
-		[topView addSubview:self.view];
-		[self.view setFrame:[self.view convertRect:topView.frame fromView:nil]];
+		
+		CGRect viewRect;
+#ifdef HIDE_STATUS_BAR
+		viewRect = topView.frame;
 		[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+#else
+		viewRect = topView.frame;
+		viewRect.origin.y += [[UIApplication sharedApplication] statusBarFrame].size.height;
+		viewRect.size.height -= [[UIApplication sharedApplication] statusBarFrame].size.height;
+#endif
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 30200)
+		[self.view setFrame:[self.view convertRect:viewRect fromView:nil]];
+#else
+		[self.view setFrame:viewRect];
+#endif
+		[topView addSubview:self.view];
 	}
 	
 	[UIView commitAnimations];
