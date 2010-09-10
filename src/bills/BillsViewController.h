@@ -31,6 +31,7 @@
 @interface BillsViewController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, UIAlertViewDelegate>
 {
 	IBOutlet BillSummaryTableCell *m_tmpCell;
+	IBOutlet UISegmentedControl   *m_segmentCtrl;
 	
 @private
 	BillsDataManager *m_data;
@@ -40,7 +41,6 @@
 	NSIndexPath *m_initialIndexPath;
 	NSString *m_initialBillID;
 	
-	UISegmentedControl *m_segmentCtrl;
 	CongressChamber m_selectedChamber;
 	
 	NSString *m_HUDTxt;
@@ -52,9 +52,13 @@
 }
 
 @property (nonatomic,assign) BillSummaryTableCell *m_tmpCell;
+@property (nonatomic, assign) UISegmentedControl  *m_segmentCtrl;
 
 - (NSString *)areaName;
 - (void)handleURLParms:(NSString *)parms;
+
+- (IBAction)congressSwitch: (id)sender;
+- (IBAction)reloadBillData;
 
 - (void)showBillDetail:(id)sender;
 

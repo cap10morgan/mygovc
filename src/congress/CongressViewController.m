@@ -65,6 +65,7 @@ enum
 @implementation CongressViewController
 
 @synthesize m_tmpCell;
+@synthesize m_segmentCtrl;
 
 - (void)didReceiveMemoryWarning 
 {
@@ -151,6 +152,20 @@ enum
 	[super viewWillAppear:animated];
 	
 	[m_data setNotifyTarget:self withSelector:@selector(dataManagerCallback:)];
+	
+	// resize the segment controller because it seems to get gorked up
+	// when the device is rotated while a sub-view is being displayed...
+	CGRect segmentFrame;
+	if ( [UIDevice currentDevice].orientation == UIDeviceOrientationPortrait || 
+		[UIDevice currentDevice].orientation == UIDeviceOrientationPortraitUpsideDown )
+	{
+		segmentFrame = CGRectMake( 55, 7, 220, 29 );
+	}
+	else 
+	{
+		segmentFrame = CGRectMake( 55, 7, 370, 29 );
+	}
+	[m_segmentCtrl setFrame:segmentFrame];
 	
 	if ( [m_data isDataAvailable] )
 	{
@@ -301,7 +316,7 @@ deselect_and_return:
 		// load an initial legislator if we were told to do so!
 		if ( nil != m_initialLegislatorID )
 		{
-			[self.navigationController popToRootViewControllerAnimated:NO];
+			//[self.navigationController popToRootViewControllerAnimated:NO];
 			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:m_initialLegislatorID];
 			/*
 			NSInvocationOperation* theOp = [[NSInvocationOperation alloc] initWithTarget:self
@@ -492,7 +507,7 @@ show_legislator:
 		else
 		{
 			// show the requested legislator!
-			[self.navigationController popToRootViewControllerAnimated:NO];
+			//[self.navigationController popToRootViewControllerAnimated:NO];
 			LegislatorContainer *legislator = [m_data getLegislatorFromBioguideID:bioguideID];
 			LegislatorDetailViewController *legViewCtrl = [[LegislatorDetailViewController alloc] init];
 			[legViewCtrl setLegislator:legislator];

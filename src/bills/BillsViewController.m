@@ -38,10 +38,8 @@
 	- (BillContainer *)billAtIndexPath:(NSIndexPath *)indexPath;
 	- (BOOL)scrollToInitialPosition;
 	- (void)searchForBillID:(NSString *)billID;
-	- (void)reloadBillData;
 	- (void)dataManagerCallback:(id)sender;
 	- (void)shadowDataCallback:(id)sender;
-	- (void)congressSwitch: (id)sender;
 	- (void)deselectRow:(id)sender;
 	- (void)setRefreshButtonInNavBar;
 	- (void)setActivityViewInNavBar;
@@ -60,6 +58,7 @@ enum
 @implementation BillsViewController
 
 @synthesize m_tmpCell;
+@synthesize m_segmentCtrl;
 
 enum
 {
@@ -125,37 +124,6 @@ enum
 	
 	self.tableView.tableHeaderView = searchBar;
 	self.tableView.tableHeaderView.userInteractionEnabled = YES;
-	
-	// Create a new segment control and place it in 
-	// the NavigationController's title area
-	NSArray *buttonNames = [NSArray arrayWithObjects:@"House", @"Senate", nil];
-	m_segmentCtrl = [[UISegmentedControl alloc] initWithItems:buttonNames];
-	
-	// default styles
-	m_segmentCtrl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	m_segmentCtrl.segmentedControlStyle = UISegmentedControlStyleBar;
-	m_segmentCtrl.selectedSegmentIndex = 0; // Default to the "House"
-	m_selectedChamber = eCongressChamberHouse;
-	m_segmentCtrl.frame = CGRectMake(0,0,200,30);
-	// saturation of 0.0 means black/white
-	m_segmentCtrl.tintColor = [UIColor darkGrayColor];
-	
-	// add ourself as the target
-	[m_segmentCtrl addTarget:self action:@selector(congressSwitch:) forControlEvents:UIControlEventValueChanged];
-	
-	// add the buttons to the navigation bar
-	self.navigationItem.titleView = m_segmentCtrl;
-	[m_segmentCtrl release];
-	
-	// 
-	// Add a "refresh" button which will wipe out the on-device cache and 
-	// re-download congressional bill data 
-	// 
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
-											   initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
-											   target:self 
-											   action:@selector(reloadBillData)];
-	
 }
 
 
@@ -164,6 +132,20 @@ enum
 	[super viewWillAppear:animated];
 	
 	[self performSelector:@selector(deselectRow:) withObject:nil afterDelay:0.5f];
+	
+	// resize the segment controller because it seems to get gorked up
+	// when the device is rotated while a sub-view is being displayed...
+	CGRect segmentFrame;
+	if ( [UIDevice currentDevice].orientation == UIDeviceOrientationPortrait || 
+		[UIDevice currentDevice].orientation == UIDeviceOrientationPortraitUpsideDown )
+	{
+		segmentFrame = CGRectMake( 55, 7, 220, 29 );
+	}
+	else 
+	{
+		segmentFrame = CGRectMake( 55, 7, 370, 29 );
+	}
+	[m_segmentCtrl setFrame:segmentFrame];
 	
 	if ( [m_data isDataAvailable] )
 	{
@@ -407,7 +389,7 @@ get_out:
 			BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
 			if ( nil != bill )
 			{
-				[self.navigationController popToRootViewControllerAnimated:NO];
+				//[self.navigationController popToRootViewControllerAnimated:NO];
 				BillInfoViewController *biView = [[BillInfoViewController alloc] init];
 				[biView setBill:bill];
 				[self.navigationController pushViewController:biView animated:YES];
@@ -593,7 +575,7 @@ get_out:
 			BillContainer *bill = [m_data billWithIdentifier:m_initialBillID];
 			if ( nil != bill )
 			{
-				[self.navigationController popToRootViewControllerAnimated:NO];
+				//[self.navigationController popToRootViewControllerAnimated:NO];
 				BillInfoViewController *biView = [[BillInfoViewController alloc] init];
 				[biView setBill:bill];
 				[self.navigationController pushViewController:biView animated:NO];
@@ -741,7 +723,7 @@ get_out:
 }
 
 
-- (void)congressSwitch: (id)sender
+- (IBAction)congressSwitch: (id)sender
 {
 	UISearchBar *searchBar = (UISearchBar *)(self.tableView.tableHeaderView);
 	switch ( [sender selectedSegmentIndex] )

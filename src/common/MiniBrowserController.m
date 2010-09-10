@@ -25,7 +25,7 @@
 #import "MiniBrowserController.h"
 
 // I haven't gotten this to work quite right yet...
-//#define HIDE_STATUS_BAR
+#define HIDE_STATUS_BAR
 
 @interface MiniBrowserController (private)
 	- (void)animate;
@@ -409,8 +409,9 @@ static MiniBrowserController *s_browser = NULL;
 	
 	if ( [self.view superview] )
 	{
+		//[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:topView cache:NO];
 		if ( [UIDevice currentDevice].orientation == UIDeviceOrientationPortrait || 
-			[UIDevice currentDevice].orientation == UIDeviceOrientationPortraitUpsideDown )
+			 [UIDevice currentDevice].orientation == UIDeviceOrientationPortraitUpsideDown )
 		{
 			[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:topView cache:NO];
 		}
@@ -419,15 +420,10 @@ static MiniBrowserController *s_browser = NULL;
 			[UIView setAnimationTransition:UIViewAnimationTransitionCurlDown forView:topView cache:NO];
 		}
 		
-		[self.view removeFromSuperview];
 #ifdef HIDE_STATUS_BAR
 		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
-		
-		CGRect fullFrame = self.view.frame;
-		fullFrame.origin.y += [[UIApplication sharedApplication] statusBarFrame].size.height;
-		fullFrame.size.height -= [[UIApplication sharedApplication] statusBarFrame].size.height;
-		[[self.view superview] setFrame:[[self.view superview] convertRect:fullFrame fromView:nil] ];
 #endif
+		[self.view removeFromSuperview];
 	}
 	else
 	{
@@ -447,14 +443,17 @@ static MiniBrowserController *s_browser = NULL;
 		[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 #else
 		viewRect = topView.frame;
-		viewRect.origin.y += [[UIApplication sharedApplication] statusBarFrame].size.height;
-		viewRect.size.height -= [[UIApplication sharedApplication] statusBarFrame].size.height;
+		CGRect statusBarFrame = [self.view convertRect:[[UIApplication sharedApplication] statusBarFrame] fromView:topView];
+		viewRect.size.height -= statusBarFrame.size.height; 
 #endif
+		
 #if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 30200)
-		[self.view setFrame:[self.view convertRect:viewRect fromView:nil]];
+		CGRect newGeom = [self.view convertRect:viewRect toView:topView];
+		[self.view setFrame:newGeom];
 #else
 		[self.view setFrame:viewRect];
 #endif
+		
 		[topView addSubview:self.view];
 	}
 	

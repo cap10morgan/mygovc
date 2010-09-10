@@ -63,6 +63,7 @@ typedef enum
 }
 
 @property (nonatomic, assign) LegislatorNameCell *m_tmpCell;
+@property (nonatomic, assign) UISegmentedControl *m_segmentCtrl;
 
 - (void)dataManagerCallback:(id)message;
 - (void)showLegislatorDetail:(id)sender;
