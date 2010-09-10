@@ -245,13 +245,21 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 			break;
 	}
 	
+	/*
 	BOOL top25 = (millionsOfDollars > 0.1 && ((CGFloat)(m_rank) / (CGFloat)rankTotal) <= 0.25);
-	
 	NSString *rankText = [[[NSString alloc] initWithFormat:@"$%.1fM %@%d/%d%@",
 											   millionsOfDollars,
 											   (top25 ?  @" » " : @" : "),
 											   m_rank,	
 											   rankTotal,
+											   (top25 ? @" «" : @"")
+						   ] autorelease];
+	*/
+	BOOL top25 = (millionsOfDollars > 0.1 && (m_pctOfYear > 0.2));
+	NSString *rankText = [[[NSString alloc] initWithFormat:@"$%.1fM %@%0.2f%%%@",
+											   millionsOfDollars,
+											   (top25 ?  @" » " : @" : "),
+											   m_pctOfYear,
 											   (top25 ? @" «" : @"")
 						   ] autorelease];
 	return rankText;
@@ -276,13 +284,20 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 			break;
 	}
 	
+	/*
 	BOOL top25 = (millionsOfDollars > 0.1 && ((CGFloat)(m_rank) / (CGFloat)rankTotal) <= 0.25);
-	
 	NSString *rankText = [[[NSString alloc] initWithFormat:@"%@%d / %d%@",
 											   (top25 ?  @" » " : @"   "),
 											   m_rank,	
 											   rankTotal,
 											   (top25 ? @" «" : @"")
+						   ] autorelease];
+	*/
+	BOOL top25 = (millionsOfDollars > 0.1 && (m_pctOfYear > 0.2));
+	NSString *rankText = [[[NSString alloc] initWithFormat:@"%@%0.2f%%%@ of total",
+												(top25 ?  @" » " : @"   "),
+												m_pctOfYear,
+												(top25 ? @" «" : @"")
 						   ] autorelease];
 	return rankText;
 }
@@ -305,7 +320,8 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 			rankTotal = -1;
 			break;
 	}
-	BOOL top25 = (millionsOfDollars > 0.1 && ((CGFloat)(m_rank) / (CGFloat)rankTotal) <= 0.25);
+//	BOOL top25 = (millionsOfDollars > 0.1 && ((CGFloat)(m_rank) / (CGFloat)rankTotal) <= 0.25);
+	BOOL top25 = (millionsOfDollars > 0.1 && (m_pctOfYear > 0.2));
 	return top25;
 }
 

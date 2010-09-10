@@ -231,7 +231,15 @@ static MiniBrowserController *s_browser = NULL;
 	[super viewWillDisappear:animated];
 	
 #ifdef HIDE_STATUS_BAR
-	[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+	if ( [myGovAppDelegate OSVersion] >= 3.2 )
+	{
+		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+	}
+	else 
+	{
+		[[UIApplication sharedApplication] setStatusBarHidden:NO animated:YES];
+	}
+
 #endif
 }
 
@@ -421,7 +429,15 @@ static MiniBrowserController *s_browser = NULL;
 		}
 		
 #ifdef HIDE_STATUS_BAR
-		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+		if ( [myGovAppDelegate OSVersion] >= 3.2 )
+		{
+			[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+		}
+		else 
+		{
+			[[UIApplication sharedApplication] setStatusBarHidden:NO animated:YES];
+		}
+
 #endif
 		[self.view removeFromSuperview];
 	}
@@ -440,7 +456,16 @@ static MiniBrowserController *s_browser = NULL;
 		CGRect viewRect;
 #ifdef HIDE_STATUS_BAR
 		viewRect = topView.frame;
-		[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+		if ( [myGovAppDelegate OSVersion] >= 3.2 )
+		{
+			[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+		}
+		else 
+		{
+			// The old way...
+			[[UIApplication sharedApplication] setStatusBarHidden:YES animated:YES];
+		}
+
 #else
 		viewRect = topView.frame;
 		CGRect statusBarFrame = [self.view convertRect:[[UIApplication sharedApplication] statusBarFrame] fromView:topView];

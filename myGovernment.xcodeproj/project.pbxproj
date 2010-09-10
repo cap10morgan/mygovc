@@ -111,6 +111,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
+		3FF132B1123AA5CF0040D4A5 /* PlaceSpendingTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3FF132B0123AA5CF0040D4A5 /* PlaceSpendingTableCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -285,6 +286,7 @@
 		1D6058910D05DD3D006BFB54 /* myGovernment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myGovernment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765070DF74369002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		3FF132B0123AA5CF0040D4A5 /* PlaceSpendingTableCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaceSpendingTableCell.xib; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -396,6 +398,7 @@
 				01D7FE900FA5019100F78B92 /* ContractorSpendingTableCell.m */,
 				01D7FE910FA5019100F78B92 /* PlaceSpendingData.h */,
 				01D7FE920FA5019100F78B92 /* PlaceSpendingData.m */,
+				3FF132B0123AA5CF0040D4A5 /* PlaceSpendingTableCell.xib */,
 				01D7FE930FA5019100F78B92 /* PlaceSpendingTableCell.h */,
 				01D7FE940FA5019100F78B92 /* PlaceSpendingTableCell.m */,
 				01D7FE990FA5019100F78B92 /* SpendingSummaryViewController.h */,
@@ -672,6 +675,7 @@
 				01849D8811C5CC93000CB52F /* CongressViewController.xib in Resources */,
 				01849E7E11C5F6D6000CB52F /* CustomTableCell.xib in Resources */,
 				01178E2911D84C470068673A /* BillSummaryTableCell.xib in Resources */,
+				3FF132B1123AA5CF0040D4A5 /* PlaceSpendingTableCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -778,6 +782,7 @@
 				GCC_THREADSAFE_STATICS = YES;
 				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				PRODUCT_NAME = myGovernment;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -802,6 +807,7 @@
 				GCC_PREFIX_HEADER = src/myGov_Prefix.pch;
 				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				PRODUCT_NAME = myGovernment;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -825,6 +831,7 @@
 				GCC_THREADSAFE_STATICS = NO;
 				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				PRODUCT_NAME = myGovernment;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";

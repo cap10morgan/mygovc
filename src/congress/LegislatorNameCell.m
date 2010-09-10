@@ -53,7 +53,7 @@
 	m_nameView.highlighted = selected;
 	m_partyView.highlighted = selected;
 	m_infoView.highlighted = selected;
-	m_detailButton.highlighted = selected;
+	//m_detailButton.highlighted = selected;
 }
 
 

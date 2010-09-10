@@ -27,14 +27,22 @@
 
 @interface PlaceSpendingTableCell : UITableViewCell 
 {
+	IBOutlet UILabel  *m_placeView;
+	IBOutlet UILabel  *m_legView;
+	IBOutlet UILabel  *m_rankView;
+	IBOutlet UIButton *m_detailButton;
+	
 @private
 	PlaceSpendingData *m_data;
 }
 
+@property (nonatomic, assign) UILabel  *m_placeView;
+@property (nonatomic, assign) UILabel  *m_legView;
+@property (nonatomic, assign) UILabel  *m_rankView;
+@property (nonatomic, assign) UIButton *m_detailButton;
 @property (readonly) PlaceSpendingData * m_data;
 
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)identifier detailTarget:(id)tgt detailSelector:(SEL)sel;
-
+- (void)setDetailTarget:(id)tgt withSelector:(SEL)sel;
 - (void)setPlaceData:(PlaceSpendingData *)data;
 
 @end

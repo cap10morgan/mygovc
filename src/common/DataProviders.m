@@ -71,15 +71,26 @@ static NSString *kGovtrackBillTextURL_fmt = @"http://www.govtrack.us/data/us/bil
 // USASpending.gov
 // 
 static NSString *kUSASpending_fpdsURL = @"http://www.usaspending.gov/fpds/fpds.php?database=fpds&reptype=r";
+static NSString *kUSASpending_exploreContractorURL = @"http://usaspending.gov/explore?&&carryfilters=on&tab=By+Recipient&fromfiscal=yes";
+static NSString *kUSASpending_exploreLocURL= @"http://usaspending.gov/customcode/USAmap/congressionalData_map.php?&carryfilters=on&tab=By+Location";
 
 static NSString *kUSASpending_DataTypeXML = @"&datype=X";
 static NSString *kUSASpending_DataTypeHTML = @"&datype=T";
 
-static NSString *kUSASpending_DetailLevel_Summary = @"&detail=-1";
-static NSString *kUSASpending_DetailLevel_Low = @"&detail=0";
-static NSString *kUSASpending_DetailLevel_Medium = @"&detail=1";
-static NSString *kUSASpending_DetailLevel_High = @"&detail=2";
-static NSString *kUSASpending_DetailLevel_Complete = @"&detail=4";
+static NSString *kUSASpending_ExploreContractor=@"&company_name"; //@"&contractorid";
+static NSString *kUSASpending_ExploreState=@"&percapita=no&pop_state";
+static NSString *kUSASpending_ExploreDistrict=@"&percapita=yes&pop_cd";
+
+static NSString *kUSASpending_DetailLevel_Summary = @"&detail=s";
+static NSString *kUSASpending_DetailLevel_Low = @"&detail=l";
+static NSString *kUSASpending_DetailLevel_Medium = @"&detail=m";
+static NSString *kUSASpending_DetailLevel_High = @"&detail=b";
+static NSString *kUSASpending_DetailLevel_Complete = @"&detail=c";
+
+static NSString *kUSASpending_ProductServiceCatKey = @"&psc_cat";
+static NSString *kUSASpending_ProductKey = @"&psc_sub";
+static NSDictionary  *kUSASpending_ProductCat = nil;
+static NSDictionary  *kUSASpending_Product = nil;
 
 static NSString *kUSASpending_SortByContractor = @"&sortby=r";
 static NSString *kUSASpending_SortByDollars = @"&sortby=f";
@@ -88,7 +99,7 @@ static NSString *kUSASpending_SortByCategory = @"&sortby=p";
 static NSString *kUSASpending_SortByDate = @"&sortby=d";
 
 static NSString *kUSASpending_FiscalYearKey = @"&fiscal_year";
-static NSString *kUSASpending_DistrictKey = @"&pop_cd2";
+static NSString *kUSASpending_DistrictKey = @"&pop_cd";
 static NSString *kUSASpending_StateKey = @"&stateCode";
 static NSString *kUSASpending_MaxRecordsKey = @"&max_records";
 static NSString *kUSASpending_ContractorKey = @"&company_name";
@@ -408,14 +419,27 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 			break;
 	}
 	
-	NSMutableString *urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_fpdsURL] autorelease];
-	[urlStr appendFormat:@"%@%@=%@%@=%0d%@%@",
-							(xmldata ? kUSASpending_DataTypeXML : kUSASpending_DataTypeHTML),
+	NSMutableString *urlStr = nil;
+	if ( xmldata )
+	{
+		urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_fpdsURL] autorelease];
+		[urlStr appendFormat:@"%@%@=%@%@=%0d%@%@",
+							kUSASpending_DataTypeXML,
 							kUSASpending_DistrictKey,district,
 							kUSASpending_FiscalYearKey,year,
 							sortStr,
 							detailStr
-	];
+		 ];
+	}
+	else 
+	{
+		urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_exploreLocURL] autorelease];
+		[urlStr appendFormat:@"%@=%0d%@=%@",
+					kUSASpending_FiscalYearKey,year,
+					kUSASpending_ExploreDistrict,district
+		 ];
+	}
+
 	return (NSString *)urlStr;
 }
 
@@ -468,14 +492,26 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 			break;
 	}
 	
-	NSMutableString *urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_fpdsURL] autorelease];
-	[urlStr appendFormat:@"%@%@=%@%@=%0d%@%@",
-							(xmldata ? kUSASpending_DataTypeXML : kUSASpending_DataTypeHTML),
-							kUSASpending_StateKey,state,
-							kUSASpending_FiscalYearKey,year,
-							sortStr,
-							detailStr
-	];
+	NSMutableString *urlStr = nil;
+	if ( xmldata )
+	{
+		urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_fpdsURL] autorelease];
+		[urlStr appendFormat:@"%@%@=%@%@=%0d%@%@",
+								(xmldata ? kUSASpending_DataTypeXML : kUSASpending_DataTypeHTML),
+								kUSASpending_StateKey,state,
+								kUSASpending_FiscalYearKey,year,
+								sortStr,
+								detailStr
+		];
+	}
+	else 
+	{
+		urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_exploreLocURL] autorelease];
+		[urlStr appendFormat:@"%@=%0d%@=%@",
+					 kUSASpending_FiscalYearKey,year,
+					 kUSASpending_ExploreState,state];
+	}
+	
 	return (NSString *)urlStr;
 }
 
@@ -588,15 +624,28 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 			break;
 	}
 	
-	NSMutableString *urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_fpdsURL] autorelease];
-	[urlStr appendFormat:@"%@%@=%0d%@=%@%@%@%@",
-				(xmldata ? kUSASpending_DataTypeXML : kUSASpending_DataTypeHTML),
-				kUSASpending_FiscalYearKey,year,
-				kUSASpending_ContractorKey,[companyName stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding],
-				detailStr,
-				kUSASpending_SearchAppendKey,
-				sortStr
-	 ];
+	NSMutableString *urlStr = nil;
+	if ( xmldata )
+	{
+		urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_fpdsURL] autorelease];
+		[urlStr appendFormat:@"%@%@=%0d%@=%@%@%@%@",
+					(xmldata ? kUSASpending_DataTypeXML : kUSASpending_DataTypeHTML),
+					kUSASpending_FiscalYearKey,year,
+					kUSASpending_ContractorKey,[companyName stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding],
+					detailStr,
+					kUSASpending_SearchAppendKey,
+					sortStr
+		 ];
+	}
+	else 
+	{
+		urlStr = [[[NSMutableString alloc] initWithString:kUSASpending_exploreContractorURL] autorelease];
+		[urlStr appendFormat:@"%@=%0d%@=%@",
+					kUSASpending_FiscalYearKey,year,
+					kUSASpending_ExploreContractor,[companyName stringByAddingPercentEscapesUsingEncoding:NSMacOSRomanStringEncoding]
+		 ];
+	}
+
 	return (NSString *)urlStr;
 }
 

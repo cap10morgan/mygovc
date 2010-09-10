@@ -25,6 +25,7 @@
 
 @class SpendingDataManager;
 @class ProgressOverlayViewController;
+@class PlaceSpendingTableCell;
 
 typedef enum
 {
@@ -38,7 +39,8 @@ typedef enum
 
 @interface SpendingViewController : UIViewController <UITableViewDelegate, UIActionSheetDelegate>
 {
-	UITableView *tableView;
+	IBOutlet PlaceSpendingTableCell *m_tmpPlaceCell;
+	IBOutlet UITableView *tableView;
 	
 @private
 	SpendingDataManager *m_data;
@@ -53,7 +55,8 @@ typedef enum
 	BOOL m_outOfScope;
 }
 
-@property (nonatomic, retain) IBOutlet UITableView *tableView;
+@property (nonatomic, retain) PlaceSpendingTableCell *m_tmpPlaceCell;
+@property (nonatomic, retain) UITableView *tableView;
 
 - (IBAction)selectSpendingFilter:(id)sender;
 - (NSString *)areaName;

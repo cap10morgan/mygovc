@@ -53,6 +53,7 @@
 
 @implementation SpendingViewController
 
+@synthesize m_tmpPlaceCell;
 @synthesize tableView;
 
 typedef enum
@@ -382,7 +383,7 @@ deselect_and_return:
 	UIButton *button = (UIButton *)sender;
 	if ( nil == button ) return;
 	
-	PlaceSpendingTableCell *tcell = (PlaceSpendingTableCell *)[button superview];
+	PlaceSpendingTableCell *tcell = (PlaceSpendingTableCell *)[[button superview] superview];
 	if ( nil == tcell ) return;
 	
 	PlaceSpendingData *psd = [tcell m_data];
@@ -706,9 +707,13 @@ deselect_and_return:
 		PlaceSpendingTableCell *cell = (PlaceSpendingTableCell *)[tblView dequeueReusableCellWithIdentifier:PlaceCellIdentifier];
 		if ( cell == nil ) 
 		{
-			cell = [[[PlaceSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:PlaceCellIdentifier detailTarget:self detailSelector:@selector(showPlaceDetail:)] autorelease];
+			[[NSBundle mainBundle] loadNibNamed:@"PlaceSpendingTableCell" owner:self options:nil];
+			cell = m_tmpPlaceCell;
+			self.m_tmpPlaceCell = nil;
 		}
-	
+		
+		[cell setDetailTarget:self withSelector:@selector(showPlaceDetail:)];
+		
 		if ( m_outOfScope ) return (UITableViewCell *)cell;
 		
 		PlaceSpendingData *psd;
