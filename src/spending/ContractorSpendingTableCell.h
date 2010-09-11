@@ -27,14 +27,19 @@
 
 @interface ContractorSpendingTableCell : UITableViewCell 
 {
+	IBOutlet UILabel  *m_dollarsView;
+	IBOutlet UILabel  *m_ctrView;
+	IBOutlet UIButton *m_detailButton;
 @private
-	ContractorInfo *m_contractor;
+	ContractorInfo    *m_contractor;
 }
 
-@property (readonly) ContractorInfo *m_contractor;
+@property (nonatomic, retain) UILabel  *m_dollarsView;
+@property (nonatomic, retain) UILabel  *m_ctrView;
+@property (nonatomic, retain) UIButton *m_detailButton;
+@property (readonly) ContractorInfo    *m_contractor;
 
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)identifier detailTarget:(id)tgt detailSelector:(SEL)sel;
-
+- (void)setDetailTarget:(id)tgt withSelector:(SEL)sel;
 - (void)setContractor:(ContractorInfo *)contractor;
 
 @end

@@ -448,7 +448,7 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 		 ];
 	}
 	
-	NSLog(@"districtURL=%@",urlStr);
+	//NSLog(@"districtURL=%@",urlStr);
 	return (NSString *)urlStr;
 }
 
@@ -528,7 +528,7 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 		 ];
 	}
 	
-	NSLog(@"stateURL=%@",urlStr);
+	//NSLog(@"stateURL=%@",urlStr);
 	return (NSString *)urlStr;
 }
 
@@ -595,7 +595,7 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 							extraStr
 	];
 	
-	NSLog(@"topContractorURL=%@",urlStr);
+	//NSLog(@"topContractorURL=%@",urlStr);
 	return (NSString *)urlStr;
 }
 
@@ -675,7 +675,7 @@ static NSString *kCholor_downloadCommunityEventsURL = @"http://cholor.com/mygov/
 		 ];
 	}
 
-	NSLog(@"contractorSearchURL=%@",urlStr);
+	//NSLog(@"contractorSearchURL=%@",urlStr);
 	return (NSString *)urlStr;
 }
 

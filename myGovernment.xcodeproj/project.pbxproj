@@ -112,6 +112,9 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
 		3FF132B1123AA5CF0040D4A5 /* PlaceSpendingTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3FF132B0123AA5CF0040D4A5 /* PlaceSpendingTableCell.xib */; };
+		3FF1335E123B2EA80040D4A5 /* recovery_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF1335D123B2EA80040D4A5 /* recovery_logo.png */; };
+		3FF13360123B2F450040D4A5 /* recovery_logo_off.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF1335F123B2F450040D4A5 /* recovery_logo_off.png */; };
+		3FF133AF123B41290040D4A5 /* ContractorSpendingTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3FF133AE123B41290040D4A5 /* ContractorSpendingTableCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -287,6 +290,9 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765070DF74369002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		3FF132B0123AA5CF0040D4A5 /* PlaceSpendingTableCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaceSpendingTableCell.xib; sourceTree = "<group>"; };
+		3FF1335D123B2EA80040D4A5 /* recovery_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = recovery_logo.png; path = res/recovery_logo.png; sourceTree = "<group>"; };
+		3FF1335F123B2F450040D4A5 /* recovery_logo_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = recovery_logo_off.png; path = res/recovery_logo_off.png; sourceTree = "<group>"; };
+		3FF133AE123B41290040D4A5 /* ContractorSpendingTableCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContractorSpendingTableCell.xib; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -392,6 +398,7 @@
 				01D7FE9C0FA5019100F78B92 /* SpendingViewController.m */,
 				01D7FE950FA5019100F78B92 /* SpendingDataManager.h */,
 				01D7FE960FA5019100F78B92 /* SpendingDataManager.m */,
+				3FF133AE123B41290040D4A5 /* ContractorSpendingTableCell.xib */,
 				01D7FE8D0FA5019100F78B92 /* ContractorSpendingData.h */,
 				01D7FE8E0FA5019100F78B92 /* ContractorSpendingData.m */,
 				01D7FE8F0FA5019100F78B92 /* ContractorSpendingTableCell.h */,
@@ -551,6 +558,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3FF1335F123B2F450040D4A5 /* recovery_logo_off.png */,
+				3FF1335D123B2EA80040D4A5 /* recovery_logo.png */,
 				01526F0A10BCE39800445CF2 /* personIcon.png */,
 				01526E3B10BCCC7C00445CF2 /* safariButton.png */,
 				01C6697F0FFAF44F00A01F3D /* newContact.png */,
@@ -676,6 +685,9 @@
 				01849E7E11C5F6D6000CB52F /* CustomTableCell.xib in Resources */,
 				01178E2911D84C470068673A /* BillSummaryTableCell.xib in Resources */,
 				3FF132B1123AA5CF0040D4A5 /* PlaceSpendingTableCell.xib in Resources */,
+				3FF1335E123B2EA80040D4A5 /* recovery_logo.png in Resources */,
+				3FF13360123B2F450040D4A5 /* recovery_logo_off.png in Resources */,
+				3FF133AF123B41290040D4A5 /* ContractorSpendingTableCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

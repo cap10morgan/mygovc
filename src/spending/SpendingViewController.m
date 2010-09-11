@@ -54,6 +54,7 @@
 @implementation SpendingViewController
 
 @synthesize m_tmpPlaceCell;
+@synthesize m_tmpContractorCell;
 @synthesize tableView;
 @synthesize m_spendingFilterLabel;
 @synthesize m_buttonFilter;
@@ -490,7 +491,7 @@ deselect_and_return:
 	UIButton *button = (UIButton *)sender;
 	if ( nil == button ) return;
 	
-	ContractorSpendingTableCell *tcell = (ContractorSpendingTableCell *)[button superview];
+	ContractorSpendingTableCell *tcell = (ContractorSpendingTableCell *)[[button superview] superview];
 	if ( nil == tcell ) return;
 	
 	ContractorInfo *ci = [tcell m_contractor];
@@ -784,8 +785,12 @@ deselect_and_return:
 		ContractorSpendingTableCell *cell = (ContractorSpendingTableCell *)[tblView dequeueReusableCellWithIdentifier:CtorCellIdendifier];
 		if ( cell == nil )
 		{
-			cell = [[[ContractorSpendingTableCell alloc] initWithFrame:CGRectZero reuseIdentifier:CtorCellIdendifier detailTarget:self detailSelector:@selector(showContractorDetail:)] autorelease];
+			[[NSBundle mainBundle] loadNibNamed:@"ContractorSpendingTableCell" owner:self options:nil];
+			cell = m_tmpContractorCell;
+			self.m_tmpContractorCell = nil;
 		}
+		
+		[cell setDetailTarget:self withSelector:@selector(showContractorDetail:)];
 		
 		if ( m_outOfScope ) return (UITableViewCell *)cell;
 		

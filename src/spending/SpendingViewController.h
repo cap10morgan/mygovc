@@ -26,6 +26,7 @@
 @class SpendingDataManager;
 @class ProgressOverlayViewController;
 @class PlaceSpendingTableCell;
+@class ContractorSpendingTableCell;
 
 typedef enum
 {
@@ -40,6 +41,7 @@ typedef enum
 @interface SpendingViewController : UIViewController <UITableViewDelegate, UIActionSheetDelegate>
 {
 	IBOutlet PlaceSpendingTableCell *m_tmpPlaceCell;
+	IBOutlet ContractorSpendingTableCell *m_tmpContractorCell;
 	IBOutlet UITableView *tableView;
 	IBOutlet UILabel *m_spendingFilterLabel;
 	IBOutlet UIButton *m_buttonFilter;
@@ -60,6 +62,7 @@ typedef enum
 }
 
 @property (nonatomic, retain) PlaceSpendingTableCell *m_tmpPlaceCell;
+@property (nonatomic, retain) ContractorSpendingTableCell *m_tmpContractorCell;
 @property (nonatomic, retain) UITableView *tableView;
 @property (nonatomic, retain) UILabel *m_spendingFilterLabel;
 @property (nonatomic, retain) UIButton *m_buttonFilter;
