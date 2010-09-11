@@ -99,12 +99,15 @@ enum
 
 @implementation SpendingSummaryData
 
+@synthesize recoveryDataOnly;
+
 - (id)init
 {
 	if ( self = [super init] )
 	{
 		m_placeData = nil;
 		m_contractorData = nil;
+		recoveryDataOnly = NO;
 		m_dataSections = [[NSMutableArray alloc] init];
 	}
 	return self;
@@ -129,6 +132,8 @@ enum
 	m_dataSections = [[NSMutableArray alloc] initWithObjects:PLACE_DATA_SECTIONS];
 	
 	if ( nil == m_placeData ) return;
+	
+	self.recoveryDataOnly = m_placeData.recoveryDataOnly;
 	
 	// allocate data
 	[m_data release];
@@ -155,6 +160,8 @@ enum
 	m_dataSections = [[NSMutableArray alloc] initWithObjects:CNTR_DATA_SECTIONS];
 	
 	if ( nil == m_contractorData ) return;
+	
+	//self.recoveryDataOnly = m_contractorData.recoveryDataOnly;
 	
 	// allocate data
 	[m_data release];
@@ -269,7 +276,7 @@ enum
 				rd.line2Color = [UIColor darkGrayColor];
 				rd.line2Font = [UIFont systemFontOfSize:14.0f];
 				
-				NSString *urlStr = [DataProviders USASpending_contractorSearchURL:contractor forYear:m_placeData.m_year withDetail:eSpendingDetailMed sortedBy:eSpendingSortDollars xmlURL:NO];
+				NSString *urlStr = [DataProviders USASpending_contractorSearchURL:contractor forYear:m_placeData.m_year withDetail:eSpendingDetailMed sortedBy:eSpendingSortDollars recoveryActOnly:recoveryDataOnly xmlURL:NO];
 				rd.url = [NSURL URLWithString:urlStr];
 				rd.action = @selector(rowActionURL:);
 				[retVal addObject:rd];
@@ -379,7 +386,7 @@ enum
 			rd.line1 = m_contractorData.m_parentCompany;
 			rd.line1Color = [UIColor darkGrayColor];
 			rd.line1Font = [UIFont systemFontOfSize:14.0f];
-			NSString *urlStr = [DataProviders USASpending_contractorSearchURL:m_contractorData.m_parentCompany forYear:m_contractorData.m_fiscalYear withDetail:eSpendingDetailMed sortedBy:eSpendingSortDollars xmlURL:NO];
+			NSString *urlStr = [DataProviders USASpending_contractorSearchURL:m_contractorData.m_parentCompany forYear:m_contractorData.m_fiscalYear withDetail:eSpendingDetailMed sortedBy:eSpendingSortDollars recoveryActOnly:recoveryDataOnly xmlURL:NO];
 			rd.url = [NSURL URLWithString:urlStr];
 			rd.action = @selector(rowActionURL:);
 			[retVal addObject:rd];

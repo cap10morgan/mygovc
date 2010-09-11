@@ -55,6 +55,8 @@
 
 @synthesize m_tmpPlaceCell;
 @synthesize tableView;
+@synthesize m_spendingFilterLabel;
+@synthesize m_buttonFilter;
 
 typedef enum
 {
@@ -91,6 +93,7 @@ typedef enum
 	
 	m_sortOrder = eSpendingSortDollars;
 	m_actionSheetType = eAST_ContractorSort;
+	m_recoveryDataOnly = NO;
 	
 	m_outOfScope = NO;
 	
@@ -127,6 +130,9 @@ typedef enum
 	
 	// re-adjust the tableView to cover the new method :-)
 	[self.tableView setFrame:CGRectMake(0,0,CGRectGetWidth(self.tableView.frame),CGRectGetHeight(self.tableView.frame)+31)];
+#else
+	m_selectedQueryMethod = eSQMDistrict;
+	[m_spendingFilterLabel setText:@"Spending Filter: District"];
 #endif
 	
 	// 
@@ -275,8 +281,94 @@ deselect_and_return:
 
 - (IBAction)selectSpendingFilter:(id)sender
 {
-	//int a = 1;
+	BOOL showOrganizerButton = NO;
+	switch ( m_selectedQueryMethod )
+	{
+		default:
+		case eSQMDistrict:
+			// This is "District"
+			m_selectedQueryMethod = eSQMState;
+			[m_spendingFilterLabel setText:[NSString stringWithFormat:@"Spending Filter: State%@",(m_recoveryDataOnly ? @" (Recovery Act)" : @"")]];
+			break;
+			
+		case eSQMState:
+			// This is "State"
+			m_selectedQueryMethod = eSQMContractor;
+			[m_spendingFilterLabel setText:[NSString stringWithFormat:@"Spending Filter: Contractor%@",(m_recoveryDataOnly ? @" (Recovery Act)" : @"")]];
+			showOrganizerButton = YES;
+			break;
+			
+		case eSQMContractor:
+			// This is "Contractor"
+			m_selectedQueryMethod = eSQMDistrict;
+			[m_spendingFilterLabel setText:[NSString stringWithFormat:@"Spending Filter: District%@",(m_recoveryDataOnly ? @" (Recovery Act)" : @"")]];
+			break;
+	}
+	
+/* jca(2010-09-11): this is now a "recovery data" button...
+	if ( showOrganizerButton )
+	{
+		// 
+		// Add an "organize button which will present the user with a method of
+		// sorting the displayed data
+		// 
+		self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] 
+												  initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize 
+												  target:self 
+												  action:@selector(sortSpendingData)] autorelease];
+	}
+	else
+	{
+		self.navigationItem.leftBarButtonItem = nil;
+	}
+*/
+	if ( [m_data isDataAvailable] )
+	{
+		[self.tableView reloadData];
+		NSUInteger idx[2] = {0,0};
+		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+	}
 }
+
+
+- (IBAction)toggleRecoveryDataOnly:(id)sender
+{
+	UIButton *recoveryButton = (UIButton *)(sender);
+	
+	if ( m_recoveryDataOnly )
+	{
+		m_recoveryDataOnly = FALSE;
+		[recoveryButton setImage:[UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"recovery_logo_off.png"]] forState:UIControlStateNormal];
+	}
+	else 
+	{
+		m_recoveryDataOnly = TRUE;
+		[recoveryButton setImage:[UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"recovery_logo.png"]] forState:UIControlStateNormal];
+	}
+	
+	switch ( m_selectedQueryMethod )
+	{
+		default:
+		case eSQMDistrict:
+			[m_spendingFilterLabel setText:[NSString stringWithFormat:@"Spending Filter: District%@",(m_recoveryDataOnly ? @" (Recovery Act)" : @"")]];
+			break;
+		case eSQMState:
+			[m_spendingFilterLabel setText:[NSString stringWithFormat:@"Spending Filter: State%@",(m_recoveryDataOnly ? @" (Recovery Act)" : @"")]];
+			break;
+		case eSQMContractor:
+			[m_spendingFilterLabel setText:[NSString stringWithFormat:@"Spending Filter: Contractor%@",(m_recoveryDataOnly ? @" (Recovery Act)" : @"")]];
+			break;
+	}
+	
+	if ( [m_data isDataAvailable] )
+	{
+		[m_data SetRecoveryDataOnly:m_recoveryDataOnly];
+		[self.tableView reloadData];
+		NSUInteger idx[2] = {0,0};
+		[self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathWithIndexes:idx length:2] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+	}
+}
+
 
 #ifdef USE_OLD_SPENDING_CHOICES
 - (void)queryMethodSwitch:(id)sender
@@ -326,7 +418,6 @@ deselect_and_return:
 	}
 }
 #endif // USE_OLD_SPENDING_CHOICES
-
 
 - (void)sortSpendingData
 {

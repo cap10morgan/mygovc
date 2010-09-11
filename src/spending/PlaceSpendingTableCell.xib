@@ -97,7 +97,7 @@
 								</object>
 								<reference key="IBUIHighlightedColor" ref="538412073"/>
 								<int key="IBUIBaselineAdjustment">1</int>
-								<float key="IBUIMinimumFontSize">16</float>
+								<float key="IBUIMinimumFontSize">12</float>
 							</object>
 							<object class="IBUILabel" id="1058917816">
 								<reference key="NSNextResponder" ref="806442696"/>
@@ -416,11 +416,15 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>m_buttonFilter</string>
+							<string>m_spendingFilterLabel</string>
 							<string>m_tmpPlaceCell</string>
 							<string>tableView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>UIButton</string>
+							<string>UILabel</string>
 							<string>PlaceSpendingTableCell</string>
 							<string>UITableView</string>
 						</object>
@@ -429,11 +433,21 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>m_buttonFilter</string>
+							<string>m_spendingFilterLabel</string>
 							<string>m_tmpPlaceCell</string>
 							<string>tableView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">m_buttonFilter</string>
+								<string key="candidateClassName">UIButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">m_spendingFilterLabel</string>
+								<string key="candidateClassName">UILabel</string>
+							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">m_tmpPlaceCell</string>
 								<string key="candidateClassName">PlaceSpendingTableCell</string>

@@ -41,6 +41,8 @@ typedef enum
 {
 	IBOutlet PlaceSpendingTableCell *m_tmpPlaceCell;
 	IBOutlet UITableView *tableView;
+	IBOutlet UILabel *m_spendingFilterLabel;
+	IBOutlet UIButton *m_buttonFilter;
 	
 @private
 	SpendingDataManager *m_data;
@@ -51,14 +53,20 @@ typedef enum
 	
 	int m_actionSheetType;
 	
+	BOOL m_recoveryDataOnly;
+	
 	ProgressOverlayViewController *m_HUD;
 	BOOL m_outOfScope;
 }
 
 @property (nonatomic, retain) PlaceSpendingTableCell *m_tmpPlaceCell;
 @property (nonatomic, retain) UITableView *tableView;
+@property (nonatomic, retain) UILabel *m_spendingFilterLabel;
+@property (nonatomic, retain) UIButton *m_buttonFilter;
 
 - (IBAction)selectSpendingFilter:(id)sender;
+- (IBAction)toggleRecoveryDataOnly:(id)sender;
+
 - (NSString *)areaName;
 - (void)handleURLParms:(NSString *)parms;
 

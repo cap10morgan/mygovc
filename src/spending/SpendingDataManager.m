@@ -41,6 +41,7 @@
 
 @synthesize isDataAvailable;
 @synthesize isBusy;
+@synthesize recoveryDataOnly;
 
 static int kMAX_CONCURRENT_DOWNLOADS = 3;
 static int kMAX_OPS_IN_QUEUE = 10;
@@ -61,6 +62,7 @@ static int kMAX_OPS_IN_QUEUE = 10;
 		isBusy = NO;
 		m_shouldStopDownloads = NO;
 		m_downloadsInFlight = 0;
+		recoveryDataOnly = NO;
 		
 		m_notifyTarget = nil;
 		m_districtSpendingSummary = [[NSMutableDictionary alloc] initWithCapacity:480];
@@ -116,6 +118,13 @@ static int kMAX_OPS_IN_QUEUE = 10;
 	m_notifySelector = sel;
 }
 
+- (void)SetRecoveryDataOnly:(BOOL)recoveryOnly
+{
+	[self cancelAllDownloads];
+	[self flushInMemoryCache];
+	recoveryDataOnly = recoveryOnly;
+	m_contractorSpendingSummary.recoveryDataOnly = recoveryOnly;
+}
 
 - (void)cancelAllDownloads
 {
@@ -189,6 +198,7 @@ static int kMAX_OPS_IN_QUEUE = 10;
 	if ( nil == dsd )
 	{
 		dsd = [[PlaceSpendingData alloc] initWithDistrict:district];
+		dsd.recoveryDataOnly = recoveryDataOnly;
 		[m_districtSpendingSummary setValue:dsd forKey:district];
 		[dsd release]; // the dictionary holds the last reference...
 	}
@@ -218,6 +228,7 @@ static int kMAX_OPS_IN_QUEUE = 10;
 	if ( nil == psd )
 	{
 		psd = [[PlaceSpendingData alloc] initWithState:state];
+		psd.recoveryDataOnly = recoveryDataOnly;
 		[m_stateSpendingSummary setValue:psd forKey:state];
 		[psd release]; // the dictionary holds the last reference...
 	}

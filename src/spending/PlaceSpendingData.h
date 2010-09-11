@@ -48,6 +48,7 @@ typedef enum
 {
 	BOOL       isDataAvailable;
 	BOOL       isBusy;
+	BOOL       recoveryDataOnly;
 	
 	NSString  *m_place;
 	NSUInteger m_year;
@@ -81,6 +82,7 @@ typedef enum
 
 @property (readonly) BOOL isDataAvailable;
 @property (readonly) BOOL isBusy;
+@property            BOOL recoveryDataOnly;
 @property (readonly) NSString *m_place;
 @property (readonly) NSUInteger m_year;
 @property (readonly) CGFloat m_pctOfYear;

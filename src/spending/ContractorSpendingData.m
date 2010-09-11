@@ -96,6 +96,7 @@ static const int kNumContractorsToQuery = 50;
 
 @synthesize isDataAvailable;
 @synthesize isBusy;
+@synthesize recoveryDataOnly;
 
 static NSString *kName_Data = @"data";
 static NSString *kName_Record = @"record";
@@ -112,6 +113,7 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 	{
 		isDataAvailable = NO;
 		isBusy = NO;
+		recoveryDataOnly = NO;
 		
 		m_infoSortedByName = [[NSMutableArray alloc] initWithCapacity:kNumContractorsToQuery];
 		m_infoSortedByDollars = [[NSMutableArray alloc] initWithCapacity:kNumContractorsToQuery];
@@ -205,6 +207,7 @@ static NSString *kName_ParentDUNS = @"eeParentDuns";
 												 maxNumContractors:kNumContractorsToQuery 
 														withDetail:eSpendingDetailLow 
 														  sortedBy:eSpendingSortDollars 
+												   recoveryActOnly:recoveryDataOnly 
 															xmlURL:YES];
 	NSURL *dataURL = [NSURL URLWithString:urlStr];
 	

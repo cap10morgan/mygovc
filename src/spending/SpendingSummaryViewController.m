@@ -277,7 +277,13 @@
 	sectionLabel.textAlignment = UITextAlignmentLeft;
 	sectionLabel.adjustsFontSizeToFitWidth = YES;
 	
-	[sectionLabel setText:[m_data titleForSection:section]];
+	NSMutableString *sectionTitle = [[[NSMutableString alloc] initWithString:[m_data titleForSection:section]] autorelease];
+	if ( m_data.recoveryDataOnly )
+	{
+		[sectionTitle appendString:@" (Recovery)"];
+	}
+	
+	[sectionLabel setText:sectionTitle];
 	
 	return sectionLabel;
 }

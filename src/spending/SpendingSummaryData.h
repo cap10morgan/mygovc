@@ -31,7 +31,10 @@
 {
 	PlaceSpendingData *m_placeData;
 	ContractorInfo *m_contractorData;
+	BOOL recoveryDataOnly;
 }
+
+@property BOOL recoveryDataOnly;
 
 - (void)setPlaceData:(PlaceSpendingData *)data;
 - (void)setContractorData:(ContractorInfo *)data;

@@ -54,7 +54,8 @@
 {
 	BOOL       isDataAvailable;
 	BOOL       isBusy;
-
+	BOOL       recoveryDataOnly;
+	
 @private
 	NSMutableArray *m_infoSortedByName;
 	NSMutableArray *m_infoSortedByDollars;
@@ -72,6 +73,7 @@
 
 @property (readonly,getter=isDataAvailable) BOOL isDataAvailable;
 @property (readonly) BOOL isBusy;
+@property            BOOL recoveryDataOnly;
 
 - (NSArray *)contractorsSortedBy:(SpendingSortMethod)order;
 - (ContractorInfo *)contractorAtIndex:(NSInteger)idx whenSortedBy:(SpendingSortMethod)order;

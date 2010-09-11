@@ -39,6 +39,7 @@
 
 @synthesize isDataAvailable;
 @synthesize isBusy;
+@synthesize recoveryDataOnly;
 @synthesize m_place;
 @synthesize m_year;
 @synthesize m_pctOfYear;
@@ -81,6 +82,7 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 {
 	isDataAvailable = NO;
 	isBusy = NO;
+	recoveryDataOnly = NO;
 	
 	m_year = 0;
 	m_pctOfYear = 0.0;
@@ -368,10 +370,10 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	switch ( m_placeType )
 	{
 		case eSPT_District:
-			urlStr = [DataProviders USASpending_districtURL:m_place forYear:m_year withDetail:eSpendingDetailLow sortedBy:eSpendingSortDollars xmlURL:NO];
+			urlStr = [DataProviders USASpending_districtURL:m_place forYear:m_year withDetail:eSpendingDetailLow sortedBy:eSpendingSortDollars recoveryActOnly:recoveryDataOnly xmlURL:NO];
 			break;
 		case eSPT_State:
-			urlStr = [DataProviders USASpending_stateURL:m_place forYear:m_year withDetail:eSpendingDetailLow sortedBy:eSpendingSortDollars xmlURL:NO];
+			urlStr = [DataProviders USASpending_stateURL:m_place forYear:m_year withDetail:eSpendingDetailLow sortedBy:eSpendingSortDollars recoveryActOnly:recoveryDataOnly xmlURL:NO];
 			break;
 		default:
 			urlStr = nil;
@@ -389,10 +391,10 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 	switch ( m_placeType )
 	{
 		case eSPT_District:
-			urlStr = [DataProviders USASpending_districtURL:m_place forYear:m_year withDetail:eSpendingDetailHigh sortedBy:eSpendingSortDollars xmlURL:NO];
+			urlStr = [DataProviders USASpending_districtURL:m_place forYear:m_year withDetail:eSpendingDetailHigh sortedBy:eSpendingSortDollars recoveryActOnly:recoveryDataOnly xmlURL:NO];
 			break;
 		case eSPT_State:
-			urlStr = [DataProviders USASpending_stateURL:m_place forYear:m_year withDetail:eSpendingDetailHigh sortedBy:eSpendingSortDollars xmlURL:NO];
+			urlStr = [DataProviders USASpending_stateURL:m_place forYear:m_year withDetail:eSpendingDetailHigh sortedBy:eSpendingSortDollars recoveryActOnly:recoveryDataOnly xmlURL:NO];
 			break;
 		default:
 			urlStr = nil;
@@ -455,7 +457,9 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 		NSString *urlStr = [DataProviders USASpending_districtURL:(nil == altPlace ? m_place : altPlace)
 														  forYear:year 
 													   withDetail:eSpendingDetailSummary 
-														 sortedBy:eSpendingSortDollars xmlURL:YES];
+														 sortedBy:eSpendingSortDollars 
+												  recoveryActOnly:recoveryDataOnly 
+														   xmlURL:YES];
 		detailSummaryURL = [NSURL URLWithString:urlStr];
 	}
 	else if ( eSPT_State == m_placeType )
@@ -463,7 +467,9 @@ static NSString *kProp_DollarAmount = @"total_obligatedAmount";
 		NSString *urlStr = [DataProviders USASpending_stateURL:(nil == altPlace ? m_place : altPlace) 
 													   forYear:year 
 													withDetail:eSpendingDetailSummary 
-													  sortedBy:eSpendingSortDollars xmlURL:YES];
+													  sortedBy:eSpendingSortDollars 
+											   recoveryActOnly:recoveryDataOnly 
+														xmlURL:YES];
 		detailSummaryURL = [NSURL URLWithString:urlStr];
 	}
 	

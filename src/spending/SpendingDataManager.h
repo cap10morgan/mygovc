@@ -34,6 +34,7 @@
 {
 	BOOL isDataAvailable;
 	BOOL isBusy;
+	BOOL recoveryDataOnly;
 	
 @private
 	NSMutableDictionary *m_districtSpendingSummary;
@@ -51,10 +52,12 @@
 
 @property (readonly) BOOL isDataAvailable;
 @property (readonly) BOOL isBusy;
+@property (setter=SetRecoveryDataOnly) BOOL recoveryDataOnly;
 
 + (NSString *)dataCachePath;
 
 - (void)setNotifyTarget:(id)target withSelector:(SEL)sel;
+- (void)SetRecoveryDataOnly:(BOOL)recoveryOnly;
 
 - (void)cancelAllDownloads;
 - (void)flushInMemoryCache;

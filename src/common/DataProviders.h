@@ -78,24 +78,28 @@ typedef enum
 							  forYear:(NSInteger)year 
 						   withDetail:(SpendingDetail)detail 
 							 sortedBy:(SpendingSortMethod)order 
+					  recoveryActOnly:(BOOL)recoveryOnly
 							   xmlURL:(BOOL)xmldata;
 
 + (NSString *)USASpending_stateURL:(NSString *)state 
 						   forYear:(NSInteger)year 
 						withDetail:(SpendingDetail)detail 
 						  sortedBy:(SpendingSortMethod)order 
+				   recoveryActOnly:(BOOL)recoveryOnly
 							xmlURL:(BOOL)xmldata;
 
 + (NSString *)USASpending_topContractorURL:(NSInteger)year 
 						 maxNumContractors:(NSInteger)maxRecords 
 								withDetail:(SpendingDetail)detail 
-								  sortedBy:(SpendingSortMethod)order 
+								  sortedBy:(SpendingSortMethod)order
+						   recoveryActOnly:(BOOL)recoveryOnly
 									xmlURL:(BOOL)xmldata;
 
 + (NSString *)USASpending_contractorSearchURL:(NSString *)companyName 
 									  forYear:(NSInteger)year 
 								   withDetail:(SpendingDetail)detail 
 									 sortedBy:(SpendingSortMethod)order 
+							  recoveryActOnly:(BOOL)recoveryOnly
 									   xmlURL:(BOOL)xmldata;
 
 

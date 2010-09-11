@@ -472,12 +472,15 @@ static MiniBrowserController *s_browser = NULL;
 		viewRect.size.height -= statusBarFrame.size.height; 
 #endif
 		
-#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 30200)
-		CGRect newGeom = [self.view convertRect:viewRect toView:topView];
-		[self.view setFrame:newGeom];
-#else
-		[self.view setFrame:viewRect];
-#endif
+		if ( [myGovAppDelegate OSVersion] >= 3.2 )
+		{
+			CGRect newGeom = [self.view convertRect:viewRect toView:topView];
+			[self.view setFrame:newGeom];
+		}
+		else
+		{
+			[self.view setFrame:viewRect];
+		}
 		
 		[topView addSubview:self.view];
 	}
